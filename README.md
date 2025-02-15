@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nico Pets
 
-## Getting Started
+## Descripción
+Nico Pets es un proyecto basado en Next.js que utiliza diversas librerías para gestionar los estilos, los iconos y los componentes de la interfaz de usuario.
 
-First, run the development server:
+## Tecnologías Utilizadas
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### 📦 Framework
+- **Next.js** (v15.1.7): Framework de React para desarrollo web optimizado con SSR y SSG.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 🎨 Estilos
+- **Tailwind CSS** (v3.4.1): Framework de utilidades para estilizar la UI.
+- **tailwind-merge** (v3.0.1): Facilita la combinación de clases de Tailwind sin conflictos.
+- **tailwindcss-animate** (v1.0.7): Extensión para animaciones en Tailwind CSS.
+- **clsx** (v2.1.1): Manejo eficiente de clases condicionales en React.
+- **class-variance-authority** (v0.7.1): Permite la variabilidad de estilos dentro de componentes de Tailwind CSS.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 🔹 Íconos
+- **lucide-react** (v0.475.0): Librería de íconos modernos y personalizables basada en Lucide Icons para React.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### ⚙️ Configuración y Herramientas
+- **TypeScript** (v5): Tipado estático para una mejor experiencia de desarrollo.
+- **ESLint** (v9) & **eslint-config-next** (v15.1.7): Configuración de linting recomendada para Next.js.
+- **PostCSS** (v8): Procesador de CSS utilizado por Tailwind CSS.
 
-## Learn More
+## Scripts Disponibles
 
-To learn more about Next.js, take a look at the following resources:
+- `pnpm dev` → Inicia el servidor de desarrollo con Turbopack.
+- `pnpm build` → Compila la aplicación para producción.
+- `pnpm start` → Inicia el servidor en producción.
+- `pnpm lint` → Ejecuta ESLint para verificar el código.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Instalación
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Clonar el repositorio:
+   ```sh
+   git clone https://github.com/usuario/nico-pets.git
+   cd nico-pets
+   ```
 
-## Deploy on Vercel
+2. Instalar dependencias con **pnpm**:
+   ```sh
+   pnpm install
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. Iniciar el entorno de desarrollo:
+   ```sh
+   pnpm dev
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Contribuir
+Si deseas contribuir, por favor abre un issue o un pull request con tus mejoras. 🚀
+
+---
+© 2025 Nico Pets. Todos los derechos reservados.
+
