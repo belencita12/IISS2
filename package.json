@@ -8,8 +8,7 @@
     "start": "next start",
     "lint": "next lint",
 
-    "cy:open": "cypress open",
-    "cy:open-prod": "cypress open --env version=prod"
+    "cy:open": "cypress open"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
