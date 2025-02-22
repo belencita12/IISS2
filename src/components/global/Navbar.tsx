@@ -1,7 +1,5 @@
-import { Input } from "@/components/ui/input";
 import { Menubar, MenubarMenu, MenubarTrigger } from "@radix-ui/react-menubar";
 
-import { Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -11,7 +9,7 @@ type NavbarProps = {
 
 export default function Navbar({ links }: NavbarProps) {
   return (
-    <Menubar className="flex justify-between items-center w-full mx-auto flex-wrap">
+    <Menubar className="flex justify-between items-center w-full mx-auto flex-wrap shadow-sm px-8">
       <div className="flex items-center gap-4">
         <Image
           src="/logo.png"
@@ -34,14 +32,6 @@ export default function Navbar({ links }: NavbarProps) {
               <MenubarTrigger>{link.label}</MenubarTrigger>
             </Link>
           ))}
-          <div className="relative">
-            <Input
-              type="search"
-              placeholder="Buscar..."
-              className="pr-8 appearance-none"
-            />
-            <Search className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
-          </div>
         </nav>
       </MenubarMenu>
     </Menubar>
