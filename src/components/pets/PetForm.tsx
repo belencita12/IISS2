@@ -12,6 +12,22 @@ export default function PetForm() {
     const [gender, setGender] = useState('');
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [imageFile, setImageFile] = useState<File | null>(null);
+    const [formErrors, setFormErrors] = useState <{[key: string]: string}>({});
+
+
+    const validateForm = () => {
+        const errors: {[key: string]: string} = {};
+
+        if (!petName.trim()) errors.petName = 'El nombre es obligatorio';
+        if (!birthDate) errors.birthDate = 'La fecha de nacimiento es obligatoria';
+        if (!breed.trim()) errors.breed = 'La raza es obligatoria';
+        if (!animalType) errors.animalType = 'Debes seleccionar un tipo de animal';
+        if (!gender) errors.gender = 'Debes seleccionar un género';
+
+        setFormErrors(errors);
+        console.log(errors);
+        return Object.keys(errors).length === 0;
+    };
 
     const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -27,6 +43,8 @@ export default function PetForm() {
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+
+        if (!validateForm()) return;
 
         const speciesId = animalType === 'dog' ? 1 : 2;
         const raceId = breed === 'Labrador' ? 101 : 102;
@@ -95,6 +113,7 @@ export default function PetForm() {
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
                             <label className="block text-sm font-medium mb-2">Nombre</label>
+                            {formErrors.petName && <p className="text-red-500 text-sm mt-1">{formErrors.petName}</p>}
                             <input
                                 type="text"
                                 value={petName}
@@ -106,6 +125,7 @@ export default function PetForm() {
 
                         <div>
                             <label className="block text-sm font-medium mb-2">Fecha de nacimiento</label>
+                            {formErrors.birthDate && <p className="text-red-500 text-sm mt-1">{formErrors.birthDate}</p>}
                             <input
                                 type="date"
                                 value={birthDate}
@@ -116,6 +136,7 @@ export default function PetForm() {
 
                         <div>
                             <label className="block text-sm font-medium mb-2">Raza</label>
+                            {formErrors.breed && <p className="text-red-500 text-sm mt-1">{formErrors.breed}</p>}
                             <input
                                 type="text"
                                 value={breed}
@@ -127,6 +148,7 @@ export default function PetForm() {
 
                         <div>
                             <label className="block text-sm font-medium mb-2">Animal</label>
+                            {formErrors.animalType && <p className="text-red-500 text-sm mt-1">{formErrors.animalType}</p>}
                             <select
                                 value={animalType}
                                 onChange={(e) => setAnimalType(e.target.value)}
@@ -140,6 +162,7 @@ export default function PetForm() {
 
                         <div>
                             <label className="block text-sm font-medium mb-2">Género</label>
+                            {formErrors.gender && <p className="text-red-500 text-sm mt-1">{formErrors.gender}</p>}
                             <div className="flex gap-4">
                                 <button
                                     type="button"
