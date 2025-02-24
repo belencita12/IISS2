@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
 
 interface Mascota {
   id: number;
@@ -13,6 +16,12 @@ interface Mascota {
   cantidad_de_visitas: number; //atributo temporal, hasta tener fuente real
 }
 
+interface Visita {
+  id: number;
+  fecha: string;
+  descripcion: string;
+}
+
 const mascota: Mascota = {
   id: 1,
   nombre: "Enrique",
@@ -25,6 +34,20 @@ const mascota: Mascota = {
   libreta_de_vacunacion_id: 101,
   cantidad_de_visitas: 8,
 };
+
+const visitas: Visita[] = [
+  { id: 1, fecha: "2024-12-20", descripcion: "Chequeo general" },
+  { id: 2, fecha: "2024-10-15", descripcion: "Vacunación anual" },
+  { id: 3, fecha: "2024-09-10", descripcion: "Desparasitación" },
+  { id: 4, fecha: "2024-05-05", descripcion: "Consulta por tos" },
+  { id: 5, fecha: "2024-02-01", descripcion: "Revisión de piel" },
+]
+
+const visitasProgramadas: Visita[] = [
+  { id: 1, fecha: "2025-01-10", descripcion: "Chequeo rutinario" },
+  { id: 2, fecha: "2025-03-05", descripcion: "Vacunación de refuerzo" },
+  { id: 3, fecha: "2025-05-20", descripcion: "Revisión dental" },
+];
 
 function calcularEdad(fechaNacimiento: string): number {
     const nacimiento = new Date(fechaNacimiento);
@@ -52,7 +75,14 @@ function convertirFecha(fecha: string): string {
   }
   
 
-export default function EditarMascota() {
+export default function DetallesMascota() {
+  const [showAll, setShowAll] = useState(false);
+  const [showAllPg, setShowAllPg] = useState(false);
+
+  const visitasVisibles = showAll ? visitas : visitas.slice(0, 4);
+
+  const visitasProgramadasVisibles = showAllPg ? visitasProgramadas : visitasProgramadas.slice(0, 4);
+
   return (
     <div className="flex-col">
         <div className="flex justify-center bg-gray-500 p-5">
@@ -88,10 +118,54 @@ export default function EditarMascota() {
                 <div className="p-1 pb-4">
                     <p>Genero</p><p className="text-xl">{mascota.genero}</p>
                 </div>
-                <button className="bg-white text-black text-sm rounded-xl p-2 pr-6 pl-6">Ver Libreta</button>
+                <button className="bg-white text-black text-sm rounded-lg p-2 pr-6 pl-6">Ver Libreta</button>
             </div>
         </div>
-        <div className="flex justify-center bg-white">Contenido 2</div>
+
+        <div className="flex-col p-7 bg-white">
+          <div className="flex justify-center">
+          <div className="flex-col justify-center items-center w-[70%] pb-7 pt-7">
+            <h2 className="text-2xl font-bold mb-3">Últimas visitas</h2>
+            <ul className="w-full">
+              {visitasVisibles.map((visita) => (
+                <li key={visita.id} className="border-b py-2 last:border-none">
+                  <p className="text-sm text-gray-600">{convertirFecha(visita.fecha)}</p>
+                  <p className="text-base">{visita.descripcion}</p>
+                </li>
+              ))}
+            </ul>
+            {visitas.length > 4 && (
+              <div className="flex justify-center">
+                <button
+                  onClick={() => setShowAll(!showAll)}
+                  className="mt-3 bg-gray-400 text-white rounded-lg p-2 pr-5 pl-5">
+                  {showAll ? "Ver menos" : "Ver más"}
+                </button>
+              </div>
+            )}
+          </div></div>
+
+          <div className="flex justify-center">
+          <div className="flex-col justify-center items-center w-[70%] pb-7 pt-7">
+            <h2 className="text-2xl font-bold mb-3">Visitas programadas</h2>
+            <ul className="w-full">
+              {visitasProgramadasVisibles.map((visita) => (
+                <li key={visita.id} className="border-b py-2 last:border-none">
+                  <p className="text-sm text-gray-600">{convertirFecha(visita.fecha)}</p>
+                  <p className="text-base">{visita.descripcion}</p>
+                </li>
+              ))}
+            </ul>
+            {visitasProgramadas.length > 4 && (
+              <button
+                onClick={() => setShowAllPg(!showAllPg)}
+                className="mt-3 text-blue-500 hover:underline"
+              >
+                {showAllPg ? "Ver menos" : "Ver más"}
+              </button>
+            )}
+          </div></div>
+        </div>
     </div>
   );
 }
