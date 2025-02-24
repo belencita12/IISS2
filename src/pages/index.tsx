@@ -3,15 +3,20 @@ import React from "react";
 import Hero from "../components/Hero";
 import Services from "../components/Services";
 import Products from "../components/Products";
-import Footer from "../components/Footer";
 
 const Index = () => {
     return (
-      <main>
+      <main className="px-[6%]">
         <Hero />
         <Services />
         <Products />
-        <Footer />
+        <img
+            src="/image gato.png"
+            alt="Gato"
+            width={1500}
+            height={400}
+            className="object-contain rounded-xl"
+          />
       </main>
     );
   };
