@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export default function Hero() {
     return (
       <section className="flex items-center justify-center py-10 bg-white">
@@ -6,8 +8,12 @@ export default function Hero() {
           <p className="text-gray-600 mb-6">
             Regístrate con nosotros y accede a una amplia gama de servicios para tu mascota.
           </p>
+          <Link href="/register" >
           <button className="bg-blue-600 text-white px-4 py-2 rounded-lg mr-4">Registrarse</button>
-          <button className="bg-gray-300 px-4 py-2 rounded-lg">Más detalles</button>
+          </Link>
+          <Link href="/login" >
+          <button className="bg-gray-300 px-4 py-2 rounded-lg">Iniciar Sesion</button>
+          </Link>
         </div>
         <img 
           src="/image.png" 
