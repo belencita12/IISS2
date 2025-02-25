@@ -26,7 +26,7 @@ export default function PasswordRecoveryForm() {
         setFormState((prev) => ({ ...prev, isLoading: true, message: "", isError: false }))
 
         try {
-            const response = await fetch("https://iiss2-backend.onrender.com/api/auth/token/reset-password", {
+            const response = await fetch("https://iiss2-backend.onrender.com/auth/token/reset-password", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email: formState.email }),
