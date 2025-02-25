@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 interface Mascota {
   id: number;
@@ -157,12 +158,12 @@ export default function DetallesMascota() {
               ))}
             </ul>
             {visitasProgramadas.length > 4 && (
-              <button
+              <Button
                 onClick={() => setShowAllPg(!showAllPg)}
                 className="mt-3 text-blue-500 hover:underline"
               >
                 {showAllPg ? "Ver menos" : "Ver más"}
-              </button>
+              </Button>
             )}
           </div></div>
         </div>
