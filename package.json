@@ -6,9 +6,12 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+
+    "cy:open": "cypress open"
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.6",
     "@radix-ui/react-menubar": "^1.1.6",
     "@radix-ui/react-slot": "^1.1.2",
     "@shadcn/ui": "^0.0.4",
