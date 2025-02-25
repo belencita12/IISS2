@@ -1,3 +1,4 @@
+import { Appointments } from "@/components/profile/Appointments";
 import { Header } from "@/components/profile/Header";
 import { PetsList } from "@/components/profile/PetLists";
 
@@ -6,6 +7,7 @@ export default function Profile() {
         <div className="mx-auto">
             <Header />
             <PetsList />
+            <Appointments/>
         </div>
     );
 }
