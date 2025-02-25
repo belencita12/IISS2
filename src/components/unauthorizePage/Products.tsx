@@ -24,7 +24,7 @@ export default function Products() {
       </section>
       <section className="flex items-center justify-between py-10 bg-white">
         {products.map((product) => (
-          <div key={product.name} className="bg-white p-4 rounded-lg shadow-lg text-center">
+          <div key={product.name} className="bg-white p-4 rounded-lg shadow-lg text-center transition-all duration-200 hover:scale-105 cursor-pointer">
             <img src={product.image} alt={product.name} className="rounded-md mb-4" />
             <h3 className="font-semibold">{product.name}</h3>
           </div>

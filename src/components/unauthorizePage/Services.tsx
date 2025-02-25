@@ -28,7 +28,7 @@ export default function Services() {
             <section className="flex items-center py-10 bg-white">
                 <div className="flex justify-between w-full">
                     {services.map((service) => (
-                        <div key={service.name} className="bg-white p-4 rounded-lg shadow-lg text-center">
+                        <div key={service.name} className="bg-white p-4 rounded-lg shadow-lg text-center transition-all duration-200 hover:scale-105 cursor-pointer">
                             <img src={service.image} alt={service.name} className="rounded-md mb-4" />
                             <h3 className="font-semibold">{service.name}</h3>
                         </div>

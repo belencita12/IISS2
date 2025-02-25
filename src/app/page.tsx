@@ -1,9 +1,9 @@
-import Index from "@/pages";
+import UnauthorizedPage from "@/pages/mainPage/unauthorizedPage";
 
 export default function Home() {
   return (
     <div>
-      <Index />
+      <UnauthorizedPage />
     </div>
   );
 }

@@ -1,10 +1,10 @@
 import React from "react";
 //import Header from "./components/Header";
-import Hero from "../components/Hero";
-import Services from "../components/Services";
-import Products from "../components/Products";
+import Hero from "@/components/unauthorizePage/Hero";
+import Services from "@/components/unauthorizePage/Services";
+import Products from "@/components/unauthorizePage/Products";
 
-const Index = () => {
+const UnauthorizedPage = () => {
     return (
       <main className="px-[6%]">
         <Hero />
@@ -21,4 +21,4 @@ const Index = () => {
     );
   };
   
-  export default Index;
+  export default UnauthorizedPage;
