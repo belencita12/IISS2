@@ -2,8 +2,8 @@
 
 import type React from "react"
 
-import { useState, type FormEvent } from "react"
-import { useRouter } from "next/navigation"
+import { useState, type FormEvent, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 
 interface IFormState {
     password: string
@@ -13,8 +13,10 @@ interface IFormState {
     isError: boolean
 }
 
-export default function PasswordResetForm({ token }: { token: string }) {
+export default function PasswordResetForm() {
     const router = useRouter()
+    const searchParams = useSearchParams()
+    const [token, setToken] = useState<string | null>(null)
     const [formState, setFormState] = useState<IFormState>({
         password: "",
         confirmPassword: "",
@@ -23,8 +25,19 @@ export default function PasswordResetForm({ token }: { token: string }) {
         isError: false,
     })
 
+    useEffect(() => {
+        const tokenFromUrl = searchParams.get("token")
+        if (!tokenFromUrl) {
+            router.push("/")
+        } else {
+            setToken(tokenFromUrl)
+        }
+    }, [searchParams, router])
+
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
+        if (!token) return
+
         setFormState((prev) => ({ ...prev, isLoading: true, message: "", isError: false }))
 
         if (formState.password !== formState.confirmPassword) {
@@ -69,8 +82,12 @@ export default function PasswordResetForm({ token }: { token: string }) {
         setFormState((prev) => ({ ...prev, [name]: value }))
     }
 
+    if (!token) {
+        return null 
+    }
+
     return (
-        <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-gray-100 flex flex-col justify-center px-4 py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Restablecer contraseña</h2>
             </div>
@@ -118,7 +135,7 @@ export default function PasswordResetForm({ token }: { token: string }) {
                             <button
                                 type="submit"
                                 disabled={formState.isLoading}
-                                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 transition-colors duration-200"
                             >
                                 {formState.isLoading ? "Procesando..." : "Restablecer contraseña"}
                             </button>
