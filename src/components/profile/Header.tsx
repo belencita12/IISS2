@@ -5,7 +5,7 @@ export const Header = () => {
     return (
         <div className="bg-[#606060] p-6 flex items-center text-white">
             <Avatar className="w-20 h-20">
-                <AvatarImage src="/avatar.jpg" alt="Veterinario" />
+                <AvatarImage  src="https://images.unsplash.com/photo-1517423440428-a5a00ad493e8" alt="Veterinario" />
             </Avatar>
             <div className="ml-4">
                 <h2 className="text-xl font-bold mt-2">Fulano Mengano</h2>
