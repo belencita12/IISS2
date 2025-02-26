@@ -61,11 +61,16 @@ export default function PasswordResetForm() {
                 },
                 body: JSON.stringify({ password: formState.password }),
             });
-            
 
-            const data = await response.json();
-
-            if (!response.ok) throw new Error("Error al restablecer la contraseña");
+            if (response.status == 401) {
+                setFormState((prev) => ({
+                    ...prev,
+                    isLoading: false,
+                    message: "Su contraseña ya fue modificada, vuelva a solicitar un cambio nuevamente. Redirigiendo....",
+                    isError: true
+                }))
+                setTimeout(() => router.push("/forgot-password"), 6000);
+            }
 
             setFormState({
                 password: "",
@@ -74,8 +79,7 @@ export default function PasswordResetForm() {
                 message: "Contraseña restablecida con éxito. Redirigiendo...",
                 isError: false,
             });
-
-            setTimeout(() => router.push("/login"), 3000);
+            setTimeout(() => router.push("/login"), 6000);
         } catch (error) {
             setFormState((prev) => ({
                 ...prev,
