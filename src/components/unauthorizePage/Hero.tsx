@@ -2,23 +2,28 @@ import Link from 'next/link'
 
 export default function Hero() {
     return (
-        <section className="flex items-center justify-around py-10 sm:flex-row flex-col sm:align-middle">
-            <div className="text-center mr-8">
+        <section className="flex flex-col sm:flex-row items-center justify-around py-10 sm:align-middle space-y-6 sm:space-y-0 w-full">
+            <div className="text-center sm:mr-8 mb-6 sm:mb-0 w-full">
                 <h2 className="text-3xl font-bold mb-4">¡Bienvenido a nuestra plataforma!</h2>
                 <p className="text-gray-600 mb-6">
                     Regístrate con nosotros y accede a una amplia gama de servicios para tu mascota.
                 </p>
-                <div className="flex justify-center py-2 h-20">
-                    <Link href="/register" >
-                        <button className="bg-white text-black px-4 py-2 rounded-lg mr-4 border border-black hover:brightness-90 cursor-pointer transition-all duration-300 text-base sm:text-lg h-full sm:h-auto">
+                <div className="flex justify-center items-center gap-5 w-full ">
+
+                    <Link href="/register" className='w-full max-w-[160px]'>
+                        <button className="bg-white text-black px-2 py-2 rounded-lg  border border-black hover:brightness-90 cursor-pointer transition-all duration-300 text-sm sm:text-lg w-full text-center">
                             Registrarse
                         </button>
                     </Link>
-                    <Link href="/login" >
-                        <button className="bg-black  text-white px-4 py-2 rounded-lg hover:brightness-110 cursor-pointer transition-all duration-300 text-[base] sm:text-lg">
+
+
+                    <Link href="/login" className='w-full max-w-[160px]'>
+                        <button className="bg-black  text-white px-2 py-2 rounded-lg hover:brightness-110 cursor-pointer transition-all duration-300 text-sm sm:text-lg w-full text-center">
                             Iniciar Sesion
                         </button>
                     </Link>
+
+
                 </div>
             </div>
             <img
@@ -26,9 +31,8 @@ export default function Hero() {
                 alt="Logo1"
                 width={300}
                 height={300}
-                className="object-contain"
+                className="object-contain mt-6 sm:mt-0"
             />
         </section>
     );
 }
-  

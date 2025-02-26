@@ -7,17 +7,15 @@ const products = [
 export default function Products() {
   return (
     <div>
-      <section className="flex items-center py-10 bg-white gap-5">
+      <section className="flex items-center py-5 bg-white gap-5">
         <img
           src="/image product.png"
           alt="Productos"
-          width={150}
-          height={150}
-          className="object-contain rounded-md"
+          className="object-contain rounded-md aaspect-square sm:w-[25%] w-[40%]"
         />
-        <div className="text-left mr-8">
-          <h2 className="text-3xl font-bold mb-4">Nuestros productos</h2>
-          <p className="text-gray-600 mb-6">
+        <div className="text-left flex flex-col gap-5 flex-1">
+          <h2 className="sm:text-3xl text-xl font-bold mb-4">Nuestros productos</h2>
+          <p className="text-gray-600 ">
             Nuestros productos.
           </p>
         </div>
