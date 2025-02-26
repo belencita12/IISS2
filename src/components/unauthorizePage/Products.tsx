@@ -18,7 +18,7 @@ export default function Products() {
         <div className="text-left mr-8">
           <h2 className="text-3xl font-bold mb-4">Nuestros productos</h2>
           <p className="text-gray-600 mb-6">
-            Siguiente productos.
+            Nuestros productos.
           </p>
         </div>
       </section>
