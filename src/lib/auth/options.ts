@@ -1,17 +1,17 @@
 // src/lib/auth/options.ts
-
 import CredentialsProvider from "next-auth/providers/credentials";
 import { NextAuthOptions } from "next-auth";
 import { SigninResponse } from "./signin-response.type";
 
-const HARDCODED_LOGIN_URL = "https://actual-maribeth-fiuni-9898c42e.koyeb.app/auth/signin"; //Hardcodeado por ahora
+const HARDCODED_LOGIN_URL = "https://actual-maribeth-fiuni-9898c42e.koyeb.app/auth/signin";
 
 const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET, 
   providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        username: {
+        email: {
           label: "Username",
           type: "text",
           placeholder: "jsmith",
@@ -22,28 +22,23 @@ const authOptions: NextAuthOptions = {
         },
       },
       async authorize(credentials, _req) {
-        if (!credentials?.username || !credentials?.password) {
+        if (!credentials?.email || !credentials?.password) {
           throw new Error("Username and password are required");
         }
 
-        // Llamada directa a tu API con el endpoint hardcodeado
         const response = await fetch(HARDCODED_LOGIN_URL, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            username: credentials.username,
+            email: credentials.email,
             password: credentials.password,
           }),
         });
 
-        // Si la respuesta no es OK, NextAuth lanza un error
         if (!response.ok) {
           throw new Error("Username or password is incorrect");
         }
 
-        // Extrae la información del usuario
         const user = await response.json() as SigninResponse;
         if (!user) {
           throw new Error("Username or password is incorrect");
@@ -54,12 +49,9 @@ const authOptions: NextAuthOptions = {
           token: user.token,
           roles: user.roles,
         };
-
-        return user;
       },
     }),
   ],
-  // Se usará JWT para almacenar el estado de la sesión
   session: { strategy: "jwt" },
   callbacks: {
     async jwt({ token, user }) {
@@ -72,14 +64,12 @@ const authOptions: NextAuthOptions = {
     },
     async session({ token, session }) {
       if (token) {
-        //session.user. = token.id as string;
         session.user.username = token.username;
         session.user.roles = token.roles;
       }
       return session;
     },
   },
-  // Páginas personalizadas para redirecciones
   pages: {
     signIn: "/auth/login",
     signOut: "/",
