@@ -4,7 +4,7 @@ import Services from "@/components/unauthorizePage/Services";
 
 export default function Home() {
   return (
-    <div className="px-[6%]">
+    <div className="sm:px-[6.5%] px-5">
       <Hero />
       <Services />
       <Products />

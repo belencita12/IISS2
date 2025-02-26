@@ -22,10 +22,10 @@ export default function Products() {
           </p>
         </div>
       </section>
-      <section className="flex items-center justify-between py-10 bg-white">
+      <section className="flex sm:flex-row flex-col items-center justify-between py-10 bg-white gap-4">
         {products.map((product) => (
-          <div key={product.name} className="bg-white p-4 rounded-lg shadow-lg text-center transition-all duration-200 hover:scale-105 cursor-pointer">
-            <img src={product.image} alt={product.name} className="rounded-md mb-4" />
+          <div key={product.name} className="bg-white p-4 rounded-lg shadow-lg text-center transition-all duration-200 hover:scale-105 cursor-pointer flex flex-row sm:flex-col items-center gap-4">
+            <img src={product.image} alt={product.name} className="rounded-md sm:max-w-full max-w-[30%] aspect-square" />
             <h3 className="font-semibold">{product.name}</h3>
           </div>
         ))}
