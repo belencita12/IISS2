@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { CalendarIcon, ClockIcon, Syringe} from "lucide-react";
+import Link from "next/link";
 
 export const Appointments = () => {
     const appointments = [
@@ -20,13 +21,17 @@ export const Appointments = () => {
     ];
 
     return (
-        <section className="max-w-4xl mx-auto mt-10 p-6 bg-white">
+        <section className="max-w-6xl mx-auto mt-10 p-6 bg-white">
             <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold">Citas Agendadas</h2>
-                <Button variant="outline" className="flex items-center gap-2 border-black">
-                    <CalendarIcon className="w-5 h-5" />
-                    Agendar una Cita
+
+                <Button asChild className="mt-2 flex items-center gap-2">
+                    <Link href="/">
+                        <CalendarIcon className="w-5 h-5" />
+                        Agendar una cita
+                    </Link>
                 </Button>
+
             </div>
 
             <div className="mt-6">
@@ -39,8 +44,8 @@ export const Appointments = () => {
                                 <p className="text-gray-500 text-sm">{appointment.date}</p>
                             </div>
                         </div>
-                        <p className="text-gray-700 font-medium flex items-center gap-2">
-                            <ClockIcon className="w-5 h-5 text-gray-500" />
+                        <p className="font-medium flex items-center gap-2">
+                            <ClockIcon className="w-5 h-5" />
                             {appointment.time}
                         </p>
                     </div>

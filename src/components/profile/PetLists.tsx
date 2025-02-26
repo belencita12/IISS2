@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
@@ -17,13 +18,15 @@ const pets = [
 ];
 
 export const PetsList = () => (
-    <section className="max-w-6xl mx-auto mt-10 flex items-center justify-center gap-12">
-        <div className="w-1/1">
+    <section className="max-w-6xl mx-auto mt-10 p-6 bg-white flex items-center justify-between">
+        <div className="w-1/2">
             <h3 className="text-3xl font-bold mt-2">Tus Mascotas Registradas</h3>
             <p className="text-gray-500 mt-2">Administra la información de tus mascotas</p>
 
-            <Button className="border border-black text-black bg-white hover:bg-gray-100 mt-4">
-                Agregar Mascota
+            <Button variant="outline" className="border border-black mt-4">
+                <Link href="/">
+                    Agregar Mascota
+                </Link>
             </Button>
 
             <div className="flex items-center gap-10 mt-8">
@@ -38,12 +41,12 @@ export const PetsList = () => (
                     </div>
                 ))}
             </div>
-        </div>
-        <div className="flex justify-start">
+        </div >
+        <div className="w-1/2">
             <img
                 src="https://images.unsplash.com/photo-1517423440428-a5a00ad493e8"
                 alt="Mascota destacada"
-                className="rounded-lg shadow-lg w-[400px] h-[300px] object-cover"
+                className="rounded-lg shadow-lg w-[600px] h-[400px] object-cover"
             />
         </div>
     </section>
