@@ -7,27 +7,30 @@ import { ShoppingCart, Package } from "lucide-react";
 const products = [
     {
         id: 1,
-        name: "Alimento Premium",
+        name: "Alimento Premium para Perros",
         price: "$50",
-        image: "https://cdn2.thedogfoodadvisor.com/wp-content/uploads/2023/06/Purina-Pro-Plan-Adult.jpg",
+        image: "https://purina.com.py/sites/default/files/2023-06/adulto_perro_pollo_alimento_humedo_frente_pro_plan.png.webp",
     },
     {
         id: 2,
-        name: "Collar Antipulgas",
+        name: "Collar Antipulgas y Garrapatas Seresto",
         price: "$20",
-        image: "https://http2.mlstatic.com/D_NQ_NP_927452-MLA69496731971_052023-O.webp",
+        image: "https://myfamilypet.com.gt/wp-content/uploads/2022/12/150507_1400x-1024x1024.webp",
     },
     {
         id: 3,
-        name: "Juguete Interactivo",
+        name: "Juguete Interactivo para Perros",
         price: "$15",
-        image: "https://m.media-amazon.com/images/I/71+AH6yxPXL.jpg",
+        image: "https://pawshop.cl/cdn/shop/files/aa34eb88d4ed61333ea6b930ea71ba38_0199e5b7-5fad-4323-b188-5e4a0468bbac.png?v=1731268421",
     },
 ];
 
+
+
+
 export const VeterinaryProducts = () => {
     return (
-        <section className="max-w-6xl mx-auto mt-10 p-6 bg-white">
+        <section className="max-w-7xl mx-auto mt-10 p-6 bg-white">
             <div className="text-center">
                 <h2 className="text-3xl font-bold">Productos Veterinarios</h2>
                 <p className="text-gray-600 mt-2">Explora los productos disponibles</p>
@@ -41,7 +44,7 @@ export const VeterinaryProducts = () => {
                         <img
                             src={product.image}
                             alt={product.name}
-                            className="w-full h-56 object-cover"
+                            className="w-full h-56 object-contain"
                         />
                         <CardContent className="p-4">
                             <h3 className="text-lg font-semibold">{product.name}</h3>

@@ -18,7 +18,7 @@ const pets = [
 ];
 
 export const PetsList = () => (
-    <section className="max-w-6xl mx-auto mt-10 p-6 bg-white flex items-center justify-between">
+    <section className="max-w-7xl mx-auto mt-10 p-6 bg-white flex items-center justify-between">
         <div className="w-1/2">
             <h3 className="text-3xl font-bold mt-2">Tus Mascotas Registradas</h3>
             <p className="text-gray-500 mt-2">Administra la información de tus mascotas</p>
