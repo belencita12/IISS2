@@ -11,6 +11,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "typeRoots": ["src/lib/auth/types"],
     "jsx": "preserve",
     "incremental": true,
     "plugins": [
