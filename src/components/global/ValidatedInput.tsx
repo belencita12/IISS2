@@ -1,6 +1,6 @@
 'use client'
-import * as React from "react"
-
+import React from "react"
+import { Input } from "../ui/input"
 import { cn } from "@/lib/utils"
 
 // Mensajes de error por defecto si el "errorMessage" no es especificado en <Input/>
@@ -19,7 +19,7 @@ const DEFAULT_ERROR_MESSAGES: Record<string, string> = {
 // Tipos de input que se validarán en tiempo real (onChange)
 const REALTIME_VALIDATION_TYPES = ["email", "password", "text", "url", "tel", "number"]
 
-const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input"> & { errorMessage?: string }>(
+const ValidatedInput = React.forwardRef<HTMLInputElement, React.ComponentProps<"input"> & { errorMessage?: string }>(
   ({ className, type, errorMessage, onChange, onBlur, ...props }, ref) => {
 
     const [isValid, setIsValid] = React.useState(true)
@@ -43,7 +43,6 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input"> &
 
       if (type && REALTIME_VALIDATION_TYPES.includes(type)) {
         setIsTyping(true)
-
         // Limpiar timeout anterior si existe
         if (timeoutId) clearTimeout(timeoutId)
 
@@ -82,21 +81,20 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input"> &
     // Se comprueba si el input del usuario es válido y si el usuario está escribiendo en el input
     const showError = !isValid && !isTyping
 
-    // Zona de descripción que mostrará el mensaje de "errorMessages"
-    const errorDescription = (showError && finalErrorMessage) ? <p className="text-red-500 text-sm mt-1">{finalErrorMessage}</p> : null
-
     // Se establece un estilo que muestre una invalidación
-    const errorClass = showError ? "border-red-500" : ""
+    const errorClass = showError ? "border-red-500 focus-visible:ring-0" : ""
+
+    // Zona de descripción que mostrará el mensaje de "errorMessages"
+    const errorDescription = (showError && finalErrorMessage) ? (
+      <p className="text-red-500 text-sm mt-1">{finalErrorMessage}</p>
+    ) : null
+
 
     return (
       <div>
-        <input
+        <Input
           type={type}
-          className={cn(
-            "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-            className,
-            errorClass
-          )}
+          className={cn(className, errorClass)}
           ref={ref}
           onBlur={handleBlur}
           onChange={handleChange}
@@ -107,6 +105,6 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input"> &
     )
   }
 )
-Input.displayName = "Input"
+ValidatedInput.displayName = "ValidatedInput"
 
-export { Input }
+export { ValidatedInput }
