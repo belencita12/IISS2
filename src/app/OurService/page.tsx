@@ -1,25 +1,27 @@
 
 import { Card } from "@/components/global/Card";
-import ClientCarousel from "@/components/serviseUi/Carousel";
+import Carousel from "@/components/serviseUi/Carousel";
+import Image from "next/image";
 
 const services = [
     {
         title: "Veterinaria",
         description: "Atención médica para tu mascota.",
-        image: "/images/veterinaria.jpg",
         carousel: ["/images/vet1.jpg", "/images/vet2.jpg"]
+        image: "/veterinaria.png",
+        carousel: ["/vet1.png", "/vet2.png"]
     },
     {
         title: "Peluquería",
         description: "Cortes y aseo para tu mascota.",
-        image: "/images/peluqueria.jpg",
-        carousel: ["/images/pelu1.jpg", "/images/pelu2.jpg"]
+        image: "/peluqueria.png",
+        carousel: ["/pelu1.png", "/pelu2.png"]
     },
     {
-        title: "Guardería",
+        title: "Castracion",
         description: "Cuidado diario para tu mascota.",
-        image: "/images/guarderia.jpg",
-        carousel: ["/images/guard1.jpg", "/images/guard2.jpg"]
+        image: "/guarderia.png",
+        carousel: ["/cast1.png", "/cast2.png"]
     }
 ];
 
@@ -30,8 +32,8 @@ export default function Servicios() {
             <section className="flex items-center justify-between py-5 bg-white">
                 <div className="flex items-center gap-5">
 
-                    <img
-                        src="/image container.png"
+                    <Image
+                        src="/container.png"
                         alt="Service"
                         width={150}
                         height={150}
@@ -55,9 +57,9 @@ export default function Servicios() {
                                 image={service.image}
                                 alt={`Imagen de ${service.title}`}
                                 ctaText="Más información"
-                                ctaLink="/servicios"
+                                ctaLink="/service.title"
                             />
-                            <ClientCarousel images={service.carousel} />
+                            <Carousel images={service.carousel} />
                         </div>
                     ))}
                 </div>
