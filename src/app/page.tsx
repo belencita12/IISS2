@@ -4,7 +4,7 @@ import Services from "@/components/unauthorizePage/Services";
 
 export default function Home() {
   return (
-    <div>
+    <div className="sm:px-[6.5%] px-5 max-w-full overflow-hidden">
       <Hero />
       <Services />
       <Products />
@@ -13,7 +13,7 @@ export default function Home() {
         alt="Gato"
         width={1500}
         height={400}
-        className="object-contain rounded-xl"
+        className="object-contain rounded-xl w-full max-w-[1500px] mx-auto"
       />
     </div>
   );
