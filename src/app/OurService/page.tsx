@@ -7,7 +7,6 @@ const services = [
     {
         title: "Veterinaria",
         description: "Atención médica para tu mascota.",
-        carousel: ["/images/vet1.jpg", "/images/vet2.jpg"]
         image: "/veterinaria.png",
         carousel: ["/vet1.png", "/vet2.png"]
     },
