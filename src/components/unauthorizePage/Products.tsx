@@ -1,3 +1,4 @@
+import Image from "next/image";
 const products = [
   { name: "Alimentos", image: "/image1.png" },
   { name: "Higiene", image: "/image2.png" },
@@ -8,9 +9,11 @@ export default function Products() {
   return (
     <div>
       <section className="flex items-center py-5 bg-white gap-5">
-        <img
+        <Image
           src="/image product.png"
           alt="Productos"
+          width={150}
+          height={150}
           className="object-contain rounded-md aaspect-square sm:w-[25%] w-[40%]"
         />
         <div className="text-left flex flex-col gap-5 flex-1">

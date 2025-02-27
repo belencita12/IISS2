@@ -1,4 +1,6 @@
+import Image from "next/image";
 import Link from 'next/link'
+import { Button } from "@/components/ui/button";
 
 export default function Hero() {
     return (
@@ -11,22 +13,22 @@ export default function Hero() {
                 <div className="flex justify-center items-center gap-5 w-full ">
 
                     <Link href="/register" className='w-full max-w-[160px]'>
-                        <button className="bg-white text-black px-2 py-2 rounded-lg  border border-black hover:brightness-90 cursor-pointer transition-all duration-300 text-sm sm:text-lg w-full text-center">
+                        <Button className="bg-white text-black px-2 py-2 rounded-lg  border border-black hover:brightness-90 cursor-pointer transition-all duration-300 text-sm sm:text-lg w-full text-center">
                             Registrarse
-                        </button>
+                        </Button>
                     </Link>
 
 
                     <Link href="/login" className='w-full max-w-[160px]'>
-                        <button className="bg-black  text-white px-2 py-2 rounded-lg hover:brightness-110 cursor-pointer transition-all duration-300 text-sm sm:text-lg w-full text-center">
+                        <Button className="bg-black  text-white px-2 py-2 rounded-lg hover:brightness-110 cursor-pointer transition-all duration-300 text-sm sm:text-lg w-full text-center">
                             Iniciar Sesion
-                        </button>
+                        </Button>
                     </Link>
 
 
                 </div>
             </div>
-            <img
+            <Image
                 src="/image.png"
                 alt="Logo1"
                 width={300}

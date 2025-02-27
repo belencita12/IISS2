@@ -1,3 +1,4 @@
+import Image from "next/image";
 const services = [
     { name: "Vacunación", image: "/image container (1).png" },
     { name: "Peluquería", image: "/image container (2).png" },
@@ -8,9 +9,11 @@ export default function Services() {
     return (
         <>
             <section className="flex items-center gap-5 py-5 bg-white">
-                    <img
+                    <Image
                         src="/image container.png"
                         alt="Service"
+                        width={150}
+                        height={150}
                         className="object-contain rounded-md aspect-square sm:w-[25%] w-[40%]"
                     />
                     <div className="text-left flex flex-col gap-5 flex-1">
