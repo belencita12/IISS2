@@ -1,12 +1,12 @@
-import { PetData } from "./IPet";
+import { PetData } from "../pets/IPet";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const registerPet = async (petData: PetData) => {
     try {
-        const response = await fetch(`${API_URL}/pets`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+        const response = await fetch(`${API_URL}/pet`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(petData),
         });
 
@@ -14,7 +14,7 @@ export const registerPet = async (petData: PetData) => {
 
         return await response.json();
     } catch (error) {
-        console.error('Error en registerPet:', error);
+        console.error("Error en registerPet:", error);
         throw error;
     }
 };
