@@ -77,13 +77,13 @@ export default function PetForm() {
         const formattedDate = `${dateObj.toISOString().split('T')[0]}T00:00:00.000Z`;
         const petData: PetData = {
             name: data.petName,
+            userId:1,
             speciesId: parseInt(data.animalType),
             raceId: parseInt(data.breed),
             weight: data.weight,
             sex: data.gender === 'male' ? 'Macho' : 'Hembra',
             profileImg: imageFile || null,
             dateOfBirth: formattedDate,
-            vaccinationBookletId: 1
         };
 
         try {
