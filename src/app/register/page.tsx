@@ -3,8 +3,9 @@
 import type React from "react"
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { Button } from "@/components/ui/button"
 import { ValidatedInput } from "@/components/global/ValidatedInput"
-import { Button } from "@/components/ui/button";
 
 interface IFormData {
     username: string
@@ -20,9 +21,10 @@ export default function RegisterForm() {
         password: "",
         confirmPassword: ""
     })
-    
+
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
+    const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -33,12 +35,12 @@ export default function RegisterForm() {
             setError("Todos los campos son obligatorios.");
             return;
         }
-        
+
         if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(formData.email)) {
             setError("Ingrese un correo válido.");
             return;
         }
-        
+
         if (formData.password !== formData.confirmPassword) {
             setError("Las contraseñas no coinciden.");
             return;
@@ -67,7 +69,7 @@ export default function RegisterForm() {
             setFormData({ username: "", email: "", password: "", confirmPassword: "" });
 
             setTimeout(() => {
-                window.location.href = "/login";
+                router.push("/login");
             }, 2000);
         } catch (error) {
             setError("Error de conexión. Inténtalo nuevamente.");
@@ -82,8 +84,7 @@ export default function RegisterForm() {
     }
 
     return (
-        //Hola
-        <div className="mt-[100px] flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <div className="mt-[30px] mb-[50px] flex items-center justify-center px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row justify-between items-center w-full max-w-3xl mx-auto gap-x-8">
                 <div className="w-full sm:w-1/2 text-center sm:text-left mb-6 sm:mb-0">
                     <h1 className="text-2xl font-semibold text-black m-0">Registro</h1>
@@ -93,7 +94,8 @@ export default function RegisterForm() {
                     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                         {error && <p className="text-red-500 text-sm">{error}</p>}
                         {success && <p className="text-green-500 text-sm">{success}</p>}
-                        
+                        <br />
+
                         <ValidatedInput
                             type="text"
                             name="username"
@@ -131,12 +133,10 @@ export default function RegisterForm() {
                         />
 
                         <div className="flex flex-col sm:flex-row gap-4 mt-2">
-                            <Link href="/login" className="flex-1 px-3 py-3 border border-black rounded-md bg-transparent text-black text-sm text-center hover:bg-gray-50">
-                                Tengo una cuenta
-                            </Link>
-                            <Button type="submit" className="flex-1">
-                                Registrarme
+                            <Button variant="outline" className="flex-1" asChild>
+                                <Link href="/login">Tengo una cuenta</Link>
                             </Button>
+                            <Button type="submit" className="flex-1">Registrarme</Button>
                         </div>
                     </form>
                 </div>

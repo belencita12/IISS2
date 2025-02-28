@@ -44,7 +44,7 @@ const authOptions: NextAuthOptions = {
           throw new Error("Username or password is incorrect");
         }
         return {
-          id: user.username, // o cualquier identificador único
+          id: user.id,
           username: user.username,
           token: user.token,
           roles: user.roles,
@@ -56,7 +56,7 @@ const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
+        token.id = user.id as number;
         token.username = user.username;
         token.roles = user.roles;
       }
@@ -64,6 +64,7 @@ const authOptions: NextAuthOptions = {
     },
     async session({ token, session }) {
       if (token) {
+        session.user.id = token.id;
         session.user.username = token.username;
         session.user.roles = token.roles;
       }
