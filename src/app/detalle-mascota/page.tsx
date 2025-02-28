@@ -125,7 +125,6 @@ export default function DetallesMascota() {
             </div>
             <div className="flex-col p-2 text-black">
               <p className="flex justify-center font-bold">{pet.name}</p>
-              <p className="flex justify-center text-gray-800 text-xs pb-3">Visitas a la veterinaria: n</p>
               <p className="flex justify-center font-bold text-xl">{calcularEdad(pet.dateOfBirth)} Años</p>
             </div>
           </div>
