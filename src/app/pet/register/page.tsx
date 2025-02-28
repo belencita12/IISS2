@@ -6,7 +6,14 @@ export default function Home() {
     return (
         <div className="min-h-screen p-6">
             <PetForm />
-            <Toaster richColors />
+            <Toaster
+                richColors
+                position="top-center"
+                toastOptions={{
+                    duration: 5000,
+                }}
+            />
+
         </div>
     );
 }
