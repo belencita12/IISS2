@@ -3,6 +3,8 @@
 import type React from "react"
 import { useState } from "react"
 import Link from "next/link"
+import { ValidatedInput } from "@/components/global/ValidatedInput"
+import { Button } from "@/components/ui/button";
 
 interface IFormData {
     username: string
@@ -91,43 +93,39 @@ export default function RegisterForm() {
                         {error && <p className="text-red-500 text-sm">{error}</p>}
                         {success && <p className="text-green-500 text-sm">{success}</p>}
                         
-                        <input
+                        <ValidatedInput
                             type="text"
                             name="username"
                             placeholder="Ingrese su nombre"
                             value={formData.username}
                             onChange={handleChange}
-                            className="w-full px-3 py-3 border border-gray-200 rounded-md text-sm outline-none focus:border-black"
                             required
                         />
 
-                        <input
+                        <ValidatedInput
                             type="email"
                             name="email"
                             placeholder="Ingrese su correo"
                             value={formData.email}
                             onChange={handleChange}
-                            className="w-full px-3 py-3 border border-gray-200 rounded-md text-sm outline-none focus:border-black"
                             required
                         />
 
-                        <input
+                        <ValidatedInput
                             type="password"
                             name="password"
                             placeholder="Ingrese su contraseña"
                             value={formData.password}
                             onChange={handleChange}
-                            className="w-full px-3 py-3 border border-gray-200 rounded-md text-sm outline-none focus:border-black"
                             required
                         />
 
-                        <input
+                        <ValidatedInput
                             type="password"
                             name="confirmPassword"
                             placeholder="Confirme su contraseña"
                             value={formData.confirmPassword}
                             onChange={handleChange}
-                            className="w-full px-3 py-3 border border-gray-200 rounded-md text-sm outline-none focus:border-black"
                             required
                         />
 
@@ -135,9 +133,9 @@ export default function RegisterForm() {
                             <Link href="/login" className="flex-1 px-3 py-3 border border-black rounded-md bg-transparent text-black text-sm text-center hover:bg-gray-50">
                                 Tengo una cuenta
                             </Link>
-                            <button type="submit" className="flex-1 px-3 py-3 border-none rounded-md bg-black text-white text-sm hover:bg-gray-800">
+                            <Button type="submit" className="flex-1">
                                 Registrarme
-                            </button>
+                            </Button>
                         </div>
                     </form>
                 </div>
