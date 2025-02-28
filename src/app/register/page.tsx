@@ -82,6 +82,7 @@ export default function RegisterForm() {
     }
 
     return (
+        //Hola
         <div className="mt-[100px] flex items-center justify-center px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row justify-between items-center w-full max-w-3xl mx-auto gap-x-8">
                 <div className="w-full sm:w-1/2 text-center sm:text-left mb-6 sm:mb-0">
