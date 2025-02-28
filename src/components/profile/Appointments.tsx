@@ -21,7 +21,7 @@ export const Appointments = () => {
     ];
 
     return (
-        <section className="max-w-7xl mx-auto mt-10 p-6 bg-white">
+        <section className="max-w-5xl mx-auto mt-10 p-6 bg-white">
             <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold">Citas Agendadas</h2>
 

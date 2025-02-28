@@ -30,7 +30,7 @@ const products = [
 
 export const VeterinaryProducts = () => {
     return (
-        <section className="max-w-7xl mx-auto mt-10 p-6 bg-white">
+        <section className="max-w-5xl mx-auto mt-10 p-6 bg-white">
             <div className="text-center">
                 <h2 className="text-3xl font-bold">Productos Veterinarios</h2>
                 <p className="text-gray-600 mt-2">Explora los productos disponibles</p>

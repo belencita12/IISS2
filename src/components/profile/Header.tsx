@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 
 export const Header = () => {
     return (
-        <div className="bg-[#606060] p-6 flex items-center text-white">
+        <div className="bg-[#606060] p-6 flex items-center text-white justify-center">
             <Avatar className="w-20 h-20">
                 <AvatarImage  src="https://images.unsplash.com/photo-1517423440428-a5a00ad493e8" alt="Veterinario" />
             </Avatar>
