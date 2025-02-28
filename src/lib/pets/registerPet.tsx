@@ -1,10 +1,10 @@
 import { PetData } from "../pets/IPet";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const registerPet = async (petData: PetData) => {
     try {
-        const response = await fetch(`${API_URL}/pet`, {
+        const response = await fetch(`${BASE_URL}/pet`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(petData),

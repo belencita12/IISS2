@@ -46,6 +46,7 @@ export default function PetForm() {
             animalType: '',
             gender: '',
             weight: 0,
+            imageFile: ''
         },
     });
 
@@ -65,14 +66,11 @@ export default function PetForm() {
         fetchData();
     }, []);
 
-    const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            form.setValue('imageFile', file);
-            const tempUrl = URL.createObjectURL(file);
-            setImagePreview(tempUrl);
-        }
-    };
+    const imageFile = form.watch('imageFile');
+
+    useEffect(() => {
+        setImagePreview(imageFile || null);
+    }, [imageFile]);
 
     const onSubmit: SubmitHandler<PetFormValues> = async (data) => {
         const dateObj = new Date(data.birthDate);
@@ -83,7 +81,7 @@ export default function PetForm() {
             raceId: parseInt(data.breed),
             weight: data.weight,
             sex: data.gender === 'male' ? 'Macho' : 'Hembra',
-            profileImg: imagePreview || null,
+            profileImg: imageFile || null,
             dateOfBirth: formattedDate,
             vaccinationBookletId: 1
         };
@@ -107,27 +105,12 @@ export default function PetForm() {
 
                     <div className="w-full flex flex-col items-start">
                         <Label className="text-sm font-semibold">Imagen (Opcional)</Label>
-                        <Label htmlFor="image-upload" className="block mt-2 cursor-pointer">
-                            <div className="w-full bg-gray-100 border border-gray-300 rounded-lg flex items-center justify-center text-gray-500 text-sm py-2 px-4">
-                                Subir imagen de la mascota
-                            </div>
-                        </Label>
-                        <Input
-                            id="image-upload"
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={handleImageUpload}
+                        <Input className='mt-2'
+                            placeholder='Subir url imagen de la mascota'
+                            type='text'
+                            {...form.register('imageFile')}
                         />
                     </div>
-
-                    {imagePreview && (
-                        <img
-                            src={imagePreview}
-                            alt="Vista previa de la mascota"
-                            className="w-60 h-60 object-cover rounded-lg shadow-md"
-                        />
-                    )}
                 </div>
 
                 <div className="md:w-2/3 w-80">
@@ -222,9 +205,6 @@ export default function PetForm() {
                                     </FormItem>
                                 )}
                             />
-
-
-
                             <FormField
                                 control={form.control}
                                 name="gender"
