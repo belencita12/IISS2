@@ -35,7 +35,7 @@ describe("Recuperación de contraseña", () => {
     });
   });
 
-  it("restablece la contrasenha y realiza login", () => {
+  it("restablece la contrasenha y redirecciona a login", () => {
     const resetToken = Cypress.env("resetToken") as string;
 
     expect(resetToken).to.exist;
@@ -49,5 +49,7 @@ describe("Recuperación de contraseña", () => {
     cy.contains("Contraseña restablecida con éxito", {
       timeout: 10000,
     }).should("be.visible");
+
+    cy.url({ timeout: 10000 }).should("include", "/login");
   });
 });
