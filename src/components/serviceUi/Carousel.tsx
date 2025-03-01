@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface CarouselProps {
   images: string[];
@@ -8,55 +9,61 @@ interface CarouselProps {
 
 export default function Carousel({ images }: CarouselProps) {
   const [index, setIndex] = useState(0);
-  const totalSlides = Math.ceil(images.length / 2); {/* Cada slide tiene 2 imágenes*/}
+  const totalSlides = Math.ceil(images.length / 2);
 
   const prevSlide = () => setIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
   const nextSlide = () => setIndex((prev) => (prev + 1) % totalSlides);
 
-  {/*Obtener las dos imágenes para este slide*/}
   const firstImage = images[index * 2];
   const secondImage = images[index * 2 + 1];
 
   return (
-    <div className="relative w-full flex justify-center items-center">
-      {/* Botón Izquierdo */}
-      <button onClick={prevSlide} className="absolute left-2 bg-gray-300 p-2 rounded z-10">
-        {"<"}
-      </button>
+    <div className="relative w-full flex justify-center items-center py-4">
+      <div className="relative flex items-center bg-white shadow-md rounded-lg p-4 w-full">
+        {/* Botón Izquierdo */}
+        <button
+          onClick={prevSlide}
+          className="absolute left-0 -translate-x-1/2 bg-gray-200 p-2 rounded-full shadow-md hover:bg-gray-300"
+        >
+          {<ChevronLeft className="w-6 h-6" />}
+        </button>
 
-      {/* Contenedor de Imágenes */}
-      <div className="flex flex-wrap justify-center items-center gap-4 w-full max-w-4xl pt-4 px-4">
-        {firstImage && (
-          <div className="flex-grow min-w-[250px] max-w-[500px]">
-            <Image
-              src={firstImage}
-              alt={`Imagen ${index * 2 + 1} de ${images.length}`}
-              width={500}
-              height={300}
-              className="rounded-lg object-cover w-full  h-auto"
-              unoptimized
-            />
-          </div>
-        )}
-        <div className="flex-grow min-w-[250px] max-w-[500px] hidden sm:block">
+        {/* Contenedor de Imágenes */}
+        <div className="flex gap-4 w-full justify-center">
+          {firstImage && (
+            <div className="flex-1">
+              <Image
+                src={firstImage}
+                alt="Imagen 1"
+                width={300}
+                height={200}
+                className="rounded-lg object-cover w-full h-full"
+                unoptimized
+              />
+            </div>
+          )}
           {secondImage && (
-            <Image
-              src={secondImage}
-              alt={`Imagen ${index * 2 + 2} de ${images.length}`}
-              width={500}
-              height={300}
-              className="rounded-lg object-cover  w-full h-auto"
-              unoptimized
-            /> 
-          )}  
+            <div className="flex-1 hidden sm:block">
+              <Image
+                src={secondImage}
+                alt="Imagen 2"
+                width={300}
+                height={200}
+                className="rounded-lg object-cover w-full h-full"
+                unoptimized
+              />
+            </div>
+          )}
         </div>
 
+        {/* Botón Derecho */}
+        <button
+          onClick={nextSlide}
+          className="absolute right-0 translate-x-1/2 bg-gray-200 p-2 rounded-full shadow-md hover:bg-gray-300"
+        >
+        {<ChevronRight className="w-6 h-6" />}
+        </button>
       </div>
-
-      {/* Botón Derecho */}
-      <button onClick={nextSlide} className="absolute right-2 bg-gray-300 p-2 rounded">
-        {">"}
-      </button>
     </div>
   );
 }

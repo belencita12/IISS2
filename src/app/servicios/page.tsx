@@ -3,7 +3,8 @@ import type { Metadata, Viewport } from "next";
 import { ServiceCard } from "@/components/serviceUi/ServiceCard";
 import Carousel from "@/components/serviceUi/Carousel";
 import Image from "next/image";
-import ObsoleteServices from "@/components/serviceUi/ObsoleteServices";
+import BestServices from "@/components/serviceUi/BestServices";
+
 
 export const metadata: Metadata = {
     title: "NicoPets",
@@ -48,19 +49,17 @@ export default function Servicios() {
                         height={300}
                         className="object-contain rounded-md aspect-square sm:w-[28%] w-full"
                     />
-                    <div className="text-left flex flex-col gap-5 flex-1">
+                    <div className="text-left flex flex-col gap-5 flex-1 px-6">
                         <h2 className="sm:text-3xl text-xl font-bold">Nuestros servicios</h2>
                         <p className="text-gray-600 text-justify">
-                        Descubre nuestros nuevos servicios diseñados para el bienestar y cuidado de tu mascota. 🐶🐱
-
-                        Hemos ampliado nuestra oferta para brindarte soluciones más completas y accesibles. Con profesionales altamente capacitados y tecnología de vanguardia, garantizamos la mejor atención para tu compañero de vida. 💖
+                         Explora nuestros servicios y dale a tu mascota el cuidado que se merece.
                         </p>
                         <p className="text-gray-600">
-                        Explora nuestras nuevas opciones y dale a tu mascota el cuidado que se merece. ¡Tu tranquilidad y su felicidad son nuestra prioridad! 🏡✨
+                         ¡Tu tranquilidad y su felicidad son nuestra prioridad! 
                         </p>
                     </div>
                 </section>
-                <ObsoleteServices />
+                <BestServices />
                 <div className="space-y-6 mt-6 w-full mx-auto">
                     {services.map((service, index) => (
                         <div key={index}>
