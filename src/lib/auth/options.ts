@@ -45,6 +45,7 @@ const authOptions: NextAuthOptions = {
         }
         return {
           id: user.id,
+          fullname: user.fullname,
           username: user.username,
           token: user.token,
           roles: user.roles,
@@ -56,6 +57,7 @@ const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
+        token.fullname = user.fullname;
         token.id = user.id as number;
         token.username = user.username;
         token.roles = user.roles;
@@ -64,6 +66,7 @@ const authOptions: NextAuthOptions = {
     },
     async session({ token, session }) {
       if (token) {
+        session.user.fullname = token.fullname;
         session.user.id = token.id;
         session.user.username = token.username;
         session.user.roles = token.roles;
