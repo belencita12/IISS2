@@ -13,6 +13,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { PetData, Race, Species } from '@/lib/pets/IPet';
 import { getRacesAndSpecies } from '@/lib/pets/getRacesAndSpecies';
 import { registerPet } from '@/lib/pets/registerPet';
+import { useSession } from 'next-auth/react';
+
 
 const petFormSchema = z.object({
     petName: z.string().min(1, 'El nombre es obligatorio'),
@@ -21,10 +23,10 @@ const petFormSchema = z.object({
     animalType: z.string().min(1, 'Debes seleccionar un tipo de animal'),
     gender: z.string().min(1, 'Debes seleccionar un género'),
     weight: z.union([z.string(), z.number()])
-    .refine((val) => !isNaN(parseFloat(String(val))) && parseFloat(String(val)) > 0, {
-        message: 'El peso debe ser un número válido mayor a 0',
-    })
-    .transform((val) => parseFloat(String(val))),
+        .refine((val) => !isNaN(parseFloat(String(val))) && parseFloat(String(val)) > 0, {
+            message: 'El peso debe ser un número válido mayor a 0',
+        })
+        .transform((val) => parseFloat(String(val))),
 
 
     imageFile: z.any().optional(),
@@ -33,9 +35,12 @@ const petFormSchema = z.object({
 type PetFormValues = z.infer<typeof petFormSchema>;
 
 export default function PetForm() {
-    const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [races, setRaces] = useState<Race[]>([]);
     const [species, setSpecies] = useState<Species[]>([]);
+    const { data: session, status } = useSession();
+    console.log("🔍 Estado de sesión:", status);
+
+    const token = session?.user?.token;
 
     const form = useForm<PetFormValues>({
         resolver: zodResolver(petFormSchema),
@@ -52,48 +57,53 @@ export default function PetForm() {
 
     // Obtener razas y especies al montar el componente
     useEffect(() => {
+        console.log("🔍 Token obtenido:", token);
+
         const fetchData = async () => {
-            toast.success('Probando')
+            if (!token) {
+                toast.error("No tienes permisos para ver esta información.");
+                return;
+            }
+
             try {
-                const { races, species } = await getRacesAndSpecies();
+                console.log("📡 Haciendo llamada a la API...");
+                const { races, species } = await getRacesAndSpecies(token);
                 setRaces(races);
                 setSpecies(species);
             } catch (error) {
-                toast.error('Hubo un error al cargar los datos.');
+                toast.error("Hubo un error al cargar los datos.");
+                console.error("❌ Error en la llamada:", error);
             }
         };
 
         fetchData();
-    }, []);
+    }, [token]);
 
     const imageFile = form.watch('imageFile');
 
-    useEffect(() => {
-        setImagePreview(imageFile || null);
-    }, [imageFile]);
-
     const onSubmit: SubmitHandler<PetFormValues> = async (data) => {
-        const dateObj = new Date(data.birthDate);
-        const formattedDate = `${dateObj.toISOString().split('T')[0]}T00:00:00.000Z`;
+        if (!session?.user?.id || !token) {
+            toast.error("Debes estar autenticado para registrar una mascota.");
+            return;
+        }
+
         const petData: PetData = {
             name: data.petName,
-            userId:1,
+            userId: session.user.id,
             speciesId: parseInt(data.animalType),
             raceId: parseInt(data.breed),
             weight: data.weight,
-            sex: data.gender === 'male' ? 'Macho' : 'Hembra',
+            sex: data.gender,
             profileImg: imageFile || null,
-            dateOfBirth: formattedDate,
+            dateOfBirth: new Date(data.birthDate).toISOString(),
         };
 
         try {
-            const result = await registerPet(petData);
-            console.log('Mascota registrada:', result);
-            toast.success('Mascota registrada con éxito!');
+            await registerPet(petData, token);
+            toast.success("Mascota registrada con éxito!");
             form.reset();
-            setImagePreview(null);
         } catch (error) {
-            toast.error('Hubo un error al registrar la mascota.');
+            toast.error("Hubo un error al registrar la mascota.");
         }
     };
     return (
@@ -212,25 +222,30 @@ export default function PetForm() {
                                     <FormItem>
                                         <FormLabel>Género</FormLabel>
                                         <div className="flex gap-4">
-                                            <Button
-                                                type="button"
-                                                variant={field.value === 'female' ? 'default' : 'outline'}
-                                                onClick={() => field.onChange('female')}
-                                            >
-                                                Hembra
-                                            </Button>
-                                            <Button
-                                                type="button"
-                                                variant={field.value === 'male' ? 'default' : 'outline'}
-                                                onClick={() => field.onChange('male')}
-                                            >
-                                                Macho
-                                            </Button>
+                                            <FormControl>
+                                                <Button
+                                                    type="button"
+                                                    variant={field.value === "F" ? "default" : "outline"}
+                                                    onClick={() => field.onChange("F")}
+                                                >
+                                                    Hembra
+                                                </Button>
+                                            </FormControl>
+                                            <FormControl>
+                                                <Button
+                                                    type="button"
+                                                    variant={field.value === "M" ? "default" : "outline"}
+                                                    onClick={() => field.onChange("M")}
+                                                >
+                                                    Macho
+                                                </Button>
+                                            </FormControl>
                                         </div>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
+
 
                             <div className="flex justify-start gap-4 mt-8">
                                 <Button

@@ -2,11 +2,14 @@ import { PetData } from "../pets/IPet";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export const registerPet = async (petData: PetData) => {
+export const registerPet = async (petData: PetData, token: string) => {
     try {
         const response = await fetch(`${BASE_URL}/pet`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
             body: JSON.stringify(petData),
         });
 
@@ -18,4 +21,3 @@ export const registerPet = async (petData: PetData) => {
         throw error;
     }
 };
-
