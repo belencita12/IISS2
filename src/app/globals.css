@@ -68,6 +68,12 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  footer{
+    margin-top: auto !important;
   }
 }
 
