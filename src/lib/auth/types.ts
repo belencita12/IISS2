@@ -4,29 +4,31 @@ import "next-auth";
 declare module "next-auth" {
   interface User {
     id: number;
-    fullname: string;
+    fullName: string;
     username: string;
     token: string;
     roles: string[];
   }
+  
 
   interface Session {
     user: {
       id: number;
-      fullname: string;
       username: string;
       token: string;
       roles: string[];
+      fullName: string;
     };
   }
 }
 
 declare module "next-auth/jwt" {
   interface JWT {
-    id: number;
-    fullname: string;
+    id: number; 
     username: string;
     token: string;
     roles: string[];
+    fullName: string;
   }
+  
 }
