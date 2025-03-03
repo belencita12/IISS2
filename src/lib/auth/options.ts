@@ -44,11 +44,12 @@ const authOptions: NextAuthOptions = {
           throw new Error("Username or password is incorrect");
         }
         return {
-          id: user.username, // o cualquier identificador único
+          id: user.id,
+          fullName: user.fullName,
           username: user.username,
           token: user.token,
           roles: user.roles,
-        };
+        };        
       },
     }),
   ],
@@ -56,19 +57,24 @@ const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
+        token.fullName = user.fullName;
+        token.id = user.id as number;
         token.username = user.username;
+        token.token = user.token;
         token.roles = user.roles;
       }
       return token;
     },
     async session({ token, session }) {
       if (token) {
+        session.user.id = token.id;
         session.user.username = token.username;
+        session.user.token = token.token;
         session.user.roles = token.roles;
+        session.user.fullName = token.fullName; 
       }
       return session;
-    },
+    },    
   },
   pages: {
     signIn: "/auth/login",
