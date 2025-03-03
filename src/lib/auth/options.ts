@@ -45,7 +45,7 @@ const authOptions: NextAuthOptions = {
         }
         return {
           id: user.id,
-          fullname: user.fullname,
+          fullName: user.fullName,
           username: user.username,
           token: user.token,
           roles: user.roles,
@@ -57,12 +57,11 @@ const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.fullname = user.fullname;
+        token.fullName = user.fullName;
         token.id = user.id as number;
         token.username = user.username;
         token.token = user.token;
         token.roles = user.roles;
-        token.fullname = user.fullname; 
       }
       return token;
     },
@@ -71,7 +70,7 @@ const authOptions: NextAuthOptions = {
         session.user.username = token.username;
         session.user.token = token.token;
         session.user.roles = token.roles;
-        session.user.fullname = token.fullname; 
+        session.user.fullName = token.fullName; 
       }
       return session;
     },    

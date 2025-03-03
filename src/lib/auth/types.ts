@@ -4,7 +4,7 @@ import "next-auth";
 declare module "next-auth" {
   interface User {
     id: number;
-    fullname: string;
+    fullName: string;
     username: string;
     token: string;
     roles: string[];
@@ -17,7 +17,7 @@ declare module "next-auth" {
       username: string;
       token: string;
       roles: string[];
-      fullname: string;
+      fullName: string;
     };
   }
 }
@@ -28,7 +28,7 @@ declare module "next-auth/jwt" {
     username: string;
     token: string;
     roles: string[];
-    fullname: string;
+    fullName: string;
   }
   
 }
