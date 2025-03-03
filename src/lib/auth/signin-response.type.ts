@@ -1,7 +1,7 @@
 export interface SigninResponse {
+    id: number;
+    fullname: string;
     username: string;
-    roles: string[];
     token: string;
-    fullname: string; 
-  }
-  
+    roles: string[];
+};
