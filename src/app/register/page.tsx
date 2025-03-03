@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button"
 import { ValidatedInput } from "@/components/global/ValidatedInput"
 
 interface IFormData {
-    username: string
+    name: string
+    lastname: string
     email: string
     password: string
     confirmPassword: string
@@ -16,7 +17,8 @@ interface IFormData {
 
 export default function RegisterForm() {
     const [formData, setFormData] = useState<IFormData>({
-        username: "",
+        name: "",
+        lastname: "",
         email: "",
         password: "",
         confirmPassword: ""
@@ -31,7 +33,7 @@ export default function RegisterForm() {
         setError(null);
         setSuccess(null);
 
-        if (!formData.username || !formData.email || !formData.password || !formData.confirmPassword) {
+        if (!formData.name || !formData.lastname || !formData.email || !formData.password || !formData.confirmPassword) {
             setError("Todos los campos son obligatorios.");
             return;
         }
@@ -53,7 +55,7 @@ export default function RegisterForm() {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    username: formData.username,
+                    fullName: formData.name.trim() + " " + formData.lastname.trim(),
                     email: formData.email,
                     password: formData.password
                 }),
@@ -66,7 +68,7 @@ export default function RegisterForm() {
             }
 
             setSuccess("Registro exitoso. Redirigiendo...");
-            setFormData({ username: "", email: "", password: "", confirmPassword: "" });
+            setFormData({ name: "", lastname: "", email: "", password: "", confirmPassword: "" });
 
             setTimeout(() => {
                 router.push("/login");
@@ -98,9 +100,17 @@ export default function RegisterForm() {
 
                         <ValidatedInput
                             type="text"
-                            name="username"
+                            name="name"
                             placeholder="Ingrese su nombre"
-                            value={formData.username}
+                            value={formData.name}
+                            onChange={handleChange}
+                            required
+                        />
+                        <ValidatedInput
+                            type="text"
+                            name="lastname"
+                            placeholder="Ingrese su apellido"
+                            value={formData.lastname}
                             onChange={handleChange}
                             required
                         />
