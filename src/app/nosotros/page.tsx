@@ -9,8 +9,8 @@ import ContactSection from '@/components/aboutPage/ContactSection';
 export default function About() {
   return (
     <div className="mx-auto py-6 px-[4%] space-y-12">
-     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-      <section className="text-center flex flex-col items-center">
+     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+      <section className="text-center flex flex-col items-center self-start">
         <h1 className="text-4xl font-bold">Sobre Nosotros</h1>
         <p className="mt-4 text-lg w-[80%]">
         Somos una veterinaria con más de 8 años de experiencia con experiencia y más experiencia en peinados de perro y gato. Si te gustan los animales es esta tu veterinaria
@@ -70,13 +70,13 @@ export default function About() {
         </li>
         </ul>
 
-        <div className="text-left pt-5 ">
+      {/* <div className="text-left pt-5 ">
         <Link href="/registro-mascota">
           <Button className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800">
             Registrar Mascota
           </Button>
         </Link>
-      </div> 
+      </div>  */}
       </section> 
        
     </div>
