@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
+import { Petemoss } from "next/font/google";
+import { useParams } from "next/navigation";
 
 interface Pet {
   id: number;
@@ -52,6 +54,16 @@ const visitasProgramadas: Visita_Programada[] = [
   { id: 2, fecha: "2025-03-05", descripcion: "Vacunación de refuerzo" },
 ];
 
+const especies: Species[] = [
+  { id:1, name: "Perro"}
+]
+
+const razas: Race[] = [
+  {id: 1, name: "Labrador"}
+]
+
+
+
 function calcularEdad(fechaNacimiento: string): number {
   const nacimiento = new Date(fechaNacimiento);
   const hoy = new Date();
@@ -86,33 +98,81 @@ function convertirFecha(fecha: string): string {
   
 
 export default function DetallesMascota() {
+  
   const [showAll, setShowAll] = useState(false);
   const [showAllProg, setShowAllProg] = useState(false);
   const [data, setData] = useState(null);
   const [pet, setPet] = useState<Pet | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedPet, setEditedPet] = useState({
+    ...pet,
+  });
 
   const visitasVisibles = showAll ? visitas : visitas.slice(0, 4);
   const visitasProgramadasVisibles = showAllProg ? visitasProgramadas : visitasProgramadas.slice(0, 4);
 
+  const PetTest: Pet = {
+    id:1, name: "raul", weight: 32, sex: "M", profileImg: null,
+    dateOfBirth: "2024-04-23T00:00:00.000Z", species: especies[0], race: razas[0]
+  }
+  
   useEffect(() => {
-    fetch("https://actual-maribeth-fiuni-9898c42e.koyeb.app/pet?page=1")
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEzLCJ1c2VybmFtZSI6Im1hdGlhc0A2MTQzMGI4YS04ZjRlLTRjNWEtYTczZi1lN2IzZDQ1NzRlMTUiLCJlbWFpbCI6ImdlbmFyby5icnVuYWdhQGZpdW5pLmVkdS5weSIsInJvbGVzIjpbIlVTRVIiXSwiaWF0IjoxNzQxMDM5ODY5LCJleHAiOjE3NDE2NDQ2Njl9.m1ud5FxTppatNV4F9S5JzVJ1sYSG1B6nnAFgGTrIGpc";
+    fetch("https://iiss2-backend-production.up.railway.app/pet/1", {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
+      }
+    })
       .then((response) => response.json())
       .then((data) => {
-        if (data.data && data.data.length > 0) {
-          setPet(data.data[0]);
-        }
+        console.log(data);
+        setPet(data);
       })
       .catch((error) => console.error("Error:", error));
   }, []);
+
+  const handleChange = (e:any) => {
+    setEditedPet({ ...editedPet, [e.target.name]: e.target.value });
+  };
+
+  /*
+  const handleSave = async () => {
+    try {
+      await fetch(`https://iiss2-backend-production.up.railway.app/pet`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(editedPet),
+      });
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error al actualizar los datos de la mascota", error);
+    }
+  };*/
+
+  const handleSave = () => {
+    /*
+    PetTest.name = editedPet.name;
+    PetTest.dateOfBirth = editedPet.dateOfBirth;
+    PetTest.weight = editedPet.weight;
+    PetTest.race = { name: editedPet.race };
+    PetTest.species = { name: editedPet.species };
+    PetTest.sex = editedPet.sex;*/
+    setIsEditing(false);
+  };
+  
 
   return (
     <div className="flex-col">
       {pet ? (
         <div className="flex justify-center bg-gray-500 p-5">
           <div className=" flex-col justify-center items-center p-3 pr-8">
-            <div className="w-[250px] h-[250px] rounded-full overflow-hidden border-[3px] border-black flex justify-center items-center">
+            <div className="w-[250px] h-[250px] rounded-full overflow-hidden border-[3px] border-black flex justify-center items-center">              
               {pet.profileImg ? (
-                <img
+                <Image
                   src={pet.profileImg}
                   alt={pet.name}
                   className="object-cover object-center w-full h-full"
@@ -128,26 +188,40 @@ export default function DetallesMascota() {
               <p className="flex justify-center font-bold text-xl">{calcularEdad(pet.dateOfBirth)} Años</p>
             </div>
           </div>
+
           <div className="flex-col justify-start text-white text-xs">
-                <div className="p-1 pb-3">
-                    <p>Nombre</p><p className="text-xl">{pet.name}</p>
-                </div>
-                <div className="p-1 pb-3">
-                    <p>Fecha de Nacimiento</p><p className="text-xl">{convertirFecha(pet.dateOfBirth)}</p>
-                </div>
-                <div className="p-1 pb-3">
-                    <p>Peso</p><p className="text-xl">{pet.weight} Kg</p>
-                </div>
-                <div className="p-1 pb-3">
-                    <p>Raza</p><p className="text-xl">{pet.race.name}</p>
-                </div>
-                <div className="p-1 pb-3">
-                    <p>Especie</p><p className="text-xl">{pet.species.name}</p>
-                </div>
-                <div className="p-1 pb-4">
-                    <p>Genero</p><p className="text-xl">{pet.sex}</p>
-                </div>
-            </div>
+            {[
+              { label: "Nombre", name: "name" },
+              { label: "Fecha de Nacimiento", name: "dateOfBirth" },
+              { label: "Peso", name: "weight" },
+              { label: "Raza", name: "race" },
+              { label: "Especie", name: "species" },
+              { label: "Género", name: "sex" },
+            ].map(({ label, name }) => (
+              <div key={name} className="p-1 pb-3">
+                <p>{label}</p>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    name={name}
+                    value={editedPet[name]}
+                    onChange={handleChange}
+                    className="text-black w-full border border-gray-300 rounded p-1"
+                  />
+                ) : (
+                  <p className="text-xl">{name === "dateOfBirth" ? convertirFecha(pet[name]) : name === "race" || name === "species" ? pet[name]?.name : pet[name]}</p>
+                )}
+              </div>
+            ))}
+            {isEditing ? (
+              <div className="flex gap-2">
+                <Button onClick={handleSave} className="p-1">Guardar</Button>
+                <Button onClick={() => setIsEditing(false)} className="p-1">Cancelar</Button>
+              </div>
+            ) : (
+              <Button onClick={() => setIsEditing(true)} className="p-1">Editar</Button>
+            )}
+          </div>
         </div>
       ) : (<p className="text-center text-gray-600">Cargando mascota...</p>)}
 
