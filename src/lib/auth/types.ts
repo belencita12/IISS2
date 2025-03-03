@@ -13,20 +13,22 @@ declare module "next-auth" {
 
   interface Session {
     user: {
+      id: number;
       username: string;
       token: string;
       roles: string[];
-      fullname: string; // Agregado aquí
+      fullname: string;
     };
   }
 }
 
 declare module "next-auth/jwt" {
   interface JWT {
+    id: number; 
     username: string;
     token: string;
     roles: string[];
-    fullname: string; // Agregado aquí
+    fullname: string;
   }
   
 }
