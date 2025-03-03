@@ -17,8 +17,6 @@ describe("Recuperación de contraseña", () => {
     );
   });
 
-  process.env.NODE_ENV;
-
   it("obtiene el token de Mailosaur y restablece la contrasenha", () => {
     cy.mailosaurGetMessage(serverId, { sentTo: validEmail }).then((message) => {
       expect(message).not.to.be.undefined;
