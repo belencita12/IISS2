@@ -36,7 +36,7 @@ interface PetFormProps {
     userId?: number;
     token?: string;
 }
-export default function PetForm({ userId, token }: PetFormProps)  {
+export default function PetForm({ userId, token }: PetFormProps) {
     const [races, setRaces] = useState<Race[]>([]);
     const [species, setSpecies] = useState<Species[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -97,18 +97,17 @@ export default function PetForm({ userId, token }: PetFormProps)  {
         };
 
         setIsSubmitting(true);
-    const toastId = toast.loading("Registrando mascota...");
 
-    try {
-        await registerPet(petData, token);
-        toast.success("Mascota registrada con éxito!", { id: toastId });
-        form.reset();
-    } catch (error) {
-        toast.error("Hubo un error al registrar la mascota.", { id: toastId });
-    } finally {
-        setIsSubmitting(false);
-    }
-};
+        try {
+            await registerPet(petData, token);
+            toast.success("Mascota registrada con éxito!");
+            form.reset();
+        } catch (error) {
+            toast.error("Hubo un error al registrar la mascota.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
     return (
         <div className="max-w-5xl mx-auto p-8">
             <div className="flex flex-col md:flex-row gap-16">
@@ -258,7 +257,9 @@ export default function PetForm({ userId, token }: PetFormProps)  {
                                 >
                                     Cancelar
                                 </Button>
-                                <Button type="submit">Registrar Mascota</Button>
+                                <Button type="submit" disabled={isSubmitting}>
+                                    {isSubmitting ? "Registrando..." : "Registrar Mascota"}
+                                </Button>
                             </div>
                         </form>
                     </Form>
