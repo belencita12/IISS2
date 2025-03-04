@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { AlertCircle, Weight } from "lucide-react";
 import { useParams } from "next/navigation";
 
+
 interface Pet {
   id: number;
   name: string;
@@ -15,6 +16,15 @@ interface Pet {
   dateOfBirth: string;
   species: Species;
   race: Race;
+}
+
+interface EditablePet {
+  name: string;
+  dateOfBirth: string;
+  weight: number;
+  sex: string;
+  raceId: number;
+  speciesId: number;
 }
 
 interface Visita {
@@ -88,8 +98,6 @@ function convertirFecha(fecha: string): string {
   return `${dia} de ${mes} ${año}`;
 }
 
-  
-
 export default function PetDetails({token}: Props) {
   const {id} = useParams();
 
@@ -98,17 +106,24 @@ export default function PetDetails({token}: Props) {
   const [data, setData] = useState(null);
   const [pet, setPet] = useState<Pet | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [editedPet, setEditedPet] = useState({
-    name: "",
-    dateOfBirth: "",
-    weight: 0,
-    race: "",
-    species: "",
-    sex: "",
-  });
+
+  const [editedPet, setEditedPet] = useState<EditablePet | null>(null);
 
   const visitasVisibles = showAll ? visitas : visitas.slice(0, 4);
   const visitasProgramadasVisibles = showAllProg ? visitasProgramadas : visitasProgramadas.slice(0, 4);
+
+  useEffect(() => {
+    if (pet) {
+      setEditedPet({
+        name: pet.name,
+        dateOfBirth: pet.dateOfBirth,
+        weight: pet.weight,
+        sex: pet.sex,
+        raceId: pet.race?.id || 0,
+        speciesId: pet.species?.id || 0,
+      })
+    }
+  }, [pet])
 
   useEffect(() => {
     if(isEditing && pet) {
@@ -116,8 +131,8 @@ export default function PetDetails({token}: Props) {
         name: pet.name || "",
         dateOfBirth: pet.dateOfBirth || "",
         weight: pet.weight || 0,
-        race: pet.race?.name || "",
-        species: pet.species?.name || "",
+        raceId: pet.race?.id || 0,
+        speciesId: pet.species?.id || 0,
         sex: pet.sex || "",
       });
     }
@@ -139,25 +154,33 @@ export default function PetDetails({token}: Props) {
       .catch((error) => console.error("Error:", error));
   }, []);
 
-  const handleChange = (e:any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {name, value} = e.target;
 
-    setEditedPet((prev) => ({
-      ...prev,
-      [name]: name === "weight" ? parseFloat(value) || 0 : value,
-    }));
+    setEditedPet((prev) => {
+      if (!prev) return prev;
+      return{
+        ...prev,
+        [name]: name === "weight" ? parseFloat(value) || 0 : value,
+      }
+    });
   };
 
 
   const handleSave = async () => {
+    if(!editedPet || !pet) {
+      console.error("Error: EditedPet o pet es null");
+      return;
+    }
+
     try {
       const updatedPet = {
         name: editedPet.name,
         dateOfBirth: new Date(editedPet.dateOfBirth).toISOString(),
         weight: editedPet.weight || 0,
         sex: editedPet.sex,
-        raceId: pet?.race?.id,
-        speciesId: pet?.species?.id,     
+        raceId: pet.race.id,
+        speciesId: pet.species.id,     
       }
 
       const response = await fetch(`https://iiss2-backend-production.up.railway.app/pet/${pet?.id}`, {
@@ -223,12 +246,17 @@ export default function PetDetails({token}: Props) {
                   <input
                     type="text"
                     name={name}
-                    value={editedPet[name]}
+                    value={editedPet ? editedPet[name as keyof EditablePet] : ""}
                     onChange={handleChange}
                     className="text-black w-full border border-gray-300 rounded p-1"
                   />
                 ) : (
-                  <p className="text-xl">{name === "dateOfBirth" ? convertirFecha(pet[name]) : name === "race" || name === "species" ? pet[name]?.name : pet[name]}</p>
+                  <p className="text-xl">
+                    {name === "dateOfBirth" ? convertirFecha(pet.dateOfBirth) :
+                    name === "race" ? pet.race?.name :
+                    name === "species" ? pet.species?.name :
+                    String(pet[name as keyof Pet])}
+                  </p>
                 )}
               </div>
             ))}
