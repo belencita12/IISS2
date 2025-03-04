@@ -1,6 +1,6 @@
 import { PetData } from "../pets/IPet";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const registerPet = async (petData: PetData, token: string) => {
     try {

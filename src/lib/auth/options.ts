@@ -3,7 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { NextAuthOptions } from "next-auth";
 import { SigninResponse } from "./signin-response.type";
 
-const HARDCODED_LOGIN_URL = "https://actual-maribeth-fiuni-9898c42e.koyeb.app/auth/signin";
+const HARDCODED_LOGIN_URL = "https://iiss2-backend-production.up.railway.app/auth/signin";
 
 const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET, 

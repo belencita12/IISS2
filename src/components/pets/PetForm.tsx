@@ -13,7 +13,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { PetData, Race, Species } from '@/lib/pets/IPet';
 import { getRacesAndSpecies } from '@/lib/pets/getRacesAndSpecies';
 import { registerPet } from '@/lib/pets/registerPet';
-import { useSession } from 'next-auth/react';
 
 
 const petFormSchema = z.object({
@@ -33,14 +32,15 @@ const petFormSchema = z.object({
 });
 
 type PetFormValues = z.infer<typeof petFormSchema>;
-
-export default function PetForm() {
+interface PetFormProps {
+    userId?: number;
+    token?: string;
+}
+export default function PetForm({ userId, token }: PetFormProps)  {
     const [races, setRaces] = useState<Race[]>([]);
     const [species, setSpecies] = useState<Species[]>([]);
-    const { data: session, status } = useSession();
-    console.log("🔍 Estado de sesión:", status);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const token = session?.user?.token;
 
     const form = useForm<PetFormValues>({
         resolver: zodResolver(petFormSchema),
@@ -57,8 +57,6 @@ export default function PetForm() {
 
     // Obtener razas y especies al montar el componente
     useEffect(() => {
-        console.log("🔍 Token obtenido:", token);
-
         const fetchData = async () => {
             if (!token) {
                 toast.error("No tienes permisos para ver esta información.");
@@ -72,7 +70,6 @@ export default function PetForm() {
                 setSpecies(species);
             } catch (error) {
                 toast.error("Hubo un error al cargar los datos.");
-                console.error("❌ Error en la llamada:", error);
             }
         };
 
@@ -82,14 +79,15 @@ export default function PetForm() {
     const imageFile = form.watch('imageFile');
 
     const onSubmit: SubmitHandler<PetFormValues> = async (data) => {
-        if (!session?.user?.id || !token) {
+
+        if (!userId || !token) {
             toast.error("Debes estar autenticado para registrar una mascota.");
             return;
         }
 
         const petData: PetData = {
             name: data.petName,
-            userId: session.user.id,
+            userId,
             speciesId: parseInt(data.animalType),
             raceId: parseInt(data.breed),
             weight: data.weight,
@@ -98,14 +96,19 @@ export default function PetForm() {
             dateOfBirth: new Date(data.birthDate).toISOString(),
         };
 
-        try {
-            await registerPet(petData, token);
-            toast.success("Mascota registrada con éxito!");
-            form.reset();
-        } catch (error) {
-            toast.error("Hubo un error al registrar la mascota.");
-        }
-    };
+        setIsSubmitting(true);
+    const toastId = toast.loading("Registrando mascota...");
+
+    try {
+        await registerPet(petData, token);
+        toast.success("Mascota registrada con éxito!", { id: toastId });
+        form.reset();
+    } catch (error) {
+        toast.error("Hubo un error al registrar la mascota.", { id: toastId });
+    } finally {
+        setIsSubmitting(false);
+    }
+};
     return (
         <div className="max-w-5xl mx-auto p-8">
             <div className="flex flex-col md:flex-row gap-16">

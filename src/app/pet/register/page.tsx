@@ -1,22 +1,26 @@
-"use client";
-
+import { getServerSession } from "next-auth";
+import authOptions from "@/lib/auth/options"
 import PetForm from "@/components/pets/PetForm";
 import { Toaster } from "@/components/ui/sonner";
-import { SessionProvider } from "next-auth/react";
 
-export default function Home() {
+export default async function Home() {
+    const session = await getServerSession(authOptions);
+    const userId = session?.user?.id;
+    const token = session?.user?.token;
+
+    console.log("Sesión:", { userId, token });
+
     return (
-        <SessionProvider>
-            <div className="min-h-screen p-6">
-                <PetForm />
-                <Toaster
-                    richColors
-                    position="top-center"
-                    toastOptions={{
-                        duration: 5000,
-                    }}
-                />
-            </div>
-        </SessionProvider>
+        <div>
+            <PetForm userId={userId} token={token} />
+            <Toaster
+                richColors
+                position="top-center"
+                toastOptions={{
+                    duration: 5000,
+                }}
+            />
+        </div>
     );
 }
+
