@@ -6,4 +6,11 @@ export default defineConfig({
       // implement node event listeners here
     },
   },
+  component: {
+    specPattern: "cypress/components/**/*.cy.{js,jsx,ts,tsx}",
+    devServer: {
+      framework: "next",
+      bundler: "webpack",
+    },
+  },
 });
