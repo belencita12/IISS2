@@ -1,8 +1,8 @@
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-export const getPetsByUserId = async (userId: number, token:string) => {
+export const getPetsByUserId = async (userId: number, token: string) => {
     try {
-        const response = await fetch(`${BASE_URL}/pet?page=1&userId=${userId}`, {
+        const response = await fetch(`${BASE_URL}/pet?page=1&size=4&userId=${userId}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -14,4 +14,4 @@ export const getPetsByUserId = async (userId: number, token:string) => {
         console.error("Error en obtener mascotas por usuario", error);
         throw error;
     }
-}
+};

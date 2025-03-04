@@ -42,8 +42,8 @@ export const VeterinaryProducts = () => {
                             <Image
                                 src={product.image}
                                 alt={product.name}
-                                layout="fill"
-                                objectFit="contain"
+                                fill
+                                style={{ objectFit: "cover" }} 
                             />
                         </div>
                         <CardContent className="p-4">

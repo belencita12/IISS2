@@ -7,8 +7,8 @@ interface HeaderProps {
 
 export const Header = ({ fullName }: HeaderProps) => {
     return (
-        <div className="bg-[#606060] p-6 flex items-center text-white justify-center">
-            <Avatar className="w-20 h-20 ml-10">
+        <div className="bg-[#606060] p-6 flex items-center text-white">
+            <Avatar className="w-20 h-20 ml-20">
                 <AvatarImage src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="Usuario" />
             </Avatar>
             <div className="ml-4">
