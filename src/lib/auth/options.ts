@@ -3,10 +3,10 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { NextAuthOptions } from "next-auth";
 import { SigninResponse } from "./signin-response.type";
 
-const HARDCODED_LOGIN_URL = "https://iiss2-backend-production.up.railway.app/auth/signin";
+const HARDCODED_LOGIN_URL = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/signin`;
 
 const authOptions: NextAuthOptions = {
-  secret: process.env.NEXTAUTH_SECRET, 
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -49,7 +49,7 @@ const authOptions: NextAuthOptions = {
           username: user.username,
           token: user.token,
           roles: user.roles,
-        };        
+        };
       },
     }),
   ],
@@ -71,10 +71,10 @@ const authOptions: NextAuthOptions = {
         session.user.username = token.username;
         session.user.token = token.token;
         session.user.roles = token.roles;
-        session.user.fullName = token.fullName; 
+        session.user.fullName = token.fullName;
       }
       return session;
-    },    
+    },
   },
   pages: {
     signIn: "/auth/login",

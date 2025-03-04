@@ -1,4 +1,4 @@
-import { PetData } from "../pets/IPet";
+import { PetData } from "./IPet";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
