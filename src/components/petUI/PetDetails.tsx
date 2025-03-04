@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Weight } from "lucide-react";
 import { useParams } from "next/navigation";
 
 interface Pet {
@@ -99,20 +99,36 @@ export default function PetDetails({token}: Props) {
   const [pet, setPet] = useState<Pet | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editedPet, setEditedPet] = useState({
-    ...pet,
+    name: "",
+    dateOfBirth: "",
+    weight: 0,
+    race: "",
+    species: "",
+    sex: "",
   });
 
   const visitasVisibles = showAll ? visitas : visitas.slice(0, 4);
   const visitasProgramadasVisibles = showAllProg ? visitasProgramadas : visitasProgramadas.slice(0, 4);
+
+  useEffect(() => {
+    if(isEditing && pet) {
+      setEditedPet({
+        name: pet.name || "",
+        dateOfBirth: pet.dateOfBirth || "",
+        weight: pet.weight || 0,
+        race: pet.race?.name || "",
+        species: pet.species?.name || "",
+        sex: pet.sex || "",
+      });
+    }
+  }, [isEditing, pet]);
   
   useEffect(() => {
-    
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEzLCJ1c2VybmFtZSI6Im1hdGlhc0A2MTQzMGI4YS04ZjRlLTRjNWEtYTczZi1lN2IzZDQ1NzRlMTUiLCJlbWFpbCI6ImdlbmFyby5icnVuYWdhQGZpdW5pLmVkdS5weSIsInJvbGVzIjpbIlVTRVIiXSwiaWF0IjoxNzQxMDg3NDk1LCJleHAiOjE3NDE2OTIyOTV9.jR3TNEpzJrEAcPKYQzW_UvuI1Ycp64M0jWmdIVkoLMM";
     fetch(`https://iiss2-backend-production.up.railway.app/pet/${id}`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token}`,
-      "Content-Type": "application/json"
+        "Content-Type": "application/json",
       }
     })
       .then((response) => response.json())
@@ -124,19 +140,41 @@ export default function PetDetails({token}: Props) {
   }, []);
 
   const handleChange = (e:any) => {
-    setEditedPet({ ...editedPet, [e.target.name]: e.target.value });
-  };s
+    const {name, value} = e.target;
+
+    setEditedPet((prev) => ({
+      ...prev,
+      [name]: name === "weight" ? parseFloat(value) || 0 : value,
+    }));
+  };
 
 
   const handleSave = async () => {
     try {
-      await fetch(`https://iiss2-backend-production.up.railway.app/pet`, {
-        method: "PUT",
+      const updatedPet = {
+        name: editedPet.name,
+        dateOfBirth: new Date(editedPet.dateOfBirth).toISOString(),
+        weight: editedPet.weight || 0,
+        sex: editedPet.sex,
+        raceId: pet?.race?.id,
+        speciesId: pet?.species?.id,     
+      }
+
+      const response = await fetch(`https://iiss2-backend-production.up.railway.app/pet/${pet?.id}`, {
+        method: "PATCH",
         headers: {
+          "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(editedPet),
+        body: JSON.stringify(updatedPet),
       });
+
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+
+      const updatedData = await response.json();
+      setPet(updatedData);
       setIsEditing(false);
     } catch (error) {
       console.error("Error al actualizar los datos de la mascota", error);
@@ -154,6 +192,8 @@ export default function PetDetails({token}: Props) {
                 <Image
                   src={pet.profileImg}
                   alt={pet.name}
+                  width={100}
+                  height={100}                
                   className="object-cover object-center w-full h-full"
                 />
               ) : (
