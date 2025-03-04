@@ -85,9 +85,15 @@ export const PetsList = ({ userId, token }: PetsListProps) => {
             <h3 className="text-3xl font-bold mt-2">Tus Mascotas Registradas</h3>
             <p className="text-gray-500 mt-2">Administra la información de tus mascotas</p>
 
-            <Button variant="outline" className="border border-black mt-4">
-                <Link href="/pet/register">Agregar Mascota</Link>
-            </Button>
+            <div className="flex gap-4 mt-4">
+                <Button variant="outline" className="border border-black">
+                    <Link href="/pet/register">Agregar Mascota</Link>
+                </Button>
+                <Button asChild className="border border-black">
+                    <Link href="/">Ver mi lista de mascotas</Link>
+                </Button>
+            </div>
+
 
             {loading ? (
                 <p className="mt-4 text-gray-500">Cargando mascotas...</p>
@@ -103,8 +109,11 @@ export const PetsList = ({ userId, token }: PetsListProps) => {
                                         <Image
                                             src={pet.profileImg}
                                             alt={pet.name}
+                                            width={96}
+                                            height={96}
                                             className="w-full h-full object-cover rounded-lg"
                                         />
+
                                     ) : (
                                         <span>{getInitials(pet.name)}</span>
                                     )}
@@ -116,12 +125,6 @@ export const PetsList = ({ userId, token }: PetsListProps) => {
                                 {calculateAge(pet.dateOfBirth) && <p className="font-bold mt-2">{calculateAge(pet.dateOfBirth)}</p>}
                             </div>
                         ))}
-                    </div>
-
-                    <div className="flex justify-center md:justify-end mt-6">
-                        <Button asChild className="border border-black">
-                            <Link href="/">Ver mi lista de mascotas</Link>
-                        </Button>
                     </div>
                 </div>
             )}
