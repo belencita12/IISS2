@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
-import { Petemoss } from "next/font/google";
 import { useParams } from "next/navigation";
 
 interface Pet {
@@ -41,6 +40,10 @@ interface Race {
   name: string;
 }
 
+interface Props {
+    token: string;
+}
+
 const visitas: Visita[] = [
   { id: 1, fecha: "2024-12-20", descripcion: "Chequeo general", costo: 30000 },
   { id: 2, fecha: "2024-10-15", descripcion: "Vacunación anual", costo: 50000},
@@ -53,16 +56,6 @@ const visitasProgramadas: Visita_Programada[] = [
   { id: 1, fecha: "2025-01-10", descripcion: "Chequeo rutinario" },
   { id: 2, fecha: "2025-03-05", descripcion: "Vacunación de refuerzo" },
 ];
-
-const especies: Species[] = [
-  { id:1, name: "Perro"}
-]
-
-const razas: Race[] = [
-  {id: 1, name: "Labrador"}
-]
-
-
 
 function calcularEdad(fechaNacimiento: string): number {
   const nacimiento = new Date(fechaNacimiento);
@@ -97,8 +90,9 @@ function convertirFecha(fecha: string): string {
 
   
 
-export default function DetallesMascota() {
-  
+export default function PetDetails({token}: Props) {
+  const {id} = useParams();
+
   const [showAll, setShowAll] = useState(false);
   const [showAllProg, setShowAllProg] = useState(false);
   const [data, setData] = useState(null);
@@ -110,15 +104,11 @@ export default function DetallesMascota() {
 
   const visitasVisibles = showAll ? visitas : visitas.slice(0, 4);
   const visitasProgramadasVisibles = showAllProg ? visitasProgramadas : visitasProgramadas.slice(0, 4);
-
-  const PetTest: Pet = {
-    id:1, name: "raul", weight: 32, sex: "M", profileImg: null,
-    dateOfBirth: "2024-04-23T00:00:00.000Z", species: especies[0], race: razas[0]
-  }
   
   useEffect(() => {
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEzLCJ1c2VybmFtZSI6Im1hdGlhc0A2MTQzMGI4YS04ZjRlLTRjNWEtYTczZi1lN2IzZDQ1NzRlMTUiLCJlbWFpbCI6ImdlbmFyby5icnVuYWdhQGZpdW5pLmVkdS5weSIsInJvbGVzIjpbIlVTRVIiXSwiaWF0IjoxNzQxMDM5ODY5LCJleHAiOjE3NDE2NDQ2Njl9.m1ud5FxTppatNV4F9S5JzVJ1sYSG1B6nnAFgGTrIGpc";
-    fetch("https://iiss2-backend-production.up.railway.app/pet/1", {
+    
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEzLCJ1c2VybmFtZSI6Im1hdGlhc0A2MTQzMGI4YS04ZjRlLTRjNWEtYTczZi1lN2IzZDQ1NzRlMTUiLCJlbWFpbCI6ImdlbmFyby5icnVuYWdhQGZpdW5pLmVkdS5weSIsInJvbGVzIjpbIlVTRVIiXSwiaWF0IjoxNzQxMDg3NDk1LCJleHAiOjE3NDE2OTIyOTV9.jR3TNEpzJrEAcPKYQzW_UvuI1Ycp64M0jWmdIVkoLMM";
+    fetch(`https://iiss2-backend-production.up.railway.app/pet/${id}`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token}`,
@@ -135,9 +125,9 @@ export default function DetallesMascota() {
 
   const handleChange = (e:any) => {
     setEditedPet({ ...editedPet, [e.target.name]: e.target.value });
-  };
+  };s
 
-  /*
+
   const handleSave = async () => {
     try {
       await fetch(`https://iiss2-backend-production.up.railway.app/pet`, {
@@ -151,17 +141,6 @@ export default function DetallesMascota() {
     } catch (error) {
       console.error("Error al actualizar los datos de la mascota", error);
     }
-  };*/
-
-  const handleSave = () => {
-    /*
-    PetTest.name = editedPet.name;
-    PetTest.dateOfBirth = editedPet.dateOfBirth;
-    PetTest.weight = editedPet.weight;
-    PetTest.race = { name: editedPet.race };
-    PetTest.species = { name: editedPet.species };
-    PetTest.sex = editedPet.sex;*/
-    setIsEditing(false);
   };
   
 
