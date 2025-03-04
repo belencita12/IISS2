@@ -1,8 +1,8 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ShoppingCart, Package } from "lucide-react";
-
 
 const products = [
     {
@@ -25,9 +25,6 @@ const products = [
     },
 ];
 
-
-
-
 export const VeterinaryProducts = () => {
     return (
         <section className="max-w-5xl mx-auto mt-10 p-6 bg-white">
@@ -35,17 +32,20 @@ export const VeterinaryProducts = () => {
                 <h2 className="text-3xl font-bold">Productos Veterinarios</h2>
                 <p className="text-gray-600 mt-2">Explora los productos disponibles</p>
                 <Button asChild className="mt-2">
-                <Link href="/">Ver más</Link>
+                    <Link href="/">Ver más</Link>
                 </Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
                 {products.map((product) => (
                     <Card key={product.id} className="shadow-lg rounded-lg overflow-hidden">
-                        <img
-                            src={product.image}
-                            alt={product.name}
-                            className="w-full h-56 object-contain"
-                        />
+                        <div className="relative w-full h-56">
+                            <Image
+                                src={product.image}
+                                alt={product.name}
+                                layout="fill"
+                                objectFit="contain"
+                            />
+                        </div>
                         <CardContent className="p-4">
                             <h3 className="text-lg font-semibold">{product.name}</h3>
                             <p className="text-xl font-bold mt-1">{product.price}</p>
@@ -60,3 +60,4 @@ export const VeterinaryProducts = () => {
         </section>
     );
 };
+
