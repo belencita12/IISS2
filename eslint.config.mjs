@@ -12,11 +12,19 @@ const compat = new FlatCompat({
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
-    "files": ["**/*.cy.js", "**/*.cy.ts"],
-    "rules": {
-      "@typescript-eslint/no-unused-expressions": "off"
-    }
-  }
+    files: ["**/*.ts", "**/*.tsx", "**/*.cy.ts", "**/*.cy.js"],
+    rules: {
+      "@typescript-eslint/no-unused-expressions": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrors: "none",
+        },
+      ],
+    },
+  },
 ];
 
 export default eslintConfig;
