@@ -68,8 +68,9 @@ export default function PetForm({ userId, token }: PetFormProps) {
                 const { races, species } = await getRacesAndSpecies(token);
                 setRaces(races);
                 setSpecies(species);
-            } catch (error) {
-                toast.error("Hubo un error al cargar los datos.");
+            }
+            catch {
+                toast.error("Hubo un error al registrar la mascota.");
             }
         };
 
@@ -102,7 +103,7 @@ export default function PetForm({ userId, token }: PetFormProps) {
             await registerPet(petData, token);
             toast.success("Mascota registrada con éxito!");
             form.reset();
-        } catch (error) {
+        } catch {
             toast.error("Hubo un error al registrar la mascota.");
         } finally {
             setIsSubmitting(false);
