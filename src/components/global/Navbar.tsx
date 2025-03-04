@@ -7,7 +7,7 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import LogoutButton from "./LogoutButton";
 import { SessionProvider, useSession } from "next-auth/react";
-import { Loading } from "./Loading";
+import NavbarSkeleton from "../skeleton/NavbarSkeleton";
 type NavbarProps = {
   links: { label: string; href: string }[];
   isLogged? : boolean;
@@ -20,7 +20,7 @@ export function Navbar({ links }: NavbarProps) {
   const isAuthenticated = !!session && !isLoading;
   console.log(status)
 
-  if(isLoading) return <Loading />
+  if(isLoading) return <NavbarSkeleton />
 
   return (
       <header className="w-full shadow-sm px-8 py-4 bg-white">
