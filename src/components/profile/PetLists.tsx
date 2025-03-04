@@ -7,6 +7,7 @@ import { getPetsByUserId } from "@/lib/pets/getPetsByUserId";
 import { getRaces } from "@/lib/pets/getRaces";
 import { PetData, Race } from "@/lib/pets/IPet";
 import { toast } from 'sonner';
+import Image from "next/image";
 
 interface PetsListProps {
     userId: number;
@@ -99,7 +100,7 @@ export const PetsList = ({ userId, token }: PetsListProps) => {
                             <div key={index} className="text-center w-48 flex-shrink-0">
                                 <Avatar className="w-24 h-24 mx-auto bg-gray-200 flex items-center justify-center text-xl font-bold text-gray-700">
                                     {pet.profileImg ? (
-                                        <img
+                                        <Image
                                             src={pet.profileImg}
                                             alt={pet.name}
                                             className="w-full h-full object-cover rounded-lg"
