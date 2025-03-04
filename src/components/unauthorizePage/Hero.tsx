@@ -32,6 +32,7 @@ export default function Hero() {
         alt="Logo1"
         width={300}
         height={300}
+        style={{ width: 'auto', height: 'auto' }} 
         className="object-contain mt-6 sm:mt-0"
       />
     </section>

@@ -23,9 +23,9 @@ export default function Products() {
           </p>
         </div>
       </section>
-      <section className="flex sm:flex-row flex-col items-center justify-between py-10 bg-white gap-4">
+      <section className="flex sm:flex-row flex-col items-center justify-between w-full py-10 bg-white gap-4">
         {products.map((product) => (
-          <div key={product.name} className="flex-1 bg-white p-4 rounded-lg shadow-lg text-center transition-all duration-200 hover:scale-105 cursor-pointer flex flex-row sm:flex-col items-center gap-4">
+          <div key={product.name} className="flex-1 w-full bg-white p-4 rounded-lg shadow-lg text-center transition-all duration-200 hover:scale-105 cursor-pointer flex flex-row sm:flex-col items-center gap-4">
             <Image 
             src={product.image} 
             alt={product.name} 
