@@ -3,19 +3,23 @@ import { Header } from "@/components/profile/Header";
 import { PetsList } from "@/components/profile/PetLists";
 import { VeterinaryProducts } from "@/components/profile/Product";
 import { getServerSession } from "next-auth";
-import authOptions from "@/lib/auth/options"
+import authOptions from "@/lib/auth/options";
+import { redirect } from "next/navigation";
 
 export default async function Profile() {
     const session = await getServerSession(authOptions);
-    const fullName = session?.user?.fullName;
+    console.log("Sesión:", session?.user?.fullName);
+    console.log("Sesión:", session?.user?.token);
 
-    console.log("Sesión:", { fullName });
+    if (!session) {
+        redirect("/login");
+    }
 
     return (
         <div>
-            <Header fullName={fullName} />
-            <PetsList />
-            <Appointments/>
+            <Header fullName={session?.user?.fullName} />
+            <PetsList userId={session?.user?.id} token={session?.user?.token} />
+            <Appointments />
             <VeterinaryProducts />
         </div>
     );
