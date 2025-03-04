@@ -112,6 +112,36 @@ export default function PetDetails({token}: Props) {
   const visitasVisibles = showAll ? visitas : visitas.slice(0, 4);
   const visitasProgramadasVisibles = showAllProg ? visitasProgramadas : visitasProgramadas.slice(0, 4);
 
+  const [speciesList, setSpeciesList] = useState<Species[]>([]);
+  const [raceList, setRaceList] = useState<Race[]>([]);
+
+  const headers = {
+    "Authorization": `Bearer ${token}`,
+    "Content-Type": "application/json",
+  }
+
+  useEffect(() => {
+    // Cargar especies
+    fetch("https://iiss2-backend-production.up.railway.app/species?page=1", { headers })
+      .then(res => res.json())
+      .then(data => { if (data.total === 1) {
+        setSpeciesList([data.data[0]]);
+      } else {
+        setSpeciesList(Array.isArray(data.data) ? data.data : [])
+      }})
+      .catch(error => console.error("Error cargando especies:", error));
+
+    // Cargar razas
+    fetch("https://iiss2-backend-production.up.railway.app/race?page=1", { headers })
+      .then(res => res.json())
+      .then(data => { if(data.total === 1) {
+        setRaceList([data.data[0]]);
+      } else {
+        setRaceList(Array.isArray(data.data) ? data.data : [])
+      }})
+      .catch(error => console.error("Error cargando razas:", error));
+  }, [token]);
+
   useEffect(() => {
     if (pet) {
       setEditedPet({
@@ -154,7 +184,7 @@ export default function PetDetails({token}: Props) {
       .catch((error) => console.error("Error:", error));
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const {name, value} = e.target;
 
     setEditedPet((prev) => {
@@ -179,8 +209,8 @@ export default function PetDetails({token}: Props) {
         dateOfBirth: new Date(editedPet.dateOfBirth).toISOString(),
         weight: editedPet.weight || 0,
         sex: editedPet.sex,
-        raceId: pet.race.id,
-        speciesId: pet.species.id,     
+        raceId: editedPet.raceId,
+        speciesId: editedPet.speciesId,     
       }
 
       const response = await fetch(`https://iiss2-backend-production.up.railway.app/pet/${pet?.id}`, {
@@ -243,19 +273,50 @@ export default function PetDetails({token}: Props) {
               <div key={name} className="p-1 pb-3">
                 <p>{label}</p>
                 {isEditing ? (
-                  <input
-                    type="text"
-                    name={name}
-                    value={editedPet ? editedPet[name as keyof EditablePet] : ""}
-                    onChange={handleChange}
-                    className="text-black w-full border border-gray-300 rounded p-1"
-                  />
+                  name === "species" ? (
+                    <select
+                      name="speciesId"
+                      value={editedPet?.speciesId || ""}
+                      onChange={handleChange}
+                      className="text-black w-full border border-gray-300 rounded p-1"
+                    >
+                      {speciesList.map((species) => (
+                        <option key={species.id} value={species.id}>
+                          {species.name}
+                        </option>
+                      ))}
+                    </select>
+                  ) : name === "race" ? (
+                    <select
+                      name="raceId"
+                      value={editedPet?.raceId || ""}
+                      onChange={handleChange}
+                      className="text-black w-full border border-gray-300 rounded p-1"
+                    >
+                      {raceList.map((race) => (
+                        <option key={race.id} value={race.id}>
+                          {race.name}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      name={name}
+                      value={editedPet ? editedPet[name as keyof EditablePet] : ""}
+                      onChange={handleChange}
+                      className="text-black w-full border border-gray-300 rounded p-1"
+                    />
+                  )
                 ) : (
                   <p className="text-xl">
-                    {name === "dateOfBirth" ? convertirFecha(pet.dateOfBirth) :
-                    name === "race" ? pet.race?.name :
-                    name === "species" ? pet.species?.name :
-                    String(pet[name as keyof Pet])}
+                    {name === "dateOfBirth"
+                      ? convertirFecha(pet.dateOfBirth)
+                      : name === "race"
+                      ? pet.race?.name
+                      : name === "species"
+                      ? pet.species?.name
+                      : String(pet[name as keyof Pet])}
                   </p>
                 )}
               </div>
