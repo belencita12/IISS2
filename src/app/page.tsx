@@ -1,6 +1,7 @@
 import Hero from "@/components/unauthorizePage/Hero";
 import Products from "@/components/unauthorizePage/Products";
 import Services from "@/components/unauthorizePage/Services";
+import Image from "next/image";
 
 export default function Home() {
   return (
@@ -8,7 +9,7 @@ export default function Home() {
       <Hero />
       <Services />
       <Products />
-      <img
+      <Image
         src="/image gato.png"
         alt="Gato"
         width={1500}
