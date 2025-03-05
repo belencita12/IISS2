@@ -3,10 +3,11 @@ describe("Registro de usuario", () => {
     validUser: {
       name: "Lourdes",
       lastname: "Valenzuela",
-      email: "lour@gmail.com",
-      password: "lourdes123"
+      email: "test1@gmail.com",
+      password: "lourdes123",
+      confirmPassword: "lourdes123"
     },
-    existingEmail: "lour@gmail.com"
+    existingEmail: "test1@gmail.com"
   };
 
   const selectors = {
@@ -15,7 +16,8 @@ describe("Registro de usuario", () => {
     emailInput: "input[name='email']",
     passwordInput: "input[name='password']",
     confirmPasswordInput: "input[name='confirmPassword']",
-    form: "form"
+    form: "form",
+    successMessage: "p.text-green-500"
   };
 
   const errorMessages = {
@@ -43,20 +45,20 @@ describe("Registro de usuario", () => {
 
     const formData = { ...defaultData, ...userData };
 
-    if (formData.name) cy.get(selectors.nameInput).type(formData.name);
-    if (formData.lastname) cy.get(selectors.lastnameInput).type(formData.lastname);
-    if (formData.email) cy.get(selectors.emailInput).type(formData.email);
-    if (formData.password) cy.get(selectors.passwordInput).type(formData.password);
-    if (formData.confirmPassword) cy.get(selectors.confirmPasswordInput).type(formData.confirmPassword);
+    if (formData.name) cy.get(selectors.nameInput).clear().type(formData.name);
+    if (formData.lastname) cy.get(selectors.lastnameInput).clear().type(formData.lastname);
+    if (formData.email) cy.get(selectors.emailInput).clear().type(formData.email);
+    if (formData.password) cy.get(selectors.passwordInput).clear().type(formData.password);
+    if (formData.confirmPassword) cy.get(selectors.confirmPasswordInput).clear().type(formData.confirmPassword);
   };
 
-  const submitFormAndCheckError = (errorMessage, timeout = 10000) => {
+  const submitFormAndCheckError = (errorMessage: string, timeout: number = 10000) => {
     cy.get(selectors.form).submit();
     cy.wait(800);
     cy.contains(errorMessage, { timeout }).should("be.visible");
   };
-
-  const testFieldValidation = (field, skipField) => {
+  
+  const testFieldValidation = (field: string, skipField: string) => {
     it(`Debe validar que el campo '${field}' esté lleno antes de enviar el formulario`, () => {
       const skipData = { [skipField]: '' };
       fillForm(skipData);
@@ -64,7 +66,6 @@ describe("Registro de usuario", () => {
     });
   };
 
-  // Validations for empty required fields
   testFieldValidation('name', 'name');
   testFieldValidation('lastname', 'lastname');
   testFieldValidation('email', 'email');
@@ -92,19 +93,20 @@ describe("Registro de usuario", () => {
     submitFormAndCheckError(errorMessages.passwordMismatch);
   });
 
-  it("Debe mostrar error si el correo ya está registrado", () => {
-    fillForm({ email: testData.existingEmail });
-    submitFormAndCheckError(errorMessages.emailInUse);
-  });
 
   it("Debe registrar un usuario exitosamente", () => {
     fillForm(testData.validUser);
     cy.get(selectors.form).submit();
     
-    cy.wait(800);
-    cy.contains(errorMessages.successRegistration, { timeout: 10000 }).should("be.visible");
+    cy.get(selectors.successMessage, { timeout: 10000 })
+      .should('be.visible')
+      .and('contain', errorMessages.successRegistration);
     
-    cy.wait(2000);
-    cy.url().should("include", "/login");
+    cy.url({ timeout: 3000 }).should("include", "/login");
+  });
+
+  it("Debe mostrar error si el correo ya está registrado", () => {
+    fillForm({ email: testData.existingEmail });
+    submitFormAndCheckError(errorMessages.emailInUse);
   });
 });
