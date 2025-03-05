@@ -13,7 +13,7 @@ interface IFormState {
   message: string;
   isError: boolean;
 }
-
+const HARDCODED_LOGIN_URL = `${process.env.NEXT_PUBLIC_BASE_URL}`;
 export default function PasswordResetForm() {
   const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
@@ -63,7 +63,7 @@ export default function PasswordResetForm() {
 
     try {
       const response = await fetch(
-        `https://actual-maribeth-fiuni-9898c42e.koyeb.app/auth/reset-password?token=${token}`,
+        `${HARDCODED_LOGIN_URL}/auth/reset-password?token=${token}`,
         {
           method: "PUT",
           headers: {
