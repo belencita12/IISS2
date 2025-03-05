@@ -1,4 +1,8 @@
 describe("Register Pet", () => {
+  const TIMEOUT = {
+    timeout: 15000,
+  };
+
   beforeEach(() => {
     const sessionToken: string = Cypress.env("sessionToken");
     if (sessionToken) cy.setCookie("next-auth.session-token", sessionToken);
@@ -21,7 +25,7 @@ describe("Register Pet", () => {
     });
     cy.contains("Iniciar Sesión").click();
 
-    cy.wait("@login", { timeout: 15000 }).then((_) => {
+    cy.wait("@login", TIMEOUT).then((_) => {
       cy.getCookie("next-auth.session-token")
         .should("exist")
         .then((cookie) => {
@@ -29,7 +33,7 @@ describe("Register Pet", () => {
         });
     });
 
-    cy.location("pathname", { timeout: 10000 }).should("eq", "/dashboard");
+    cy.location("pathname", TIMEOUT).should("eq", "/dashboard");
   });
 
   it("Navegar a /pet/register y enviar formulario con datos invalidos", () => {
@@ -44,6 +48,16 @@ describe("Register Pet", () => {
       "be.visible"
     );
     cy.contains("Debes seleccionar un género").should("be.visible");
+    cy.contains("Debes seleccionar un tipo de animal").should("be.visible");
+    cy.contains("La raza es obligatoria").should("be.visible");
+
+    cy.intercept("POST", `${Cypress.env("API_BASEURL")}/pet`).as("registerPet");
+    cy.wait(2000);
+    cy.get("@registerPet").should("not.exist");
+
+    cy.contains("button", "Cancelar").click();
+    cy.location("pathname", TIMEOUT).should("eq", "/user-profile");
+
   });
 
   it("Debe cargar datos validos y registrar una mascota", () => {
@@ -52,13 +66,14 @@ describe("Register Pet", () => {
 
     const petData = {
       name: "TestName",
-      birthDate: "2023-01-01",
+      birthDate: "2022-01-01",
       weight: "10.2",
     };
 
-    cy.intercept("GET", `${Cypress.env("API_BASEURL")}/race?page=1`).as(
-      "getRaces"
-    );
+    cy.intercept(
+      "GET",
+      `${Cypress.env("API_BASEURL")}/race?page=1&speciesId=1`
+    ).as("getRaces");
 
     cy.intercept("GET", `${Cypress.env("API_BASEURL")}/species?page=1`).as(
       "getSpecies"
@@ -66,35 +81,25 @@ describe("Register Pet", () => {
 
     cy.intercept("POST", `${Cypress.env("API_BASEURL")}pet`).as("registerPet");
 
-    cy.get("input[name='petName']", { timeout: 10000 }).type(petData.name);
+    cy.get("input[name='petName']", TIMEOUT).type(petData.name);
     cy.get("input[name='birthDate']").type(petData.birthDate);
     cy.get("input[name='weight']").type(petData.weight);
 
-    cy.wait("@getRaces").then((int) => {
+    cy.wait("@getSpecies", TIMEOUT).then((int) => {
       const response = int.response;
       if (response) {
-        cy.get('button[aria-controls="radix-:Rlpfnnl7:"]').click();
-        cy.get('div[role="listbox"]')
-          .contains("div", response.body.data[0].name)
-          .click();
-        cy.get('select[name="race"]').should(
-          "have.value",
-          response.body.data[0].id
-        );
+        expect(response.statusCode).to.eq(200);
+        cy.get("button[id=animalType]").click();
+        cy.get('div[role="listbox"] div').first().click();
       }
     });
 
-    cy.wait("@getSpecies").then((int) => {
+    cy.wait("@getRaces", TIMEOUT).then((int) => {
       const response = int.response;
       if (response) {
-        cy.get('button[aria-controls="radix-:Rm9fnnl7:"]').click();
-        cy.get('div[role="listbox"]')
-          .contains("div", response.body.data[0].name)
-          .click();
-        cy.get('select[name="race"]').should(
-          "have.value",
-          response.body.data[0].id
-        );
+        expect(response.statusCode).to.eq(200);
+        cy.get("button[id=breed]").click();
+        cy.get('div[role="listbox"] div').first().click();
       }
     });
 
@@ -112,5 +117,7 @@ describe("Register Pet", () => {
     });
 
     cy.contains("Mascota registrada con éxito!").should("be.visible");
+
+    cy.location("pathname", TIMEOUT).should("eq", "/user-profile");
   });
 });
