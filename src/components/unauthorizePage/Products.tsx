@@ -14,7 +14,7 @@ export default function Products() {
           alt="Productos"
           width={150}
           height={150}
-          className="object-contain rounded-md aaspect-square sm:w-[25%] w-[40%]"
+          className="object-contain rounded-md aspect-square sm:w-[25%] w-[40%]"
         />
         <div className="text-left flex flex-col gap-5 flex-1">
           <h2 className="sm:text-3xl text-xl font-bold mb-4">Nuestros productos</h2>
