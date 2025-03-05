@@ -38,7 +38,7 @@ describe("Inicio de sesión", () => {
     cy.get("input[name='email']").type("lourdes@gmail.com", { delay: 100 });
     cy.get("input[name='password']").type("lourdes", { delay: 100 });
     cy.get("form").submit();
-    cy.location("pathname", { timeout: 10000 }).should("eq", "/dashboard");
+    cy.location("pathname", { timeout: 10000 }).should("eq", "/user-profile");
     cy.wait(2000);
   });
 });
