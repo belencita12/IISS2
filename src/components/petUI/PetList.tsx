@@ -62,6 +62,7 @@ const ListView = ({ pets }: { pets: IPet[] }) => (
     </div>
 );
 
+// componente para la lista de mascotas
 const PetList = ({ userId, token }: { userId: number, token: string }) => {
     const [isGridView, setIsGridView] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
