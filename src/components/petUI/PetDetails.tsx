@@ -67,11 +67,13 @@ const visitasProgramadas: Visita_Programada[] = [
   { id: 2, fecha: "2025-03-05", descripcion: "Vacunación de refuerzo" },
 ];
 
-function calcularEdad(fechaNacimiento: string): number {
+function calcularEdad(fechaNacimiento: string): string {
   const nacimiento = new Date(fechaNacimiento);
   const hoy = new Date();
+  let meses = 0;
 
-  let edad = hoy.getUTCFullYear() - nacimiento.getUTCFullYear();
+  const agediff = hoy.getUTCFullYear() - nacimiento.getUTCFullYear();
+  let edad = agediff;
   const mesNacimiento = nacimiento.getUTCMonth();
   const diaNacimiento = nacimiento.getUTCDate();
   const mesActual = hoy.getUTCMonth();
@@ -80,7 +82,20 @@ function calcularEdad(fechaNacimiento: string): number {
   if (mesActual < mesNacimiento || (mesActual === mesNacimiento && diaActual < diaNacimiento)) {
       edad--;
   }
-  return edad;
+
+  if (edad < 1) {
+    if(agediff > 0){ meses = 12 + mesActual - mesNacimiento;
+    } else { meses = mesActual - mesNacimiento;
+    }
+    if(meses === 1) { return `${meses} Mes`
+    } else { return `${meses} Meses`
+    }
+  }
+
+  if (edad === 1){
+    return `${edad} Año`;
+  }
+  return `${edad} Años`;
 }
 
 function convertirFecha(fecha: string): string {
@@ -96,6 +111,10 @@ function convertirFecha(fecha: string): string {
   const año = fechaObj.getUTCFullYear();
 
   return `${dia} de ${mes} ${año}`;
+}
+
+function formatNumber(num: number) {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
 export default function PetDetails({token}: Props) {
@@ -257,7 +276,7 @@ export default function PetDetails({token}: Props) {
             </div>
             <div className="flex-col p-2 text-black">
               <p className="flex justify-center font-bold">{pet.name}</p>
-              <p className="flex justify-center font-bold text-xl">{calcularEdad(pet.dateOfBirth)} Años</p>
+              <p className="flex justify-center font-bold text-xl">{calcularEdad(pet.dateOfBirth)}</p>
             </div>
           </div>
 
@@ -316,6 +335,8 @@ export default function PetDetails({token}: Props) {
                       ? pet.race?.name
                       : name === "species"
                       ? pet.species?.name
+                      : name === "weight"
+                      ? `${pet.weight} kg`
                       : String(pet[name as keyof Pet])}
                   </p>
                 )}
@@ -323,11 +344,11 @@ export default function PetDetails({token}: Props) {
             ))}
             {isEditing ? (
               <div className="flex gap-2">
-                <Button onClick={handleSave} className="p-1">Guardar</Button>
-                <Button onClick={() => setIsEditing(false)} className="p-1">Cancelar</Button>
+                <Button onClick={handleSave} className="p-1 pl-3 pr-3">Guardar</Button>
+                <Button onClick={() => setIsEditing(false)} className="p-1 pl-3 pr-3">Cancelar</Button>
               </div>
             ) : (
-              <Button onClick={() => setIsEditing(true)} className="p-1">Editar</Button>
+              <Button onClick={() => setIsEditing(true)} className="p-1 pl-3 pr-3">Editar</Button>
             )}
           </div>
         </div>
@@ -344,7 +365,7 @@ export default function PetDetails({token}: Props) {
                     <p className="text-base">{visita.descripcion}</p>
                     <p className="text-sm text-gray-600">{convertirFecha(visita.fecha)}</p>                    
                   </div>
-                  <p className="text-base text-left">{visita.costo} Gs</p>
+                  <p className="text-base text-left">{formatNumber(visita.costo)} Gs</p>
                 </li>
               ))}
             </ul>
