@@ -125,20 +125,19 @@ export default function PetDetails({token}: Props) {
   const [data, setData] = useState(null);
   const [pet, setPet] = useState<Pet | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isEditingName, setIsEditingName] = useState(false);
 
   const [editedPet, setEditedPet] = useState<EditablePet | null>(null);
 
   const visitasVisibles = showAll ? visitas : visitas.slice(0, 4);
   const visitasProgramadasVisibles = showAllProg ? visitasProgramadas : visitasProgramadas.slice(0, 4);
 
-  const [speciesList, setSpeciesList] = useState<Species[]>([]);
-  const [raceList, setRaceList] = useState<Race[]>([]);
-
   const headers = {
     "Authorization": `Bearer ${token}`,
     "Content-Type": "application/json",
   }
 
+  {/*
   useEffect(() => {
     // Cargar especies
     fetch("https://iiss2-backend-production.up.railway.app/species?page=1", { headers })
@@ -159,7 +158,7 @@ export default function PetDetails({token}: Props) {
         setRaceList(Array.isArray(data.data) ? data.data : [])
       }})
       .catch(error => console.error("Error cargando razas:", error));
-  }, [token]);
+  }, [token]);*/}
 
   useEffect(() => {
     if (pet) {
@@ -210,7 +209,7 @@ export default function PetDetails({token}: Props) {
       if (!prev) return prev;
       return{
         ...prev,
-        [name]: name === "weight" ? parseFloat(value) || 0 : value,
+        [name]: value,
       }
     });
   };
@@ -224,12 +223,7 @@ export default function PetDetails({token}: Props) {
 
     try {
       const updatedPet = {
-        name: editedPet.name,
-        dateOfBirth: new Date(editedPet.dateOfBirth).toISOString(),
-        weight: editedPet.weight || 0,
-        sex: editedPet.sex,
-        raceId: editedPet.raceId,
-        speciesId: editedPet.speciesId,     
+        name: editedPet.name,   
       }
 
       const response = await fetch(`https://iiss2-backend-production.up.railway.app/pet/${pet?.id}`, {
@@ -248,6 +242,7 @@ export default function PetDetails({token}: Props) {
       const updatedData = await response.json();
       setPet(updatedData);
       setIsEditing(false);
+      setIsEditingName(false);
     } catch (error) {
       console.error("Error al actualizar los datos de la mascota", error);
     }
@@ -280,6 +275,7 @@ export default function PetDetails({token}: Props) {
             </div>
           </div>
 
+          {/*
           <div className="flex-col justify-start text-white text-xs">
             {[
               { label: "Nombre", name: "name" },
@@ -351,6 +347,53 @@ export default function PetDetails({token}: Props) {
               <Button onClick={() => setIsEditing(true)} className="p-1 pl-3 pr-3">Editar</Button>
             )}
           </div>
+          */}
+
+          <div className="flex-col justify-start text-white text-xs">
+            {[
+              { label: "Nombre", name: "name" },
+              { label: "Fecha de Nacimiento", name: "dateOfBirth" },
+              { label: "Peso", name: "weight" },
+              { label: "Raza", name: "race" },
+              { label: "Especie", name: "species" },
+              { label: "Género", name: "sex" },
+            ].map(({ label, name }) => (
+              <div key={name} className="p-1 pb-3">
+                <p>{label}</p>
+                {isEditingName && name === "name" ? (
+                  <input
+                    type="text"
+                    name={name}
+                    value={editedPet ? editedPet[name as keyof EditablePet] : ""}
+                    onChange={handleChange}
+                    className="text-black w-full border border-gray-300 rounded p-1"
+                  />
+                ) : (
+                  <p className="text-xl">
+                    {name === "dateOfBirth"
+                      ? convertirFecha(pet.dateOfBirth)
+                      : name === "race"
+                      ? pet.race?.name
+                      : name === "species"
+                      ? pet.species?.name
+                      : name === "weight"
+                      ? `${pet.weight} kg`
+                      : String(pet[name as keyof Pet])}
+                  </p>
+                )}
+              </div>
+            ))}
+            {isEditingName ? (
+              <div className="flex gap-2">
+                <Button onClick={handleSave} className="p-1 pl-3 pr-3">Guardar</Button>
+                <Button onClick={() => setIsEditingName(false)} className="p-1 pl-3 pr-3">Cancelar</Button>
+              </div>
+            ) : (
+              <Button onClick={() => setIsEditingName(true)} className="p-1 pl-3 pr-3">Editar</Button>
+            )}
+          </div>
+
+
         </div>
       ) : (<p className="text-center text-gray-600">Cargando mascota...</p>)}
 

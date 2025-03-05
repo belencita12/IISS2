@@ -8,7 +8,10 @@ export default async function Page() {
   if(session){
     const token = session?.user.token;
     console.log(token);
-    return  <PetDetails token={token} />
+
+    return <div>
+      <PetDetails token={token} />
+    </div>
   }
   return;
 }
