@@ -15,6 +15,8 @@ interface IFormData {
     confirmPassword: string
 }
 
+const HARDCODED_LOGIN_URL = `${process.env.NEXT_PUBLIC_BASE_URL}`;
+
 export default function RegisterForm() {
     const [formData, setFormData] = useState<IFormData>({
         name: "",
@@ -54,7 +56,7 @@ export default function RegisterForm() {
         }
 
         try {
-            const response = await fetch(`https://iiss2-backend-production.up.railway.app/api/auth/signup`, {
+            const response = await fetch(`${HARDCODED_LOGIN_URL}/auth/signup`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

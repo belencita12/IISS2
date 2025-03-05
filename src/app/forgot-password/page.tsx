@@ -14,6 +14,7 @@ interface IFormState {
     isError: boolean
 }
 
+const HARDCODED_LOGIN_URL = `${process.env.NEXT_PUBLIC_BASE_URL}`;
 export default function PasswordRecoveryForm() {
     const [formState, setFormState] = useState<IFormState>({
         email: "",
@@ -21,13 +22,12 @@ export default function PasswordRecoveryForm() {
         message: "",
         isError: false,
     })
-
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         setFormState((prev) => ({ ...prev, isLoading: true, message: "", isError: false }))
 
         try {
-            const response = await fetch("https://actual-maribeth-fiuni-9898c42e.koyeb.app/auth/token/reset-password", {
+            const response = await fetch(`${HARDCODED_LOGIN_URL}/auth/token/reset-password`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email: formState.email }),
