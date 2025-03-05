@@ -34,7 +34,7 @@ export default function LoginForm() {
         if (res?.error) {
             setError("Credenciales incorrectas. Inténtalo de nuevo.");
         } else {
-            router.push("/dashboard");
+            router.push("/user-profile");
         }
     };
 
