@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
@@ -9,11 +9,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { PetData, Race, Species } from '@/lib/pets/IPet';
-import { getRacesAndSpecies } from '@/lib/pets/getRacesAndSpecies';
+import { getRacesBySpecies, getSpecies } from '@/lib/pets/getRacesAndSpecies';
 import { registerPet } from '@/lib/pets/registerPet';
-
+import { useRouter } from 'next/navigation';
 
 const petFormSchema = z.object({
     petName: z.string().min(1, 'El nombre es obligatorio'),
@@ -26,8 +25,6 @@ const petFormSchema = z.object({
             message: 'El peso debe ser un número válido mayor a 0',
         })
         .transform((val) => parseFloat(String(val))),
-
-
     imageFile: z.any().optional(),
 });
 
@@ -36,13 +33,20 @@ interface PetFormProps {
     userId?: number;
     token?: string;
 }
+
 export default function PetForm({ userId, token }: PetFormProps) {
-    const [races, setRaces] = useState<Race[]>([]);
     const [species, setSpecies] = useState<Species[]>([]);
+    const [races, setRaces] = useState<Race[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const router = useRouter();
 
-
-    const form = useForm<PetFormValues>({
+    const {
+        register,
+        handleSubmit,
+        watch,
+        setValue,
+        formState: { errors },
+    } = useForm<PetFormValues>({
         resolver: zodResolver(petFormSchema),
         defaultValues: {
             petName: '',
@@ -55,32 +59,40 @@ export default function PetForm({ userId, token }: PetFormProps) {
         },
     });
 
-    // Obtener razas y especies al montar el componente
+    //Obtiene las especies
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchSpecies = async () => {
             if (!token) {
                 toast.error("No tienes permisos para ver esta información.");
                 return;
             }
 
             try {
-                console.log("📡 Haciendo llamada a la API...");
-                const { races, species } = await getRacesAndSpecies(token);
-                setRaces(races);
-                setSpecies(species);
-            }
-            catch {
-                toast.error("Hubo un error al registrar la mascota.");
+                const speciesData = await getSpecies(token);
+                setSpecies(speciesData);
+            } catch {
+                toast.error("Error al obtener las especies.");
             }
         };
 
-        fetchData();
+        fetchSpecies();
     }, [token]);
 
-    const imageFile = form.watch('imageFile');
+    //Obtiene las razas a partir de las especies
+    const handleSpeciesChange = async (speciesId: string) => {
+        setRaces([]);
 
-    const onSubmit: SubmitHandler<PetFormValues> = async (data) => {
+        if (!speciesId) return;
 
+        try {
+            const racesData = await getRacesBySpecies(parseInt(speciesId), token!);
+            setRaces(racesData);
+        } catch {
+            toast.error("Error al obtener las razas.");
+        }
+    };
+
+    const onSubmit = async (data: PetFormValues) => {
         if (!userId || !token) {
             toast.error("Debes estar autenticado para registrar una mascota.");
             return;
@@ -93,7 +105,7 @@ export default function PetForm({ userId, token }: PetFormProps) {
             raceId: parseInt(data.breed),
             weight: data.weight,
             sex: data.gender,
-            profileImg: imageFile || null,
+            profileImg: data.imageFile || null,
             dateOfBirth: new Date(data.birthDate).toISOString(),
         };
 
@@ -101,169 +113,162 @@ export default function PetForm({ userId, token }: PetFormProps) {
 
         try {
             await registerPet(petData, token);
-            toast.success("Mascota registrada con éxito!");
-            form.reset();
+            toast.success("Mascota registrada con éxito!", {
+                duration: 2000,
+                onAutoClose: () => {
+                    router.push('/user-profile');
+                }
+            });
         } catch {
             toast.error("Hubo un error al registrar la mascota.");
         } finally {
             setIsSubmitting(false);
         }
     };
+
     return (
         <div className="max-w-5xl mx-auto p-8">
             <div className="flex flex-col md:flex-row gap-16">
-                <div className=" flex flex-col items-center space-y-4 w-80">
+                <div className="flex flex-col items-center space-y-4 w-80">
                     <h1 className="text-3xl font-bold self-start">Registro de Mascota</h1>
                     <p className="text-gray-600 self-start">Ingresa los datos de la mascota</p>
 
                     <div className="w-full flex flex-col items-start">
                         <Label className="text-sm font-semibold">Imagen (Opcional)</Label>
-                        <Input className='mt-2'
+                        <Input
+                            id="pet-image-file"
+                            {...register('imageFile')}
+                            className='mt-2'
                             placeholder='Subir url imagen de la mascota'
                             type='text'
-                            {...form.register('imageFile')}
                         />
                     </div>
                 </div>
 
                 <div className="md:w-2/3 w-80">
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                            <FormField
-                                control={form.control}
-                                name="petName"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Nombre</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Ej. Luna" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
+                    <form
+                        id="petForm"
+                        onSubmit={handleSubmit(onSubmit)}
+                        className="space-y-4"
+                    >
+                        <div>
+                            <Label>Nombre</Label>
+                            <Input
+                                id="petName"
+                                {...register('petName')}
+                                placeholder="Ej. Luna"
                             />
+                            {errors.petName && <p className="text-red-500">{errors.petName.message}</p>}
+                        </div>
 
-                            <FormField
-                                control={form.control}
-                                name="birthDate"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Fecha de nacimiento</FormLabel>
-                                        <FormControl>
-                                            <Input type="date" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
+                        <div>
+                            <Label>Fecha de nacimiento</Label>
+                            <Input
+                                id="birthDate"
+                                type="date"
+                                {...register('birthDate')}
+                                max={new Date().toISOString().split("T")[0]}
                             />
+                            {errors.birthDate && <p className="text-red-500">{errors.birthDate.message}</p>}
+                        </div>
 
-                            <FormField
-                                control={form.control}
-                                name="breed"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Raza</FormLabel>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                            <FormControl>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Seleccionar" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                {races.map((race) => (
-                                                    <SelectItem key={race.id} value={race.id.toString()}>
-                                                        {race.name}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="animalType"
-                                render={({ field }) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel>Animal</FormLabel>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                            <FormControl>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Seleccionar" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                {species.map((specie) => (
-                                                    <SelectItem key={specie.id} value={specie.id.toString()}>
-                                                        {specie.name}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="weight"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Peso</FormLabel>
-                                        <FormControl>
-                                            <Input type="number" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="gender"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Género</FormLabel>
-                                        <div className="flex gap-4">
-                                            <FormControl>
-                                                <Button
-                                                    type="button"
-                                                    variant={field.value === "F" ? "default" : "outline"}
-                                                    onClick={() => field.onChange("F")}
-                                                >
-                                                    Hembra
-                                                </Button>
-                                            </FormControl>
-                                            <FormControl>
-                                                <Button
-                                                    type="button"
-                                                    variant={field.value === "M" ? "default" : "outline"}
-                                                    onClick={() => field.onChange("M")}
-                                                >
-                                                    Macho
-                                                </Button>
-                                            </FormControl>
-                                        </div>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                        <div>
+                            <Label>Animal</Label>
+                            <Select
+                                onValueChange={(value) => {
+                                    setValue('animalType', value);
+                                    handleSpeciesChange(value);
+                                }}
+                            >
+                                <SelectTrigger id="animalType">
+                                    <SelectValue placeholder="Seleccionar" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {species.map((specie) => (
+                                        <SelectItem
+                                            key={specie.id}
+                                            value={specie.id.toString()}
+                                        >
+                                            {specie.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            {errors.animalType && <p className="text-red-500">{errors.animalType.message}</p>}
+                        </div>
 
+                        <div>
+                            <Label>Raza</Label>
+                            <Select
+                                onValueChange={(value) => setValue('breed', value)}
+                            >
+                                <SelectTrigger id="breed">
+                                    <SelectValue placeholder={races.length > 0 ? "Seleccionar" : "Selecciona una especie primero"} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {races.map((race) => (
+                                        <SelectItem
+                                            key={race.id}
+                                            value={race.id.toString()}
+                                        >
+                                            {race.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            {errors.breed && <p className="text-red-500">{errors.breed.message}</p>}
+                        </div>
 
-                            <div className="flex justify-start gap-4 mt-8">
+                        <div>
+                            <Label>Peso (kg)</Label>
+                            <Input
+                                id="weight"
+                                type="number"
+                                {...register('weight')}
+                            />
+                            {errors.weight && <p className="text-red-500">{errors.weight.message}</p>}
+                        </div>
+
+                        <div>
+                            <Label>Género</Label>
+                            <div className="flex gap-4">
                                 <Button
+                                    id="genderFemale"
                                     type="button"
-                                    variant="outline"
-                                    onClick={() => form.reset()}
+                                    variant={watch('gender') === "F" ? "default" : "outline"}
+                                    onClick={() => setValue('gender', "F")}
                                 >
-                                    Cancelar
+                                    Hembra
                                 </Button>
-                                <Button type="submit" disabled={isSubmitting}>
-                                    {isSubmitting ? "Registrando..." : "Registrar Mascota"}
+                                <Button
+                                    id="genderMale"
+                                    type="button"
+                                    variant={watch('gender') === "M" ? "default" : "outline"}
+                                    onClick={() => setValue('gender', "M")}
+                                >
+                                    Macho
                                 </Button>
                             </div>
-                        </form>
-                    </Form>
+                            {errors.gender && <p className="text-red-500">{errors.gender.message}</p>}
+                        </div>
+
+                        <div className="flex justify-start gap-4 mt-8">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => router.push('/user-profile')}
+                            >
+                                Cancelar
+                            </Button>
+
+                            <Button
+                                type="submit"
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting ? "Registrando..." : "Registrar Mascota"}
+                            </Button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
