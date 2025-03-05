@@ -90,7 +90,7 @@ export const PetsList = ({ userId, token }: PetsListProps) => {
                     <Link href="/pet/register">Agregar Mascota</Link>
                 </Button>
                 <Button asChild className="border border-black">
-                    <Link href="/">Ver mi lista de mascotas</Link>
+                    <Link href="/list-pets">Ver mi lista de mascotas</Link>
                 </Button>
             </div>
 
