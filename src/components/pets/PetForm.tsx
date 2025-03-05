@@ -54,7 +54,6 @@ export default function PetForm({ userId, token }: PetFormProps) {
             breed: '',
             animalType: '',
             gender: '',
-            weight: 0,
             imageFile: ''
         },
     });
@@ -224,6 +223,7 @@ export default function PetForm({ userId, token }: PetFormProps) {
                             <Input
                                 id="weight"
                                 type="number"
+                                step={0.1}
                                 {...register('weight')}
                             />
                             {errors.weight && <p className="text-red-500">{errors.weight.message}</p>}
