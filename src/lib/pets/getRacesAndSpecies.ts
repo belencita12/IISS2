@@ -1,29 +1,33 @@
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-export const getRacesAndSpecies = async (token: string) => {
+export const getSpecies = async (token: string) => {
     try {
-        const [racesResponse, speciesResponse] = await Promise.all([
-            fetch(`${BASE_URL}/race?page=1`, {
-                headers: { Authorization: `Bearer ${token}` },
-            }),
-            fetch(`${BASE_URL}/species?page=1`, {
-                headers: { Authorization: `Bearer ${token}` },
-            }),
-        ]);
+        const response = await fetch(`${BASE_URL}/species?page=1`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
 
-        if (!racesResponse.ok || !speciesResponse.ok) throw new Error("Error al obtener datos");
+        if (!response.ok) throw new Error("Error al obtener especies");
 
-        const [racesData, speciesData] = await Promise.all([
-            racesResponse.json(),
-            speciesResponse.json(),
-        ]);
-
-        return {
-            races: racesData?.data || [],
-            species: speciesData?.data || [],
-        };
+        const data = await response.json();
+        return data?.data || [];
     } catch (error) {
-        console.error("Error en getRacesAndSpecies:", error);
+        console.error("Error en getSpecies:", error);
+        throw error;
+    }
+};
+
+export const getRacesBySpecies = async (speciesId: number, token: string) => {
+    try {
+        const response = await fetch(`${BASE_URL}/race?page=1&speciesId=${speciesId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!response.ok) throw new Error("Error al obtener razas");
+
+        const data = await response.json();
+        return data?.data || [];
+    } catch (error) {
+        console.error("Error en getRacesBySpecies:", error);
         throw error;
     }
 };
