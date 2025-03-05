@@ -15,6 +15,8 @@ interface IFormData {
     confirmPassword: string
 }
 
+const HARDCODED_LOGIN_URL = `${process.env.NEXT_PUBLIC_BASE_URL}`;
+
 export default function RegisterForm() {
     const [formData, setFormData] = useState<IFormData>({
         name: "",
@@ -48,8 +50,13 @@ export default function RegisterForm() {
             return;
         }
 
+        if (formData.password.length < 8) {
+            setError("La contraseña debe tener al menos 8 caracteres.");
+            return;
+        }
+
         try {
-            const response = await fetch(`https://actual-maribeth-fiuni-9898c42e.koyeb.app/auth/signup`, {
+            const response = await fetch(`${HARDCODED_LOGIN_URL}/auth/signup`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
