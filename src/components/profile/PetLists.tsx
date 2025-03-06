@@ -103,7 +103,7 @@ export const PetsList = ({ userId, token }: PetsListProps) => {
                 <div className="mt-8 w-full max-w-[57rem]">
                     <div className="flex flex-wrap justify-center gap-6">
                                 {pets.map((pet, index) => (
-                                    <Link key={index} href={`/detalles-mascota/${pet.id}`} className="text-center w-48 flex-shrink-0 cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition">
+                                    <Link key={index} href={`/detalle-mascota/${pet.id}`} className="text-center w-48 flex-shrink-0 cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition">
                                         <Avatar className="w-24 h-24 mx-auto bg-gray-200 flex items-center justify-center text-xl font-bold text-gray-700">
                                             {pet.profileImg ? (
                                                 <Image
