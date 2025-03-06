@@ -3,11 +3,11 @@ describe("Registro de usuario", () => {
     validUser: {
       name: "Lourdes",
       lastname: "Valenzuela",
-      email: "test1@gmail.com",
+      email: "test@gmail.com",
       password: "lourdes123",
       confirmPassword: "lourdes123"
     },
-    existingEmail: "test1@gmail.com"
+    existingEmail: "test@gmail.com"
   };
 
   const selectors = {
