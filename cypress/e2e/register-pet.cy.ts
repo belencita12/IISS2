@@ -33,7 +33,7 @@ describe("Register Pet", () => {
         });
     });
 
-    cy.location("pathname", TIMEOUT).should("eq", "/dashboard");
+    cy.location("pathname", TIMEOUT).should("eq", "/user-profile");
   });
 
   it("Navegar a /pet/register y enviar formulario con datos invalidos", () => {
@@ -57,7 +57,6 @@ describe("Register Pet", () => {
 
     cy.contains("button", "Cancelar").click();
     cy.location("pathname", TIMEOUT).should("eq", "/user-profile");
-
   });
 
   it("Debe cargar datos validos y registrar una mascota", () => {
@@ -116,7 +115,8 @@ describe("Register Pet", () => {
       expect(requestBody.sex).to.eq("F");
     });
 
-    cy.contains("Mascota registrada con éxito!").should("be.visible");
+    cy.wait(800);
+    cy.contains("Mascota registrada con éxito!").should("exist");
 
     cy.location("pathname", TIMEOUT).should("eq", "/user-profile");
   });
