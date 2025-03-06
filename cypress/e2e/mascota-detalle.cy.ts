@@ -129,7 +129,13 @@ describe("Register Pet", () => {
     cy.contains("p", "F").should("be.visible");
     cy.contains("button", "Editar").click();
 
-    cy.get("input[name='name']", TIMEOUT).clear().type("EditedName");
+    cy.get("input[name='name']").clear();
+    cy.contains("button", "Guardar").click();
+    cy.contains("p", "El nombre no puede estar vacío.", TIMEOUT).should(
+      "be.visible"
+    );
+
+    cy.get("input[name='name']", TIMEOUT).type("EditedName");
     cy.contains("button", "Guardar").click();
 
     cy.contains("p", "EditedName", TIMEOUT).should("be.visible");
