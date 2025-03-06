@@ -417,7 +417,7 @@ export default function PetDetails({ token }: Props) {
                       <Button
                         onClick={handleSave}
                         disabled={isSaving}
-                        className={`px-4 py-2 bg-blue-500 text-white rounded ${isSaving ? "opacity-50 cursor-not-allowed" : ""}`}
+                        className={`p-1 pl-3 pr-3 ${isSaving ? " cursor-not-allowed" : ""}`}
                       >
                         {isSaving ? "Guardando..." : "Guardar"}
                       </Button>
