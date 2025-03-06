@@ -26,39 +26,37 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 //
 
-Cypress.Commands.add("loginAndSetSession", (key: string): void => {
-  const userCredentials = {
-    email: Cypress.env("USER_EMAIL") as string,
-    password: Cypress.env("USER_PASSWORD") as string,
-  };
+Cypress.Commands.add(
+  "loginAndSetSession",
+  (key: string, email: string, password: string): void => {
+    cy.intercept("POST", "/api/auth/callback/credentials").as("login");
 
-  cy.intercept("POST", "/api/auth/callback/credentials").as("login");
+    cy.visit("/login");
+    cy.url().should("include", "/login");
 
-  cy.visit("/login");
-  cy.url().should("include", "/login");
+    cy.get("input[name='email']").type(email, { log: false });
+    cy.get("input[name='password']").type(password, {
+      log: false,
+    });
+    cy.contains("Iniciar Sesión").click();
 
-  cy.get("input[name='email']").type(userCredentials.email, { log: false });
-  cy.get("input[name='password']").type(userCredentials.password, {
-    log: false,
-  });
-  cy.contains("Iniciar Sesión").click();
+    cy.wait("@login").then((interception) => {
+      if (interception.response?.statusCode === 200) {
+        cy.getCookie("next-auth.session-token")
+          .should("exist")
+          .then((cookie) => {
+            if (cookie) Cypress.env(key, cookie.value);
+          });
+      }
+    });
 
-  cy.wait("@login").then((interception) => {
-    if (interception.response?.statusCode === 200) {
-      cy.getCookie("next-auth.session-token")
-        .should("exist")
-        .then((cookie) => {
-          if (cookie) Cypress.env(key, cookie.value);
-        });
-    }
-  });
-
-  cy.location("pathname").should("eq", "/user-profile");
-});
+    cy.location("pathname").should("eq", "/user-profile");
+  }
+);
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace Cypress {
   interface Chainable {
-    loginAndSetSession(key: string): void;
+    loginAndSetSession(key: string, email: string, password: string): void;
   }
 }
