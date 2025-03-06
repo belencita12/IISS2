@@ -130,6 +130,8 @@ export default function PetDetails({ token }: Props) {
   const [pet, setPet] = useState<Pet | null | undefined>(undefined);
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingName, setIsEditingName] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [editedPet, setEditedPet] = useState<EditablePet | null>(null);
 
@@ -216,6 +218,7 @@ export default function PetDetails({ token }: Props) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
+
     setEditedPet((prev) => {
       if (!prev) return prev;
       return {
@@ -227,38 +230,40 @@ export default function PetDetails({ token }: Props) {
 
 
   const handleSave = async () => {
-    if (!editedPet || !pet) {
-      console.error("Error: EditedPet o pet es null");
+    if (!editedPet || !pet || !editedPet.name.trim()) {
+      setError("El nombre no puede estar vacío.");
       return;
     }
 
+    setIsSaving(true);
+    setError(null); 
     try {
-      const updatedPet = {
-        name: editedPet.name,
-      }
-
-      const response = await fetch(`https://iiss2-backend-production.up.railway.app/pet/${pet?.id}`, {
+      const response = await fetch(`https://iiss2-backend-production.up.railway.app/pet/${pet.id}`, {
         method: "PATCH",
         headers: {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(updatedPet),
+        body: JSON.stringify({ name: editedPet.name }),
       });
-
+  
       if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
+        throw new Error(`Error ${response.status}: No se pudo actualizar`);
       }
-
-      const updatedData = await response.json();
-      setPet(updatedData);
-      setIsEditing(false);
+  
+      const updatedPet = await response.json();
+      if (!updatedPet || !updatedPet.id) {
+        throw new Error("Respuesta inválida de la API");
+      }
+  
+      setPet(updatedPet);
       setIsEditingName(false);
-    } catch (error) {
-      console.error("Error al actualizar los datos de la mascota", error);
+    } catch (error: any) {
+      setError(error.message || "Error desconocido al actualizar la mascota");
+    } finally {
+      setIsSaving(false);
     }
   };
-
 
   return (
     <div className="flex-col">
@@ -380,6 +385,7 @@ export default function PetDetails({ token }: Props) {
               <div key={name} className="p-1 pb-3">
                 <p>{label}</p>
                 {isEditingName && name === "name" ? (
+                  <>
                   <input
                     type="text"
                     name={name}
@@ -387,6 +393,10 @@ export default function PetDetails({ token }: Props) {
                     onChange={handleChange}
                     className="text-black w-full border border-gray-300 rounded p-1"
                   />
+                  {error && name === "name" && (
+                    <p className="text-red-500 text-sm mt-1">{error}</p>
+                  )}
+                  </>
                 ) : (
                   <p className="text-xl">
                     {name === "dateOfBirth"
@@ -404,7 +414,14 @@ export default function PetDetails({ token }: Props) {
             ))}
             {isEditingName ? (
               <div className="flex gap-2">
-                <Button onClick={handleSave} className="p-1 pl-3 pr-3">Guardar</Button>
+                      <Button
+                        onClick={handleSave}
+                        disabled={isSaving}
+                        className={`px-4 py-2 bg-blue-500 text-white rounded ${isSaving ? "opacity-50 cursor-not-allowed" : ""}`}
+                      >
+                        {isSaving ? "Guardando..." : "Guardar"}
+                      </Button>
+
                 <Button onClick={() => setIsEditingName(false)} className="p-1 pl-3 pr-3">Cancelar</Button>
               </div>
             ) : (
