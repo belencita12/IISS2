@@ -265,7 +265,10 @@ export default function PetDetails({ token }: Props) {
       {pet === undefined ? (
         <p className="text-center text-gray-600">Cargando mascota...</p>
       ) : pet === null ? (
-        <p className="text-center mt-4 p-10">Mascota no registrada.</p>
+          <>
+            <p className="text-center mt-4 p-10">Mascota no registrada.</p>
+            <p className="text-center">Error 404</p>
+          </>
       ) : (
         <>
         <div className="flex justify-center bg-gray-500 p-5">
