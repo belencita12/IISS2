@@ -15,6 +15,7 @@ export default function NavbarSkeleton() {
           <Skeleton className="h-4 w-20" />
           <Skeleton className="h-4 w-14" />
           <Skeleton className="h-4 w-18" />
+          <Skeleton className="h-4 w-14" />
         </div>
 
         {/* Mobile Menu Button Skeleton */}
