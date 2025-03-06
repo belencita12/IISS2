@@ -54,6 +54,16 @@ export default function PasswordResetForm() {
       return;
     }
 
+    if (formState.password.length < 8) {
+      setFormState((prev) => ({
+        ...prev,
+        isLoading: false,
+        message: "La contraseña debe tener al menos 8 caracteres",
+        isError: true,
+      }));
+      return;
+    }
+
     setFormState((prev) => ({
       ...prev,
       isLoading: true,
