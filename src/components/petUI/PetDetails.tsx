@@ -258,8 +258,13 @@ export default function PetDetails({ token }: Props) {
   
       setPet(updatedPet);
       setIsEditingName(false);
-    } catch (error: any) {
-      setError(error.message || "Error desconocido al actualizar la mascota");
+    }catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      }
+      else {
+        setError("Error al guardar los cambios");
+      }
     } finally {
       setIsSaving(false);
     }
