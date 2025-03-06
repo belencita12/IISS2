@@ -1,5 +1,6 @@
 
 export interface PetData {
+    id?:number
     name: string;
     userId: number;
     speciesId: number;
