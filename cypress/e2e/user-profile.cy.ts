@@ -7,8 +7,8 @@ describe('Perfil de Usuario', () => {
     
     cy.log('Iniciando sesión con un usuario válido');
     cy.visit('/login');  
-    cy.get('input[name="email"]').type('test1@gmail.com'); 
-    cy.get('input[name="password"]').type('lourdes123');  
+    cy.get('input[name="email"]').type('tester@gmail.com'); 
+    cy.get('input[name="password"]').type('test12345');  
     cy.get('button[type="submit"]').click();  
     
     cy.log('Esperando la respuesta de perfil y mascotas');
@@ -17,7 +17,7 @@ describe('Perfil de Usuario', () => {
     cy.wait(10000);
   
     cy.log('Verificando que la información del perfil y las mascotas se muestre correctamente');
-    cy.get('h2.text-xl.font-bold.mt-2', waitOptions).should('contain.text', 'Lourdes Valenzuela');  
+    cy.get('h2.text-xl.font-bold.mt-2', waitOptions).should('contain.text', 'Tester Tester');  
     cy.contains('Tus Mascotas Registradas', waitOptions).should('be.visible');  
     cy.url(waitOptions).should('include', '/user-profile');  
 

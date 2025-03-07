@@ -16,8 +16,8 @@ describe("Navbar", () => {
   
     it("Navegar por los enlaces del navbar cuando estás autenticado y cerrar sesión", () => {
       cy.visit("/login");
-      cy.get("input[name='email']").type("test1@gmail.com");
-      cy.get("input[name='password']").type("lourdes123");
+      cy.get("input[name='email']").type("tester@gmail.com");
+      cy.get("input[name='password']").type("test12345");
       cy.get("button[type='submit']").click();
       cy.wait(3000);
   

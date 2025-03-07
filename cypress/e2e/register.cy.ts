@@ -1,13 +1,13 @@
 describe("Registro de usuario", () => {
   const testData = {
     validUser: {
-      name: "Lourdes",
-      lastname: "Valenzuela",
-      email: "test@gmail.com",
-      password: "lourdes123",
-      confirmPassword: "lourdes123"
+      name: "Tester",
+      lastname: "Tester",
+      email: "tester@gmail.com",
+      password: "test12345",
+      confirmPassword: "test12345"
     },
-    existingEmail: "test@gmail.com"
+    existingEmail: "tester@gmail.com"
   };
 
   const selectors = {
