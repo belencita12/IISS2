@@ -3,8 +3,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ShoppingCart, Package } from "lucide-react";
-import env from '/lib/env';
-import urls from '/lib/urls';
+import urls from "@/lib/urls";
 
 const products = [
     {
