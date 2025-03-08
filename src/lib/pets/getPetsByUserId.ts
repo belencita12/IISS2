@@ -1,8 +1,9 @@
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+import env from "@/lib/env";
+import urls from "@/lib/urls";
 
 export const getPetsByUserId = async (userId: number, token: string) => {
     try {
-        const response = await fetch(`${BASE_URL}/pet?page=1&size=4&userId=${userId}`, {
+        const response = await fetch(`${env.BASE_URL}${urls.PETS}?page=1&size=4&userId=${userId}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
 

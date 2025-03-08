@@ -16,24 +16,21 @@ import {
   SettingsIcon,
   CircleHelpIcon,
 } from "lucide-react";
+import urls from "@/lib/urls"; 
 
 const linksUser = [
-  { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
-  { name: "Citas", href: "/dashboard/citas", icon: UserIcon },
-  { name: "Productos", href: "/dashboard/productos", icon: BoneIcon },
-  { name: "Vacunas", href: "/dashboard/vacunas", icon: SyringeIcon },
-  { name: "Depositos", href: "/dashboard/depositos", icon: StoreIcon },
-  { name: "Movimientos", href: "/dashboard/movimientos", icon: BoxIcon },
-  { name: "Compras", href: "/dashboard/compras", icon: CircleDollarSignIcon },
-  { name: "Crear Venta", href: "/dashboard/ventas", icon: HandCoinsIcon },
-  { name: "Empleados", href: "/dashboard/empleados", icon: BookUserIcon },
-  { name: "Facturas", href: "/dashboard/facturas", icon: FileIcon },
-  {
-    name: "Configuración",
-    href: "/dashboard/configuración",
-    icon: SettingsIcon,
-  },
-  { name: "Ayuda", href: "/dashboard/ayuda", icon: CircleHelpIcon },
+{ name: "Dashboard", href: urls.DASHBOARD, icon: HomeIcon },
+{ name: "Citas", href: urls.DASHBOARD_CITAS, icon: UserIcon },
+{ name: "Productos", href: urls.DASHBOARD_PRODUCTOS, icon: BoneIcon },
+{ name: "Vacunas", href: urls.DASHBOARD_VACUNAS, icon: SyringeIcon },
+{ name: "Depositos", href: urls.DASHBOARD_DEPOSITOS, icon: StoreIcon },
+{ name: "Movimientos", href: urls.DASHBOARD_MOVIMIENTOS, icon: BoxIcon },
+{ name: "Compras", href: urls.DASHBOARD_COMPRAS, icon: CircleDollarSignIcon },
+{ name: "Crear Venta", href: urls.DASHBOARD_VENTAS, icon: HandCoinsIcon },
+{ name: "Empleados", href: urls.DASHBOARD_EMPLEADOS, icon: BookUserIcon },
+{ name: "Facturas", href: urls.DASHBOARD_FACTURAS, icon: FileIcon },
+{ name: "Configuración", href: urls.DASHBOARD_CONFIGURACION, icon: SettingsIcon },
+{ name: "Ayuda", href: urls.DASHBOARD_AYUDA, icon: CircleHelpIcon },
 ];
 
 export default function NavLinks() {
@@ -43,7 +40,7 @@ export default function NavLinks() {
     <>
       {linksUser.map((link) => {
         const LinkIcon = link.icon;
-        const isActive = pathname === link.href; // Verifica si la ruta actual coincide
+        const isActive = pathname === link.href; 
 
         return (
           <Link

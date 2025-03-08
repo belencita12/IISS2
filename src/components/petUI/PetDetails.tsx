@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, Weight } from "lucide-react";
 import { useParams } from "next/navigation";
+import env from "@/lib/env";
+import urls from "@/lib/urls";
 
 
 interface Pet {
@@ -194,7 +196,7 @@ export default function PetDetails({ token }: Props) {
 
   useEffect(() => {
     setPet(undefined);
-    fetch(`https://iiss2-backend-production.up.railway.app/pet/${id}`, {
+    fetch(`${env.BASE_URL}${urls.PETS}/${id}`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token}`,
@@ -238,7 +240,7 @@ export default function PetDetails({ token }: Props) {
     setIsSaving(true);
     setError(null); 
     try {
-      const response = await fetch(`https://iiss2-backend-production.up.railway.app/pet/${pet.id}`, {
+      const response = await fetch(`${env.BASE_URL}${urls.PETS}/${pet.id}`, {
         method: "PATCH",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -246,7 +248,6 @@ export default function PetDetails({ token }: Props) {
         },
         body: JSON.stringify({ name: editedPet.name }),
       });
-  
       if (!response.ok) {
         throw new Error(`Error ${response.status}: No se pudo actualizar`);
       }

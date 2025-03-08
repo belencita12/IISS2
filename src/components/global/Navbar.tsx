@@ -9,6 +9,8 @@ import LogoutButton from "./LogoutButton";
 import { SessionProvider, useSession } from "next-auth/react";
 import NavbarSkeleton from "../skeleton/NavbarSkeleton";
 import { link } from "fs";
+import urls from "@/lib/urls"; 
+
 type NavbarProps = {
   links: { label: string; href: string }[];
   isLogged? : boolean;
@@ -51,11 +53,7 @@ export function Navbar({ links }: NavbarProps) {
           {
             isAuthenticated && (
               <> 
-              <Link
-              key="user-profile"
-              href="/user-profile"
-              className="hover:text-[#258084] transition-colors duration-200"
-            >Mi Perfil</Link>
+              <Link key="user-profile" href={urls.USER_PROFILE} className="hover:text-[#258084] transition-colors duration-200">Mi Perfil</Link>
                 <LogoutButton />
               </>
             )
@@ -88,11 +86,7 @@ export function Navbar({ links }: NavbarProps) {
           {
             isAuthenticated && (
               <> 
-              <Link
-              key="user-profile"
-              href="/user-profile"
-              className="hover:text-[#258084] transition-colors duration-200"
-            >Mi Perfil</Link>
+              <Link key="user-profile" href={urls.USER_PROFILE} className="hover:text-[#258084] transition-colors duration-200"> Mi Perfil </Link>
                 <LogoutButton />
               </>
             )

@@ -2,6 +2,8 @@
 import { PowerIcon, LogOutIcon } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import urls from "@/lib/urls"; 
+
 export default function SignOutButton() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,8 +20,9 @@ export default function SignOutButton() {
     e.preventDefault();
     setLoading(true);
     await logout();
-    router.push("/login");
+    router.push(urls.AUTH_LOGIN); 
   };
+
   return (
     <button
       onClick={handleLogout}

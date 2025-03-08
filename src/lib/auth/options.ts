@@ -2,8 +2,10 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import { NextAuthOptions } from "next-auth";
 import { SigninResponse } from "./signin-response.type";
+import env from "@/lib/env";
+import urls from "@/lib/urls";
 
-const HARDCODED_LOGIN_URL = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/signin`;
+const HARDCODED_LOGIN_URL = `${env.BASE_URL}${urls.AUTH_SIGNIN}`;
 
 const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,

@@ -3,6 +3,8 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ShoppingCart, Package } from "lucide-react";
+import env from '/lib/env';
+import urls from '/lib/urls';
 
 const products = [
     {
@@ -32,7 +34,7 @@ export const VeterinaryProducts = () => {
                 <h2 className="text-3xl font-bold">Productos Veterinarios</h2>
                 <p className="text-gray-600 mt-2">Explora los productos disponibles</p>
                 <Button asChild className="mt-2">
-                    <Link href="/">Ver más</Link>
+                    <Link href={urls.TIENDA}>Ver más</Link>
                 </Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
@@ -60,4 +62,3 @@ export const VeterinaryProducts = () => {
         </section>
     );
 };
-

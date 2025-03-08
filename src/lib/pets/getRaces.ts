@@ -1,8 +1,9 @@
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+import env from "@/lib/env";
+import urls from "@/lib/urls";
 
 export const getRaces = async (token: string) => {
     try {
-        const response = await fetch(`${BASE_URL}/race?page=1`, {
+        const response = await fetch(`${env.BASE_URL}${urls.RACES}?page=1`, {
             headers: { Authorization: `Bearer ${token}` },
         });
 

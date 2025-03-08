@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Grid, List } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '../ui/pagination';
+import env from '@/lib/env';
+import urls from '@/lib/urls';
 
 interface IPet {
     id: number
@@ -21,7 +23,6 @@ interface IPet {
 }
 
 const IMAGE_NOT_FOUND = "/imagen-mascota/default.jpg" 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
 
 // Muestra una vista en forma de Cards
 const GridView = ({ pets }: { pets: IPet[] }) => (
@@ -79,7 +80,7 @@ const PetList = ({ userId, token }: { userId: number, token: string }) => {
         const fetchPets = async () => {
             setLoading(true);
             try {
-                const response = await fetch(`${BASE_URL}/pet?page=${currentPage}&userId=${userId}`, {
+              const response = await fetch(`${env.BASE_URL}${urls.PETS}?page=${currentPage}&userId=${userId}`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,

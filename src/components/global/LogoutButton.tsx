@@ -3,13 +3,15 @@
 import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
 import { useState } from "react";
+import urls from "@/lib/urls";
+
 
 export default function LogoutButton() {
   const [loading, setLoading] = useState(false);
 
   const handleLogout = async () => {
     setLoading(true);
-    await signOut({ callbackUrl: "/login" });
+    await signOut({ callbackUrl: urls. AUTH_LOGIN });
   };
 
   return (
