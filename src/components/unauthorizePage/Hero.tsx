@@ -1,14 +1,18 @@
+
+
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export default function Hero() {
+  
   return (
     <section className="flex flex-col sm:flex-row items-center justify-around py-10 sm:align-middle space-y-6 sm:space-y-0 w-full">
       <div className="text-center sm:mr-8 mb-6 sm:mb-0 w-full">
         <h2 className="text-3xl font-bold mb-4">
           ¡Bienvenido a nuestra plataforma!
         </h2>
+        
         <p className="text-gray-600 mb-6">
           Regístrate con nosotros y accede a una amplia gama de servicios para
           tu mascota.
@@ -32,6 +36,7 @@ export default function Hero() {
         alt="Logo1"
         width={300}
         height={300}
+        style={{ width: 'auto', height: 'auto' }} 
         className="object-contain mt-6 sm:mt-0"
       />
     </section>

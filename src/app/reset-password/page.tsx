@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -13,11 +13,10 @@ interface IFormState {
   message: string;
   isError: boolean;
 }
-
+const HARDCODED_LOGIN_URL = `${process.env.NEXT_PUBLIC_BASE_URL}`;
 export default function PasswordResetForm() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const token = searchParams.get("token");
+  const [token, setToken] = useState<string | null>(null);
 
   const [formState, setFormState] = useState<IFormState>({
     password: "",
@@ -28,9 +27,10 @@ export default function PasswordResetForm() {
   });
 
   useEffect(() => {
-    if (!token) {
-      router.push("/");
-    }
+    const searchParams = new URLSearchParams(window.location.search);
+    const newToken = searchParams.get("token");
+    if (!newToken) router.push("/");
+    setToken(newToken);
   }, [token, router]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -54,6 +54,16 @@ export default function PasswordResetForm() {
       return;
     }
 
+    if (formState.password.length < 8) {
+      setFormState((prev) => ({
+        ...prev,
+        isLoading: false,
+        message: "La contraseña debe tener al menos 8 caracteres",
+        isError: true,
+      }));
+      return;
+    }
+
     setFormState((prev) => ({
       ...prev,
       isLoading: true,
@@ -63,7 +73,7 @@ export default function PasswordResetForm() {
 
     try {
       const response = await fetch(
-        `https://actual-maribeth-fiuni-9898c42e.koyeb.app/auth/reset-password?token=${token}`,
+        `${HARDCODED_LOGIN_URL}/auth/reset-password?token=${token}`,
         {
           method: "PUT",
           headers: {
