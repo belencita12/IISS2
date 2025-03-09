@@ -20,7 +20,7 @@ export default function SignOutButton() {
     e.preventDefault();
     setLoading(true);
     await logout();
-    router.push(urls.AUTH_LOGIN); 
+    router.push(urls.LOGIN); 
   };
 
   return (

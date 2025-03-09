@@ -5,10 +5,11 @@ import { SigninResponse } from "./signin-response.type";
 import env from "@/lib/env";
 import urls from "@/lib/urls";
 
-const HARDCODED_LOGIN_URL = `${env.BASE_URL}${urls.AUTH_SIGNIN}`;
+
+const LOGIN_URL = `${env.BASE_URL}${urls.AUTH_SIGNIN}`;
 
 const authOptions: NextAuthOptions = {
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -28,7 +29,7 @@ const authOptions: NextAuthOptions = {
           throw new Error("Username and password are required");
         }
 
-        const response = await fetch(HARDCODED_LOGIN_URL, {
+        const response = await fetch(LOGIN_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -41,7 +42,7 @@ const authOptions: NextAuthOptions = {
           throw new Error("Username or password is incorrect");
         }
 
-        const user = await response.json() as SigninResponse;
+        const user = (await response.json()) as SigninResponse;
         if (!user) {
           throw new Error("Username or password is incorrect");
         }
@@ -79,9 +80,9 @@ const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: "/auth/login",
-    signOut: "/",
-    error: "/auth/login",
+    signIn: urls.LOGIN,         
+    signOut: "/",              
+    error: urls.AUTH_ERROR,     
   },
 };
 

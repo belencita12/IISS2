@@ -11,7 +11,7 @@ export default function LogoutButton() {
 
   const handleLogout = async () => {
     setLoading(true);
-    await signOut({ callbackUrl: urls. AUTH_LOGIN });
+    await signOut({ callbackUrl: urls.LOGIN });
   };
 
   return (
