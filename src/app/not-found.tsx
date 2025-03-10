@@ -1,6 +1,6 @@
-import Link from 'next/link'; 
-import { headers } from 'next/headers'; 
-import { AlertTriangle } from 'lucide-react'; 
+import Link from 'next/link';
+import { headers } from 'next/headers';
+import { AlertTriangle } from 'lucide-react';
 
 async function getSiteData() {
   const headersList = await headers();
