@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { toast } from 'sonner';
+import { toast } from '@/lib/toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -39,7 +39,6 @@ export default function PetForm({ userId, token }: PetFormProps) {
     const [races, setRaces] = useState<Race[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const router = useRouter();
-
     const {
         register,
         handleSubmit,
@@ -62,15 +61,16 @@ export default function PetForm({ userId, token }: PetFormProps) {
     useEffect(() => {
         const fetchSpecies = async () => {
             if (!token) {
-                toast.error("No tienes permisos para ver esta información.");
+                toast("error","No tienes permisos para ver esta información.");
                 return;
             }
 
             try {
                 const speciesData = await getSpecies(token);
                 setSpecies(speciesData);
+                toast("info","Obteniendo especies");
             } catch {
-                toast.error("Error al obtener las especies.");
+                toast("error","Error al obtener las especies.");
             }
         };
 
@@ -87,13 +87,13 @@ export default function PetForm({ userId, token }: PetFormProps) {
             const racesData = await getRacesBySpecies(parseInt(speciesId), token!);
             setRaces(racesData);
         } catch {
-            toast.error("Error al obtener las razas.");
+            toast("error","Error al obtener las razas.");
         }
     };
 
     const onSubmit = async (data: PetFormValues) => {
         if (!userId || !token) {
-            toast.error("Debes estar autenticado para registrar una mascota.");
+            toast("error","Debes estar autenticado para registrar una mascota.");
             return;
         }
 
@@ -112,14 +112,13 @@ export default function PetForm({ userId, token }: PetFormProps) {
 
         try {
             await registerPet(petData, token);
-            toast.success("Mascota registrada con éxito!", {
-                duration: 2000,
+            toast('success', "¡Mascota registrada con éxito!", {
                 onAutoClose: () => {
-                    router.push('/user-profile');
+                  router.push('/user-profile');
                 }
-            });
+              });
         } catch {
-            toast.error("Hubo un error al registrar la mascota.");
+            toast('error', "Ocurrió un error al registrar la mascota.");
         } finally {
             setIsSubmitting(false);
         }
