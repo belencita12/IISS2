@@ -4,6 +4,7 @@ import "./globals.css";
 import { clientLinks } from "@/constants/navbar";
 import Footer from "@/components/global/Footer";
 import NavbarWrapped from "@/components/global/Navbar";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,6 +40,7 @@ export default function RootLayout({
         <NavbarWrapped links={clientLinks} />
         {children}
         <Footer />
+        <Toaster  theme="light"/>
       </body>
     </html>
   );

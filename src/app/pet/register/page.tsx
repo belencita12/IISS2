@@ -18,13 +18,6 @@ export default async function Home() {
     return (
         <div>
             <PetForm userId={userId} token={token} />
-            <Toaster
-                richColors
-                position="top-center"
-                toastOptions={{
-                    duration: 5000,
-                }}
-            />
         </div>
     );
 }
