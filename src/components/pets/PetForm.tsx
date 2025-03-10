@@ -61,16 +61,15 @@ export default function PetForm({ userId, token }: PetFormProps) {
     useEffect(() => {
         const fetchSpecies = async () => {
             if (!token) {
-                toast("error","No tienes permisos para ver esta información.");
+                toast("error", "No tienes permisos para ver esta información.");
                 return;
             }
 
             try {
                 const speciesData = await getSpecies(token);
                 setSpecies(speciesData);
-                toast("info","Obteniendo especies");
             } catch {
-                toast("error","Error al obtener las especies.");
+                toast("error", "Error al obtener las especies.");
             }
         };
 
@@ -87,13 +86,13 @@ export default function PetForm({ userId, token }: PetFormProps) {
             const racesData = await getRacesBySpecies(parseInt(speciesId), token!);
             setRaces(racesData);
         } catch {
-            toast("error","Error al obtener las razas.");
+            toast("error", "Error al obtener las razas.");
         }
     };
 
     const onSubmit = async (data: PetFormValues) => {
         if (!userId || !token) {
-            toast("error","Debes estar autenticado para registrar una mascota.");
+            toast("error", "Debes estar autenticado para registrar una mascota.");
             return;
         }
 
@@ -114,9 +113,9 @@ export default function PetForm({ userId, token }: PetFormProps) {
             await registerPet(petData, token);
             toast('success', "¡Mascota registrada con éxito!", {
                 onAutoClose: () => {
-                  router.push('/user-profile');
+                    router.push('/user-profile');
                 }
-              });
+            });
         } catch {
             toast('error', "Ocurrió un error al registrar la mascota.");
         } finally {
