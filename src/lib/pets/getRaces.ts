@@ -1,8 +1,8 @@
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+import { RACE_API } from "@/lib/urls";
 
 export const getRaces = async (token: string) => {
     try {
-        const response = await fetch(`${BASE_URL}/race?page=1`, {
+        const response = await fetch(`${RACE_API}?page=1`, {
             headers: { Authorization: `Bearer ${token}` },
         });
 
