@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, Weight } from "lucide-react";
 import { useParams } from "next/navigation";
+import { PET_API} from "@/lib/urls";  
 
 
 interface Pet {
@@ -194,8 +195,7 @@ export default function PetDetails({ token }: Props) {
 
   useEffect(() => {
     setPet(undefined);
-    fetch(`https://iiss2-backend-production.up.railway.app/pet/${id}`, {
-      method: "GET",
+    fetch(`${PET_API}/${id}`, { 
       headers: {
         "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -238,7 +238,7 @@ export default function PetDetails({ token }: Props) {
     setIsSaving(true);
     setError(null); 
     try {
-      const response = await fetch(`https://iiss2-backend-production.up.railway.app/pet/${pet.id}`, {
+      const response = await fetch(`${PET_API}/${pet.id}`, { 
         method: "PATCH",
         headers: {
           "Authorization": `Bearer ${token}`,
