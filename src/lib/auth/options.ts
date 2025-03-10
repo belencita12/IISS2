@@ -2,7 +2,7 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import { NextAuthOptions } from "next-auth";
 import { SigninResponse } from "./signin-response.type";
-import { LOGIN_API } from "@/lib/urls";
+import { AUTH_API } from "@/lib/urls";
 
 const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -25,7 +25,7 @@ const authOptions: NextAuthOptions = {
           throw new Error("Username and password are required");
         }
 
-        const response = await fetch(LOGIN_API, {  
+        const response = await fetch(`${AUTH_API}/signin`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
