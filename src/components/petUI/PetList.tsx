@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Grid, List } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '../ui/pagination';
+import { PET_API} from "@/lib/urls";  
 
 interface IPet {
     id: number
@@ -79,7 +80,7 @@ const PetList = ({ userId, token }: { userId: number, token: string }) => {
         const fetchPets = async () => {
             setLoading(true);
             try {
-                const response = await fetch(`${BASE_URL}/pet?page=${currentPage}&userId=${userId}`, {
+              const response = await fetch(`${PET_API}?page=${currentPage}&userId=${userId}`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
