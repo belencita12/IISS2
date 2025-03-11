@@ -18,7 +18,11 @@ export const toast = (type: 'success' | 'error' | 'info' | 'warning', message: s
 
     sonnerToast[type](message, {
         ...toastOptions,
-        style: { color: colors[type] },
+        style: {
+            color: colors[type],
+            fontSize: '1.25rem',
+            padding: '0.75rem 1.25rem',
+        },
         ...options,
     });
 };
