@@ -102,29 +102,29 @@ export const PetsList = ({ userId, token }: PetsListProps) => {
             ) : (
                 <div className="mt-8 w-full max-w-[57rem]">
                     <div className="flex flex-wrap justify-center gap-6">
-                                {pets.map((pet, index) => (
-                                    <Link key={index} href={`/detalle-mascota/${pet.id}`} className="text-center w-48 flex-shrink-0 cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition">
-                                        <Avatar className="w-24 h-24 mx-auto bg-gray-200 flex items-center justify-center text-xl font-bold text-gray-700">
-                                            {pet.profileImg?.previewUrl || pet.profileImg?.originalUrl ? (
-                                                <Image
-                                                    src={pet.profileImg.previewUrl || pet.profileImg.originalUrl}
-                                                    alt={pet.name}
-                                                    width={96}
-                                                    height={96}
-                                                    className="w-full h-full object-cover rounded-lg"
-                                                    priority
-                                                />
-                                            ) : (
-                                                <span>{getInitials(pet.name)}</span>
-                                            )}
-                                        </Avatar>
-                                        <p className="font-semibold mt-2 text-lg">{pet.name}</p>
-                                        <p className="text-sm text-gray-500">
-                                            {races.find((r) => r.id === pet.raceId)?.name || "Raza desconocida"}
-                                        </p>
-                                        {calculateAge(pet.dateOfBirth) && <p className="font-bold mt-2">{calculateAge(pet.dateOfBirth)}</p>}
-                                    </Link>
-                                ))}
+                        {pets.map((pet, index) => (
+                            <Link key={index} href={`/detalle-mascota/${pet.id}`} className="text-center w-48 flex-shrink-0 cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition">
+                                <Avatar className="w-24 h-24 mx-auto bg-gray-200 flex items-center justify-center text-xl font-bold text-gray-700">
+                                    {pet.profileImg?.previewUrl || pet.profileImg?.originalUrl ? (
+                                        <Image
+                                            src={pet.profileImg.originalUrl}
+                                            alt={pet.name}
+                                            width={96}
+                                            height={96}
+                                            className="w-full h-full object-cover rounded-lg"
+                                            priority
+                                        />
+                                    ) : (
+                                        <span>{getInitials(pet.name)}</span>
+                                    )}
+                                </Avatar>
+                                <p className="font-semibold mt-2 text-lg">{pet.name}</p>
+                                <p className="text-sm text-gray-500">
+                                    {pet.race?.name || "Raza desconocida"}
+                                </p>
+                                {calculateAge(pet.dateOfBirth) && <p className="font-bold mt-2">{calculateAge(pet.dateOfBirth)}</p>}
+                            </Link>
+                        ))}
                     </div>
                 </div>
             )}

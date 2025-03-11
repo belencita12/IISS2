@@ -9,11 +9,11 @@ export interface PetData {
     id?: number;
     name: string;
     userId: number;
-    speciesId: number;
-    raceId: number;
+    species: Species;
+    race: Race;
     weight: number;
     sex: string;
-    profileImg?: Image | null; // Ahora puede ser el objeto con las URLs o null
+    profileImg?: Image | null;
     dateOfBirth: string;
 }
 
