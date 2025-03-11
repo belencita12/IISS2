@@ -14,6 +14,10 @@ import { getRacesBySpecies, getSpecies } from '@/lib/pets/getRacesAndSpecies';
 import { registerPet } from '@/lib/pets/registerPet';
 import { useRouter } from 'next/navigation';
 
+
+const MAX_FILE_SIZE = 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
 const petFormSchema = z.object({
     petName: z.string().min(1, 'El nombre es obligatorio'),
     birthDate: z.string().min(1, 'La fecha de nacimiento es obligatoria'),
@@ -26,9 +30,14 @@ const petFormSchema = z.object({
         })
         .transform((val) => parseFloat(String(val))),
         imageFile: z
-    .any()
-    .optional()
-    .transform((files) => (files && files.length > 0 ? files[0] : null)),
+        .instanceof(File)
+        .refine((file) => ALLOWED_IMAGE_TYPES.includes(file.type), {
+            message: 'Solo se permiten imágenes en formato JPG, PNG o WEBP',
+        })
+        .refine((file) => file.size <= MAX_FILE_SIZE, {
+            message: 'La imagen no debe superar 1MB',
+        })
+        .optional(),
 });
 
 type PetFormValues = z.infer<typeof petFormSchema>;
@@ -42,6 +51,7 @@ export default function PetForm({ userId, token }: PetFormProps) {
     const [races, setRaces] = useState<Race[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const router = useRouter();
+    const [imageError, setImageError] = useState<string | null>(null);
     const {
         register,
         handleSubmit,
@@ -96,12 +106,37 @@ export default function PetForm({ userId, token }: PetFormProps) {
         }
     };
 
-    const onSubmit = async (data: PetFormValues) => {
-        if (!userId || !token) {
-            toast("error","Debes estar autenticado para registrar una mascota.");
+    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+
+        if (!file) {
+            setValue('imageFile', undefined);
+            setImageError(null);
             return;
         }
+
+        if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+            setImageError('Solo se permiten imágenes en formato JPG, PNG o WEBP');
+            return;
+        }
+
+        if (file.size > MAX_FILE_SIZE) {
+            setImageError('La imagen no debe superar 1MB');
+            return;
+        }
+
+        setImageError(null);
+        setValue('imageFile', file);
+    };
+
     
+
+    const onSubmit = async (data: PetFormValues) => {
+        if (!userId || !token) {
+            toast("error", "Debes estar autenticado para registrar una mascota.");
+            return;
+        }
+
         const formData = new FormData();
         formData.append("name", data.petName);
         formData.append("userId", userId.toString());
@@ -110,28 +145,28 @@ export default function PetForm({ userId, token }: PetFormProps) {
         formData.append("weight", data.weight.toString());
         formData.append("sex", data.gender);
         formData.append("dateOfBirth", new Date(data.birthDate).toISOString());
-    
+
         if (data.imageFile) {
             formData.append("profileImg", data.imageFile); // Solo se envía si hay imagen
         }
-    
+
         setIsSubmitting(true);
-    
+
         try {
             await registerPet(formData, token);
-            toast("success","Mascota registrada con éxito!", {
+            toast("success", "Mascota registrada con éxito!", {
                 duration: 2000,
                 onAutoClose: () => {
                     router.push('/user-profile');
                 }
             });
         } catch {
-            toast("error","Hubo un error al registrar la mascota.");
+            toast("error", "Hubo un error al registrar la mascota.");
         } finally {
             setIsSubmitting(false);
         }
     };
-    
+
 
     return (
         <div className="max-w-5xl mx-auto p-8">
@@ -145,10 +180,11 @@ export default function PetForm({ userId, token }: PetFormProps) {
                         <Input
                             id="pet-image-file"
                             type="file"
-                            accept="image/*"
-                            {...register('imageFile')}
+                            accept="image/jpeg, image/png, image/webp"
+                            onChange={handleImageChange}
                             className="mt-2"
                         />
+                        {imageError && <p className="text-red-500">{imageError}</p>}
                     </div>
 
                 </div>
