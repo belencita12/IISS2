@@ -1,15 +1,22 @@
 
+export interface Image {
+    id: number;
+    previewUrl: string;
+    originalUrl: string;
+}
+
 export interface PetData {
-    id?:number
+    id?: number;
     name: string;
     userId: number;
     speciesId: number;
     raceId: number;
     weight: number;
     sex: string;
-    profileImg: string | null;
+    profileImg?: Image | null; // Ahora puede ser el objeto con las URLs o null
     dateOfBirth: string;
 }
+
 export interface Race {
     id: number;
     name: string;

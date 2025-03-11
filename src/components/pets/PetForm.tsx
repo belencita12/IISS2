@@ -25,7 +25,10 @@ const petFormSchema = z.object({
             message: 'El peso debe ser un número válido mayor a 0',
         })
         .transform((val) => parseFloat(String(val))),
-    imageFile: z.any().optional(),
+        imageFile: z
+    .any()
+    .optional()
+    .transform((files) => (files && files.length > 0 ? files[0] : null)),
 });
 
 type PetFormValues = z.infer<typeof petFormSchema>;
@@ -53,7 +56,7 @@ export default function PetForm({ userId, token }: PetFormProps) {
             breed: '',
             animalType: '',
             gender: '',
-            imageFile: ''
+            imageFile: undefined
         },
     });
 
@@ -68,6 +71,9 @@ export default function PetForm({ userId, token }: PetFormProps) {
             try {
                 const speciesData = await getSpecies(token);
                 setSpecies(speciesData);
+                if (speciesData.length === 0) {
+                    toast("info", "No hay especies disponibles.");
+                }
             } catch {
                 toast("error", "Error al obtener las especies.");
             }
@@ -92,36 +98,40 @@ export default function PetForm({ userId, token }: PetFormProps) {
 
     const onSubmit = async (data: PetFormValues) => {
         if (!userId || !token) {
-            toast("error", "Debes estar autenticado para registrar una mascota.");
+            toast("error","Debes estar autenticado para registrar una mascota.");
             return;
         }
-
-        const petData: PetData = {
-            name: data.petName,
-            userId,
-            speciesId: parseInt(data.animalType),
-            raceId: parseInt(data.breed),
-            weight: data.weight,
-            sex: data.gender,
-            profileImg: data.imageFile || null,
-            dateOfBirth: new Date(data.birthDate).toISOString(),
-        };
-
+    
+        const formData = new FormData();
+        formData.append("name", data.petName);
+        formData.append("userId", userId.toString());
+        formData.append("speciesId", data.animalType);
+        formData.append("raceId", data.breed);
+        formData.append("weight", data.weight.toString());
+        formData.append("sex", data.gender);
+        formData.append("dateOfBirth", new Date(data.birthDate).toISOString());
+    
+        if (data.imageFile) {
+            formData.append("profileImg", data.imageFile); // Solo se envía si hay imagen
+        }
+    
         setIsSubmitting(true);
-
+    
         try {
-            await registerPet(petData, token);
-            toast('success', "¡Mascota registrada con éxito!", {
+            await registerPet(formData, token);
+            toast("success","Mascota registrada con éxito!", {
+                duration: 2000,
                 onAutoClose: () => {
                     router.push('/user-profile');
                 }
             });
         } catch {
-            toast('error', "Ocurrió un error al registrar la mascota.");
+            toast("error","Hubo un error al registrar la mascota.");
         } finally {
             setIsSubmitting(false);
         }
     };
+    
 
     return (
         <div className="max-w-5xl mx-auto p-8">
@@ -134,12 +144,13 @@ export default function PetForm({ userId, token }: PetFormProps) {
                         <Label className="text-sm font-semibold">Imagen (Opcional)</Label>
                         <Input
                             id="pet-image-file"
+                            type="file"
+                            accept="image/*"
                             {...register('imageFile')}
-                            className='mt-2'
-                            placeholder='Subir url imagen de la mascota'
-                            type='text'
+                            className="mt-2"
                         />
                     </div>
+
                 </div>
 
                 <div className="md:w-2/3 w-80">
