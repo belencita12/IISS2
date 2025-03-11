@@ -105,9 +105,9 @@ export const PetsList = ({ userId, token }: PetsListProps) => {
                                 {pets.map((pet, index) => (
                                     <Link key={index} href={`/detalle-mascota/${pet.id}`} className="text-center w-48 flex-shrink-0 cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition">
                                         <Avatar className="w-24 h-24 mx-auto bg-gray-200 flex items-center justify-center text-xl font-bold text-gray-700">
-                                            {pet.profileImg ? (
+                                            {pet.profileImg?.previewUrl || pet.profileImg?.originalUrl ? (
                                                 <Image
-                                                    src={pet.profileImg}
+                                                    src={pet.profileImg.previewUrl || pet.profileImg.originalUrl}
                                                     alt={pet.name}
                                                     width={96}
                                                     height={96}
