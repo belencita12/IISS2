@@ -19,13 +19,13 @@ function EmployeeForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className=" mx-auto flex gap-x-20 p-8 bg-white rounded-lg shadow-md"
+      className="flex gap-20 p-8 rounded-lg max-w-full mx-auto"
     >
       {/* 📌 Sección Izquierda (RUC, Nombre, Apellido, Correo y Puesto) */}
-      <div className="flex-1 space-y-6">
+      <div className="flex-auto space-y-4 w-1/2 p-4">
         <div>
           <Label>RUC</Label>
-          <Input placeholder="Ingrese su RUC..." className="w-full" {...register("ruc", { required: "Campo obligatorio" })} />
+          <Input placeholder="Ingrese su RUC..."  {...register("ruc", { required: "Campo obligatorio" })} />
           {typeof errors.ruc?.message === "string" && (
             <p className="text-red-500">{errors.ruc.message}</p>
           )}
@@ -41,7 +41,10 @@ function EmployeeForm() {
 
         <div>
           <Label>Apellido</Label>
-          <Input placeholder="Ingrese su apellido..." {...register("apellido")} />
+          <Input placeholder="Ingrese su apellido..." {...register("apellido", { required: "Campo obligatorio" })} />
+          {typeof errors.ruc?.message === "string" && (
+            <p className="text-red-500">{errors.ruc.message}</p>
+          )}
         </div>
 
         <div>
@@ -68,10 +71,10 @@ function EmployeeForm() {
       </div>
 
       {/* 📌 Sección Derecha (Disponibilidad, Token, Foto) */}
-      <div className="flex-1 space-y-7">
+      <div className="flex-auto space-y-7 w-1/4  p-3">
         <div>
           <Label>Establecer disponibilidad</Label>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid space-y-2 grid-cols-2 gap-x-3 gap-y-3">
             {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"].map((dia) => (
               <div key={dia} className="flex items-center space-x-2">
                 <Checkbox {...register(`disponibilidad.${dia}`)} />
@@ -89,15 +92,14 @@ function EmployeeForm() {
 
         <div>
           <Label>Foto del empleado</Label>
-          <div className="border border-dashed p-4 flex flex-col items-center justify-center">
+          <div className="border border-dashed p-4 flex flex-col w-full items-center justify-center">
             <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" id="upload" />
             <label htmlFor="upload" className="cursor-pointer">
               {file ? file.name : "Arrastra una imagen aquí"}
             </label>
           </div>
         </div>
-
-        <Button type="submit" className="w-full">Agregar</Button>
+        <Button type="submit" className="w-auto">Agregar</Button>
       </div>
     </form>
   );
