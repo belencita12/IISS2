@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 import { getPetsByUserId } from "@/lib/pets/getPetsByUserId";
-import { PetData, Race } from "@/lib/pets/IPet";
+import { PetData} from "@/lib/pets/IPet";
 import { toast } from 'sonner';
 import Image from "next/image";
 
