@@ -5,17 +5,28 @@ import Image from "next/image";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import LogoutButton from "./LogoutButton";
+import { SessionProvider, useSession } from "next-auth/react";
+import NavbarSkeleton from "../skeleton/NavbarSkeleton";
+import { link } from "fs";
 type NavbarProps = {
   links: { label: string; href: string }[];
+  isLogged? : boolean;
 };
 
-export default function Navbar({ links }: NavbarProps) {
+export function Navbar({ links }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const { data: session, status } = useSession();
+  const isLoading = status === 'loading';
+  const isAuthenticated = !!session && !isLoading;
+  console.log(status)
+
+  if(isLoading) return <NavbarSkeleton />
 
   return (
-    <header className="w-full shadow-sm px-8 py-4 bg-white">
+      <header className="w-full shadow-sm px-8 py-4 bg-white">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
-        <div className="flex items-center gap-4">
+        <Link href="/" className="flex items-center gap-4">
           <Image
             src="/logo.png"
             alt="NicoPets logo"
@@ -24,7 +35,7 @@ export default function Navbar({ links }: NavbarProps) {
             priority
           />
           <h1 className="text-xl font-semibold">NicoPets</h1>
-        </div>
+        </Link>
 
         {/* Desktop Menu */}
         <nav className="hidden md:flex gap-8 items-center">
@@ -37,6 +48,18 @@ export default function Navbar({ links }: NavbarProps) {
               {link.label}
             </Link>
           ))}
+          {
+            isAuthenticated && (
+              <> 
+              <Link
+              key="user-profile"
+              href="/user-profile"
+              className="hover:text-[#258084] transition-colors duration-200"
+            >Mi Perfil</Link>
+                <LogoutButton />
+              </>
+            )
+          }
         </nav>
 
         {/* Mobile Menu Button */}
@@ -62,8 +85,24 @@ export default function Navbar({ links }: NavbarProps) {
               {link.label}
             </Link>
           ))}
+          {
+            isAuthenticated && (
+              <> 
+              <Link
+              key="user-profile"
+              href="/user-profile"
+              className="hover:text-[#258084] transition-colors duration-200"
+            >Mi Perfil</Link>
+                <LogoutButton />
+              </>
+            )
+          }
         </nav>
       )}
     </header>
   );
+}
+
+export default function NavbarWrapped ({links}:NavbarProps) {
+  return <SessionProvider><Navbar links={links} /></SessionProvider>
 }
