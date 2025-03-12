@@ -19,10 +19,10 @@ function EmployeeForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex gap-20 p-8 rounded-lg max-w-full mx-auto"
+      className="flex flex-col md:flex-row flex-wrap gap-8 p-6 rounded-lg max-w-full mx-auto"
     >
-      {/* 📌 Sección Izquierda (RUC, Nombre, Apellido, Correo y Puesto) */}
-      <div className="flex-auto space-y-4 w-1/2 p-4">
+      {/* 📌 Sección Izquierda */}
+      <div className="flex-auto space-y-4 w-full md:w-1/2 p-4">
         <div>
           <Label>RUC</Label>
           <Input placeholder="Ingrese su RUC..."  {...register("ruc", { required: "Campo obligatorio" })} />
@@ -34,25 +34,19 @@ function EmployeeForm() {
         <div>
           <Label>Nombre</Label>
           <Input placeholder="Ingrese su nombre..." {...register("nombre", { required: "Campo obligatorio" })} />
-          {typeof errors.nombre?.message === "string" && (
-            <p className="text-red-500">{errors.nombre.message}</p>
-          )}
+          {typeof errors.nombre?.message === "string" && <p className="text-red-500">{errors.nombre.message}</p>}
         </div>
 
         <div>
           <Label>Apellido</Label>
           <Input placeholder="Ingrese su apellido..." {...register("apellido", { required: "Campo obligatorio" })} />
-          {typeof errors.ruc?.message === "string" && (
-            <p className="text-red-500">{errors.ruc.message}</p>
-          )}
+          {typeof errors.apellido?.message === "string" && <p className="text-red-500">{errors.apellido.message}</p>}
         </div>
 
         <div>
           <Label>Correo</Label>
           <Input type="email" placeholder="Ingrese su correo..." {...register("correo", { required: "Campo obligatorio" })} />
-          {typeof errors.correo?.message === "string" && (
-            <p className="text-red-500">{errors.correo.message}</p>
-          )}
+          {typeof errors.correo?.message === "string" && <p className="text-red-500">{errors.correo.message}</p>}
         </div>
 
         <div>
@@ -70,11 +64,11 @@ function EmployeeForm() {
         </div>
       </div>
 
-      {/* 📌 Sección Derecha (Disponibilidad, Token, Foto) */}
-      <div className="flex-auto space-y-7 w-1/4  p-3">
-        <div>
+      {/* 📌 Sección Derecha */}
+      <div className="flex-auto space-y-7 w-full md:w-1/3 p-4">
+        <div className="flex-auto space-y-4">
           <Label>Establecer disponibilidad</Label>
-          <div className="grid space-y-2 grid-cols-2 gap-x-3 gap-y-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-x-3 gap-y-3">
             {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"].map((dia) => (
               <div key={dia} className="flex items-center space-x-2">
                 <Checkbox {...register(`disponibilidad.${dia}`)} />
@@ -99,14 +93,14 @@ function EmployeeForm() {
             </label>
           </div>
         </div>
-        <div className="flex gap-4">
-          <Button type="button" variant="outline" className="text-black border-gray-300 hover:bg-gray-100">
-            Cancelar
-          </Button>
-          <Button type="submit" variant="default" className="bg-black text-white hover:bg-gray-900">
-            Registrar
-          </Button>
-        </div>
+      </div>
+      <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto p-4 justify-end ml-auto">
+        <Button type="button" variant="outline" className="text-black border-gray-300 hover:bg-gray-100">
+          Cancelar
+        </Button>
+        <Button type="submit" variant="default" className="bg-black text-white hover:bg-gray-900">
+          Registrar
+        </Button>
       </div>
     </form>
   );
