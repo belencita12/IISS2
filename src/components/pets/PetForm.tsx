@@ -71,31 +71,24 @@ export default function PetForm({ userId, token }: PetFormProps) {
     });
     //Obtiene las especies
     useEffect(() => {
+        if (!token) return;
         const fetchSpecies = async () => {
-            if (!token) {
-                toast("error", "No tienes permisos para ver esta información.");
-                return;
-            }
             try {
                 const speciesData = await getSpecies(token);
                 setSpecies(speciesData);
-                if (speciesData.length === 0) {
-                    toast("info", "No hay especies disponibles.");
-                }
             } catch {
                 toast("error", "Error al obtener las especies.");
             }
         };
-
         fetchSpecies();
     }, [token]);
 
     //Obtiene las razas a partir de las especies
     const handleSpeciesChange = async (speciesId: string) => {
         setRaces([]);
-        if (!speciesId) return;
+        if (!speciesId || !token) return;
         try {
-            const racesData = await getRacesBySpecies(parseInt(speciesId), token!);
+            const racesData = await getRacesBySpecies(parseInt(speciesId), token);
             setRaces(racesData);
         } catch {
             toast("error", "Error al obtener las razas.");
@@ -119,17 +112,16 @@ export default function PetForm({ userId, token }: PetFormProps) {
             return;
         }
         const formData = new FormData();
-        formData.append("name", data.petName);
-        formData.append("userId", userId.toString());
-        formData.append("speciesId", data.animalType);
-        formData.append("raceId", data.breed);
-        formData.append("weight", data.weight.toString());
-        formData.append("sex", data.gender);
-        formData.append("dateOfBirth", new Date(data.birthDate).toISOString());
-
-        if (data.imageFile) {
-            formData.append("profileImg", data.imageFile); // Solo se envía si hay imagen
-        }
+        Object.entries({
+            name: data.petName,
+            userId: userId.toString(),
+            speciesId: data.animalType,
+            raceId: data.breed,
+            weight: data.weight.toString(),
+            sex: data.gender,
+            dateOfBirth: new Date(data.birthDate).toISOString(),
+        }).forEach(([key, value]) => formData.append(key, value));
+        if (data.imageFile) formData.append("profileImg", data.imageFile);
         setIsSubmitting(true);
         try {
             await registerPet(formData, token);
@@ -151,7 +143,6 @@ export default function PetForm({ userId, token }: PetFormProps) {
                 <div className="flex flex-col items-center space-y-4 w-80">
                     <h1 className="text-3xl font-bold self-start">Registro de Mascota</h1>
                     <p className="text-gray-600 self-start">Ingresa los datos de la mascota</p>
-
                     <div className="w-full flex flex-col items-center">
                         <h3 className="text-sm font-semibold mb-2 text-gray-700">Imagen (Opcional)</h3>
                         <div className="w-full flex flex-col items-center relative">
@@ -197,7 +188,6 @@ export default function PetForm({ userId, token }: PetFormProps) {
                             />
                             {errors.petName && <p className="text-red-500">{errors.petName.message}</p>}
                         </div>
-
                         <div>
                             <Label>Fecha de nacimiento</Label>
                             <Input
@@ -208,7 +198,6 @@ export default function PetForm({ userId, token }: PetFormProps) {
                             />
                             {errors.birthDate && <p className="text-red-500">{errors.birthDate.message}</p>}
                         </div>
-
                         <div>
                             <Label>Animal</Label>
                             <Select
