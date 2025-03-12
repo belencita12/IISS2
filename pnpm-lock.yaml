@@ -29,6 +29,9 @@ importers:
       next:
         specifier: 15.1.7
         version: 15.1.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      nico-pets:
+        specifier: 'file:'
+        version: file:(@types/react-dom@19.0.3(@types/react@19.0.8))(@types/react@19.0.8)(tailwindcss@3.4.17)
       react:
         specifier: ^19.0.0
         version: 19.0.0
@@ -1856,6 +1859,9 @@ packages:
         optional: true
       sass:
         optional: true
+
+  'nico-pets@file:':
+    resolution: {directory: '', type: directory}
 
   normalize-path@3.0.0:
     resolution: {integrity: sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==}
@@ -4511,6 +4517,30 @@ snapshots:
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
+
+  nico-pets@file:(@types/react-dom@19.0.3(@types/react@19.0.8))(@types/react@19.0.8)(tailwindcss@3.4.17):
+    dependencies:
+      '@radix-ui/react-dialog': 1.1.6(@types/react-dom@19.0.3(@types/react@19.0.8))(@types/react@19.0.8)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@radix-ui/react-menubar': 1.1.6(@types/react-dom@19.0.3(@types/react@19.0.8))(@types/react@19.0.8)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@radix-ui/react-slot': 1.1.2(@types/react@19.0.8)(react@19.0.0)
+      class-variance-authority: 0.7.1
+      clsx: 2.1.1
+      lucide-react: 0.475.0(react@19.0.0)
+      next: 15.1.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
+      tailwind-merge: 3.0.1
+      tailwindcss-animate: 1.0.7(tailwindcss@3.4.17)
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@opentelemetry/api'
+      - '@playwright/test'
+      - '@types/react'
+      - '@types/react-dom'
+      - babel-plugin-macros
+      - babel-plugin-react-compiler
+      - sass
+      - tailwindcss
 
   normalize-path@3.0.0: {}
 
