@@ -99,7 +99,14 @@ function EmployeeForm() {
             </label>
           </div>
         </div>
-        <Button type="submit" className="w-auto">Agregar</Button>
+        <div className="flex gap-4">
+          <Button type="button" variant="outline" className="text-black border-gray-300 hover:bg-gray-100">
+            Cancelar
+          </Button>
+          <Button type="submit" variant="default" className="bg-black text-white hover:bg-gray-900">
+            Registrar
+          </Button>
+        </div>
       </div>
     </form>
   );
