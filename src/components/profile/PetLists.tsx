@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 import { getPetsByUserId } from "@/lib/pets/getPetsByUserId";
-import { getRaces } from "@/lib/pets/getRaces";
 import { PetData, Race } from "@/lib/pets/IPet";
 import { toast } from 'sonner';
 import Image from "next/image";
@@ -16,7 +15,6 @@ interface PetsListProps {
 
 export const PetsList = ({ userId, token }: PetsListProps) => {
     const [pets, setPets] = useState<PetData[]>([]);
-    const [races, setRaces] = useState<Race[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
@@ -24,9 +22,6 @@ export const PetsList = ({ userId, token }: PetsListProps) => {
             try {
                 const fetchedPets = await getPetsByUserId(userId, token);
                 setPets(fetchedPets);
-
-                const fetchedRaces = await getRaces(token);
-                setRaces(fetchedRaces);
             } catch {
                 toast.error("Error al obtener mascotas o razas:");
             } finally {
@@ -84,7 +79,6 @@ export const PetsList = ({ userId, token }: PetsListProps) => {
         <section className="max-w-5xl mx-auto mt-10 p-6 bg-white flex flex-col items-center text-center">
             <h3 className="text-3xl font-bold mt-2">Tus Mascotas Registradas</h3>
             <p className="text-gray-500 mt-2">Administra la información de tus mascotas</p>
-
             <div className="flex gap-4 mt-4">
                 <Button variant="outline" className="border border-black">
                     <Link href="/pet/register">Agregar Mascota</Link>
@@ -93,8 +87,6 @@ export const PetsList = ({ userId, token }: PetsListProps) => {
                     <Link href="/list-pets">Ver mi lista de mascotas</Link>
                 </Button>
             </div>
-
-
             {loading ? (
                 <p className="mt-4 text-gray-500">Cargando mascotas...</p>
             ) : pets.length === 0 ? (
