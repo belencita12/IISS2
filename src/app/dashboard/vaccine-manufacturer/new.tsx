@@ -1,5 +1,5 @@
 import ManufacturerForm from '@/components/admin/VaccineManufacturerForm'
-import { createManufacturer } from '@/lib/vaccineManufacturer/getVaccineManufacturerById'
+import { createManufacturer } from '@/lib/vaccine-manufacturer/getVaccineManufacturerById'
 
 export default function NewManufacturerPage() {
   return (

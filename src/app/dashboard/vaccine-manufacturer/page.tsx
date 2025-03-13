@@ -1,5 +1,5 @@
 
-import { getManufacturers, deleteManufacturer } from '@/lib/vaccineManufacturer/getVaccineManufacturerById'
+import { getManufacturers, deleteManufacturer } from '@/lib/vaccine-manufacturer/getVaccineManufacturerById'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 

@@ -1,5 +1,5 @@
 import ManufacturerForm from '@/components/admin/VaccineManufacturerForm'
-import { getManufacturerById, updateManufacturer } from '@/lib/vaccineManufacturer/getVaccineManufacturerById'
+import { getManufacturerById, updateManufacturer } from '@/lib/vaccine-manufacturer/getVaccineManufacturerById'
 
 export default async function EditManufacturerPage({ params }: { params: { id: string } }) {
   const manufacturer = await getManufacturerById(+params.id)
