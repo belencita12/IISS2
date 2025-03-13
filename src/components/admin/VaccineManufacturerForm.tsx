@@ -1,4 +1,4 @@
-
+'use client'
 
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -45,7 +45,7 @@ export default function ManufacturerForm({
   const onSubmit = async (data: ManufacturerFormValues) => {
     setIsSubmitting(true)
     try {
-      await onSubmitHandler(data)
+      //await onSubmitHandler(data)
       toast('success', `Fabricante ${mode === 'create' ? 'creado' : 'actualizado'} exitosamente.`)
       router.push('/admin/fabricantes') // Ruta de lista de fabricantes
     } catch (error) {

@@ -1,4 +1,4 @@
-const API_URL = `${process.env.NEXT_PUBLIC_BASE_URL}/vaccine-manufacturer`;
+const API_URL = `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/vaccine-manufacturer`;
 
 export async function createManufacturer(data: { name: string }) {
   const response = await fetch(API_URL, {
