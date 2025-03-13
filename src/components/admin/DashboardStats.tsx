@@ -23,10 +23,10 @@ export const DashboardStats = () => {
         }
         const data: DashboardStat = await response.json();
         setStats(data);
-        toast.success('Datos cargados exitosamente!'); // Muestra un toast de éxito cuando los datos se cargan correctamente
+        //toast.success('Datos cargados exitosamente!'); // Muestra un toast de éxito cuando los datos se cargan correctamente
       } catch (error) {
         setError('No se pudieron cargar los datos');
-        toast.error('Error al cargar los datos'); // Muestra un toast de error si ocurre un problema
+        //toast.error('Error al cargar los datos'); // Muestra un toast de error si ocurre un problema
       } finally {
         setLoading(false);
       }
@@ -63,7 +63,7 @@ export const DashboardStats = () => {
       </div>
 
       {/* Toast Container */}
-      <toast.Container position="top-right" autoClose={3000} hideProgressBar newestOnTop />
+      {/* <toast.Container position="top-right" autoClose={3000} hideProgressBar newestOnTop /> */}
     </>
   );
 };

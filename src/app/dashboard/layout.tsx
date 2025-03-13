@@ -13,11 +13,11 @@ export const viewport: Viewport = {
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-auto flex-col md:flex-row md:overflow-hidden">
-      <div className="w-full flex-none md:w-64 md:sticky">
+    <div className="flex h-auto sm:max-w-screen md:flex-row ">
+      <div className="w-[20%] md:sticky top-0">
         <SideNav />
       </div>
-      <div className="flex-grow md:overflow-y-auto ">
+      <div className="w-[80%] h-auto pr-2 pb-3">
         {children}
       </div>
     </div>

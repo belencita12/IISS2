@@ -1,9 +1,26 @@
 'use client';
 
 import { Bar, Line, Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement } from 'chart.js';
+import { Chart as ChartJS, 
+         CategoryScale, 
+         LinearScale, 
+         BarElement, 
+         Title, 
+         Tooltip, 
+         Legend, 
+         PointElement, 
+         LineElement, 
+         ArcElement } from 'chart.js';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ArcElement, BarElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, 
+                 LinearScale, 
+                 PointElement, 
+                 LineElement, 
+                 ArcElement, 
+                 BarElement, 
+                 Title, 
+                 Tooltip, 
+                 Legend);
 
 const lineData = {
   labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May'],
@@ -12,7 +29,7 @@ const lineData = {
       label: 'Citas',
       data: [10, 20, 15, 25, 30],
       borderColor: '#4F46E5',
-      backgroundColor: 'rgba(79, 70, 229, 0.5)',
+      backgroundColor: '#4F46E5',
       tension: 0.4
     }
   ]
@@ -42,11 +59,12 @@ const barData = {
 
 
 export const LineChart = () => (
-  <div className="p-4 bg-white rounded-lg shadow">
+  <div className="relative w-full p-3 aspect-video bg-white rounded-lg shadow">
     <Line
       data={lineData}
       options={{
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           title: {
             display: true, // Muestra el título
@@ -59,16 +77,18 @@ export const LineChart = () => (
           }
         }
       }}
+      redraw={true}
     />
   </div>
 );
 
 export const PieChart = () => (
-  <div className="p-4 bg-white rounded-lg shadow">
+  <div className="relative w-full p-3 aspect-square bg-white rounded-lg shadow">
     <Pie
       data={pieData}
       options={{
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           title: {
             display: true, // Muestra el título
@@ -81,16 +101,18 @@ export const PieChart = () => (
           }
         }
       }}
+      redraw={true}
     />
   </div>
 );
 
 export const BarChart = () => (
-  <div className="p-4 bg-white rounded-lg shadow">
+  <div className="relative w-full p-3 aspect-video bg-white rounded-lg shadow">
     <Bar
       data={barData}
       options={{
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           title: {
             display: true, // Muestra el título
@@ -103,6 +125,7 @@ export const BarChart = () => (
           }
         }
       }}
+      redraw={true}
     />
   </div>
 );
