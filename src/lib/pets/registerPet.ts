@@ -1,15 +1,14 @@
-import { PetData } from "./IPet";
+
 import { PET_API} from "@/lib/urls";  
 
-export const registerPet = async (petData: PetData, token: string) => {
+export const registerPet = async (petData: FormData, token: string) => {
     try {
         const response = await fetch(PET_API, { 
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`
             },
-            body: JSON.stringify(petData),
+            body: petData,
         });
 
         if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
