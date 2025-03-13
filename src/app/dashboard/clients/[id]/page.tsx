@@ -3,6 +3,7 @@ import authOptions from "@/lib/auth/options";
 import { getServerSession, User } from "next-auth";
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
+import PetsTable from "@/components/admin/pet/PetsTable";
 
 type ClientDetailsProps = {
     params: {
@@ -37,30 +38,12 @@ export default async function ClientDetails({ params }: ClientDetailsProps) {
                 <p className="text-gray-600">{client.email}</p>
                </div>
             </section>
-            <section className="mx-auto">
-                <div className="flex justify-between items-center px-24">
+            <section className="mx-auto px-24">
+                <div className="flex justify-between items-center ">
                     <h2 className="text-xl">Mascotas</h2>
                     <Button variant={"outline"}>Agregar</Button>
                 </div>
-                <table className="w-full mx-auto px-24">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Edad</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Max</td>
-                            <td>5</td>
-                            <td>
-                                <Button variant={"secondary"}>Editar</Button>
-                                <Button variant={"destructive"}>Eliminar</Button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <PetsTable />
             </section>
         </>
     );
