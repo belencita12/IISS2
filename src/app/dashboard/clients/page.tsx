@@ -5,17 +5,18 @@ import { Header } from "@/components/admin/Header";
 import { redirect } from "next/navigation";
 
 export default async function ClientesPage() {
-
     const session = await getServerSession(authOptions);
 
     if (!session) {
         redirect("/login");
     }
 
+    const token = session?.user?.token || null;
+
     return (
         <div>
             <Header fullName={session?.user.fullName} />
-            <ClientList />
+            <ClientList token={token} />
         </div>
     );
 };
