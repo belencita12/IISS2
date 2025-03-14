@@ -1,7 +1,6 @@
 import ClientList from "@/components/admin/ClientList";
 import { getServerSession } from "next-auth";
 import authOptions from "@/lib/auth/options";
-import { Header } from "@/components/admin/Header";
 import { redirect } from "next/navigation";
 
 export default async function ClientesPage() {
@@ -15,7 +14,6 @@ export default async function ClientesPage() {
 
     return (
         <div>
-            <Header fullName={session?.user.fullName} />
             <ClientList token={token} />
         </div>
     );
