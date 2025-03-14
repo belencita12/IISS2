@@ -9,10 +9,22 @@ import { toast } from "sonner";
 import { useState } from "react";
 
 function EmployeeForm() {
-  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm();
+
+  type EmployeeFormData = {
+    ruc: string;
+    nombre: string;
+    apellido: string;
+    correo: string;
+    puesto: string;
+    disponibilidad: Record<string, boolean>;
+    tokenCalendly?: string;
+  };
+
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<EmployeeFormData>();
   const [file, setFile] = useState<File | null>(null);
 
-  const onSubmit = (data: any) => {
+
+  const onSubmit = (data: EmployeeFormData) => {
     console.log(data);
     toast.success("Empleado registrado con éxito", {
       description: `${data.nombre} ${data.apellido} ha sido agregado correctamente.`,
