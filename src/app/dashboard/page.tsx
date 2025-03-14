@@ -1,22 +1,11 @@
-import { Header } from '@/components/admin/Header'
+
 import { LineChart, PieChart, BarChart } from '@/components/admin/Charts';
 import { DollarSign, Users } from 'lucide-react';
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
-import authOptions from '@/lib/auth/options';
 
-export default async function Dashboard() {
-  const session = await getServerSession(authOptions);
-  console.log("Sesión:", session?.user?.fullName);
-  console.log("Sesión:", session?.user?.token);
-  
-  if (!session) {
-      redirect("/login");
-  }
+export default function Dashboard() {
 
   return (
     <div className="text-sm sm:text-base flex flex-col gap-3">
-      <Header fullName={session?.user?.fullName} />
       <div className="flex md:flex-row flex-col items-center w-full gap-3">
         <div className="bg-white w-full md:flex-1 p-4 shadow rounded-lg flex items-center justify-between">
           <div>
