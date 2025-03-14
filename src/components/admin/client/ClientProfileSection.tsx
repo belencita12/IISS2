@@ -1,16 +1,11 @@
+import { IUserProfile } from '@/lib/client/IUserProfile';
 import Image from 'next/image';
 
-interface ClientProfileProps {
-  fullName: string;
-  email: string;
-  image: string;
-}
-
-export default function ClientProfileSection({ fullName, email, image }: ClientProfileProps) {
+export default function ClientProfileSection({ fullName,email}: IUserProfile) {
   return (
     <section className="flex flex-wrap items-center gap-4 px-16 mx-auto md:gap-16 md:px-24 py-12">
       <Image
-        src={image}
+        src={"/userProfile.png"}
         alt={fullName}
         width={250}
         height={250}
