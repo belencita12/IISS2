@@ -127,9 +127,8 @@ export default function PetForm({ userId, token }: PetFormProps) {
             await registerPet(formData, token);
             toast("success", "Mascota registrada con éxito!", {
                 duration: 2000,
-                onAutoClose: () => {
-                    router.push('/user-profile');
-                }
+                onAutoClose: () => {router.push('/user-profile');},
+                onDismiss: () => router.push('/user-profile'),
             });
         } catch {
             toast("error", "Hubo un error al registrar la mascota.");
@@ -249,6 +248,10 @@ export default function PetForm({ userId, token }: PetFormProps) {
                                 id="weight"
                                 type="number"
                                 step={0.1}
+                                min="0"
+                                onKeyDown={(e) => {
+                                    if (e.key === "-" || e.key === "e") e.preventDefault();
+                                }}
                                 {...register('weight')}
                             />
                             {errors.weight && <p className="text-red-500">{errors.weight.message}</p>}
