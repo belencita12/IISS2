@@ -9,10 +9,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { PetData, Race, Species } from '@/lib/pets/IPet';
+import { Race, Species } from '@/lib/pets/IPet';
 import { getRacesBySpecies, getSpecies } from '@/lib/pets/getRacesAndSpecies';
 import { registerPet } from '@/lib/pets/registerPet';
 import { useRouter } from 'next/navigation';
+import Image from "next/image";
+
+const MAX_FILE_SIZE = 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 const petFormSchema = z.object({
     petName: z.string().min(1, 'El nombre es obligatorio'),
@@ -25,7 +29,15 @@ const petFormSchema = z.object({
             message: 'El peso debe ser un número válido mayor a 0',
         })
         .transform((val) => parseFloat(String(val))),
-    imageFile: z.any().optional(),
+    imageFile: z
+        .instanceof(File)
+        .refine((file) => ALLOWED_IMAGE_TYPES.includes(file.type), {
+            message: 'Solo se permiten imágenes en formato JPG, PNG o WEBP',
+        })
+        .refine((file) => file.size <= MAX_FILE_SIZE, {
+            message: 'La imagen no debe superar 1MB',
+        })
+        .optional(),
 });
 
 type PetFormValues = z.infer<typeof petFormSchema>;
@@ -39,6 +51,7 @@ export default function PetForm({ userId, token }: PetFormProps) {
     const [races, setRaces] = useState<Race[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const router = useRouter();
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
     const {
         register,
         handleSubmit,
@@ -53,18 +66,13 @@ export default function PetForm({ userId, token }: PetFormProps) {
             breed: '',
             animalType: '',
             gender: '',
-            imageFile: ''
+            imageFile: undefined
         },
     });
-
     //Obtiene las especies
     useEffect(() => {
+        if (!token) return;
         const fetchSpecies = async () => {
-            if (!token) {
-                toast("error", "No tienes permisos para ver esta información.");
-                return;
-            }
-
             try {
                 const speciesData = await getSpecies(token);
                 setSpecies(speciesData);
@@ -72,76 +80,98 @@ export default function PetForm({ userId, token }: PetFormProps) {
                 toast("error", "Error al obtener las especies.");
             }
         };
-
         fetchSpecies();
     }, [token]);
 
     //Obtiene las razas a partir de las especies
     const handleSpeciesChange = async (speciesId: string) => {
         setRaces([]);
-
-        if (!speciesId) return;
-
+        if (!speciesId || !token) return;
         try {
-            const racesData = await getRacesBySpecies(parseInt(speciesId), token!);
+            const racesData = await getRacesBySpecies(parseInt(speciesId), token);
             setRaces(racesData);
         } catch {
             toast("error", "Error al obtener las razas.");
         }
     };
-
+    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setPreviewImage(null);
+        const file = event.target.files?.[0];
+        if (!file) {
+            setValue('imageFile', undefined);
+            return;
+        }
+        setValue('imageFile', file);
+        const reader = new FileReader();
+        reader.onload = (e) => setPreviewImage(e.target?.result as string);
+        reader.readAsDataURL(file)
+    };
     const onSubmit = async (data: PetFormValues) => {
         if (!userId || !token) {
             toast("error", "Debes estar autenticado para registrar una mascota.");
             return;
         }
-
-        const petData: PetData = {
+        const formData = new FormData();
+        Object.entries({
             name: data.petName,
-            userId,
-            speciesId: parseInt(data.animalType),
-            raceId: parseInt(data.breed),
-            weight: data.weight,
+            userId: userId.toString(),
+            speciesId: data.animalType,
+            raceId: data.breed,
+            weight: data.weight.toString(),
             sex: data.gender,
-            profileImg: data.imageFile || null,
             dateOfBirth: new Date(data.birthDate).toISOString(),
-        };
-
+        }).forEach(([key, value]) => formData.append(key, value));
+        if (data.imageFile) formData.append("profileImg", data.imageFile);
         setIsSubmitting(true);
-
         try {
-            await registerPet(petData, token);
-            toast('success', "¡Mascota registrada con éxito!", {
-                onAutoClose: () => {
-                    router.push('/user-profile');
-                }
+            await registerPet(formData, token);
+            toast("success", "Mascota registrada con éxito!", {
+                duration: 2000,
+                onAutoClose: () => {router.push('/user-profile');},
+                onDismiss: () => router.push('/user-profile'),
             });
         } catch {
-            toast('error', "Ocurrió un error al registrar la mascota.");
+            toast("error", "Hubo un error al registrar la mascota.");
         } finally {
             setIsSubmitting(false);
         }
     };
-
     return (
         <div className="max-w-5xl mx-auto p-8">
             <div className="flex flex-col md:flex-row gap-16">
                 <div className="flex flex-col items-center space-y-4 w-80">
                     <h1 className="text-3xl font-bold self-start">Registro de Mascota</h1>
                     <p className="text-gray-600 self-start">Ingresa los datos de la mascota</p>
-
-                    <div className="w-full flex flex-col items-start">
-                        <Label className="text-sm font-semibold">Imagen (Opcional)</Label>
-                        <Input
-                            id="pet-image-file"
-                            {...register('imageFile')}
-                            className='mt-2'
-                            placeholder='Subir url imagen de la mascota'
-                            type='text'
-                        />
+                    <div className="w-full flex flex-col items-center">
+                        <h3 className="text-sm font-semibold mb-2 text-gray-700">Imagen (Opcional)</h3>
+                        <div className="w-full flex flex-col items-center relative">
+                            <Label className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-md text-sm font-medium text-center cursor-pointer">
+                                <Input
+                                    type="file"
+                                    accept="image/jpeg, image/png, image/webp"
+                                    onChange={handleImageChange}
+                                    className="hidden"
+                                />
+                                {previewImage ? "Cambiar imagen" : "Subir imagen de la mascota"}
+                            </Label>
+                            {previewImage && (
+                                <div className="w-full mt-4">
+                                    <Image
+                                        src={previewImage}
+                                        className="w-full h-auto rounded-md"
+                                        alt="Vista previa de la mascota"
+                                        width={96}
+                                        height={96}
+                                        priority
+                                    />
+                                </div>
+                            )}
+                            {errors.imageFile && (
+                                <p className="text-red-500 text-sm mt-2">{errors.imageFile.message}</p>
+                            )}
+                        </div>
                     </div>
                 </div>
-
                 <div className="md:w-2/3 w-80">
                     <form
                         id="petForm"
@@ -157,7 +187,6 @@ export default function PetForm({ userId, token }: PetFormProps) {
                             />
                             {errors.petName && <p className="text-red-500">{errors.petName.message}</p>}
                         </div>
-
                         <div>
                             <Label>Fecha de nacimiento</Label>
                             <Input
@@ -168,7 +197,6 @@ export default function PetForm({ userId, token }: PetFormProps) {
                             />
                             {errors.birthDate && <p className="text-red-500">{errors.birthDate.message}</p>}
                         </div>
-
                         <div>
                             <Label>Animal</Label>
                             <Select
@@ -193,7 +221,6 @@ export default function PetForm({ userId, token }: PetFormProps) {
                             </Select>
                             {errors.animalType && <p className="text-red-500">{errors.animalType.message}</p>}
                         </div>
-
                         <div>
                             <Label>Raza</Label>
                             <Select
@@ -215,18 +242,20 @@ export default function PetForm({ userId, token }: PetFormProps) {
                             </Select>
                             {errors.breed && <p className="text-red-500">{errors.breed.message}</p>}
                         </div>
-
                         <div>
                             <Label>Peso (kg)</Label>
                             <Input
                                 id="weight"
                                 type="number"
                                 step={0.1}
+                                min="0"
+                                onKeyDown={(e) => {
+                                    if (e.key === "-" || e.key === "e") e.preventDefault();
+                                }}
                                 {...register('weight')}
                             />
                             {errors.weight && <p className="text-red-500">{errors.weight.message}</p>}
                         </div>
-
                         <div>
                             <Label>Género</Label>
                             <div className="flex gap-4">
@@ -249,7 +278,6 @@ export default function PetForm({ userId, token }: PetFormProps) {
                             </div>
                             {errors.gender && <p className="text-red-500">{errors.gender.message}</p>}
                         </div>
-
                         <div className="flex justify-start gap-4 mt-8">
                             <Button
                                 type="button"
@@ -258,7 +286,6 @@ export default function PetForm({ userId, token }: PetFormProps) {
                             >
                                 Cancelar
                             </Button>
-
                             <Button
                                 type="submit"
                                 disabled={isSubmitting}

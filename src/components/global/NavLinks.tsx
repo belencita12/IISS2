@@ -15,11 +15,13 @@ import {
   FileIcon,
   SettingsIcon,
   CircleHelpIcon,
+  CalendarIcon,
 } from "lucide-react";
 
 const linksUser = [
   { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
-  { name: "Citas", href: "/dashboard/citas", icon: UserIcon },
+  { name: "Citas", href: "/dashboard/citas", icon: CalendarIcon },
+  { name: "Clientes", href: "/dashboard/clients", icon: UserIcon },
   { name: "Productos", href: "/dashboard/productos", icon: BoneIcon },
   { name: "Vacunas", href: "/dashboard/vacunas", icon: SyringeIcon },
   { name: "Depositos", href: "/dashboard/depositos", icon: StoreIcon },
