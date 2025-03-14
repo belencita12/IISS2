@@ -17,14 +17,14 @@ import {
       name: "El gato",
       species: "Gato",
       breed: "Mestizo",
-      image: "/pelu1.png",
+      image: "/image (4).png",
     },
     {
       id: 2,
       name: "Megatron",
       species: "Perro",
       breed: "Caniche",
-      image: "/pelu2.png",
+      image: "/image 26.png",
     },
   ];
   
@@ -32,7 +32,7 @@ import {
     return (
       <Table>
         <TableHeader>
-          <TableRow className="bg-[E9EAEF]">
+          <TableRow className="bg-[#E9EAEF]">
             <TableHead className="w-[50px]"> </TableHead>
             <TableHead>Nombre</TableHead>
             <TableHead>Especie</TableHead>
