@@ -7,12 +7,12 @@ import { getPetsByUserId } from "@/lib/pets/getPetsByUserId";
 import { PetData } from "@/lib/pets/IPet";
 
 export default async function ClientDetails(
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
-
     const session = await getServerSession(authOptions);
     const token = session?.user?.token || "";
-    const { id } = params;
+    const resolvedParams = await params; 
+    const { id } = resolvedParams;
     const client = {
         fullName: "Lindsey Stroud",
         image: "/userProfile.png",
