@@ -5,12 +5,19 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
 import { useState } from "react";
 
 function EmployeeForm() {
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm();
   const [file, setFile] = useState<File | null>(null);
-  const onSubmit = (data: any) => console.log(data);
+
+  const onSubmit = (data: any) => {
+    console.log(data);
+    toast.success("Empleado registrado con éxito", {
+      description: `${data.nombre} ${data.apellido} ha sido agregado correctamente.`,
+    });
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) setFile(e.target.files[0]);
