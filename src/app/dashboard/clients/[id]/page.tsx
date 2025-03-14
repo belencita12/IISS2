@@ -14,8 +14,8 @@ export default async function ClientDetails(
     const session = await getServerSession(authOptions);
     const token = session?.user?.token || "";
     const resolvedParams = await params; 
-    const { id } = resolvedParams;
-    const client = await getClientById(Number(id), token) as IUserProfile;
+    const id = Number(resolvedParams.id);
+    const client = await getClientById(id, token) as IUserProfile;
     
     return (
         <>
@@ -25,7 +25,7 @@ export default async function ClientDetails(
                     <h2 className="text-xl">Mascotas</h2>
                     <Button variant={"outline"} className="border-black border-solid">Agregar</Button>
                 </div>
-                    <PaginatedPetsTable token={token} id={Number(id)}/>
+                    <PaginatedPetsTable token={token} id={id}/>
             </section>
         </>
     );

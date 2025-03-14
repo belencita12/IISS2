@@ -44,6 +44,7 @@ interface GenericTableProps<T> {
   onPageChange?: (page: number) => void;
   isLoading?: boolean;
   emptyMessage?: string;
+  skeleton?: React.ReactNode;
   className?: string;
 }
 
@@ -56,6 +57,7 @@ export default function GenericTable<T extends { id?: string | number }>({
   isLoading = false,
   emptyMessage = "No hay datos disponibles",
   className,
+  skeleton,
 }: GenericTableProps<T>) {
   const [currentPage, setCurrentPage] = useState(pagination?.currentPage || 1);
 
@@ -67,7 +69,11 @@ export default function GenericTable<T extends { id?: string | number }>({
   }, [pagination?.currentPage]);
 
   if (isLoading) {
-    return <div className="py-8 text-center">Cargando datos...</div>;
+    return skeleton ? (
+      <div className={className}>{skeleton}</div>
+    ) : (
+      <div className="py-8 text-center">Cargando datos...</div>
+    );
   }
 
   if (data.length === 0) {

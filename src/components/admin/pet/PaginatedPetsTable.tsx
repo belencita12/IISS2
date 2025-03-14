@@ -6,6 +6,8 @@ import { PetData } from "@/lib/pets/IPet";
 import { Pencil, Trash } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import PetsTableSkeleton from "./skeleton/PetsTableSkeleton";
+import { set } from "react-hook-form";
 
 
 export default function PaginatedPetsTable({ token,id }: { token: string ,id:number}) {
@@ -59,6 +61,7 @@ export default function PaginatedPetsTable({ token,id }: { token: string ,id:num
 
   const [pets, setPets] = useState<PetData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
@@ -69,6 +72,7 @@ export default function PaginatedPetsTable({ token,id }: { token: string ,id:num
   useEffect(() => {
     const fetchPets = async () => {
       try {
+        setIsLoading(true);
         const data = await getPetsByUserIdFull(id, token, pagination.currentPage);
         setPets(data.data);
         setPagination({
@@ -86,7 +90,7 @@ export default function PaginatedPetsTable({ token,id }: { token: string ,id:num
     };
 
     fetchPets();
-  }, [pagination.currentPage, token]);
+  }, [pagination.currentPage, token,id]);
 
   return (
     <GenericTable
@@ -95,6 +99,7 @@ export default function PaginatedPetsTable({ token,id }: { token: string ,id:num
       actions={actions}
       pagination={pagination}
       isLoading={isLoading}
+      skeleton={<PetsTableSkeleton />}
       onPageChange={(page) => setPagination({ ...pagination, currentPage: page })}
       emptyMessage="No hay mascotas disponibles"
     />
