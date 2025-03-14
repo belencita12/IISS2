@@ -1,29 +1,36 @@
-import { Header } from "@/components/profile/Header";
 import authOptions from "@/lib/auth/options";
 import { getServerSession, } from "next-auth";
 import ClientProfileSection from "@/components/admin/client/ClientProfileSection";
-import PetsSection from "@/components/admin/pet/PetsSection";
+import PetsTable from "@/components/admin/pet/PetsTable";
+import { Button } from "@/components/ui/button";
+import { getPetsByUserId } from "@/lib/pets/getPetsByUserId";
+import { PetData } from "@/lib/pets/IPet";
 
-type ClientDetailsProps = {
-    params: {
-        id: string;
-    };
-};
+export default async function ClientDetails(
+    { params }: { params: { id: string } }
+) {
 
-export default async function ClientDetails() {
-    const token = await getServerSession(authOptions);
-    const fullName = token?.user?.fullName || "User";
+    const session = await getServerSession(authOptions);
+    const token = session?.user?.token || "";
+    const { id } = params;
     const client = {
         fullName: "Lindsey Stroud",
         image: "/userProfile.png",
         email: "lindsey.stroud.@example.com",
     };
 
+    const pets = await getPetsByUserId(Number(id), token) as PetData[];
+
     return (
         <>
-            <Header fullName={fullName} />
             <ClientProfileSection {...client} />
-            <PetsSection />
+            <section className="mx-auto px-24">
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-xl">Mascotas</h2>
+                    <Button variant={"outline"} className="border-black border-solid">Agregar</Button>
+                </div>
+                <PetsTable pets={pets}/>
+            </section>
         </>
     );
 }

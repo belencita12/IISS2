@@ -1,8 +1,7 @@
 import {
     Table,
     TableBody,
-    TableCaption,
-    TableCell,
+      TableCell,
     TableHead,
     TableHeader,
     TableRow,
@@ -10,25 +9,12 @@ import {
   import { Pencil, Trash } from "lucide-react";
   import Image from "next/image";
   import { Button } from "@/components/ui/button";
+  import { PetData } from "@/lib/pets/IPet";
   
-  const pets = [
-    {
-      id: 1,
-      name: "El gato",
-      species: "Gato",
-      breed: "Mestizo",
-      image: "/image (4).png",
-    },
-    {
-      id: 2,
-      name: "Megatron",
-      species: "Perro",
-      breed: "Caniche",
-      image: "/image 26.png",
-    },
-  ];
-  
-  export default function PetsTable() {
+  export default function PetsTable(
+    { pets }: { pets: PetData[] }
+  ) {
+    if(pets.length === 0) return <p className="text-center">No hay mascotas</p>
     return (
       <Table>
         <TableHeader>
@@ -45,7 +31,7 @@ import {
             <TableRow key={pet.id}>
               <TableCell>
                 <Image
-                  src={pet.image}
+                  src={pet.profileImg?.previewUrl || "/image (4).png"}
                   alt={pet.name}
                   width={30}
                   height={30}
@@ -53,8 +39,8 @@ import {
                 />
               </TableCell>
               <TableCell className="font-medium">{pet.name}</TableCell>
-              <TableCell>{pet.species}</TableCell>
-              <TableCell>{pet.breed}</TableCell>
+              <TableCell>{pet.species.name}</TableCell>
+              <TableCell>{pet.race.name}</TableCell>
               <TableCell className="text-right flex gap-2 justify-end">
                 <Button variant="ghost" size="icon">
                   <Pencil className="w-4 h-4" />
