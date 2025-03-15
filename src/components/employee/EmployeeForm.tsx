@@ -77,6 +77,7 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
     reader.onload = (e) => setPreviewImage(e.target?.result as string);
     reader.readAsDataURL(file);
   };
+  
   const onSubmit = async (data: EmployeeFormValues) => {
     const formData = new FormData();
     Object.entries({
@@ -85,7 +86,7 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
       email: data.email,
       positionId: data.position,
     }).forEach(([key, value]) => formData.append(key, value));
-    
+  
     if (data.profileImg) {
       formData.append("profileImg", data.profileImg);
     }
@@ -94,19 +95,26 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
     try {
       await registerEmployee(formData, token);
       toast.success("Empleado registrado con éxito");
-     // router.push("/employees");
-    } catch (error: any) {
-      let errorMessage = "Hubo un error al registrar el empleado";
-  
-      if (error.response?.status === 400) {
-        errorMessage = error.response?.data?.message || errorMessage;
+    //  router.push("/employees");
+    } catch (error) {
+      if (error instanceof Response) {
+        try {
+          const errorData = await error.json();
+          toast.error(errorData.message || "Hubo un error al registrar el empleado");
+        } catch {
+          toast.error("Hubo un error inesperado");
+        }
+      } else if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Hubo un error desconocido");
       }
-  
-      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
   };
+  
+  
   
 
 
