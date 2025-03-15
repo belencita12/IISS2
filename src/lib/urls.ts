@@ -5,3 +5,4 @@ export const SPECIES_API = `${BASE_API_URL}/species`;
 export const RACE_API = `${BASE_API_URL}/race`;
 export const AUTH_API = `${BASE_API_URL}/auth`;
 export const CLIENT_API = `${BASE_API_URL}/user`;
+export const PRODUCT_API = `${BASE_API_URL}/product`;
