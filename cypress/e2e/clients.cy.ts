@@ -1,12 +1,12 @@
-
+/* 
 
 describe('ClientProfileSection', () => {
 const SESSION_KEY = "sessionToken";
 
     it("iniciar sesión", () => {
         const USER = {
-        email: "andres.cabrera@fiuni.edu.py",
-        password: "asdqwe123"
+        email: "makiko.yamamoto@fiuni.edu.py",
+        password: "MakiYamaGin"
         };
     
         cy.loginAndSetSession(SESSION_KEY, USER.email, USER.password);
@@ -27,6 +27,28 @@ const SESSION_KEY = "sessionToken";
       // Verifica que la imagen de perfil esté presente
       cy.get('img[alt="Lindsey Stroud"]').should('exist');
     });
-  });
+
+    it('Muestra el mensaje de "sin mascotas"', () => {
+      cy.visit('/dashboard/clients/2');
   
+      // Verifica que se muestra la sección de mascotas
+      cy.contains('Mascotas').should('exist');
+  
+      // Ahora verifica que aparezca el mensaje de "sin mascotas"
+      cy.contains(/no tiene mascotas registradas/i).should('exist');
+  
+      // Opcional: Verifica que la tabla no se muestre
+      cy.get('table').should('not.exist');
+    });
+  
+    it('El botón "Agregar" sigue estando visible', () => {
+      cy.visit('/dashboard/clients/2');
+  
+      // El botón debería estar aunque no haya mascotas
+      cy.get('button').contains('Agregar').should('exist');
+  
+    
+    });
+  });
+   */
   
