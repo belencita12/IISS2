@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button"
@@ -34,7 +34,12 @@ export default function LoginForm() {
         if (res?.error) {
             setError("Credenciales incorrectas. Inténtalo de nuevo.");
         } else {
-            router.push("/user-profile");
+            const session = await getSession();
+            if (session?.user?.roles?.includes("ADMIN")) {
+                router.push("/dashboard");  
+            } else {
+                router.push("/user-profile");
+            }
         }
     };
 
