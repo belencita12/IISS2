@@ -120,7 +120,7 @@ const ClientList: React.FC<ClientListProps> = ({ token }) => {
             <SearchBar onSearch={handleSearch} />
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-3xl font-bold">Clientes</h2>
-                <Button variant="outline" className="px-6">
+                <Button variant="outline" className="px-6" onClick={() => router.push("/dashboard/clients/register")}>
                     Agregar
                 </Button>
             </div>
