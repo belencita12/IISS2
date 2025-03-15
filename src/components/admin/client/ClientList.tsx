@@ -14,13 +14,12 @@ import GenericTable, {
 import ClientTableSkeleton from "./skeleton/ClientTableSkeleton";
 import { getPetsByUserIdFull } from "@/lib/pets/getPetsByUserId";
 import { useRouter } from "next/navigation";
+import { IUserProfile } from "@/lib/client/IUserProfile";
 
-type User = {
-    id: number;
-    fullName: string;
-    email: string;
+export interface IUserWithPets extends IUserProfile {
     petCount?: number;
-};
+}
+
 interface ClientListProps {
     token: string | null;
 }
@@ -28,7 +27,7 @@ interface ClientListProps {
 export default function ClientList({ token }: ClientListProps) {
     const router = useRouter();
     const [data, setData] = useState<{
-        users: User[];
+        users: IUserWithPets[];
         pagination: PaginationInfo;
     }>({
         users: [],
@@ -45,20 +44,20 @@ export default function ClientList({ token }: ClientListProps) {
                 const results = await fetchUsers(page, query, token);
                 if (!results.data.length && query)
                     toast("info", "No se ha encontrado el cliente!");
-                // Obtener la cantidad de mascotas para cada usuario en paralelo
+
                 const usersWithPets = await Promise.all(
-                    results.data.map(async (user: User) => {
+                    results.data.map(async (user: IUserProfile) => {
                         try {
                             const petResponse = await getPetsByUserIdFull(user.id, token);
                             const petCount = petResponse?.total ?? 0;
-                            return { ...user, petCount };
+                            return { ...user, petCount } as IUserWithPets;
                         } catch (error) {
                             console.error(
                                 `Error obteniendo mascotas para usuario ${user.id}:`,
                                 error
                             );
                             toast("error", "Error obteniendo mascotas!");
-                            return { ...user, petCount: 0 };
+                            return { ...user, petCount: 0 } as IUserWithPets;
                         }
                     })
                 );
@@ -81,21 +80,25 @@ export default function ClientList({ token }: ClientListProps) {
         },
         [token]
     );
+
     useEffect(() => {
         if (token) loadUsers(data.pagination.currentPage);
     }, [token, data.pagination.currentPage, loadUsers]);
+
     const handleSearch = (query: string) => loadUsers(1, query);
     const handlePageChange = (page: number) =>
         setData((prev) => ({
             ...prev,
             pagination: { ...prev.pagination, currentPage: page },
         }));
-    const columns: Column<User>[] = [
+
+    const columns: Column<IUserWithPets>[] = [
         { header: "Nombre", accessor: "fullName" },
         { header: "Email", accessor: "email" },
         { header: "Mascotas", accessor: "petCount", className: "text-center" },
     ];
-    const actions: TableAction<User>[] = [
+
+    const actions: TableAction<IUserWithPets>[] = [
         {
             icon: <Eye className="w-4 h-4" />,
             onClick: (user) => router.push(`/dashboard/clients/${user.id}`),
@@ -112,6 +115,7 @@ export default function ClientList({ token }: ClientListProps) {
             label: "Eliminar",
         },
     ];
+
     return (
         <div className="p-4 mx-auto">
             <SearchBar onSearch={handleSearch} />
@@ -133,5 +137,6 @@ export default function ClientList({ token }: ClientListProps) {
             />
         </div>
     );
-};
+}
+
 
