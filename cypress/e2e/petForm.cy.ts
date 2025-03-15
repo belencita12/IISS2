@@ -134,8 +134,154 @@ describe('Registrar Mascota con PetForm', () => {
     cy.contains("button", "Cancelar").click();
     cy.location("pathname", TIMEOUT).should("eq", "/user-profile");
   });
+
+  it("Registrar mascota sin imagen", () => {
+    cy.intercept("GET", `${BASE_URL}/species?page=1`).as("getSpecies");
+    cy.intercept("GET", `${BASE_URL}/race?page=1&speciesId=1`).as("getRaces");
+    cy.intercept("POST", `${BASE_URL}/pet`).as("registerPet");
+  
+    cy.log('Navegar a la página de agregar mascota sin imagen');
+    cy.contains('button', 'Agregar Mascota').click();
+  
+    cy.wait("@getSpecies", TIMEOUT);
+    cy.wait(3000);
+  
+    cy.get("input[name='petName']").type(`${PET_MOCK.name} sin imagen`);
+    cy.get("input[name='birthDate']").type(`2023-02-01`);
+    cy.get("input[name='weight']").type(`14`);
+  
+    cy.get("button#animalType").click();
+    cy.get('div[role="listbox"] div').first().click();
+  
+    
+    cy.wait("@getRaces", TIMEOUT).then((int) => {
+      const response = int.response;
+      expect(response?.statusCode).to.eq(200);
+  
+      // Seleccionar raza
+      cy.get("button#breed").click();
+      cy.get('div[role="listbox"] div').first().click();
+    });
+  
+    cy.get("button#breed").click();
+    cy.get('div[role="listbox"] div').first().click();
+  
+    cy.contains("button", "Macho").click();
+  
+    //Sin imagen 
+  
+    cy.contains("button", "Registrar Mascota").click();
+  
+    cy.wait("@registerPet").then((interception) => {
+      expect(interception.response?.statusCode).to.eq(201);
+    });
+  
+    cy.contains("Mascota registrada con éxito!").should("exist");
+  });
+  
+  it("Registrar mascota con imagen de tamaño grande", () => {
+    cy.intercept("GET", `${BASE_URL}/species?page=1`).as("getSpecies");
+    cy.intercept("GET", `${BASE_URL}/race?page=1&speciesId=1`).as("getRaces");
+    cy.intercept("POST", `${BASE_URL}/pet`).as("registerPet");
+  
+    cy.log('Navegar a la página de agregar mascota con imagen grande');
+    cy.contains('button', 'Agregar Mascota').click();
+  
+    cy.wait("@getSpecies", TIMEOUT);
+    cy.wait(3000);
+  
+    cy.get("input[name='petName']").type("Grande");
+    cy.get("input[name='birthDate']").type("2022-05-05");
+    cy.get("input[name='weight']").type("15");
+  
+    cy.get("button#animalType").click();
+    cy.get('div[role="listbox"] div').first().click();
+  
+    cy.wait("@getRaces", TIMEOUT).then((int) => {
+      const response = int.response;
+      expect(response?.statusCode).to.eq(200);
+  
+      // Seleccionar raza
+      cy.get("button#breed").click();
+      cy.get('div[role="listbox"] div').first().click();
+    });
+  
+    cy.get("button#breed").click();
+    cy.get('div[role="listbox"] div').first().click();
+  
+    cy.contains("button", "Hembra").click();
+  
+    const largeImagePath = "images/perroG.png"; 
+    cy.get('input[type="file"]').selectFile(`cypress/fixtures/${largeImagePath}`, {
+      force: true,
+    });
+    
+    cy.wait(3000);
+
+    cy.contains("button", "Registrar Mascota").click();
+
+    cy.contains("La imagen no debe superar 1MB").should("be.visible");
+
+    cy.get("@registerPet").should("not.exist");
+  
+    // Regresar al perfil
+    cy.contains("button", "Cancelar").click();
+    cy.location("pathname", TIMEOUT).should("eq", "/user-profile");
+  });
+
+  it("Intentar registrar mascota con peso inválido", () => {
+    cy.intercept("GET", `${BASE_URL}/species?page=1`).as("getSpecies");
+    cy.intercept("GET", `${BASE_URL}/race?page=1&speciesId=1`).as("getRaces");
+    cy.intercept("POST", `${BASE_URL}/pet`).as("registerPet");
+  
+    cy.log('Navegar a la página de agregar mascota con peso inválido');
+    cy.contains('button', 'Agregar Mascota').click();
+  
+    cy.wait("@getSpecies", TIMEOUT);
+    cy.wait(3000);
+  
+    cy.get("input[name='petName']").type("PesoInválido");
+    cy.get("input[name='birthDate']").type("2021-11-11");
+  
+    cy.get("button#animalType").click();
+    cy.get('div[role="listbox"] div').first().click();
+  
+    cy.wait("@getRaces", TIMEOUT).then((int) => {
+      const response = int.response;
+      expect(response?.statusCode).to.eq(200);
+  
+      // Seleccionar raza
+      cy.get("button#breed").click();
+      cy.get('div[role="listbox"] div').first().click();
+    });
+  
+    cy.get("button#breed").click();
+    cy.get('div[role="listbox"] div').first().click();
+  
+    cy.contains("button", "Macho").click();
+
+    cy.get("input[name='weight']").type("-10"); // Peso negativo
+
+    cy.get("input[name='weight']")
+      .invoke('val')
+      .then((value)=>{
+        const valorNumerico = Number(value)
+
+        expect(valorNumerico).to.be.greaterThan(-1)
+      })
+    
+    cy.get("@registerPet").should("not.exist");
+  
+    // Regresar al perfil
+    cy.contains("button", "Cancelar").click();
+    cy.location("pathname", TIMEOUT).should("eq", "/user-profile");
+
+  });
+  
+  
 });
 
+//test inicial para ingresar sesion y guardar token
 it("iniciar sesión", () => {
   const USER = {
     email: "makiko.yamamoto@fiuni.edu.py",
