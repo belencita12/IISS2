@@ -7,7 +7,6 @@ import { Pencil, Trash } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import PetsTableSkeleton from "./skeleton/PetsTableSkeleton";
-import { set } from "react-hook-form";
 
 
 export default function PaginatedPetsTable({ token,id }: { token: string ,id:number}) {
