@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { fetchUsers } from "@/lib/client/getUsers";
-import { SearchBar } from "./SearchBar";
+import SearchBar from "./SearchBar";
 import { Eye, Pencil, Trash } from "lucide-react";
 import { toast } from "@/lib/toast";
 import GenericTable, {
@@ -25,7 +25,7 @@ interface ClientListProps {
     token: string | null;
 }
 
-const ClientList: React.FC<ClientListProps> = ({ token }) => {
+export default function ClientList({ token }: ClientListProps) {
     const router = useRouter();
     const [data, setData] = useState<{
         users: User[];
@@ -57,6 +57,7 @@ const ClientList: React.FC<ClientListProps> = ({ token }) => {
                                 `Error obteniendo mascotas para usuario ${user.id}:`,
                                 error
                             );
+                            toast("error", "Error obteniendo mascotas!");
                             return { ...user, petCount: 0 };
                         }
                     })
@@ -80,18 +81,15 @@ const ClientList: React.FC<ClientListProps> = ({ token }) => {
         },
         [token]
     );
-
     useEffect(() => {
         if (token) loadUsers(data.pagination.currentPage);
     }, [token, data.pagination.currentPage, loadUsers]);
-
     const handleSearch = (query: string) => loadUsers(1, query);
     const handlePageChange = (page: number) =>
         setData((prev) => ({
             ...prev,
             pagination: { ...prev.pagination, currentPage: page },
         }));
-
     const columns: Column<User>[] = [
         { header: "Nombre", accessor: "fullName" },
         { header: "Email", accessor: "email" },
@@ -114,7 +112,6 @@ const ClientList: React.FC<ClientListProps> = ({ token }) => {
             label: "Eliminar",
         },
     ];
-
     return (
         <div className="p-4 mx-auto">
             <SearchBar onSearch={handleSearch} />
@@ -138,4 +135,3 @@ const ClientList: React.FC<ClientListProps> = ({ token }) => {
     );
 };
 
-export default ClientList;

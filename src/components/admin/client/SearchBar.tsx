@@ -9,10 +9,8 @@ import { toast } from "@/lib/toast";
 interface SearchBarProps {
     onSearch: (query: string) => void;
 }
-
-export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+export default function SearchBar({ onSearch }: SearchBarProps) {
     const [query, setQuery] = useState("");
-
     const handleSearch = () => {
         const trimmedQuery = query.trim();
         if (!trimmedQuery) {
@@ -21,18 +19,15 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
         }
         onSearch(trimmedQuery);
     };
-
     const clearSearch = () => {
         setQuery("");
         onSearch("");
     };
-
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter") {
             handleSearch();
         }
     };
-
     return (
         <div className="flex items-center gap-2 mb-4">
             <div className="relative w-full">
