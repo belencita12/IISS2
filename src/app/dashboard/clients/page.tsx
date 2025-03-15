@@ -1,4 +1,4 @@
-import ClientList from "@/components/admin/ClientList";
+import ClientList from "@/components/admin/client/ClientList";
 import { getServerSession } from "next-auth";
 import authOptions from "@/lib/auth/options";
 import { redirect } from "next/navigation";
