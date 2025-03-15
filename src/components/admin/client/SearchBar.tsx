@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -13,15 +14,23 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     const [query, setQuery] = useState("");
 
     const handleSearch = () => {
-        if (!query.trim()) {
+        const trimmedQuery = query.trim();
+        if (!trimmedQuery) {
             toast("info", "Debes ingresar algo para buscar!");
             return;
         }
-        onSearch(query);
+        onSearch(trimmedQuery);
     };
 
-    const handleClear = () => {
+    const clearSearch = () => {
         setQuery("");
+        onSearch("");
+    };
+
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === "Enter") {
+            handleSearch();
+        }
     };
 
     return (
@@ -32,11 +41,12 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                     className="pr-10"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
+                    onKeyDown={handleKeyDown}
                 />
                 {query && (
                     <button
                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                        onClick={handleClear}
+                        onClick={clearSearch}
                     >
                         <X className="w-5 h-5" />
                     </button>
