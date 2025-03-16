@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { getProducts } from "@/lib/products/getProducts";
+import { getProducts } from "@/lib/admin/products/getProducts";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
-import { Product, ProductResponse } from "@/lib/products/IProducts";
+import { Product, ProductResponse } from "@/lib/admin/products/IProducts";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext } from "@/components/ui/pagination";
 import ProductFilters from "@/components/admin/product/ProductFilter";
 
@@ -32,10 +32,10 @@ export default function AdminProductsPage({ token }: AdminProductsPageProps) {
     pageSize: 5,
   });
 
-  const loadProducts = async (page: number) => {
+  const loadProducts = async (page: number, filterParams = filters) => {
     setIsLoading(true);
     try {
-      const params = { ...filters, page, size: pagination.pageSize };
+      const params = { ...filterParams, page, size: pagination.pageSize };
       const data: ProductResponse = await getProducts(params, token);
       setStockMap((prev) => {
         const newMap = { ...prev };
@@ -62,14 +62,17 @@ export default function AdminProductsPage({ token }: AdminProductsPageProps) {
 
   useEffect(() => {
     if (token) loadProducts(pagination.currentPage);
-  }, [pagination.currentPage, token]);
+  }, [token]); 
 
-  const handleSearch = () => {
+  const handleSearch = (updatedFilters = filters) => {
     setPagination((prev) => ({ ...prev, currentPage: 1 }));
-    loadProducts(1);
+    loadProducts(1, updatedFilters);
   };
 
   const handlePageChange = (page: number) => {
+    // Validar que la página solicitada es válida
+    if (page < 1 || page > pagination.totalPages) return;
+    
     setPagination((prev) => ({ ...prev, currentPage: page }));
     loadProducts(page);
   };
@@ -149,7 +152,10 @@ export default function AdminProductsPage({ token }: AdminProductsPageProps) {
       <Pagination>
         <PaginationContent>
           <PaginationItem>
-            <PaginationPrevious onClick={() => handlePageChange(pagination.currentPage - 1)} />
+            <PaginationPrevious 
+              onClick={() => handlePageChange(pagination.currentPage - 1)} 
+              className={pagination.currentPage <= 1 ? "pointer-events-none opacity-50" : ""}
+            />
           </PaginationItem>
           {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((page) => (
             <PaginationItem key={page}>
@@ -162,7 +168,10 @@ export default function AdminProductsPage({ token }: AdminProductsPageProps) {
             </PaginationItem>
           ))}
           <PaginationItem>
-            <PaginationNext onClick={() => handlePageChange(pagination.currentPage + 1)} />
+            <PaginationNext 
+              onClick={() => handlePageChange(pagination.currentPage + 1)} 
+              className={pagination.currentPage >= pagination.totalPages ? "pointer-events-none opacity-50" : ""}
+            />
           </PaginationItem>
         </PaginationContent>
       </Pagination>

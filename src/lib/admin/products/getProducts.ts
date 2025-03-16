@@ -1,5 +1,5 @@
 import { PRODUCT_API } from "@/lib/urls";
-import { Product, ProductQueryParams, ProductResponse } from "./IProducts";
+import { ProductQueryParams, ProductResponse } from "./IProducts";
 
 export const getProducts = async (
   params: ProductQueryParams,
