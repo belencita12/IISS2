@@ -34,13 +34,13 @@ export default function RegisterClientForm({ token }: RegisterClientFormProps) {
       const response = await registerClient({ fullName, email: formData.email }, token);
 
       if (response.status === 401) {
-        toast("error", "Correo ya utilizado");
+        toast("error", "Correo ya registrado");
         setTimeout(() => router.push("/dashboard/clients/register"), 6000);
       } else if (response.error) {
         toast("error", response.error);
         setTimeout(() => router.push("/dashboard/clients"), 6000);
       } else {
-        toast("success", "Usuario creado con éxito. Se ha enviado un correo para restablecer la contraseña.");
+        toast("success", "Registro exitoso!");
         setTimeout(() => router.push("/dashboard/clients"), 2000);
       }
     } catch (err: unknown) {
