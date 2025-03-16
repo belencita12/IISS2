@@ -35,12 +35,12 @@ export default function RegisterClientForm({ token }: RegisterClientFormProps) {
 
       if (response.status === 401) {
         toast("error", "El enlace de reseteo de contraseña ya fue utilizado. Redirigiendo...");
-        setTimeout(() => router.push("/forgot-password"), 6000);
+        setTimeout(() => router.push("/dashboard/clients"), 6000);
       } else if (response.error) {
         toast("error", response.error);
         setTimeout(() => router.push("/dashboard/clients"), 6000);
       } else {
-        toast("success", "Usuario creado con éxito. Se ha enviado un correo para restablecer la contraseña. Redirigiendo...");
+        toast("success", "Usuario creado con éxito. Se ha enviado un correo para restablecer la contraseña.");
         setTimeout(() => router.push("/dashboard/clients"), 2000);
       }
     } catch (err: unknown) {
@@ -48,7 +48,7 @@ export default function RegisterClientForm({ token }: RegisterClientFormProps) {
         "error",
         err instanceof Error
           ? err.message
-          : "Ocurrió un error al crear el usuario. Redirigiendo..."
+          : "Ocurrió un error. Redirigiendo..."
       );
       setTimeout(() => router.push("/dashboard/clients"), 6000);
     } finally {
