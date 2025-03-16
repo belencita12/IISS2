@@ -6,14 +6,11 @@ export const getClientById = async (clientId: number, token: string) => {
         const response = await fetch(`${CLIENT_API}/${clientId}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
-
-        if (!response.ok) throw new Error("Error al obtener el cliente");
-
-        const data = await response.json();
-        console.log(data);
-        return data as IUserProfile;
+        if (response.ok){
+            const data = await response.json();
+            return data as IUserProfile;
+        }
     } catch (error) {
-        console.error("Error en obtener cliente por id", error);
-        throw error;
+        return null;
     }
 };

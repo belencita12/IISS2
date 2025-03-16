@@ -7,6 +7,7 @@ import { PetData } from "@/lib/pets/IPet";
 import { getClientById } from "@/lib/client/getClientById";
 import { IUserProfile } from "@/lib/client/IUserProfile";
 import PaginatedPetsTable from "@/components/admin/pet/PaginatedPetsTable";
+import { notFound } from "next/navigation";
 
 export default async function ClientDetails(
     { params }: { params: Promise<{ id: string }> }
@@ -16,6 +17,7 @@ export default async function ClientDetails(
     const resolvedParams = await params; 
     const id = Number(resolvedParams.id);
     const client = await getClientById(id, token) as IUserProfile;
+    if(!client) return notFound();
     
     return (
         <>
