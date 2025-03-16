@@ -12,7 +12,7 @@ export default async function Position() {
     const token = session?.user?.token;
     return (
         <div>
-            <PositionForm />
+            <PositionForm token={token}/>
         </div>
     );
 }
