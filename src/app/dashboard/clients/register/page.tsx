@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import authOptions from "@/lib/auth/options";
-import AdminUserCreationForm from "@/components/admin/client/RegisterClientForm";
+import RegisterClientForm from "@/components/admin/client/RegisterClientForm";
 
 export default async function CreateUserPage() {
   const session = await getServerSession(authOptions);
@@ -15,7 +15,7 @@ export default async function CreateUserPage() {
   return (
     <div>
 
-      <AdminUserCreationForm token={token} />
+      <RegisterClientForm token={token} />
     </div>
   );
 }
