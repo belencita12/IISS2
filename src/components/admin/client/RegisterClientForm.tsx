@@ -34,8 +34,8 @@ export default function RegisterClientForm({ token }: RegisterClientFormProps) {
       const response = await registerClient({ fullName, email: formData.email }, token);
 
       if (response.status === 401) {
-        toast("error", "El enlace de reseteo de contraseña ya fue utilizado. Redirigiendo...");
-        setTimeout(() => router.push("/dashboard/clients"), 6000);
+        toast("error", "Correo ya utilizado");
+        setTimeout(() => router.push("/dashboard/clients/register"), 6000);
       } else if (response.error) {
         toast("error", response.error);
         setTimeout(() => router.push("/dashboard/clients"), 6000);
