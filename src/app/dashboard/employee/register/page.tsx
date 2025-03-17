@@ -1,20 +1,10 @@
-"use client";
-import { getSession } from "next-auth/react";
+import { getServerSession } from "next-auth";
+import authOptions from "@/lib/auth/options";
 import EmployeeForm from "@/components/employee/EmployeeForm";
-import { useEffect, useState } from "react";
 
-export default function EmployeesPage() {
-  const [token, setToken] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function fetchSession() {
-      const session = await getSession();
-      if (session?.user.token) {
-        setToken(session.user.token as string);
-      }
-    }
-    fetchSession();
-  }, []);
+export default async function EmployeesPage() {
+  const session = await getServerSession(authOptions);
+  const token = session?.user?.token || "";
 
   if (!token) return <p>Cargando...</p>;
 
