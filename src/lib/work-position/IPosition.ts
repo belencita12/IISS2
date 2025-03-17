@@ -1,14 +1,12 @@
 export interface Shift {
-    weekDay: number | number [];
+    weekDay: number | number[];
     startTime: string;
     endTime: string;
+    id?: number;
 }
 
 export interface Position {
+    id?: number;
     name: string;
     shifts: Shift[];
-}
-
-export interface ShiftResponse extends Shift {
-    id: number;
 }
