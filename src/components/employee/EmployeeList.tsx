@@ -119,7 +119,7 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
         <h1 className="text-2xl font-semibold">Empleados</h1>
         <Button 
           className="bg-white text-black border border-gray-300 hover:bg-gray-100"
-          onClick={() => router.push("/dashboard/employees/register")}
+          onClick={() => router.push("/dashboard/employee/register")}
         >
           Agregar
         </Button>
