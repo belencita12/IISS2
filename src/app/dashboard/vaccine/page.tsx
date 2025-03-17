@@ -1,9 +1,15 @@
-import VaccineList from '@/components/admin/VaccineList';
-import { getVaccines } from '@/lib/vaccine/index'; // Cambia la ruta si luego decides moverlo a /vaccine/
+import { getServerSession } from "next-auth";
+import authOptions from "@/lib/auth/options";
+import VaccineList from "@/components/admin/vaccine/VaccineList";
+import { redirect } from "next/navigation";
 
 export default async function VaccineListPage() {
-  // Aquí consumimos los datos
-  const data = await getVaccines();
+  const session = await getServerSession(authOptions);
+  const token = session?.user?.token || null;
 
-  return <VaccineList vaccines={data.items} />;
+  if (!token) {
+    redirect("/login");
+  }
+
+  return <VaccineList token={token} />;
 }
