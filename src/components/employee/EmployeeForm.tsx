@@ -95,7 +95,7 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
     try {
       await registerEmployee(formData, token);
       toast.success("Empleado registrado con éxito");
-    //  router.push("/employees");
+    //  router.push("/dashboard/employee");
     } catch (error) {
       if (error instanceof Response) {
         try {
