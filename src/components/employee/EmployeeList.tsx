@@ -8,6 +8,7 @@ import { fetchEmployees } from "@/lib/employee/getEmployees";
 import { toast } from "@/lib/toast";
 import { useRouter } from "next/navigation";
 import { EmployeeData } from "@/lib/employee/IEmployee";
+import { deleteEmployeeByID } from "@/lib/employee/deleteEmployeeByID";
 
 interface EmployeesTableProps {
   token: string | null;
@@ -52,7 +53,6 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
   );
 
   useEffect(() => {
-    console.log("Token recibido:", token);
     if (token) loadEmployees(data.pagination.currentPage);
   }, [token, data.pagination.currentPage, loadEmployees]);
 
@@ -62,6 +62,19 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
       ...prev,
       pagination: { ...prev.pagination, currentPage: page },
     }));
+
+    const handleDelete = async (employeeId: number) => {
+      if (!window.confirm("¿Estás seguro de que quieres eliminar este empleado?")) return;
+  
+      const success = await deleteEmployeeByID(token || "", employeeId);
+  
+      if (success) {
+        toast("success", "Empleado eliminado correctamente.");
+        loadEmployees(data.pagination.currentPage); 
+      } else {
+        toast("error", "No se pudo eliminar el empleado.");
+      }
+    };
 
   const columns: Column<EmployeeData>[] = [
     { header: "Nombre", accessor: "fullName" },
@@ -77,10 +90,16 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
       label: "Editar",
     },
     {
-      icon: <Trash className="w-4 h-4" />, 
-      onClick: (employee) => console.log("Eliminar", employee), 
+      icon: <Trash className="w-4 h-4" />,
+      onClick: (employee) => {
+        if (employee.id !== undefined) {
+          handleDelete(employee.id);
+        } else {
+          toast("error", "Empleado sin ID, no se puede eliminar.");
+        }
+      },
       label: "Eliminar",
-    },
+    }
   ];
 
   return (
