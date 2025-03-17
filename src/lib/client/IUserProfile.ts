@@ -1,12 +1,15 @@
 export interface IUserProfile {
+  id: number;
+  fullName: string;
+  username: string;
+  email: string;
+  roles: string[];
+  image: {
     id: number;
-    fullName: string;
-    username: string;
-    email: string;
-    imageId: number | null;
-    createdAt: string;
-    updatedAt: string;
-    deletedAt: string | null;
-    roles: string[];
-  }
-  
+    previewUrl: string;
+    originalUrl: string;
+  } | null;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: Record<string, never> | null;
+}
