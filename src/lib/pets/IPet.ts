@@ -1,3 +1,4 @@
+import { PaginationResponse } from "../types";
 
 export interface Image {
     id: number;
@@ -27,3 +28,5 @@ export interface Species {
     id: number;
     name: string;
 }
+
+export type PetDataResponse = PaginationResponse<PetData>
