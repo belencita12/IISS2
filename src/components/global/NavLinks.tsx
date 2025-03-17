@@ -22,7 +22,7 @@ const linksUser = [
   { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
   { name: "Citas", href: "/dashboard/citas", icon: CalendarIcon },
   { name: "Clientes", href: "/dashboard/clients", icon: UserIcon },
-  { name: "Productos", href: "/dashboard/productos", icon: BoneIcon },
+  { name: "Productos", href: "/dashboard/products", icon: BoneIcon },
   { name: "Vacunas", href: "/dashboard/vacunas", icon: SyringeIcon },
   { name: "Depositos", href: "/dashboard/depositos", icon: StoreIcon },
   { name: "Movimientos", href: "/dashboard/movimientos", icon: BoxIcon },
