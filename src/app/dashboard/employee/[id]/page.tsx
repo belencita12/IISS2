@@ -1,52 +1,28 @@
 import EmployeeDetails from "@/components/employee/EmployeeDetails";
+import { getServerSession } from "next-auth";
+import authOptions from "@/lib/auth/options";
+import { redirect } from "next/navigation";
 
+export default async function EmployeePage({ params }: { params: { id?: string } }) {
+    const session = await getServerSession(authOptions);
 
-const Page = ({ params }: { params: { id: string } }) => {
-  const trabajadorMock = {
-    id: params.id,
-    nombre: "Katrina Bennet",
-    puesto: "Veterinaria",
-    correo: "kbennet@gmail.com",
-    telefono: "0981 234 567",
-    inicioTrabajo: "03/02/2022",
-    disponibilidad: "Lunes a Viernes",
-    salario: "3.200.000 Gs. Mensuales",
-    foto: "/coverlg.jpg",
-    historial: [
-      {
-        tipo: "Servicio de Vacunación",
-        fecha: "5/11/2024",
-        hora: "17:30",
-        cliente: "Marta Perez",
-        animal: "Perro",
-        detalles: [
-          { concepto: "Vacuna triple felina y 3 más...", costo: "50.000 gs." },
-          { concepto: "Servicio de transporte", costo: "15.000 gs." }
-        ],
-        total: "75.000 Gs."
-      },
-      {
-        tipo: "Servicio de Consulta clínica",
-        fecha: "6/11/2024",
-        hora: "17:30",
-        cliente: "Marta Perez",
-        animal: "Perro",
-        detalles: [
-          { concepto: "Consulta", costo: "50.000 gs." },
-          { concepto: "Servicio de transporte", costo: "15.000 gs." }
-        ],
-        total: "75.000 Gs."
-      }
-    ]
-  };
+    if (!session) {
+        redirect("/login");
+    }
 
+    if (!params?.id) {
+        return <p>ID de empleado no proporcionado</p>;
+    }
 
-  return (
-   
-      <EmployeeDetails trabajador={trabajadorMock} />
- 
-  );
-};
+    const employeeId = Number(params.id);
 
+    if (isNaN(employeeId)) {
+        return <p>ID de empleado no válido</p>;
+    }
 
-export default Page;
+    return (
+        <div>
+            <EmployeeDetails token={session.user.token} employeeId={employeeId} />
+        </div>
+    );
+}
