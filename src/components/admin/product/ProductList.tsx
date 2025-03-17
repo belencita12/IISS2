@@ -1,12 +1,20 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getProducts } from "@/lib/admin/products/getProducts";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Product, ProductResponse } from "@/lib/admin/products/IProducts";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext } from "@/components/ui/pagination";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+} from "@/components/ui/pagination";
 import ProductFilters from "@/components/admin/product/ProductFilter";
 
 interface AdminProductsPageProps {
@@ -37,15 +45,18 @@ export default function AdminProductsPage({ token }: AdminProductsPageProps) {
     try {
       const params = { ...filterParams, page, size: pagination.pageSize };
       const data: ProductResponse = await getProducts(params, token);
+
       setStockMap((prev) => {
         const newMap = { ...prev };
         data.data.forEach((product) => {
           if (!newMap[product.id]) {
+            // Simular un stock aleatorio
             newMap[product.id] = Math.floor(Math.random() * 300) + 1;
           }
         });
         return newMap;
       });
+
       setProducts(data.data);
       setPagination({
         currentPage: data.currentPage,
@@ -62,7 +73,8 @@ export default function AdminProductsPage({ token }: AdminProductsPageProps) {
 
   useEffect(() => {
     if (token) loadProducts(pagination.currentPage);
-  }, [token]); 
+    
+  }, [token]);
 
   const handleSearch = (updatedFilters = filters) => {
     setPagination((prev) => ({ ...prev, currentPage: 1 }));
@@ -70,9 +82,7 @@ export default function AdminProductsPage({ token }: AdminProductsPageProps) {
   };
 
   const handlePageChange = (page: number) => {
-    // Validar que la página solicitada es válida
     if (page < 1 || page > pagination.totalPages) return;
-    
     setPagination((prev) => ({ ...prev, currentPage: page }));
     loadProducts(page);
   };
@@ -99,78 +109,103 @@ export default function AdminProductsPage({ token }: AdminProductsPageProps) {
           Crear Producto
         </Button>
       </div>
+
       {isLoading ? (
         <p className="text-center py-4">Cargando productos...</p>
       ) : products.length === 0 ? (
         <p className="text-center py-4">No hay productos disponibles</p>
       ) : (
         products.map((product) => (
-          <Card key={product.id} className="overflow-hidden mb-4">
-            <div className="flex p-4">
-              <div className="w-[100px] h-[100px] mr-4 flex-shrink-0">
-                {product.image?.originalUrl ? (
-                  <Image
-                    src={product.image.originalUrl}
-                    alt={product.name}
-                    width={100}
-                    height={100}
-                    className="w-full h-full object-cover rounded"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded">
-                    {product.name.charAt(0).toUpperCase()}
-                  </div>
-                )}
-              </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold mb-4">{product.name}</h3>
-                <div className="grid gap-x-2" style={{ gridTemplateColumns: "auto auto auto auto" }}>
-                  <div className="flex flex-col">
-                    <p className="text-sm text-gray-500">Proveedor</p>
-                    <p className="text-sm text-gray-500 mt-2">Categoría</p>
-                    <p className="text-sm text-gray-500 mt-2">Precio Unitario</p>
-                  </div>
-                  <div className="flex flex-col">
-                    <p className="text-sm">La Mascota S.A.</p>
-                    <p className="text-sm mt-2">Producto</p>
-                    <p className="text-sm mt-2">{product.price.toLocaleString()} Gs</p>
-                  </div>
-                  <div className="flex flex-col">
-                    <p className="text-sm text-gray-500">Costo</p>
-                    <p className="text-sm text-gray-500 mt-2">Stock</p>
-                  </div>
-                  <div className="flex flex-col">
-                    <p className="text-sm">{product.cost?.toLocaleString()} Gs</p>
-                    <p className="text-sm mt-2">{stockMap[product.id] || 0}</p>
+          
+          <Link key={product.id} href={`dashboard/products/${product.id}`}>
+            <Card className="overflow-hidden mb-4 cursor-pointer hover:shadow-md transition-shadow">
+              <div className="flex p-4">
+                <div className="w-[100px] h-[100px] mr-4 flex-shrink-0">
+                  {product.image?.originalUrl ? (
+                    <Image
+                      src={product.image.originalUrl}
+                      alt={product.name}
+                      width={100}
+                      height={100}
+                      className="w-full h-full object-cover rounded"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded">
+                      {product.name.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold mb-4">{product.name}</h3>
+                  <div
+                    className="grid gap-x-2"
+                    style={{ gridTemplateColumns: "auto auto auto auto" }}
+                  >
+                    <div className="flex flex-col">
+                      <p className="text-sm text-gray-500">Proveedor</p>
+                      <p className="text-sm text-gray-500 mt-2">Categoría</p>
+                      <p className="text-sm text-gray-500 mt-2">
+                        Precio Unitario
+                      </p>
+                    </div>
+                    <div className="flex flex-col">
+                      <p className="text-sm">La Mascota S.A.</p>
+                      <p className="text-sm mt-2">Producto</p>
+                      <p className="text-sm mt-2">
+                        {product.price.toLocaleString()} Gs
+                      </p>
+                    </div>
+                    <div className="flex flex-col">
+                      <p className="text-sm text-gray-500">Costo</p>
+                      <p className="text-sm text-gray-500 mt-2">Stock</p>
+                    </div>
+                    <div className="flex flex-col">
+                      <p className="text-sm">
+                        {product.cost?.toLocaleString()} Gs
+                      </p>
+                      <p className="text-sm mt-2">{stockMap[product.id] || 0}</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </Card>
+            </Card>
+          </Link>
         ))
       )}
+
+      {/* Paginación */}
       <Pagination>
         <PaginationContent>
           <PaginationItem>
-            <PaginationPrevious 
-              onClick={() => handlePageChange(pagination.currentPage - 1)} 
-              className={pagination.currentPage <= 1 ? "pointer-events-none opacity-50" : ""}
+            <PaginationPrevious
+              onClick={() => handlePageChange(pagination.currentPage - 1)}
+              className={
+                pagination.currentPage <= 1
+                  ? "pointer-events-none opacity-50"
+                  : ""
+              }
             />
           </PaginationItem>
-          {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((page) => (
-            <PaginationItem key={page}>
-              <PaginationLink
-                isActive={pagination.currentPage === page}
-                onClick={() => handlePageChange(page)}
-              >
-                {page}
-              </PaginationLink>
-            </PaginationItem>
-          ))}
+          {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(
+            (page) => (
+              <PaginationItem key={page}>
+                <PaginationLink
+                  isActive={pagination.currentPage === page}
+                  onClick={() => handlePageChange(page)}
+                >
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
+            )
+          )}
           <PaginationItem>
-            <PaginationNext 
-              onClick={() => handlePageChange(pagination.currentPage + 1)} 
-              className={pagination.currentPage >= pagination.totalPages ? "pointer-events-none opacity-50" : ""}
+            <PaginationNext
+              onClick={() => handlePageChange(pagination.currentPage + 1)}
+              className={
+                pagination.currentPage >= pagination.totalPages
+                  ? "pointer-events-none opacity-50"
+                  : ""
+              }
             />
           </PaginationItem>
         </PaginationContent>
