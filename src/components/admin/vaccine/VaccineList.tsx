@@ -11,14 +11,14 @@ import GenericTable, {
 } from "@/components/global/GenericTable";
 import VaccineTableSkeleton from "./skeleton/VaccineTableSkeleton";
 import { useRouter } from "next/navigation";
-import { getVaccines } from "@/lib/vaccine/index";
+import { getVaccines } from "@/lib/vaccine/getVaccines";
 import SearchBar from "./SearchBar";
 
 interface Vaccine {
     id: number;
     name: string;
-    manufacturer: { name: string };
-    species: { name: string };
+    manufacturer: { id: number; name: string };
+    species: { id: number; name: string };
 }
 
 interface VaccineListProps {
@@ -35,14 +35,15 @@ export default function VaccineList({ token }: VaccineListProps) {
         pagination: { currentPage: 1, totalPages: 1, totalItems: 0, pageSize: 4 },
     });
     const [loading, setLoading] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
 
     const loadVaccines = useCallback(
-        async (page: number = 1, query: string = "") => {
+        async (page: number = 1) => {
           if (!token) return;
           setLoading(true);
       
           try {
-            const results = await getVaccines(token, `page=${page}`);      
+            const results = await getVaccines(token, page);      
             if (!Array.isArray(results.data)) {
               throw new Error("La respuesta de la API no es un array");
             }
@@ -70,12 +71,25 @@ export default function VaccineList({ token }: VaccineListProps) {
         if (token) loadVaccines(data.pagination.currentPage);
     }, [token, data.pagination.currentPage, loadVaccines]);
 
-    const handleSearch = (query: string) => loadVaccines(1, query);
+    const handleSearch = (query: string) => {
+        setSearchQuery(query); // Actualiza el estado de la búsqueda
+    };
+
     const handlePageChange = (page: number) =>
         setData((prev) => ({
             ...prev,
             pagination: { ...prev.pagination, currentPage: page },
         }));
+
+    // Filtrar las vacunas en el frontend
+    const filteredVaccines = data.vaccines.filter((vaccine) => {
+        const searchText = searchQuery.toLowerCase();
+        return (
+            vaccine.name.toLowerCase().includes(searchText) ||
+            vaccine.manufacturer.name.toLowerCase().includes(searchText) ||
+            vaccine.species.name.toLowerCase().includes(searchText)
+        );
+    });
 
     const columns: Column<Vaccine>[] = [
         { header: "Nombre", accessor: "name" },
@@ -115,7 +129,7 @@ export default function VaccineList({ token }: VaccineListProps) {
                 </Button>
             </div>
             <GenericTable
-                data={data.vaccines}
+                data={filteredVaccines} // Usa las vacunas filtradas
                 columns={columns}
                 actions={actions}
                 pagination={data.pagination}
