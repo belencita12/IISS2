@@ -1,4 +1,4 @@
-export async function getVaccines(token: string, query = 'page=1') {
+export async function getVaccines(token: string, query = '') {
   const url = `${process.env.NEXT_PUBLIC_BASE_URL}/vaccine?${query}`;
 
   const response = await fetch(url, {
@@ -8,7 +8,12 @@ export async function getVaccines(token: string, query = 'page=1') {
     },
   });
 
-  if (!response.ok) throw new Error('Error al obtener vacunas');
+  if (!response.ok) {
+    console.error("Error en la respuesta de la API:", response.status, response.statusText);
+    throw new Error('Error al obtener vacunas');
+  }
 
-  return await response.json();
+  const data = await response.json();
+  console.log("Respuesta de la API:", data); // Inspecciona la estructura de la respuesta
+  return data;
 }
