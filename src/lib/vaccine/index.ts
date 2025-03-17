@@ -10,5 +10,5 @@ export async function getVaccines(token: string, query = 'page=1') {
 
   if (!response.ok) throw new Error('Error al obtener vacunas');
 
-  return response.json();
+  return await response.json();
 }

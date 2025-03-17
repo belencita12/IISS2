@@ -11,8 +11,8 @@ import { toast } from '@/lib/toast';
 interface Vaccine {
   id: number;
   name: string;
-  manufacturer: string;
-  species: string;
+  manufacturer: { name: string };
+  species: { name: string };
 }
 
 interface VaccineListProps {
@@ -33,8 +33,8 @@ export default function VaccineList({ token }: VaccineListProps) {
     setIsLoading(true);
     try {
       const data = await getVaccines(token, 'page=1'); 
-      if (Array.isArray(data.items)) {
-        setVaccines(data.items);
+      if (Array.isArray(data.data)) {
+        setVaccines(data.data);
       } else {
         setVaccines([]); // Si no es un array, asignar un array vacío
       }
@@ -71,7 +71,7 @@ export default function VaccineList({ token }: VaccineListProps) {
               <TableHead>Nombre</TableHead>
               <TableHead>Fabricante</TableHead>
               <TableHead>Especie</TableHead>
-              <TableHead>Acciones</TableHead>
+              <TableHead className="text-right">Acciones</TableHead> {/* Alineado a la derecha */}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -79,21 +79,23 @@ export default function VaccineList({ token }: VaccineListProps) {
               filteredVaccines.map((vaccine) => (
                 <TableRow key={vaccine.id}>
                   <TableCell>{vaccine.name}</TableCell>
-                  <TableCell>{vaccine.manufacturer}</TableCell>
-                  <TableCell>{vaccine.species}</TableCell>
-                  <TableCell className="space-x-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => router.push(`/dashboard/vaccine/${vaccine.id}/edit`)}
-                    >
-                      ✏️
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      onClick={() => console.log('Eliminar', vaccine.id)}
-                    >
-                      🗑️
-                    </Button>
+                  <TableCell>{vaccine.manufacturer.name}</TableCell>
+                  <TableCell>{vaccine.species.name}</TableCell>
+                  <TableCell className="text-right"> {/* Alineado a la derecha */}
+                    <div className="flex justify-end space-x-2"> {/* Contenedor flexible para los botones */}
+                      <Button
+                        variant="outline"
+                        onClick={() => router.push(`/dashboard/vaccine/${vaccine.id}/edit`)}
+                      >
+                        ✏️
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        onClick={() => console.log('Eliminar', vaccine.id)}
+                      >
+                        🗑️
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
