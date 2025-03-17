@@ -33,7 +33,11 @@ export default function VaccineList({ token }: VaccineListProps) {
     setIsLoading(true);
     try {
       const data = await getVaccines(token, 'page=1'); 
-      setVaccines(data.items);
+      if (Array.isArray(data.items)) {
+        setVaccines(data.items);
+      } else {
+        setVaccines([]); // Si no es un array, asignar un array vacío
+      }
     } catch (error) {
       toast('error', 'Error al obtener vacunas');
       console.error(error);
