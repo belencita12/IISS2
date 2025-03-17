@@ -9,7 +9,7 @@ export default function ClientProfileSection({ fullName,email}: IUserProfile) {
         alt={fullName}
         width={250}
         height={250}
-        className="rounded-full bg-cover md:w[250px] md:h[250px]"
+        className="w-[250px] h-[250px] rounded-full object-cover"
       />
       <div>
         <h1 className="text-xl md:text-3xl font-bold text-gray-800">
