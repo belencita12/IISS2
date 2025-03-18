@@ -40,6 +40,7 @@ interface GenericTableProps<T> {
   data: T[];
   columns: Column<T>[];
   actions?: TableAction<T>[];
+  actionsTitle?: string;
   pagination?: PaginationInfo;
   onPageChange?: (page: number) => void;
   isLoading?: boolean;
@@ -52,6 +53,7 @@ export default function GenericTable<T extends { id?: string | number }>({
   data,
   columns,
   actions,
+  actionsTitle="Acciones",
   pagination,
   onPageChange,
   isLoading = false,
@@ -126,7 +128,7 @@ export default function GenericTable<T extends { id?: string | number }>({
               </TableHead>
             ))}
             {actions && actions.length > 0 && (
-              <TableHead className="text-right">Acciones</TableHead>
+              <TableHead className="text-right">{actionsTitle}</TableHead>
             )}
           </TableRow>
         </TableHeader>
