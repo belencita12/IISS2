@@ -13,6 +13,7 @@ import VaccineTableSkeleton from "./skeleton/VaccineTableSkeleton";
 import { useRouter } from "next/navigation";
 import { getVaccines } from "@/lib/vaccine/getVaccines";
 import SearchBar from "./SearchBar";
+import { ConfirmationModal } from '@/components/global/Confirmation-modal'
 
 interface Vaccine {
     id: number;
@@ -36,6 +37,55 @@ export default function VaccineList({ token }: VaccineListProps) {
     });
     const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+    const [vaccineToDelete, setVaccineToDelete] = useState<Vaccine | null>(null)
+
+    const handleConfirmDelete = async () => {
+        if (!vaccineToDelete) return;
+
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BASE_URL}/vaccine/${vaccineToDelete.id}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Error al eliminar la vacuna");
+            }
+
+            console.log("Vacuna eliminada:", vaccineToDelete.id);
+
+            // Actualizamos el estado removiendo la vacuna eliminada
+            setData((prevData) => ({
+                ...prevData,
+                vaccines: prevData.vaccines.filter(
+                    (vaccine) => vaccine.id !== vaccineToDelete.id
+                ),
+                pagination: {
+                    ...prevData.pagination,
+                    totalItems: prevData.pagination.totalItems - 1,
+                },
+            }));
+
+            // Opcional: mostrar una notificación de éxito
+            toast("success", "Vacuna eliminada exitosamente");
+        } catch (error) {
+            console.error("Error al eliminar vacuna:", error);
+            toast("error", "Error al eliminar vacuna");
+        } finally {
+            setIsDeleteModalOpen(false);
+            setVaccineToDelete(null);
+        }
+
+
+    }
+
+
 
     const loadVaccines = useCallback(
         async (page: number = 1) => {
@@ -101,19 +151,23 @@ export default function VaccineList({ token }: VaccineListProps) {
         {
             icon: <Eye className="w-4 h-4" />,
             onClick: (vaccine) => router.push(`/dashboard/vaccine/${vaccine.id}`),
-            label: "Ver detalles",
+            label: 'Ver detalles',
         },
         {
             icon: <Pencil className="w-4 h-4" />,
-            onClick: (vaccine) => console.log("Editar:", vaccine),
-            label: "Editar",
+            onClick: (vaccine) => router.push(`/dashboard/vaccine/edit/${vaccine.id}`),
+            label: 'Editar',
         },
         {
             icon: <Trash className="w-4 h-4" />,
-            onClick: (vaccine) => console.log("Eliminar:", vaccine),
-            label: "Eliminar",
+            onClick: (vaccine) => {
+                // Abre el modal y guarda la vacuna seleccionada
+                setVaccineToDelete(vaccine)
+                setIsDeleteModalOpen(true)
+            },
+            label: 'Eliminar',
         },
-    ];
+    ]
 
     return (
         <div className="p-4 mx-auto">
@@ -146,6 +200,16 @@ export default function VaccineList({ token }: VaccineListProps) {
                 isLoading={loading}
                 skeleton={<VaccineTableSkeleton />}
                 emptyMessage="No se encontraron vacunas"
+            />
+            <ConfirmationModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={handleConfirmDelete}
+                title="¿Estás seguro de eliminar esta vacuna?"
+                message="Esta acción no se puede deshacer."
+                confirmText="Eliminar"
+                cancelText="Cancelar"
+                variant="danger"
             />
         </div>
     );
