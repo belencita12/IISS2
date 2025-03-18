@@ -31,7 +31,7 @@ describe('Registrar Mascota con PetForm', () => {
   it('Muestra la información del perfil y mascotas cuando el usuario está autenticado', () => {
 
     cy.log('Verificando que la información del perfil y las mascotas se muestre correctamente');
-    cy.get('h2.text-xl.font-bold.mt-2', waitOptions).should('contain.text', 'Makiko Yamamoto');
+    cy.get('h2.text-xl.font-bold.mt-2', waitOptions).should('contain.text', 'Tester Tester');
     cy.contains('Tus Mascotas Registradas', waitOptions).should('be.visible');
     cy.url(waitOptions).should('include', '/user-profile');
 
@@ -284,8 +284,8 @@ describe('Registrar Mascota con PetForm', () => {
 //test inicial para ingresar sesion y guardar token
 it("iniciar sesión", () => {
   const USER = {
-    email: "makiko.yamamoto@fiuni.edu.py",
-    password: "MakiYamaGin"
+    email: "tester@gmail.com",
+    password: "test12345"
   };
 
   cy.loginAndSetSession(SESSION_KEY, USER.email, USER.password);
