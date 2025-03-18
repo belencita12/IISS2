@@ -4,10 +4,13 @@ import GenericTable, { Column } from "@/components/global/GenericTable";
 import { Bell} from "lucide-react";
 import PetsTableSkeleton from "../admin/pet/skeleton/PetsTableSkeleton";
 import { VaccineRecord } from "@/lib/vaccine-registry/IVaccineRegistry";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getByPetId } from "@/lib/vaccine-registry/getByPetId";
 
 
-export default function PetVaccinationTable() {
+export default function PetVaccinationTable(
+  { token,petId }: { token: string ,petId:number}
+) {
     const onReminder = (vac: VaccineRecord) => {
     console.log("reminder", vac);
     }
@@ -40,52 +43,8 @@ export default function PetVaccinationTable() {
     }
   ];
 
-  const vacMock: VaccineRecord[] = [
-    {
-        applicationDate: "2022-01-01",
-        createdAt: "2022-01-01",
-        dose: 1,
-        expectedDate: "2022-01-01",
-        id: 1,
-        name: "Vacuna 1",
-        petId: 1,
-        updatedAt: "2022-01-01",
-        vaccineId: 1
-    },
-    {
-        applicationDate: "2022-01-01",
-        createdAt: "2022-01-01",
-        dose: 1,
-        expectedDate: "2022-01-01",
-        id: 2,
-        name: "Vacuna 2",
-        petId: 1,
-        updatedAt: "2022-01-01",
-        vaccineId: 2
-    },
-    {
-        applicationDate: "2022-01-01",
-        createdAt: "2022-01-01",
-        dose: 1,
-        expectedDate: "2022-01-01",
-        id: 3,
-        name: "Vacuna 3",
-        petId: 1,
-        updatedAt: "2022-01-01",
-        vaccineId: 3
-    },
-    {
-        applicationDate: "2022-01-01",
-        createdAt: "2022-01-01",
-        dose: 1,
-        expectedDate: "2022-01-01",
-        id: 4,
-        name: "Vacuna 4",
-        petId: 1,
-        updatedAt: "2022-01-01",
-        vaccineId: 4
-    }
-    ];
+  const [vaccines, setVaccines] = useState<VaccineRecord[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [pagination, setPagination] = useState({
     currentPage: 1,
@@ -94,15 +53,42 @@ export default function PetVaccinationTable() {
     pageSize: 4
   });
 
+  useEffect(() => {
+    const fetchVaccines = async () => {
+      try {
+        setIsLoading(true);
+        const data = await getByPetId(petId, token);
+        if(!data) {
+          setVaccines([]);
+          return;
+        }
+        setVaccines(data.data);
+        setPagination({
+          currentPage: data.currentPage,
+          totalPages: data.totalPages,
+          totalItems: data.total,
+          pageSize: data.size
+        });
+      } catch (error) {
+        console.error("Error al obtener vacunas", error);
+      }
+      finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchVaccines();
+  }, [pagination.currentPage, token, petId]);
+
 
   return (
     <GenericTable
-      data={vacMock}
+      data={vaccines}
       columns={columns}
       actions={actions}
       actionsTitle="Recordatorio"
       pagination={pagination}
-      isLoading={false}
+      isLoading={isLoading}
       skeleton={<PetsTableSkeleton />}
       onPageChange={(page) => setPagination({ ...pagination, currentPage: page })}
       emptyMessage="No hay vacunas registradas"

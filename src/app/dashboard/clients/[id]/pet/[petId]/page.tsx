@@ -38,7 +38,7 @@ export default async function Page(
         </section>
         <section className="flex-col flex-wrap items-center gap-4 px-16 mx-auto md:gap-16 md:px-24">
         <h2 className="text-2xl font-bold mb-3">Control de Vacunas</h2>
-        <PetVaccinationTable />
+        <PetVaccinationTable token={token} petId={petId} />
         </section>
     </div>
     }
