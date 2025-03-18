@@ -1,3 +1,4 @@
+import DepositList from "@/components/deposits/depositList";
 import authOptions from "@/lib/auth/options";
 import { getServerSession } from "next-auth/next";
 
@@ -7,6 +8,8 @@ export default async function Page() {
       const token = session?.user.token;
       console.log(token);
   
-      return <div></div>
+      return <div>
+        <DepositList />
+      </div>
     }
 }
