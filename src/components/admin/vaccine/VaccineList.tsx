@@ -39,33 +39,33 @@ export default function VaccineList({ token }: VaccineListProps) {
 
     const loadVaccines = useCallback(
         async (page: number = 1) => {
-          if (!token) return;
-          setLoading(true);
-      
-          try {
-            const results = await getVaccines(token, page);      
-            if (!Array.isArray(results.data)) {
-              throw new Error("La respuesta de la API no es un array");
+            if (!token) return;
+            setLoading(true);
+
+            try {
+                const results = await getVaccines(token, page);
+                if (!Array.isArray(results.data)) {
+                    throw new Error("La respuesta de la API no es un array");
+                }
+
+                setData({
+                    vaccines: results.data,
+                    pagination: {
+                        currentPage: results.currentPage || 1,
+                        totalPages: results.totalPages || 1,
+                        totalItems: results.total || 0,
+                        pageSize: results.size || 4,
+                    },
+                });
+            } catch (error) {
+                toast("error", "Error al cargar vacunas");
+                console.error("Error cargando vacunas:", error);
+            } finally {
+                setLoading(false);
             }
-      
-            setData({
-              vaccines: results.data, 
-              pagination: {
-                currentPage: results.currentPage || 1,
-                totalPages: results.totalPages || 1,
-                totalItems: results.total || 0,
-                pageSize: results.size || 4,
-              },
-            });
-          } catch (error) {
-            toast("error", "Error al cargar vacunas");
-            console.error("Error cargando vacunas:", error);
-          } finally {
-            setLoading(false);
-          }
         },
         [token]
-      );
+    );
 
     useEffect(() => {
         if (token) loadVaccines(data.pagination.currentPage);
@@ -117,19 +117,28 @@ export default function VaccineList({ token }: VaccineListProps) {
 
     return (
         <div className="p-4 mx-auto">
-            <SearchBar onSearch={handleSearch} /> 
+            <SearchBar onSearch={handleSearch} />
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-3xl font-bold">Vacunas</h2>
-                <Button
-                    variant="outline"
-                    className="px-6"
-                    onClick={() => router.push("/dashboard/vaccine/new")}
-                >
-                    Agregar
-                </Button>
+                <div className="flex gap-2">
+                    <Button
+                        variant="outline"
+                        className="px-6"
+                        onClick={() => router.push("/dashboard/vaccine/new-manufacturer")}
+                    >
+                        Agregar nuevo Fabricante
+                    </Button>
+                    <Button
+                        variant="outline"
+                        className="px-6"
+                        onClick={() => router.push("/dashboard/vaccine/new")}
+                    >
+                        Agregar nueva vacuna
+                    </Button>
+                </div>
             </div>
             <GenericTable
-                data={filteredVaccines} // Usa las vacunas filtradas
+                data={filteredVaccines}
                 columns={columns}
                 actions={actions}
                 pagination={data.pagination}
