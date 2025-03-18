@@ -10,6 +10,9 @@ export const positionSchema = z.object({
             ]),
             startTime: z.string(),
             endTime: z.string()
-        })
+        }).refine(
+            ({ startTime, endTime }) => startTime < endTime,
+            { message: "La hora de finalización debe ser posterior a la de inicio", path: ["endTime"] }
+        )
     ).min(1, "Debe agregar al menos un horario")
 });

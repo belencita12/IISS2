@@ -11,7 +11,7 @@ export default async function Position() {
     }
     const token = session?.user?.token;
     return (
-        <div>
+        <div className="max-w-4xl mx-auto p-8">
             <PositionForm token={token}/>
         </div>
     );
