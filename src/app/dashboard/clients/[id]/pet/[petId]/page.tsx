@@ -1,4 +1,3 @@
-import NotFound from "@/app/not-found";
 import PetVaccinationTable from "@/components/petUI/PetVaccinationTable";
 import authOptions from "@/lib/auth/options";
 import { getPetById } from "@/lib/pets/getPetById";

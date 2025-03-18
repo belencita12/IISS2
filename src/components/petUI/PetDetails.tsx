@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, Weight } from "lucide-react";
+import { AlertCircle} from "lucide-react";
 import { useParams } from "next/navigation";
 import { PET_API} from "@/lib/urls";  
 import PetVaccinationTable from "./PetVaccinationTable";
@@ -139,34 +139,6 @@ export default function PetDetails({ token }: Props) {
 
   const visitasVisibles = showAll ? visitas : visitas.slice(0, 4);
   const visitasProgramadasVisibles = showAllProg ? visitasProgramadas : visitasProgramadas.slice(0, 4);
-
-  const headers = {
-    "Authorization": `Bearer ${token}`,
-    "Content-Type": "application/json",
-  }
-
-  {/*
-  useEffect(() => {
-    // Cargar especies
-    fetch("https://iiss2-backend-production.up.railway.app/species?page=1", { headers })
-      .then(res => res.json())
-      .then(data => { if (data.total === 1) {
-        setSpeciesList([data.data[0]]);
-      } else {
-        setSpeciesList(Array.isArray(data.data) ? data.data : [])
-      }})
-      .catch(error => console.error("Error cargando especies:", error));
-
-    // Cargar razas
-    fetch("https://iiss2-backend-production.up.railway.app/race?page=1", { headers })
-      .then(res => res.json())
-      .then(data => { if(data.total === 1) {
-        setRaceList([data.data[0]]);
-      } else {
-        setRaceList(Array.isArray(data.data) ? data.data : [])
-      }})
-      .catch(error => console.error("Error cargando razas:", error));
-  }, [token]);*/}
 
   useEffect(() => {
     if (pet) {
@@ -415,7 +387,7 @@ export default function PetDetails({ token }: Props) {
             </div>
           </div>
           <h2 className="text-2xl font-bold mb-3">Control de Vacunas</h2>
-        <PetVaccinationTable  />
+        <PetVaccinationTable token={token} petId={pet.id}  />
         </div>
       </>
     )}
