@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/lib/toast";
 import { getManufacturers } from "@/lib/vaccine-manufacturer/getAllManufacturers";
 import { getSpecies } from "@/lib/pets/getRacesAndSpecies";
+import { Plus } from "lucide-react";
 
 // Interfaces
 interface Manufacturer {
@@ -214,17 +215,29 @@ export default function NewVaccineForm({ token }: { token: string | null }) {
 
                 {/* Fabricante */}
                 <div>
-                    <label className="block text-sm font-medium mb-2">Fabricante</label>
-                    <div className="relative">
+                    <div className="flex items-center justify-between">
+                        <label className="block text-sm font-medium mb-2">Fabricante</label>
+                    </div>
+
+                    <div className="relative items-center">
+
                         <Input
                             type="text"
                             value={manufacturerSearch}
                             onChange={(e) => setManufacturerSearch(e.target.value)}
                             onFocus={() => setIsManufacturerListVisible(true)}
-                            onBlur={validateManufacturerSelection} // Validación en onBlur
                             placeholder="Buscar fabricante..."
-                            className="w-full mb-2"
+                            className="w-full mb-2 pr-10"
                         />
+                        <button
+                            type="button"
+                            onClick={() => router.push("/dashboard/vaccine/manufacturer/new")}
+                            className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2  text-black rounded-full"
+                            title="Agregar Fabricante"
+                        >
+                            <Plus size={18} />
+                        </button>
+
                         {isManufacturerListVisible && (
                             <div className="absolute z-50 w-full bg-white border rounded shadow-lg max-h-40 overflow-y-auto">
                                 {filteredManufacturers.map((manufacturer) => (
