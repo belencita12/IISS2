@@ -47,7 +47,7 @@ export default function ProductFilters({
       [filterName]: "",
     };
     setFilters(updatedFilters);
-    onSearch(updatedFilters); // Ejecuta la búsqueda con el filtro limpio
+    onSearch(updatedFilters); 
   };
 
   return (

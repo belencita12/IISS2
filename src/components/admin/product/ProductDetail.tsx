@@ -142,7 +142,7 @@ export default function ProductDetail({ token }: ProductDetailProps) {
             </div>
           </div>
   
-          {/* Sección de sucursales - adjusted width */}
+          {/* Sección de sucursales */}
           <div className="mt-10 w-full">
             <h3 className="text-2xl font-semibold text-center mb-6">
               Cantidad por Sucursales

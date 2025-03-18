@@ -136,9 +136,7 @@ export default function ProductListPage({ token }: ProductListProps) {
             className="overflow-hidden mb-4 cursor-pointer hover:shadow-md transition-shadow"
             onClick={() => handleCardClick(product.id)}
           >
-            {/* Se usa flex-col en pantallas pequeñas y flex-row en pantallas medianas */}
             <div className="flex flex-col sm:flex-row p-4">
-              {/* Imagen: se centra en vertical en pantallas pequeñas */}
               <div className="w-[100px] h-[100px] mb-4 sm:mb-0 sm:mr-4 flex-shrink-0">
                 {product.image?.originalUrl ? (
                   <Image
@@ -156,7 +154,6 @@ export default function ProductListPage({ token }: ProductListProps) {
               </div>
               <div className="flex-1">
                 <h3 className="text-lg font-semibold mb-4">{product.name}</h3>
-                {/* Grid responsivo: 2 columnas en pantallas pequeñas, 4 columnas en pantallas medianas */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                   <div className="flex flex-col">
                     <p className="text-sm text-gray-500">Proveedor</p>
