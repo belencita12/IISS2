@@ -47,7 +47,7 @@ export default function ProductFilters({
       [filterName]: "",
     };
     setFilters(updatedFilters);
-    onSearch(updatedFilters); 
+    onSearch(updatedFilters);
   };
 
   return (
@@ -87,13 +87,18 @@ export default function ProductFilters({
         {/* Filtro de categoría */}
         <div className="relative">
           <select
+            title="type"
             value={filters.category}
-            onChange={(e) =>
-              setFilters((prev) => ({
-                ...prev,
-                category: e.target.value === "none" ? "" : e.target.value,
-              }))
-            }
+            onChange={(e) => {
+              setFilters((prev) => {
+                const temp = {
+                  ...prev,
+                  category: e.target.value === "none" ? "" : e.target.value,
+                };
+                onSearch(temp);
+                return temp;
+              });
+            }}
             className="border p-2 rounded w-40"
           >
             <option value="" disabled hidden>
@@ -101,6 +106,7 @@ export default function ProductFilters({
             </option>
             <option value="none">Ninguno</option>
             <option value="PRODUCT">Producto</option>
+            {/* <option value="SERVICE">Servicio</option> */}
             <option value="VACCINE">Vacuna</option>
           </select>
           {filters.category !== "" && (
@@ -124,7 +130,11 @@ export default function ProductFilters({
               placeholder="Desde"
               value={filters.minPrice}
               onChange={(e) =>
-                setFilters((prev) => ({ ...prev, minPrice: e.target.value }))
+                setFilters((prev) => {
+                  const temp = { ...prev, minPrice: e.target.value };
+                  onSearch(temp);
+                  return temp;
+                })
               }
               onKeyDown={preventInvalidKeys}
               className="border p-1 rounded w-28"
@@ -147,7 +157,11 @@ export default function ProductFilters({
               placeholder="Hasta"
               value={filters.maxPrice}
               onChange={(e) =>
-                setFilters((prev) => ({ ...prev, maxPrice: e.target.value }))
+                setFilters((prev) => {
+                  const temp = { ...prev, maxPrice: e.target.value };
+                  onSearch(temp);
+                  return temp;
+                })
               }
               onKeyDown={preventInvalidKeys}
               className="border p-1 rounded w-28"
@@ -174,7 +188,11 @@ export default function ProductFilters({
               placeholder="Desde"
               value={filters.minCost}
               onChange={(e) =>
-                setFilters((prev) => ({ ...prev, minCost: e.target.value }))
+                setFilters((prev) => {
+                  const temp = { ...prev, minCost: e.target.value };
+                  onSearch(temp);
+                  return temp;
+                })
               }
               onKeyDown={preventInvalidKeys}
               className="border p-1 rounded w-28"
@@ -197,7 +215,11 @@ export default function ProductFilters({
               placeholder="Hasta"
               value={filters.maxCost}
               onChange={(e) =>
-                setFilters((prev) => ({ ...prev, maxCost: e.target.value }))
+                setFilters((prev) => {
+                  const temp = { ...prev, maxCost: e.target.value };
+                  onSearch(temp);
+                  return temp;
+                })
               }
               onKeyDown={preventInvalidKeys}
               className="border p-1 rounded w-28"

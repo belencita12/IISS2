@@ -156,14 +156,16 @@ export default function ProductListPage({ token }: ProductListProps) {
                 <h3 className="text-lg font-semibold mb-4">{product.name}</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                   <div className="flex flex-col">
-                    <p className="text-sm text-gray-500">Proveedor</p>
+                    <p className="text-sm text-gray-500">Código</p>
+                    <p className="text-sm text-gray-500 mt-2">Proveedor</p>
                     <p className="text-sm text-gray-500 mt-2">Categoría</p>
                     <p className="text-sm text-gray-500 mt-2">
                       Precio Unitario
                     </p>
                   </div>
                   <div className="flex flex-col">
-                    <p className="text-sm">La Mascota S.A.</p>
+                   <p className="text-sm">{product.code}</p>
+                    <p className="text-sm mt-2">La Mascota S.A.</p>
                     <p className="text-sm mt-2">{product.category}</p>
                     <p className="text-sm mt-2">
                       {product.price.toLocaleString()} Gs
