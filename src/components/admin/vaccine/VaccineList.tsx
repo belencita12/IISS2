@@ -124,9 +124,9 @@ export default function VaccineList({ token }: VaccineListProps) {
                     <Button
                         variant="outline"
                         className="px-6"
-                        onClick={() => router.push("/dashboard/vaccine/new-manufacturer")}
+                        onClick={() => router.push("/dashboard/vaccine/manufacturer")} //aca falta agregar un listado de manufacturers, pero la idea está
                     >
-                        Agregar nuevo Fabricante
+                        Fabricantes de Vacunas
                     </Button>
                     <Button
                         variant="outline"
