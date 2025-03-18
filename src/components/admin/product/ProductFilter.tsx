@@ -40,16 +40,16 @@ export default function ProductFilters({
   onSearch,
   preventInvalidKeys,
 }: ProductFiltersProps) {
-  // Función auxiliar para limpiar un filtro y ejecutar la búsqueda
-  const clearFilterAndSearch = (filterName: keyof typeof filters) => {
+  // Función auxiliar para limpiar un filtro sin disparar búsqueda
+  const clearFilter = (filterName: keyof typeof filters) => {
     const updatedFilters = {
       ...filters,
       [filterName]: "",
     };
-
     setFilters(updatedFilters);
-    onSearch(updatedFilters);
+    onSearch(updatedFilters); // Ejecuta la búsqueda con el filtro limpio
   };
+  
 
   return (
     <div>
@@ -66,7 +66,7 @@ export default function ProductFilters({
           />
           {filters.code && (
             <button
-              onClick={() => clearFilterAndSearch("code")}
+              onClick={() => clearFilter("code")}
               className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
             >
               <X className="w-4 h-4" />
@@ -103,7 +103,7 @@ export default function ProductFilters({
           </select>
           {filters.category !== "" && (
             <button
-              onClick={() => clearFilterAndSearch("category")}
+              onClick={() => clearFilter("category")}
               className="absolute right-8 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
             >
               <X className="w-4 h-4" />
@@ -128,7 +128,7 @@ export default function ProductFilters({
             />
             {filters.minPrice && (
               <button
-                onClick={() => clearFilterAndSearch("minPrice")}
+                onClick={() => clearFilter("minPrice")}
                 className="absolute right-8 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
               >
                 <X className="w-3 h-3" />
@@ -151,7 +151,7 @@ export default function ProductFilters({
             />
             {filters.maxPrice && (
               <button
-                onClick={() => clearFilterAndSearch("maxPrice")}
+                onClick={() => clearFilter("maxPrice")}
                 className="absolute right-8 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
               >
                 <X className="w-3 h-3" />
@@ -177,7 +177,7 @@ export default function ProductFilters({
             />
             {filters.minCost && (
               <button
-                onClick={() => clearFilterAndSearch("minCost")}
+                onClick={() => clearFilter("minCost")}
                 className="absolute right-8 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
               >
                 <X className="w-3 h-3" />
@@ -200,7 +200,7 @@ export default function ProductFilters({
             />
             {filters.maxCost && (
               <button
-                onClick={() => clearFilterAndSearch("maxCost")}
+                onClick={() => clearFilter("maxCost")}
                 className="absolute right-8 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
               >
                 <X className="w-3 h-3" />
