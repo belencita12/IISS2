@@ -3,9 +3,10 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, Weight } from "lucide-react";
+import { AlertCircle} from "lucide-react";
 import { useParams } from "next/navigation";
 import { PET_API} from "@/lib/urls";  
+import PetVaccinationTable from "./PetVaccinationTable";
 
 
 interface Pet {
@@ -138,34 +139,6 @@ export default function PetDetails({ token }: Props) {
 
   const visitasVisibles = showAll ? visitas : visitas.slice(0, 4);
   const visitasProgramadasVisibles = showAllProg ? visitasProgramadas : visitasProgramadas.slice(0, 4);
-
-  const headers = {
-    "Authorization": `Bearer ${token}`,
-    "Content-Type": "application/json",
-  }
-
-  {/*
-  useEffect(() => {
-    // Cargar especies
-    fetch("https://iiss2-backend-production.up.railway.app/species?page=1", { headers })
-      .then(res => res.json())
-      .then(data => { if (data.total === 1) {
-        setSpeciesList([data.data[0]]);
-      } else {
-        setSpeciesList(Array.isArray(data.data) ? data.data : [])
-      }})
-      .catch(error => console.error("Error cargando especies:", error));
-
-    // Cargar razas
-    fetch("https://iiss2-backend-production.up.railway.app/race?page=1", { headers })
-      .then(res => res.json())
-      .then(data => { if(data.total === 1) {
-        setRaceList([data.data[0]]);
-      } else {
-        setRaceList(Array.isArray(data.data) ? data.data : [])
-      }})
-      .catch(error => console.error("Error cargando razas:", error));
-  }, [token]);*/}
 
   useEffect(() => {
     if (pet) {
@@ -304,80 +277,6 @@ export default function PetDetails({ token }: Props) {
             </div>
           </div>
 
-          {/*
-          <div className="flex-col justify-start text-white text-xs">
-            {[
-              { label: "Nombre", name: "name" },
-              { label: "Fecha de Nacimiento", name: "dateOfBirth" },
-              { label: "Peso", name: "weight" },
-              { label: "Raza", name: "race" },
-              { label: "Especie", name: "species" },
-              { label: "Género", name: "sex" },
-            ].map(({ label, name }) => (
-              <div key={name} className="p-1 pb-3">
-                <p>{label}</p>
-                {isEditing ? (
-                  name === "species" ? (
-                    <select
-                      name="speciesId"
-                      value={editedPet?.speciesId || ""}
-                      onChange={handleChange}
-                      className="text-black w-full border border-gray-300 rounded p-1"
-                    >
-                      {speciesList.map((species) => (
-                        <option key={species.id} value={species.id}>
-                          {species.name}
-                        </option>
-                      ))}
-                    </select>
-                  ) : name === "race" ? (
-                    <select
-                      name="raceId"
-                      value={editedPet?.raceId || ""}
-                      onChange={handleChange}
-                      className="text-black w-full border border-gray-300 rounded p-1"
-                    >
-                      {raceList.map((race) => (
-                        <option key={race.id} value={race.id}>
-                          {race.name}
-                        </option>
-                      ))}
-                    </select>
-                  ) : (
-                    <input
-                      type="text"
-                      name={name}
-                      value={editedPet ? editedPet[name as keyof EditablePet] : ""}
-                      onChange={handleChange}
-                      className="text-black w-full border border-gray-300 rounded p-1"
-                    />
-                  )
-                ) : (
-                  <p className="text-xl">
-                    {name === "dateOfBirth"
-                      ? convertirFecha(pet.dateOfBirth)
-                      : name === "race"
-                      ? pet.race?.name
-                      : name === "species"
-                      ? pet.species?.name
-                      : name === "weight"
-                      ? `${pet.weight} kg`
-                      : String(pet[name as keyof Pet])}
-                  </p>
-                )}
-              </div>
-            ))}
-            {isEditing ? (
-              <div className="flex gap-2">
-                <Button onClick={handleSave} className="p-1 pl-3 pr-3">Guardar</Button>
-                <Button onClick={() => setIsEditing(false)} className="p-1 pl-3 pr-3">Cancelar</Button>
-              </div>
-            ) : (
-              <Button onClick={() => setIsEditing(true)} className="p-1 pl-3 pr-3">Editar</Button>
-            )}
-          </div>
-          */}
-
           <div className="flex-col justify-start text-white text-xs">
             {[
               { label: "Nombre", name: "name" },
@@ -436,9 +335,9 @@ export default function PetDetails({ token }: Props) {
 
 
         </div>
-        <div className="flex-col p-7 bg-white">
+        <div className="flex-col md:px-28 md:py-10 bg-white">
           <div className="flex justify-center">
-            <div className="flex-col justify-center items-center w-[80%] pb-7 pt-7">
+            <div className="flex-col justify-center items-center w-full pb-7 pt-7">
               <h2 className="text-2xl font-bold mb-3">Últimas visitas</h2>
               <ul className="w-full">
                 {visitasVisibles.map((visita) => (
@@ -463,8 +362,8 @@ export default function PetDetails({ token }: Props) {
             </div>
           </div>
 
-          <div className="flex justify-center">
-            <div className="flex-col justify-center items-center w-[70%] pb-7 pt-7">
+          <div className="flex justify-between mb-14">
+            <div className="flex-col justify-center items-center w-full">
               <h2 className="text-2xl font-bold mb-3">Visitas programadas</h2>
               <ul className="w-full grid grid-cols-2 gap-4">
 
@@ -487,6 +386,8 @@ export default function PetDetails({ token }: Props) {
               )}
             </div>
           </div>
+          <h2 className="text-2xl font-bold mb-3">Control de Vacunas</h2>
+        <PetVaccinationTable token={token} petId={pet.id}  />
         </div>
       </>
     )}
