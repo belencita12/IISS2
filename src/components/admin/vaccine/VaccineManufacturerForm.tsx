@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -9,15 +9,17 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 const vaccineManufacturerSchema = z.object({
-  name: z.string().min(2, "El nombre debe tener al menos 3 caracteres"),
+  name: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
 });
 
 type VaccineManufacturerFormProps = {
   initialData?: { id?: string; name: string };
+  token: string;
 };
 
-export default function VaccineManufacturerForm({ initialData }: VaccineManufacturerFormProps) {
+export default function VaccineManufacturerForm({ initialData, token }: VaccineManufacturerFormProps) {
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
   
   const {
@@ -31,6 +33,7 @@ export default function VaccineManufacturerForm({ initialData }: VaccineManufact
 
   const onSubmit = async (data: { name: string }) => {
     setLoading(true);
+    setErrorMessage("");
     try {
       const url = initialData?.id
         ? `/api/vaccine-manufacturer/${initialData.id}`
@@ -39,26 +42,38 @@ export default function VaccineManufacturerForm({ initialData }: VaccineManufact
 
       const response = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
         body: JSON.stringify(data),
       });
 
-      if (!response.ok) throw new Error("Error al guardar");
+      console.log("Response status:", response.status);
+      const responseData = await response.json();
+      console.log("Response body:", responseData);
+      
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} - ${responseData.message || "No se pudo guardar"}`);
+      }
+
       router.push("/dashboard/vaccine/manufacturer");
     } catch (error) {
       console.error(error);
+      setErrorMessage(error instanceof Error ? error.message : "Ocurrió un error inesperado");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-md p-6  rounded-lg  bg-white">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-md p-6 border rounded-lg shadow-md bg-white">
       <div className="text-left space-y-2">
         <label className="block text-sm font-medium">Nombre</label>
         <Input {...register("name")} placeholder="Nombre del fabricante" className="p-2 border rounded-md w-full" />
         {errors.name && <p className="text-red-500 text-xs">{errors.name.message}</p>}
       </div>
+      {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
       <div className="flex space-x-4">
         <Button type="submit" disabled={loading} className="px-4 py-2">
           {loading ? "Guardando..." : initialData?.id ? "Actualizar" : "Crear"}
