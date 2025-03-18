@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -21,6 +21,7 @@ export default function VaccineManufacturerForm({ initialData, token }: VaccineM
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
+  const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
   
   const {
     register,
@@ -36,9 +37,12 @@ export default function VaccineManufacturerForm({ initialData, token }: VaccineM
     setErrorMessage("");
     try {
       const url = initialData?.id
-        ? `/api/vaccine-manufacturer/${initialData.id}`
-        : "/api/vaccine-manufacturer";
+        ? `${API_BASE_URL}/vaccine-manufacturer/${initialData.id}`
+        : `${API_BASE_URL}/vaccine-manufacturer`;
       const method = initialData?.id ? "PUT" : "POST";
+
+      console.log("Enviando datos a:", url);
+      console.log("Payload:", JSON.stringify(data));
 
       const response = await fetch(url, {
         method,
@@ -50,6 +54,12 @@ export default function VaccineManufacturerForm({ initialData, token }: VaccineM
       });
 
       console.log("Response status:", response.status);
+      const contentType = response.headers.get("content-type");
+      
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Error: La API devolvió una respuesta no válida (posible HTML en lugar de JSON)");
+      }
+
       const responseData = await response.json();
       console.log("Response body:", responseData);
       

@@ -1,21 +1,20 @@
-'use client'
+import { getServerSession } from "next-auth";
+import authOptions from "@/lib/auth/options";
+import { redirect } from "next/navigation";
 import VaccineManufacturerForm from "@/components/admin/vaccine/VaccineManufacturerForm";
-import { useEffect, useState } from "react";
 
-export default function NewVaccineManufacturerPage() {
-  const [token, setToken] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+export default async function NewVaccineManufacturerPage() {
+    const session = await getServerSession(authOptions);
+    const token = session?.user?.token || null;
 
-  useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    setToken(storedToken);
-    setLoading(false);
-  }, []);
+    if (!token) {
+        redirect("/login");
+    }
 
-  return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Crear Fabricante de Vacunas</h1>
-      {loading ? <p>Cargando...</p> : token ? <VaccineManufacturerForm token={token} /> : <p>Error: No hay token disponible</p>}
-    </div>
-  );
+    return (
+        <div className="p-6">
+            <h1 className="text-2xl font-bold mb-4">Crear Fabricante de Vacunas</h1>
+            <VaccineManufacturerForm token={token} />
+        </div>
+    );
 }
