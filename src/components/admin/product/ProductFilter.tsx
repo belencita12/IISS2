@@ -49,11 +49,11 @@ export default function ProductFilters({
     setFilters(updatedFilters);
     onSearch(updatedFilters); // Ejecuta la búsqueda con el filtro limpio
   };
-  
 
   return (
     <div>
-      <div className="flex gap-4 mb-4">
+      {/* Fila superior: input de búsqueda y botón "Buscar" */}
+      <div className="flex flex-col sm:flex-row gap-4 mb-4">
         <div className="relative flex-1">
           <input
             type="text"
@@ -81,7 +81,9 @@ export default function ProductFilters({
           Buscar
         </Button>
       </div>
-      <div className="flex items-center mb-6 relative w-full">
+
+      {/* Fila inferior: filtros de categoría, precio y costo */}
+      <div className="flex flex-col sm:flex-row items-center mb-6 relative w-full">
         {/* Filtro de categoría */}
         <div className="relative">
           <select
@@ -110,8 +112,9 @@ export default function ProductFilters({
             </button>
           )}
         </div>
+
         {/* Filtros de precio */}
-        <div className="flex items-center gap-2 absolute left-1/2 transform -translate-x-1/2">
+        <div className="flex flex-col sm:flex-row items-center gap-2 mt-4 sm:mt-0 sm:absolute sm:left-1/2 sm:transform sm:-translate-x-1/2">
           <span className="text-sm">Precio</span>
           <div className="relative">
             <input
@@ -159,8 +162,9 @@ export default function ProductFilters({
             )}
           </div>
         </div>
+
         {/* Filtros de costo */}
-        <div className="flex items-center gap-2 ml-auto">
+        <div className="flex flex-col sm:flex-row items-center gap-2 mt-4 sm:mt-0 sm:ml-auto">
           <span className="text-sm">Costo</span>
           <div className="relative">
             <input

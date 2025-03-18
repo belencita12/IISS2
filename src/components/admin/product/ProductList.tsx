@@ -117,10 +117,11 @@ export default function ProductListPage({ token }: ProductListProps) {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Productos</h1>
         <Button
-        variant="default"
-        onClick={() => router.push(``)}
-        className="bg-black text-white hover:bg-gray-800"
-        > Crear Producto
+          variant="default"
+          onClick={() => router.push(``)}
+          className="bg-black text-white hover:bg-gray-800"
+        >
+          Crear Producto
         </Button>
       </div>
 
@@ -135,8 +136,10 @@ export default function ProductListPage({ token }: ProductListProps) {
             className="overflow-hidden mb-4 cursor-pointer hover:shadow-md transition-shadow"
             onClick={() => handleCardClick(product.id)}
           >
-            <div className="flex p-4">
-              <div className="w-[100px] h-[100px] mr-4 flex-shrink-0">
+            {/* Se usa flex-col en pantallas pequeñas y flex-row en pantallas medianas */}
+            <div className="flex flex-col sm:flex-row p-4">
+              {/* Imagen: se centra en vertical en pantallas pequeñas */}
+              <div className="w-[100px] h-[100px] mb-4 sm:mb-0 sm:mr-4 flex-shrink-0">
                 {product.image?.originalUrl ? (
                   <Image
                     src={product.image.originalUrl}
@@ -153,10 +156,8 @@ export default function ProductListPage({ token }: ProductListProps) {
               </div>
               <div className="flex-1">
                 <h3 className="text-lg font-semibold mb-4">{product.name}</h3>
-                <div
-                  className="grid gap-x-2"
-                  style={{ gridTemplateColumns: "auto auto auto auto" }}
-                >
+                {/* Grid responsivo: 2 columnas en pantallas pequeñas, 4 columnas en pantallas medianas */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                   <div className="flex flex-col">
                     <p className="text-sm text-gray-500">Proveedor</p>
                     <p className="text-sm text-gray-500 mt-2">Categoría</p>
