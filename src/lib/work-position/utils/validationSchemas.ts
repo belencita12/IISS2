@@ -5,8 +5,8 @@ export const positionSchema = z.object({
     shifts: z.array(
         z.object({
             weekDay: z.union([
-                z.number().min(1).max(7),
-                z.array(z.number().min(1).max(7)).min(1)
+                z.number().min(0, { message: "Elige un día de la semana" }).max(6, { message: "Elige un día de la semana" }),
+                z.array(z.number().min(0, { message: "Elige un día de la semana" }).max(6, { message: "Elige un día de la semana" })).min(0, { message: "Elige un día de la semana" })
             ]),
             startTime: z.string(),
             endTime: z.string()

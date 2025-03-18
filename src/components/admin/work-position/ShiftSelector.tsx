@@ -2,7 +2,7 @@
 
 import { Controller } from "react-hook-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { getDayText, getDayValue, getAvailableDays } from "@/lib/work-position/utils/shifts";
+import { getDayText, getDayValue, getAvailableDays, DAYS } from "@/lib/work-position/utils/shifts";
 import { Shift } from "@/lib/work-position/IPosition";
 
 interface ShiftSelectorProps {
@@ -13,7 +13,7 @@ interface ShiftSelectorProps {
   onSelectDay: (value: string, index: number) => void;
 }
 
-export function ShiftSelector({index, shift,shifts,control, onSelectDay}: ShiftSelectorProps) {
+export function ShiftSelector({ index, shift, shifts, control, onSelectDay }: ShiftSelectorProps) {
   return (
     <Controller
       name={`shifts.${index}.weekDay`}
@@ -33,7 +33,7 @@ export function ShiftSelector({index, shift,shifts,control, onSelectDay}: ShiftS
             <SelectItem value="weekdays_saturday">Lunes a Sábado</SelectItem>
             {getAvailableDays(shifts, index).map((day) => (
               <SelectItem key={day} value={String(day)}>
-                {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"][day - 1]}
+                {DAYS[day]}
               </SelectItem>
             ))}
           </SelectContent>
