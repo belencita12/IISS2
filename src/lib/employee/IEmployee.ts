@@ -9,8 +9,9 @@ export interface EmployeeData {
     id?: number;
     fullName: string;
     email: string;
+    ruc: string;
     position: WorkPosition;
-    profileImg?: Image | null;
+    image?: Image | null;
 }
 
 export interface WorkPosition {
