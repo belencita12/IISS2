@@ -6,16 +6,25 @@ import { PencilIcon } from "lucide-react";
 
 interface Deposit {
   id: number;
-  name: string;
-  location: string;
+  nombre: string;
+  direccion: string;
 }
+
+const mockDeposits: Deposit[] = [
+  { id: 1, nombre: "Depósito Central", direccion: "Av. Principal 123" },
+  { id: 2, nombre: "Bodega Norte", direccion: "Calle 45 #23-10" },
+  { id: 3, nombre: "Almacén Sur", direccion: "Carrera 12 #8-19" },
+  { id: 4, nombre: "Depósito Este", direccion: "Av. Industrial 567" },
+  { id: 5, nombre: "Depósito Oeste", direccion: "Calle 9 #17-22" },
+  { id: 6, nombre: "Centro de Distribución", direccion: "Diagonal 32 #4-56" },
+];
 
 const DepositList = () => {
   const [deposits, setDeposits] = useState<Deposit[]>([]);
   const [pagination, setPagination] = useState<PaginationInfo>({
     currentPage: 1,
     totalPages: 1,
-    totalItems: 0,
+    totalItems: mockDeposits.length,
     pageSize: 5,
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -24,33 +33,29 @@ const DepositList = () => {
     fetchDeposits(pagination.currentPage);
   }, [pagination.currentPage]);
 
-  const fetchDeposits = async (page: number) => {
+  const fetchDeposits = (page: number) => {
     setIsLoading(true);
-    try {
-      const response = await fetch(`/api/deposits?page=${page}&limit=${pagination.pageSize}`);
-      const data = await response.json();
-      setDeposits(data.items);
+    setTimeout(() => {
+      const startIndex = (page - 1) * pagination.pageSize;
+      const endIndex = startIndex + pagination.pageSize;
+      setDeposits(mockDeposits.slice(startIndex, endIndex));
       setPagination({
-        currentPage: data.currentPage,
-        totalPages: data.totalPages,
-        totalItems: data.totalItems,
+        currentPage: page,
+        totalPages: Math.ceil(mockDeposits.length / pagination.pageSize),
+        totalItems: mockDeposits.length,
         pageSize: pagination.pageSize,
       });
-    } catch (error) {
-      console.error("Error fetching deposits:", error);
-    } finally {
       setIsLoading(false);
-    }
+    }, 500);
   };
 
   const handleEdit = (deposit: Deposit) => {
     console.log("Editar depósito:", deposit);
-    // Aquí podrías redirigir a una página de edición o abrir un modal
   };
 
   const columns: Column<Deposit>[] = [
-    { header: "Nombre de Depósito", accessor: "name" },
-    { header: "Ubicación", accessor: "location" },
+    { header: "Nombre de Depósito", accessor: "nombre" },
+    { header: "Dirección", accessor: "direccion" },
   ];
 
   const actions: TableAction<Deposit>[] = [

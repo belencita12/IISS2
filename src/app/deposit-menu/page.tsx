@@ -1,4 +1,5 @@
 import DepositList from "@/components/deposits/depositList";
+import UserBar from "@/components/deposits/userBar";
 import authOptions from "@/lib/auth/options";
 import { getServerSession } from "next-auth/next";
 
@@ -9,6 +10,7 @@ export default async function Page() {
       console.log(token);
   
       return <div>
+        <UserBar token={token} />
         <DepositList />
       </div>
     }
