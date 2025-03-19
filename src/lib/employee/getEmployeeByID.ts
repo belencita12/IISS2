@@ -1,24 +1,22 @@
 import { EMPLOYEE_API } from "../urls";
+import { EmployeeData } from "./IEmployee";
 
-export const deleteEmployeeByID = async (token: string, id: number): Promise<boolean> => {
+export const getEmployeeByID = async (token: string, id: number) => {
     try {
         const response = await fetch(`${EMPLOYEE_API}/${id}`, {
-            method: "DELETE",
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
+            headers: { Authorization: `Bearer ${token}` },
         });
 
         if (!response.ok) {
             const errorText = await response.text();
             console.error(`Error HTTP ${response.status}:`, errorText);
             throw new Error(`Error ${response.status}: ${errorText}`);
-        }
+          }
 
-        return true; 
+        const data: EmployeeData = await response.json();
+        return data;
     } catch (error) {
-        console.error("Error en deleteEmployeeByID:", error);
-        return false; 
+        console.error("Error en getEmployeeByID:", error);
+        throw error;
     }
 };
