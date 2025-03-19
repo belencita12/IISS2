@@ -17,13 +17,14 @@ export const registerPosition = async (positionData: Position, token: string) =>
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.error(`Error HTTP ${response.status}:`, errorText);
-            throw new Error(`Error HTTP: ${response.status}`);
+            if (errorText.toLowerCase().includes("ya están en uso")) {
+                throw new Error("El puesto ya existe");
+            }
+            throw new Error("Ocurrió un error. Intenta nuevamente.");
         }
 
         return await response.json() as Position;
     } catch (error) {
-        console.error('Error en createWorkPosition:', error);
-        throw error;
+        throw new Error(error instanceof Error ? error.message : "Ocurrió un error. Intenta nuevamente.");
     }
 };
