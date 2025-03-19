@@ -36,7 +36,7 @@ export default function VaccineList({ token }: VaccineListProps) {
     pagination: { currentPage: 1, totalPages: 1, totalItems: 0, pageSize: 4 },
   });
   const [loading, setLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredData, setFilteredData] = useState<Vaccine[]>([]); // Inicializar vacío
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [vaccineToDelete, setVaccineToDelete] = useState<Vaccine | null>(null);
 
@@ -101,6 +101,9 @@ export default function VaccineList({ token }: VaccineListProps) {
             pageSize: results.size || 4,
           },
         });
+
+        // Al cargar las vacunas, también actualizamos `filteredData`
+        setFilteredData(results.data);
       } catch (error) {
         toast("error", "Error al cargar vacunas");
         console.error("Error cargando vacunas:", error);
@@ -118,7 +121,17 @@ export default function VaccineList({ token }: VaccineListProps) {
   }, [token, data.pagination.currentPage, loadVaccines]);
 
   const handleSearch = (query: string) => {
-    setSearchQuery(query);
+    if (!query) {
+      setFilteredData(data.vaccines); // Restaurar datos cuando query está vacío
+      return;
+    }
+    const results = data.vaccines.filter(
+      (vaccine) =>
+        vaccine.name.toLowerCase().includes(query.toLowerCase()) ||
+        vaccine.manufacturer.name.toLowerCase().includes(query.toLowerCase()) ||
+        vaccine.species.name.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredData(results);
   };
 
   const handlePageChange = (page: number) =>
@@ -127,16 +140,7 @@ export default function VaccineList({ token }: VaccineListProps) {
       pagination: { ...prev.pagination, currentPage: page },
     }));
 
-  const filteredVaccines = data.vaccines.filter((vaccine) => {
-    const searchText = searchQuery.toLowerCase();
-    return (
-      vaccine.name.toLowerCase().includes(searchText) ||
-      vaccine.manufacturer.name.toLowerCase().includes(searchText) ||
-      vaccine.species.name.toLowerCase().includes(searchText)
-    );
-  });
-
-  const sortedVaccines = [...filteredVaccines].sort((a, b) =>
+  const sortedVaccines = [...filteredData].sort((a, b) =>
     a.name.localeCompare(b.name)
   );
 
@@ -190,7 +194,7 @@ export default function VaccineList({ token }: VaccineListProps) {
         </div>
       </div>
       <GenericTable
-        data={sortedVaccines}
+        data={sortedVaccines} // Ahora usa `filteredData`
         columns={columns}
         actions={actions}
         pagination={data.pagination}
