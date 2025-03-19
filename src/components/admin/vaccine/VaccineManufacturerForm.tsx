@@ -39,42 +39,50 @@ export default function VaccineManufacturerForm({ initialData, token }: VaccineM
       const url = initialData?.id
         ? `${API_BASE_URL}/vaccine-manufacturer/${initialData.id}`
         : `${API_BASE_URL}/vaccine-manufacturer`;
-      const method = initialData?.id ? "PUT" : "POST";
-
-      console.log("Enviando datos a:", url);
-      console.log("Payload:", JSON.stringify(data));
-
+      const method = initialData?.id ? "PATCH" : "POST";
+  
       const response = await fetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(data),
       });
-
-      console.log("Response status:", response.status);
+  
       const contentType = response.headers.get("content-type");
-      
       if (!contentType || !contentType.includes("application/json")) {
-        throw new Error("Error: La API devolvió una respuesta no válida (posible HTML en lugar de JSON)");
+        throw new Error(
+          "Error: La API devolvió una respuesta no válida (posible HTML en lugar de JSON)"
+        );
       }
-
+  
       const responseData = await response.json();
-      console.log("Response body:", responseData);
-      
       if (!response.ok) {
-        throw new Error(`Error: ${response.status} - ${responseData.message || "No se pudo guardar"}`);
+        throw new Error(
+          `Error: ${response.status} - ${
+            responseData.message || "No se pudo guardar"
+          }`
+        );
       }
-
-      router.push("/dashboard/vaccine/manufacturer");
+  
+      // Al tener éxito, verifica si hay historial para retroceder
+      if (window.history.length > 1) {
+        router.back();
+      } else {
+        router.push("/dashboard/vaccine/manufacturer");
+      }
     } catch (error) {
       console.error(error);
-      setErrorMessage(error instanceof Error ? error.message : "Ocurrió un error inesperado");
+      setErrorMessage(
+        error instanceof Error ? error.message : "Ocurrió un error inesperado"
+      );
     } finally {
       setLoading(false);
     }
   };
+  
+  
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-md p-6 border rounded-lg shadow-md bg-white">
