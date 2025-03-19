@@ -5,10 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Eye, Pencil, Trash } from "lucide-react";
 import { toast } from "@/lib/toast";
 import GenericTable, { Column, TableAction, PaginationInfo } from "@/components/global/GenericTable";
-import VaccineTableSkeleton from "./skeleton/VaccineTableSkeleton"; // O VaccineTableSkeleton si lo reusas
+import VaccineTableSkeleton from "./skeleton/VaccineTableSkeleton"; // Asegúrate de tener este componente
 import { useRouter } from "next/navigation";
-import { getManufacturers } from "@/lib/vaccine-manufacturer/getVaccineManufacturerById";
+import { getManufacturers, deleteManufacturer } from "@/lib/vaccine-manufacturer/getVaccineManufacturerById"; // Verifica la ruta del archivo
 import SearchBar from "./SearchBar";
+import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 
 interface Manufacturer {
   id: number;
@@ -30,13 +31,14 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
   });
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [manufacturerToDelete, setManufacturerToDelete] = useState<Manufacturer | null>(null);
 
   const loadManufacturers = useCallback(
     async (page: number = 1) => {
       if (!token) return;
       setLoading(true);
       try {
-        // Ahora se envían token, página y query de búsqueda
         const results = await getManufacturers(token, page, searchQuery);
         if (!Array.isArray(results.data)) {
           throw new Error("La respuesta de la API no es un array");
@@ -66,7 +68,6 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    // Reinicia a la página 1 con el nuevo query
     loadManufacturers(1);
   };
 
@@ -88,15 +89,41 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
     },
     {
       icon: <Pencil className="w-4 h-4" />,
-      onClick: (manufacturer) => router.push(`/dashboard/vaccine/manufacturer/edit/${manufacturer.id}`),
+      onClick: (manufacturer) => router.push(`/dashboard/vaccine/manufacturer/${manufacturer.id}/edit`),
       label: "Editar",
     },
     {
       icon: <Trash className="w-4 h-4" />,
-      onClick: (manufacturer) => console.log("Eliminar:", manufacturer),
+      onClick: (manufacturer) => {
+        console.log("Se quiere eliminar:", manufacturer);
+        setManufacturerToDelete(manufacturer);
+        setIsDeleteModalOpen(true);
+      },
       label: "Eliminar",
     },
   ];
+
+  const handleConfirmDelete = async () => {
+    if (!manufacturerToDelete) return;
+    try {
+      await deleteManufacturer(token, manufacturerToDelete.id);
+      toast("success", "Fabricante eliminado exitosamente");
+      setData((prev) => ({
+        ...prev,
+        manufacturers: prev.manufacturers.filter((m) => m.id !== manufacturerToDelete.id),
+        pagination: {
+          ...prev.pagination,
+          totalItems: prev.pagination.totalItems - 1,
+        },
+      }));
+    } catch (error) {
+      console.error("Error al eliminar fabricante:", error);
+      toast("error", "Error al eliminar fabricante");
+    } finally {
+      setIsDeleteModalOpen(false);
+      setManufacturerToDelete(null);
+    }
+  };
 
   return (
     <div className="p-4 mx-auto">
@@ -120,6 +147,16 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
         isLoading={loading}
         skeleton={<VaccineTableSkeleton />}
         emptyMessage="No se encontraron fabricantes"
+      />
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        title="¿Estás seguro de eliminar este fabricante?"
+        message="Esta acción no se puede deshacer."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="danger"
       />
     </div>
   );
