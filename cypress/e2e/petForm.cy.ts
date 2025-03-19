@@ -45,7 +45,7 @@ describe('Registrar Mascota con PetForm', () => {
   
     cy.intercept(
       "GET",
-      `${BASE_URL}/race?page=1&speciesId=1`
+      `${BASE_URL}/race?page=1&speciesId=*`
     ).as("getRaces");
   
     cy.intercept("POST", `${BASE_URL}/pet`).as("registerPet");
@@ -137,7 +137,7 @@ describe('Registrar Mascota con PetForm', () => {
 
   it("Registrar mascota sin imagen", () => {
     cy.intercept("GET", `${BASE_URL}/species?page=1`).as("getSpecies");
-    cy.intercept("GET", `${BASE_URL}/race?page=1&speciesId=1`).as("getRaces");
+    cy.intercept("GET", `${BASE_URL}/race?page=1&speciesId=*`).as("getRaces");
     cy.intercept("POST", `${BASE_URL}/pet`).as("registerPet");
   
     cy.log('Navegar a la página de agregar mascota sin imagen');
@@ -181,7 +181,7 @@ describe('Registrar Mascota con PetForm', () => {
   
   it("Registrar mascota con imagen de tamaño grande", () => {
     cy.intercept("GET", `${BASE_URL}/species?page=1`).as("getSpecies");
-    cy.intercept("GET", `${BASE_URL}/race?page=1&speciesId=1`).as("getRaces");
+    cy.intercept("GET", `${BASE_URL}/race?page=1&speciesId=*`).as("getRaces");
     cy.intercept("POST", `${BASE_URL}/pet`).as("registerPet");
   
     cy.log('Navegar a la página de agregar mascota con imagen grande');
@@ -231,7 +231,7 @@ describe('Registrar Mascota con PetForm', () => {
 
   it("Intentar registrar mascota con peso inválido", () => {
     cy.intercept("GET", `${BASE_URL}/species?page=1`).as("getSpecies");
-    cy.intercept("GET", `${BASE_URL}/race?page=1&speciesId=1`).as("getRaces");
+    cy.intercept("GET", `${BASE_URL}/race?page=1&speciesId=*`).as("getRaces");
     cy.intercept("POST", `${BASE_URL}/pet`).as("registerPet");
   
     cy.log('Navegar a la página de agregar mascota con peso inválido');
