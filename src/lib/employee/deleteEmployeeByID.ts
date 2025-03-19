@@ -16,9 +16,9 @@ export const deleteEmployeeByID = async (token: string, id: number): Promise<boo
             throw new Error(`Error ${response.status}: ${errorText}`);
         }
 
-        return true; // Indica que la eliminación fue exitosa
+        return true; 
     } catch (error) {
         console.error("Error en deleteEmployeeByID:", error);
-        return false; // Indica que hubo un error
+        return false; 
     }
 };
