@@ -6,7 +6,7 @@ export default async function StockPage() {
   const session = await getServerSession(authOptions);
   const token = session?.user?.token || "";
 
-  if (!token) return <p>Cargando...</p>;
+  if (!token) return <p>Cargando..</p>;
 
   return (
     <main className="py-6 px-20">
