@@ -36,7 +36,7 @@ export default function PositionForm({ token, position }: PositionFormProps) {
         ? { name: position.name, shifts: position.shifts }
         : { name: "", shifts: [DEFAULT_SHIFT] };
 
-    const { register, handleSubmit, control, getValues, watch, formState: { errors, isSubmitting } } = useForm<PositionFormValues>({
+    const { register, handleSubmit,reset, control, getValues, watch, formState: { errors, isSubmitting } } = useForm<PositionFormValues>({
         resolver: zodResolver(positionSchema),
         defaultValues,
     });
@@ -101,9 +101,14 @@ export default function PositionForm({ token, position }: PositionFormProps) {
                 toast("success", "Puesto actualizado con éxito");
             } else {
                 await registerPosition(normalizedData, token);
-                toast("success", "Puesto registrado con éxito");
+                toast("success", "Puesto registrado con éxito!");
+                reset({
+                    name: "",
+                    shifts: [DEFAULT_SHIFT],
+                });
             }
-            router.refresh();
+            router.refresh()
+
         } catch {
             toast("error", `Error al ${isEditing ? "actualizar" : "registrar"} el puesto`);
         }

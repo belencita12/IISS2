@@ -56,7 +56,7 @@ export const isTimeBefore = (time1: string, time2: string) => {
 };
 
 // Valida la selección de días y evita conflictos
-export const validateShifts = (value: string, currentShifts: any[], index: number): number | number[] | undefined => {
+export const validateShifts = (value: string, currentShifts: Shift[], index: number): number | number[] | undefined => {
     const mappings: Record<string, number[]> = {
         weekdays: [0, 1, 2, 3, 4], weekdays_saturday: [0, 1, 2, 3, 4, 5], fullweek: [0, 1, 2, 3, 4, 5, 6],
     };
