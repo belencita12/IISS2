@@ -45,29 +45,29 @@ export default function StockForm({ token }: StockFormProps) {
         toast.success("Depósito registrado con éxito");
       //  router.push("/dashboard/stock");
     } catch (error: unknown) {
-      if (
+      if (error instanceof Error) {
+        toast.error("Hubo un error desconocido al registrar el deposito");
+      } else if (
         typeof error === "object" &&
         error !== null &&
         "response" in error &&
-        typeof (error as any).response === "object" &&
-        "data" in (error as any).response &&
-        typeof (error as any).response.data === "object" 
-     //   "message" in (error as any).response.data
+        "data" in (error as { response: { data: { message: string } } }).response
       ) {
-        const errorMessage = (error as any).response.data.message;
+        const errorMessage = (error as { response: { data: { message: string } } }).response.data.message;
         
         if (typeof errorMessage === "string") {
           if (errorMessage.includes("Uno o más campos ya están en uso")) {
-            toast.error("El nombre del stock ya está registrado. Intente con otro.");
+            toast.error("El nombre del deposito ya está registrado. Intente con otro.");
           } else {
             toast.error(errorMessage);
           }
         } else {
-          toast.error("Hubo un error al registrar el stock");
+          toast.error("Hubo un error al registrar el deposito");
         }
       } else {
-        toast.error("Hubo un error desconocido al registrar el stock");
+        toast.error("Hubo un error desconocido al registrar el deposito");
       }
+    
     } finally {
       setIsSubmitting(false);
     }
