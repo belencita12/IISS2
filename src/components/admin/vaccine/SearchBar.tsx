@@ -9,6 +9,7 @@ import { toast } from "@/lib/toast";
 interface SearchBarProps {
     onSearch: (query: string) => void;
 }
+
 export default function SearchBar({ onSearch }: SearchBarProps) {
     const [query, setQuery] = useState("");
 
@@ -16,19 +17,23 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
         const trimmedQuery = query.trim();
         if (!trimmedQuery) {
             toast("info", "Debes ingresar algo para buscar!");
+            onSearch(""); // Esto debería restaurar los datos en el componente padre
             return;
         }
         onSearch(trimmedQuery);
     };
+
     const clearSearch = () => {
         setQuery("");
-        onSearch("");
+        onSearch(""); // Llamar a onSearch con cadena vacía para restaurar datos
     };
+
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter") {
             handleSearch();
         }
     };
+
     return (
         <div className="flex items-center gap-2 mb-4">
             <div className="relative w-full">
@@ -51,4 +56,4 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
             <Button onClick={handleSearch}>Buscar</Button>
         </div>
     );
-};
+}
