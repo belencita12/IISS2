@@ -249,6 +249,7 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
               type="text"
               value={manufacturerSearch}
               onChange={(e) => setManufacturerSearch(e.target.value)}
+              onBlur={validateManufacturerSelection}
               onFocus={() => setIsManufacturerListVisible(true)}
               placeholder="Buscar fabricante..."
               className="w-full mb-2 pr-10"
