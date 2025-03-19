@@ -28,12 +28,18 @@ export async function updateManufacturer(token: string, id: number, data: { name
   return response.json();
 }
 
-export async function getManufacturers(token: string, query = '') {
-  const response = await fetch(`${API_URL}?${query}`, {
+export async function getManufacturers(token: string, page: number = 1, searchQuery: string = '') {
+  const url = new URL(API_URL);
+  url.searchParams.append("page", page.toString());
+  if (searchQuery) {
+    url.searchParams.append("name", searchQuery);
+  }
+
+  const response = await fetch(url.toString(), {
     method: 'GET',
     headers: {
-      'Authorization': `Bearer ${token}`
-    }
+      'Authorization': `Bearer ${token}`,
+    },
   });
 
   if (!response.ok) throw new Error('Error al obtener fabricantes');
