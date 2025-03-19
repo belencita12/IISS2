@@ -16,6 +16,7 @@ import {
   PaginationNext,
 } from "@/components/ui/pagination";
 import ProductFilters from "@/components/admin/product/ProductFilter";
+import useDebounce from "@/lib/admin/products/useDebounceHook"; // Importamos el hook de debounce
 
 interface ProductListProps {
   token: string;
@@ -35,6 +36,10 @@ export default function ProductListPage({ token }: ProductListProps) {
   });
 
   const [inputFilters, setInputFilters] = useState({ ...searchFilters });
+  
+  // Aplicamos debounce a los filtros de entrada (500ms de retraso)
+  const debouncedFilters = useDebounce(inputFilters, 500);
+  
   const [products, setProducts] = useState<Product[]>([]);
   const [stockMap, setStockMap] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -80,16 +85,26 @@ export default function ProductListPage({ token }: ProductListProps) {
     [searchFilters, token, pagination.pageSize]
   );
 
+  // Este useEffect se activará cuando los filtros debounced cambien
+  useEffect(() => {
+    if (token) {
+      setSearchFilters(debouncedFilters);
+      loadProducts(1, debouncedFilters);
+    }
+  }, [debouncedFilters, token, loadProducts]);
+
+  // Este useEffect es para la carga inicial
   useEffect(() => {
     if (token) {
       loadProducts(1);
     }
-  }, [token, loadProducts]);
+  }, [token]);
 
-  const handleSearch = (updatedFilters = inputFilters) => {
-    setSearchFilters(updatedFilters);
+  const handleSearch = () => {
+    // Para búsquedas manuales (botón Buscar)
+    setSearchFilters(inputFilters);
     setPagination((prev) => ({ ...prev, currentPage: 1 }));
-    loadProducts(1, updatedFilters);
+    loadProducts(1, inputFilters);
   };
 
   const handlePageChange = (page: number) => {
