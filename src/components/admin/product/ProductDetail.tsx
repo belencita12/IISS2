@@ -101,6 +101,11 @@ export default function ProductDetail({ token }: ProductDetailProps) {
               <h1 className="text-2xl font-bold mb-4">{product.name}</h1>
               
               <div className="space-y-2">
+              <div className="flex">
+                  <span className="text-gray-600 w-24">Código:</span>
+                  <span className="flex-grow text-right">{product.code?.toLocaleString()}</span>
+                </div>
+
                 <div className="flex">
                   <span className="text-gray-600 w-24">Precio:</span>
                   <span className="flex-grow text-right">{product.price?.toLocaleString()} Gs</span>
