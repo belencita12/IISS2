@@ -4,12 +4,14 @@ import { Controller } from "react-hook-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getDayText, getDayValue, getAvailableDays, DAYS } from "@/lib/work-position/utils/shifts";
 import { Shift } from "@/lib/work-position/IPosition";
+import { PositionFormValues } from "@/lib/work-position/IPosition";
+import { Control } from "react-hook-form";
 
 interface ShiftSelectorProps {
   index: number;
   shift: Shift;
   shifts: Shift[];
-  control: any;
+  control: Control<PositionFormValues>;
   onSelectDay: (value: string, index: number) => void;
 }
 

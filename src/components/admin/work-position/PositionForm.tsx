@@ -14,16 +14,10 @@ import { areDefaultShifts, DEFAULT_SHIFT, isTimeBefore, validateShifts } from "@
 import { positionSchema } from "@/lib/work-position/utils/validationSchemas";
 import { ShiftSelector } from "./ShiftSelector";
 import { useRouter } from "next/navigation";
+import { PositionFormValues } from "@/lib/work-position/IPosition";
 import TimeField from "react-simple-timefield";
 
-type PositionFormValues = {
-    name: string;
-    shifts: {
-        weekDay: number | number[];
-        startTime: string;
-        endTime: string;
-    }[];
-};
+
 interface PositionFormProps {
     token: string;
     position?: Position;
@@ -46,7 +40,7 @@ export default function PositionForm({ token, position }: PositionFormProps) {
     const getCurrentShifts = () => getValues("shifts");
 
     const updateShift = useCallback(
-        (index: number, field: keyof PositionFormValues["shifts"][number], value: any) => {
+        (index: number, field: keyof PositionFormValues["shifts"][number], value: string | number | number[]) => {
             const currentShift = getValues(`shifts.${index}`);
             update(index, { ...currentShift, [field]: value });
         },
