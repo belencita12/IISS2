@@ -3,10 +3,11 @@
 import GenericTable, { Column } from "@/components/global/GenericTable";
 import {getPetsByUserIdFull } from "@/lib/pets/getPetsByUserId";
 import { PetData } from "@/lib/pets/IPet";
-import { Pencil, Trash } from "lucide-react";
+import { Eye, Pencil, Trash } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import PetsTableSkeleton from "./skeleton/PetsTableSkeleton";
+import { useRouter } from "next/navigation";
 
 
 export default function PaginatedPetsTable({ token,id }: { token: string ,id:number}) {
@@ -25,7 +26,7 @@ export default function PaginatedPetsTable({ token,id }: { token: string ,id:num
           alt={pet.name}
           width={30}
           height={30}
-          className="rounded-full"
+          className="rounded-full object-cover w-[30px] h-[30px]"
         />
       ),
       className: "w-[50px]"
@@ -45,7 +46,17 @@ export default function PaginatedPetsTable({ token,id }: { token: string ,id:num
     }
   ];
 
+    const router = useRouter();
+    const onRedirect = (pet: PetData) => {
+      router.push(`/dashboard/clients/${id}/pet/${pet.id}`);
+    }
+
   const actions = [
+    {
+      icon: <Eye className="w-4 h-4" />,
+      onClick: onRedirect,
+      label: "Detalles"
+    },
     {
       icon: <Pencil className="w-4 h-4" />,
       onClick: onEdit,
