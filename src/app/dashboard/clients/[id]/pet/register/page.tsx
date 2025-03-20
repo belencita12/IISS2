@@ -1,8 +1,9 @@
-import PetDetails from "@/components/petUI/PetDetails";
+import PetRegisterForm from "@/components/admin/pet/PetRegisterForm";
 import authOptions from "@/lib/auth/options";
 import { getServerSession } from "next-auth/next";
+import { redirect } from "next/navigation";
 
-export default async function Page() {
+export default async function PetRegisterPage() {
   const session = await getServerSession(authOptions);
   if (session) {
     const token = session?.user.token;
@@ -10,9 +11,10 @@ export default async function Page() {
 
     return (
       <div>
-        <PetDetails token={token} />
+        <PetRegisterForm token={token} />
       </div>
     );
   }
-  return;
+
+  redirect("/login");
 }

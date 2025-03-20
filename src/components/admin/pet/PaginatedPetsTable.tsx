@@ -11,8 +11,12 @@ import { useRouter } from "next/navigation";
 
 
 export default function PaginatedPetsTable({ token,id }: { token: string ,id:number}) {
+    const router = useRouter();
+    const onRedirect = (pet: PetData) => {
+      router.push(`/dashboard/clients/${id}/pet/${pet.id}`);
+    };
     const onEdit = (pet: PetData) => {
-    console.log("Edit pet", pet);
+    router.push(`/dashboard/clients/${id}/pet/${pet.id}/edit`);
     }
     const onDelete = (pet: PetData) => {
     console.log("Delete pet", pet);
@@ -46,10 +50,7 @@ export default function PaginatedPetsTable({ token,id }: { token: string ,id:num
     }
   ];
 
-    const router = useRouter();
-    const onRedirect = (pet: PetData) => {
-      router.push(`/dashboard/clients/${id}/pet/${pet.id}`);
-    }
+
 
   const actions = [
     {
