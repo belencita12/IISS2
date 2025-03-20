@@ -1,10 +1,10 @@
 
 import { Position } from "./IPosition";
-import { BASE_API_URL } from "../env";
+import { WORK_POSITION_API } from "../urls";
 
 export const updatePosition = async (id: number, positionData: Position, token: string) => {
     try {
-        const response = await fetch(`${BASE_API_URL}/work-position/${id}`, {
+        const response = await fetch(`${WORK_POSITION_API}/${id}`, {
             method: 'PATCH',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -15,12 +15,14 @@ export const updatePosition = async (id: number, positionData: Position, token: 
 
         if (!response.ok) {
             const errorText = await response.text();
-            throw new Error(`Error HTTP: ${response.status}: ${errorText}`);
+            if (errorText.toLowerCase().includes("ya están en uso")) {
+                throw new Error("El puesto ya existe");
+            }
+            throw new Error("Ocurrió un error. Intenta nuevamente.");
         }
 
         return await response.json() as Position;
     } catch (error) {
-        console.error('Error en updatePosition:', error);
-        throw error;
+        throw new Error(error instanceof Error ? error.message : "Ocurrió un error. Intenta nuevamente.");
     }
 };
