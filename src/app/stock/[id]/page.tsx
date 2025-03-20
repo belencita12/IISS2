@@ -13,10 +13,13 @@ export default async function StockPage({ params }: { params: { id: string } }) 
   const nombre = session.user.fullName;
 
   return (
-    <div>
-      <UserBar token={token} nombre={nombre}/>
-      <DepositInfo token={token} depositoId={Number(params.id)} />
-      <ProductList token={token} depositoId={Number(params.id)} />
+    <div className="flex justify-center">
+      <div className="w-4/5 space-y-4">
+        <UserBar token={token} nombre={nombre}/>
+        <DepositInfo token={token} depositoId={Number(params.id)} />
+        <ProductList token={token} depositoId={Number(params.id)} />
+      </div>
+
     </div>
   );
 }

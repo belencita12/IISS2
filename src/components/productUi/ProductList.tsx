@@ -25,6 +25,8 @@ interface Props {
   depositoId: number;
 }
 
+const formatNumber = (num: number) => num.toLocaleString("es-ES");
+
 const ProductList: React.FC<Props> = ({ token, depositoId }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -102,9 +104,9 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
           <div>
             <h3 className="text-lg font-bold">{product.name}</h3>
             <p className="text-gray-600">Categoría: {product.category}</p>
-            <p>Precio: {product.price} Gs.</p>
-            <p>Costo: {product.cost} Gs.</p>
-            <p>Stock: {product.stock}</p>
+            <p>Precio: {formatNumber(product.price)} Gs.</p>
+            <p>Costo: {formatNumber(product.cost)} Gs.</p>
+            <p>Stock: {formatNumber(product.stock)}</p>
           </div>
         </div>
       ))}
