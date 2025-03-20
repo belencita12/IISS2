@@ -17,10 +17,46 @@ const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 const productFormSchema = z.object({
   productName: z.string().min(1, "El nombre es obligatorio"),
-  cost: z.number().min(1, "El costo es obligatorio"),
-  price: z.number().min(1, "El precio es obligatorio"),
-  iva: z.number().min(1, "El IVA es obligatorio"),
-  category: z.string().min(1, "Selecciona una categoría"),
+  cost: z
+    .union([z.string(), z.number(), z.nan()])
+    .refine(
+      (val) =>
+        val !== undefined &&
+        val !== "" &&
+        !isNaN(parseFloat(String(val))) &&
+        parseFloat(String(val)) > 0,
+      {
+        message: "El costo es obligatorio",
+      }
+    )
+    .transform((val) => parseFloat(String(val))),
+  price: z
+    .union([z.string(), z.number(), z.nan()])
+    .refine(
+      (val) =>
+        val !== undefined &&
+        val !== "" &&
+        !isNaN(parseFloat(String(val))) &&
+        parseFloat(String(val)) > 0,
+      {
+        message: "El precio es obligatorio",
+      }
+    )
+    .transform((val) => parseFloat(String(val))),
+  iva: z
+    .union([z.string(), z.number(), z.nan()])
+    .refine(
+      (val) =>
+        val !== undefined &&
+        val !== "" &&
+        !isNaN(parseFloat(String(val))) &&
+        parseFloat(String(val)) >= 0,
+      {
+        message: "El IVA es obligatorio",
+      }
+    )
+    .transform((val) => parseFloat(String(val))),
+  category: z.string(),
   imageFile: z
     .instanceof(File)
     .refine((file) => ALLOWED_IMAGE_TYPES.includes(file.type), {
@@ -53,10 +89,10 @@ export default function ProductRegisterForm({
     resolver: zodResolver(productFormSchema),
     defaultValues: {
       productName: "",
-      cost: 0,
-      price: 0,
-      iva: 0,
-      category: "",
+      cost: undefined,
+      price: undefined,
+      iva: undefined,
+      category: "PRODUCT",
       imageFile: undefined,
     },
   });
@@ -75,6 +111,7 @@ export default function ProductRegisterForm({
   };
 
   const onSubmit = async (data: ProductFormValues) => {
+    setIsSubmitting(true);
     if (!token) {
       toast("error", "Debes estar autenticado para registrar el producto");
       return;
@@ -174,17 +211,6 @@ export default function ProductRegisterForm({
             />
             {errors.iva && <p className="text-red-500">{errors.iva.message}</p>}
           </div>
-          <div className="w-2/3">
-            <Label>Categoría</Label>
-            <Input
-              id="category"
-              {...register("category")}
-              placeholder="Ingrese la categoría del producto"
-            />
-            {errors.category && (
-              <p className="text-red-500">{errors.category.message}</p>
-            )}
-          </div>
           <div className="w-full flex flex-col items-start relative">
             <Label className="pb-2">Imagen</Label>
             <Label className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-md text-sm font-medium text-center cursor-pointer">
@@ -219,6 +245,7 @@ export default function ProductRegisterForm({
               type="button"
               variant="outline"
               onClick={() => router.push("/dashboard/products")}
+              disabled={isSubmitting}
             >
               Cancelar
             </Button>

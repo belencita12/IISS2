@@ -220,17 +220,6 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
                 <p className="text-red-500">{errors.iva.message}</p>
               )}
             </div>
-            <div className="w-2/3">
-              <Label>Categoría</Label>
-              <Input
-                id="category"
-                {...register("category")}
-                placeholder="Ingrese la categoría del producto"
-              />
-              {errors.category && (
-                <p className="text-red-500">{errors.category.message}</p>
-              )}
-            </div>
             <div className="w-full flex flex-col items-start relative">
               <Label className="pb-2">Imagen</Label>
               <Label className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-md text-sm font-medium text-center cursor-pointer">
