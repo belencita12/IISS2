@@ -1,4 +1,4 @@
-import PetRegisterForm from "@/components/admin/pet/PeRegisterForm";
+import PetRegisterForm from "@/components/admin/pet/PetRegisterForm";
 import authOptions from "@/lib/auth/options";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
