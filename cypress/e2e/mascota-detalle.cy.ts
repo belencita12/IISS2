@@ -1,7 +1,5 @@
 describe("Register Pet", () => {
-  const TIMEOUT = {
-    timeout: 15000,
-  };
+  const TIMEOUT = { timeout: 15000 };
   const PET_ID_KEY = "PET_ID";
   const SESSION_KEY = "sessionToken";
   const PET_MOCK = {
@@ -9,6 +7,17 @@ describe("Register Pet", () => {
     birthDate: "2022-01-02",
     weight: "10.2",
   };
+  let testUser: BaseUser;
+
+  before(() => {
+    cy.intercept("POST", "**/auth/signup").as("register");
+    cy.generateUser().then((user) => {
+      testUser = user;
+      cy.log("Registrando usuario de prueba...");
+      cy.register(user);
+      cy.wait("@register", { timeout: 16000 });
+    });
+  });
 
   beforeEach(() => {
     const sessionToken: string = Cypress.env(SESSION_KEY);
@@ -16,21 +25,16 @@ describe("Register Pet", () => {
   });
 
   it("Debe iniciar sesión y obtener un token válido", () => {
-    const USER = {
-      email: Cypress.env("USER_EMAIL") as string,
-      password: Cypress.env("USER_PASSWORD") as string,
-    };
-
-    cy.loginAndSetSession(SESSION_KEY, USER.email, USER.password);
+    expect(testUser).to.exist;
+    cy.loginAndSetSession(SESSION_KEY, testUser.email, testUser.password);
+    cy.location("pathname", TIMEOUT).should("eq", "/user-profile");
   });
 
   it("Detalle de mascota con id invalido", () => {
     const ERR_PET_ID = 9999;
     cy.visit("/detalle-mascota/" + ERR_PET_ID);
     cy.url().should("include", "/detalle-mascota/" + ERR_PET_ID);
-    cy.intercept("GET", `${Cypress.env("API_BASEURL")}/pet/${ERR_PET_ID}`).as(
-      "registerPet"
-    );
+    cy.intercept("GET", `**/pet/${ERR_PET_ID}`).as("registerPet");
     cy.wait(2000);
     cy.wait("@registerPet").then((int) => {
       const res = int.response;
@@ -44,10 +48,7 @@ describe("Register Pet", () => {
     cy.visit("/pet/register");
     cy.url().should("include", "/pet/register");
 
-    cy.intercept(
-      "GET",
-      `${Cypress.env("API_BASEURL")}/race?page=1&speciesId=1`
-    ).as("getRaces");
+    cy.intercept("GET", `${Cypress.env("API_BASEURL")}/race?*`).as("getRaces");
 
     cy.intercept("GET", `${Cypress.env("API_BASEURL")}/species?page=1`).as(
       "getSpecies"
