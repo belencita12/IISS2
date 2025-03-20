@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import ProductSearch from "../depositUI/ProductSearch";
 
 const apiUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -26,6 +27,7 @@ interface Props {
 
 const ProductList: React.FC<Props> = ({ token, depositoId }) => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -66,6 +68,7 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
         );
 
         setProducts(fetchedProducts);
+        setFilteredProducts(fetchedProducts);
         setTotalPages(data.totalPages);
       } catch (err: any) {
         setError(err.message);
@@ -76,12 +79,20 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
     fetchProducts();
   }, [currentPage, depositoId, token]);
 
+  const handleSearch = (query: string) => {
+    const filtered = products.filter((product) =>
+      product.name.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredProducts(filtered);
+  };
+
   if (loading) return <p>Cargando...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
     <div className="p-4 bg-white shadow-lg rounded-lg">
-      {products.map((product) => (
+      <ProductSearch onSearch={handleSearch} />
+      {filteredProducts.map((product) => (
         <div key={product.id} className="border p-4 rounded-lg flex gap-4 items-center">
           <img
             src={product.imageUrl || "https://via.placeholder.com/150"}
