@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import ProductSearch from "../depositUI/ProductSearch";
+import Image from "next/image";
 
 const apiUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -72,8 +73,12 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
         setProducts(fetchedProducts);
         setFilteredProducts(fetchedProducts);
         setTotalPages(data.totalPages);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Error desconocido");
+        }
       } finally {
         setLoading(false);
       }
@@ -96,10 +101,11 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
       <ProductSearch onSearch={handleSearch} />
       {filteredProducts.map((product) => (
         <div key={product.id} className="border p-4 rounded-lg flex gap-4 items-center">
-          <img
+          <Image
             src={product.imageUrl || "https://via.placeholder.com/150"}
             alt={product.name}
-            className="w-16 h-16 object-cover rounded"
+            width={64} height={64} 
+            className="object-cover rounded"
           />
           <div>
             <h3 className="text-lg font-bold">{product.name}</h3>

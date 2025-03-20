@@ -3,7 +3,6 @@ import ProductList from "@/components/productUi/ProductList";
 import UserBar from "@/components/depositUI/UserBar";
 import { getServerSession } from "next-auth/next";
 import authOptions from "@/lib/auth/options";
-import ProductSearch from "@/components/depositUI/ProductSearch";
 
 export default async function StockPage({ params }: { params: { id: string } }) {
   const session = await getServerSession(authOptions);

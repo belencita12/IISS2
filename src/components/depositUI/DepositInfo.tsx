@@ -32,8 +32,12 @@ const DepositInfo: React.FC<Props> = ({ token, depositoId }) => {
         }
         const data = await response.json();
         setDeposit(data);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Error desconocido");
+        }
       } finally {
         setLoading(false);
       }

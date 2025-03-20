@@ -9,9 +9,11 @@ export default async function Page() {
       const token = session?.user.token;
       const nombre = session?.user.fullName;
   
-      return <div>
-        <UserBar token={token} nombre={nombre}/>
-        <DepositList token={token}/>
+      return <div className="flex justify-center">
+        <div className="w-4/5 space-y-4">
+          <UserBar token={token} nombre={nombre}/>
+          <DepositList token={token}/>
+        </div>
       </div>
       
     }
