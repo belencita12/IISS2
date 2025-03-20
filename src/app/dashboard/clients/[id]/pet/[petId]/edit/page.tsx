@@ -1,9 +1,9 @@
-import AdminPetForm from "@/components/admin/pet/AdminPetForm";
+import PetUpdateForm from "@/components/admin/pet/PetUpdateForm";
 import authOptions from "@/lib/auth/options";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 
-export default async function PetRegisterPage() {
+export default async function PetUpdatePage() {
   const session = await getServerSession(authOptions);
   if (session) {
     const token = session?.user.token;
@@ -11,11 +11,10 @@ export default async function PetRegisterPage() {
 
     return (
       <div>
-        <AdminPetForm token={token} />
+        <PetUpdateForm token={token} />
       </div>
     );
   }
 
   redirect("/login");
-  return;
 }

@@ -18,17 +18,13 @@ import {
 import { Race, Species } from "@/lib/pets/IPet";
 import { getRacesBySpecies, getSpecies } from "@/lib/pets/getRacesAndSpecies";
 import { registerPet } from "@/lib/pets/registerPet";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import { ValidatedInput } from "@/components/global/ValidatedInput";
-import { Check, LoaderCircleIcon, X } from "lucide-react";
-import { fetchUsers } from "@/lib/client/getUsers";
 
 const MAX_FILE_SIZE = 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 const petFormSchema = z.object({
-  userId: z.number().min(1, "El correo del usuario no está comprobado"),
   petName: z.string().min(1, "El nombre es obligatorio"),
   birthDate: z.string().min(1, "La fecha de nacimiento es obligatoria"),
   breed: z.string().min(1, "La raza es obligatoria"),
@@ -59,17 +55,14 @@ interface AdminPetFormProps {
   token?: string;
 }
 
-export default function AdminPetForm({ token }: AdminPetFormProps) {
-  type validationState = "NOTHING" | "LOADING" | "VALID" | "INVALID";
+export default function PetRegisterForm({ token }: AdminPetFormProps) {
+  const { id } = useParams();
 
   const [species, setSpecies] = useState<Species[]>([]);
   const [races, setRaces] = useState<Race[]>([]);
-  const [searchQuery, setSearchQuery] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [validatingState, setValidatingState] =
-    useState<validationState>("NOTHING");
   const {
     register,
     handleSubmit,
@@ -79,7 +72,6 @@ export default function AdminPetForm({ token }: AdminPetFormProps) {
   } = useForm<PetFormValues>({
     resolver: zodResolver(petFormSchema),
     defaultValues: {
-      userId: 0,
       petName: "",
       birthDate: "",
       breed: "",
@@ -89,7 +81,7 @@ export default function AdminPetForm({ token }: AdminPetFormProps) {
     },
   });
 
-  // Obtiene las especies
+  // Obtiene las especies para el select
   useEffect(() => {
     if (!token) return;
     const fetchSpecies = async () => {
@@ -136,9 +128,9 @@ export default function AdminPetForm({ token }: AdminPetFormProps) {
     const formData = new FormData();
     Object.entries({
       name: data.petName,
-      userId: data.userId.toString(),
       speciesId: data.animalType,
       raceId: data.breed,
+      userId: id as string,
       weight: data.weight.toString(),
       sex: data.gender,
       dateOfBirth: new Date(data.birthDate).toISOString(),
@@ -149,54 +141,13 @@ export default function AdminPetForm({ token }: AdminPetFormProps) {
       await registerPet(formData, token);
       toast("success", "Mascota registrada con éxito!", {
         duration: 2000,
-        onAutoClose: () => router.push("/dashboard"),
-        onDismiss: () => router.push("/dashboard"),
+        onAutoClose: () => router.push(`/dashboard/clients/${id}`),
+        onDismiss: () => router.push(`/dashboard/clients/${id}`),
       });
     } catch {
       toast("error", "Hubo un error al registrar la mascota.");
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  // Renderizado condicional basado en el estado de validación
-  const renderValidationIcon = () => {
-    switch (validatingState) {
-      case "LOADING":
-        return (
-          <LoaderCircleIcon className="lucide lucide-loader-circle animate-spin" />
-        );
-      case "VALID":
-        return <Check className="lucide lucide-check text-green-500" />;
-      case "INVALID":
-        return <X className="lucide lucide-x text-red-500" />;
-      default:
-        return null;
-    }
-  };
-
-  // Obtiene el usuario a partir del correo
-  const handleUserValidation = async (userEmail: string) => {
-    setValidatingState("LOADING");
-
-    if (!userEmail || !userEmail.includes("@") || !token) {
-      setValidatingState("INVALID");
-      return;
-    }
-
-    try {
-      const userData = await fetchUsers(1, `${userEmail}`, token);
-
-      if (userData.total === 0) {
-        setValidatingState("INVALID");
-        return;
-      }
-
-      setValue("userId", userData.data[0].id);
-      setValidatingState("VALID");
-    } catch {
-      toast("error", "Error al obtener el usuario.");
-      setValidatingState("INVALID");
     }
   };
 
@@ -250,50 +201,6 @@ export default function AdminPetForm({ token }: AdminPetFormProps) {
             onSubmit={handleSubmit(onSubmit)}
             className="space-y-4"
           >
-            <div>
-              <Label>Correo del usuario</Label>
-              <div className="flex flex-col justify-between items-start gap-4">
-                <div className="flex justify-start items-center gap-4">
-                  <div className="flex items-start gap-4">
-                    <ValidatedInput
-                      className="w-full"
-                      type="email"
-                      id="searchUser"
-                      placeholder="Ej: ejemplo@gmail.com"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                    <div className="flex justify-start items-center gap-2">
-                      <Button
-                        variant={"secondary"}
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleUserValidation(searchQuery);
-                        }}
-                      >
-                        Comprobar usuario
-                      </Button>
-                      {renderValidationIcon()}
-                    </div>
-                  </div>
-                </div>
-                {errors.userId && (
-                  <p className="text-red-500">{errors.userId.message}</p>
-                )}
-                <div className="flex gap-1">
-                  <span className="text-xs">
-                    El usuario no existe? Podrías{" "}
-                  </span>
-                  <p
-                    className="text-xs underline cursor-pointer"
-                    onClick={() => router.push("/dashboard/clients/register")}
-                  >
-                    registrar un usuario
-                  </p>
-                </div>
-              </div>
-            </div>
             <div>
               <Label>Nombre</Label>
               <Input
@@ -408,7 +315,7 @@ export default function AdminPetForm({ token }: AdminPetFormProps) {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => router.push("/dashboard")}
+                onClick={() => router.push(`/dashboard/clients/${id}`)}
               >
                 Cancelar
               </Button>
