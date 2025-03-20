@@ -52,7 +52,6 @@ describe('Página de Detalles del Cliente', () => {
       statusCode: 404,
       body: { message: "Client not found" }
     };
-
     cy.visit({
       url: `/dashboard/clients/${clientNone}`, // URL que puede fallar
       failOnStatusCode: false,  
@@ -82,7 +81,7 @@ describe('Página de Detalles del Cliente', () => {
     cy.intercept("GET", `${BASE_URL}/pet?page=1&userId=${clientId}`).as("getPets");
 
     cy.visit(`/dashboard/clients/${clientId}`);
-
+    
     cy.get('body').then(($body) => {
       if ($body.find('span:contains("Next")').length > 0) {
         // Simular hacer clic en el botón de paginación "Siguiente"
@@ -93,7 +92,6 @@ describe('Página de Detalles del Cliente', () => {
         cy.log('No existe la paginacion');
       }
     });
-
 
   });
 

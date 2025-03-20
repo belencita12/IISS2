@@ -13,7 +13,7 @@ describe('ClientListSection', () => {
         });
         cy.visit('/dashboard/clients');
         cy.url().should('include', '/dashboard/clients');
-        cy.wait(20000);
+        cy.wait(10000);
     });
 
     it('Debe mostrar correctamente los datos de los clientes', () => {
@@ -29,32 +29,28 @@ describe('ClientListSection', () => {
 
 
     it('Debe buscar clientes correctamente filtrandolos por nombre', () => {
-        cy.wait(20000);
-        cy.get('input[placeholder="Buscar por nombre o email..."]').type('Andres Cabrera');
+        cy.get('input[placeholder="Buscar por nombre o email..."]').type('Juan Pérez');
         cy.get('button').contains('Buscar').click();
-        cy.wait(20000);
-        cy.get('table tbody tr').should('contain', 'Andres Cabrera');
+        cy.wait(10000);
+        cy.get('table tbody tr').should('contain', 'Juan Pérez');
     });
 
 
     it('Debe buscar clientes correctamente filtrando por correo', () => {
-        cy.wait(20000);
-        cy.get('input[placeholder="Buscar por nombre o email..."]').type('nicolascabrera554@gmail.com');
+        cy.get('input[placeholder="Buscar por nombre o email..."]').type('testuser83380@gmail.com');
         cy.get('button').contains('Buscar').click();
         cy.wait(12000);
-        cy.get('table tbody tr').should('contain', 'nicolascabrera554@gmail.com');
+        cy.get('table tbody tr').should('contain', 'testuser83380@gmail.com');
     });
 
 
     it('Debe abrir la página de registro de clientes', () => {
-        cy.wait(20000);
         cy.get('button').contains('Agregar').click();
         cy.wait(10000);
         cy.url().should('include', '/dashboard/clients/register');
     });
     
     it('Debe hacer clic en el icono de ojo', () => {
-        cy.wait(20000);
         cy.get('.lucide-eye').first().click();
         cy.wait(10000);
         cy.url().should('include', '/dashboard/clients/');

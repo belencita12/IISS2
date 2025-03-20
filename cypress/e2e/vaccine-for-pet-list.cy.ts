@@ -1,4 +1,4 @@
-describe('Listado de fabricantes de vacunas', () => {
+describe('Listado de vacunas aplicadas por mascotas', () => {
     const SESSION_KEY = "sessionToken";
     const USER = {
         email: Cypress.env("USER_EMAIL"),
@@ -11,32 +11,20 @@ describe('Listado de fabricantes de vacunas', () => {
             cy.wait(20000);
             cy.url().should('include', '/dashboard');
         });
-        cy.visit('dashboard/vaccine/manufacturer');
-        cy.url().should('include', 'dashboard/vaccine/manufacturer');
+        cy.visit('/dashboard/clients/2/pet/1');
+        cy.url().should('include', '/dashboard/clients/2/pet/1');
     });
 
-    it('Debe mostrar correctamente los datos de los fabricantes de vacunas', () => {
+    it('Debe mostrar correctamente las vacunas aplicadas a la mascota', () => {
         cy.get('table tbody tr').each(($row) => {
             cy.wrap($row).within(() => {
-                cy.get('td').eq(0).should('not.be.empty'); // Nombre
-                cy.get('td').eq(1).should('not.be.empty'); // Acciones
+                cy.get('td').eq(0).should('not.be.empty'); // Fecha
+                cy.get('td').eq(1).should('not.be.empty'); // Detalle de la vacuna
+                cy.get('td').eq(2).should('not.be.empty'); // Fecha prevista
+                cy.get('td').eq(3).should('not.be.empty'); // Dosis
+                cy.get('td').eq(4).should('not.be.empty'); // Recordatorio
             });
         });
-    });
-
-
-    it('Debe buscar fabricantes de vacunas correctamente filtrandolos por nombre', () => {
-        cy.get('input[placeholder="Buscar por nombre o productor..."]').type('string1');
-        cy.get('button').contains('Buscar').click();
-        cy.wait(10000);
-        cy.get('table tbody tr').should('contain', 'string1');
-    });
-
-    it('Debe abrir la página de registro de fabricantes de vacunas', () => {
-        cy.wait(10000);
-        cy.get('button').contains('Agregar').click();
-        cy.wait(10000);
-        cy.url().should('include', '/vaccine/manufacturer/new');
     });
 
     it('Debe verificar la paginación', () => {
