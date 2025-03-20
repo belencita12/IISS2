@@ -144,7 +144,7 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
     }
   };
   return (
-    <div className="flex flex-col md:flex-row items-center gap-16 p-10">
+    <div className="flex flex-col md:flex-row justify-center items-center gap-16 p-10">
       {isLoading ? (
         <div className="text-center mt-8">Cargando...</div>
       ) : error ? (
