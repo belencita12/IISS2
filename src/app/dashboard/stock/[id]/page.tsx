@@ -1,6 +1,5 @@
 import DepositInfo from "@/components/depositUI/DepositInfo";
 import ProductList from "@/components/productUi/ProductList";
-import UserBar from "@/components/depositUI/UserBar";
 import { getServerSession } from "next-auth/next";
 import authOptions from "@/lib/auth/options";
 
@@ -14,12 +13,10 @@ export default async function Page({ params, }: { params: Promise<{ id: string }
   if (isNaN(depositoId)) return <p>ID de depósito no válido</p>;
 
   const token = session.user.token;
-  const nombre = session.user.fullName;
 
   return (
     <div className="flex justify-center">
-      <div className="w-4/5 space-y-4">
-        <UserBar token={token} nombre={nombre}/>
+      <div className="w-4/5 space-y-4 mt-4">
         <DepositInfo token={token} depositoId={depositoId} />
         <ProductList token={token} depositoId={depositoId} />
       </div>
