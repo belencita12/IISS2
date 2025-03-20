@@ -40,3 +40,8 @@ export function calcularEdad(fechaNacimiento: string): string {
   }
   return `${edad} Años`;
 }
+
+export function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("es-ES");
+}
