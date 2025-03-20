@@ -133,7 +133,7 @@ export default function ProductListPage({ token }: ProductListProps) {
         <h1 className="text-2xl font-bold">Productos</h1>
         <Button
           variant="default"
-          onClick={() => router.push(``)}
+          onClick={() => router.push(`/dashboard/products/register`)}
           className="bg-black text-white hover:bg-gray-800"
         >
           Crear Producto

@@ -6,6 +6,7 @@ import PetsTableSkeleton from "../admin/pet/skeleton/PetsTableSkeleton";
 import { VaccineRecord } from "@/lib/vaccine-registry/IVaccineRegistry";
 import { useEffect, useState } from "react";
 import { getByPetId } from "@/lib/vaccine-registry/getByPetId";
+import { formatDate } from "@/lib/utils";
 
 
 export default function PetVaccinationTable(
@@ -18,16 +19,16 @@ export default function PetVaccinationTable(
   const columns: Column<VaccineRecord>[] = [
     {
       header: "Fecha",
-      accessor: (vac)=>vac.applicationDate,
+      accessor: (vac)=>formatDate(vac.applicationDate || vac.createdAt),
       className: "font-medium"
     },
     {
       header: "Detalles de la Vacuna",
-      accessor: (vac) => vac.name
+      accessor: (vac) => vac.vaccine.name
     },
     {
       header: "Fecha Prevista",
-      accessor: (vac) => vac.expectedDate
+      accessor: (vac) => formatDate(vac.expectedDate)
     },
     {
       header: "Dosis",
@@ -57,7 +58,7 @@ export default function PetVaccinationTable(
     const fetchVaccines = async () => {
       try {
         setIsLoading(true);
-        const data = await getByPetId(petId, token);
+        const data = await getByPetId(petId, token,pagination.currentPage);
         if(!data) {
           setVaccines([]);
           return;
