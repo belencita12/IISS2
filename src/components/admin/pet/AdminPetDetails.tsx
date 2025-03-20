@@ -3,9 +3,8 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, Check, LoaderCircleIcon, X } from "lucide-react";
+import { Check, LoaderCircleIcon, X } from "lucide-react";
 import { useParams } from "next/navigation";
-import PetVaccinationTable from "@/components/petUI/PetVaccinationTable";
 import { PetData, Race, Species } from "@/lib/pets/IPet";
 import { getPetById } from "@/lib/pets/getPetById";
 import { toast } from "@/lib/toast";
@@ -51,32 +50,6 @@ type PetFormValues = z.infer<typeof petFormSchema>;
 interface AdminPetDetailsProps {
   token: string;
 }
-
-interface Visita {
-  id: number;
-  fecha: string;
-  description: string;
-  costo: number;
-}
-
-interface Visita_Programada {
-  id: number;
-  date: string;
-  description: string;
-}
-
-const visitas: Visita[] = [
-  { id: 1, fecha: "2024-12-20", description: "Chequeo general", costo: 30000 },
-  { id: 2, fecha: "2024-10-15", description: "Vacunación anual", costo: 50000 },
-  { id: 3, fecha: "2024-09-10", description: "Desparasitación", costo: 35000 },
-  { id: 4, fecha: "2024-05-05", description: "Consulta por tos", costo: 40000 },
-  { id: 5, fecha: "2024-02-01", description: "Revisión de piel", costo: 60000 },
-];
-
-const visitasProgramadas: Visita_Programada[] = [
-  { id: 1, date: "2025-01-10", description: "Chequeo rutinario" },
-  { id: 2, date: "2025-03-05", description: "Vacunación de refuerzo" },
-];
 
 // Calcula la diferencia de años y meses entre la fecha de nacimiento y la fecha actual
 function calculateAge(dateOfBirth: string): string {
@@ -135,9 +108,6 @@ export default function AdminPetDetails({ token }: AdminPetDetailsProps) {
 
   const { id } = useParams();
 
-  const [showAll, setShowAll] = useState(false);
-  const [showAllProg, setShowAllProg] = useState(false);
-
   const [pet, setPet] = useState<PetData | null | undefined>(null);
   const [client, setClient] = useState<ClientData | null>(null);
   const [species, setSpecies] = useState<Species[]>([]);
@@ -166,11 +136,6 @@ export default function AdminPetDetails({ token }: AdminPetDetailsProps) {
       gender: "",
     },
   });
-
-  const visitasVisibles = showAll ? visitas : visitas.slice(0, 4);
-  const visitasProgramadasVisibles = showAllProg
-    ? visitasProgramadas
-    : visitasProgramadas.slice(0, 4);
 
   // Obtiene las especies
   useEffect(() => {
@@ -312,7 +277,7 @@ export default function AdminPetDetails({ token }: AdminPetDetailsProps) {
   return (
     <div className="flex-col">
       {pet === undefined ? (
-        <p className="text-center text-gray-600">Cargando mascota...</p>
+        <p className="text-center text-gray-600 pt-10">Cargando mascota...</p>
       ) : pet === null ? (
         <>
           <p className="text-center mt-4 p-10">Mascota no registrada.</p>
@@ -320,7 +285,7 @@ export default function AdminPetDetails({ token }: AdminPetDetailsProps) {
         </>
       ) : (
         <>
-          <div className="flex flex-col md:flex-row justify-center bg-gray-500 p-5 gap-6">
+          <div className="flex flex-col md:flex-row justify-center p-5 gap-6">
             <div className="flex flex-col justify-center items-center p-3">
               <div className="w-[250px] h-[250px] rounded-full overflow-hidden border-[3px] border-black flex justify-center items-center">
                 {pet.profileImg ? (
@@ -354,7 +319,7 @@ export default function AdminPetDetails({ token }: AdminPetDetailsProps) {
                     className="flex-col space-y-4"
                   >
                     <div>
-                      <Label className="text-white">Correo del usuario</Label>
+                      <Label className="">Correo del usuario</Label>
                       <div className="flex flex-col justify-between items-start gap-1">
                         <div className="flex flex-col sm:flex-row justify-start items-start gap-4 w-full">
                           <div className="flex-grow w-full">
@@ -388,7 +353,7 @@ export default function AdminPetDetails({ token }: AdminPetDetailsProps) {
                       </div>
                     </div>
                     <div>
-                      <Label className="text-white">Nombre</Label>
+                      <Label className="">Nombre</Label>
                       <Input
                         id="petName"
                         {...register("petName")}
@@ -401,7 +366,7 @@ export default function AdminPetDetails({ token }: AdminPetDetailsProps) {
                       )}
                     </div>
                     <div>
-                      <Label className="text-white">Fecha de nacimiento</Label>
+                      <Label className="">Fecha de nacimiento</Label>
                       <Input
                         id="birthDate"
                         type="date"
@@ -415,7 +380,7 @@ export default function AdminPetDetails({ token }: AdminPetDetailsProps) {
                       )}
                     </div>
                     <div>
-                      <Label className="text-white">Especie</Label>
+                      <Label className="">Especie</Label>
                       <Select
                         defaultValue={watch("animalType")}
                         onValueChange={(value) => {
@@ -444,7 +409,7 @@ export default function AdminPetDetails({ token }: AdminPetDetailsProps) {
                       )}
                     </div>
                     <div>
-                      <Label className="text-white">Raza</Label>
+                      <Label className="">Raza</Label>
                       <Select
                         defaultValue={watch("breed")}
                         onValueChange={(value) => setValue("breed", value)}
@@ -470,7 +435,7 @@ export default function AdminPetDetails({ token }: AdminPetDetailsProps) {
                       )}
                     </div>
                     <div>
-                      <Label className="text-white">Peso (kg)</Label>
+                      <Label className="">Peso (kg)</Label>
                       <Input
                         id="weight"
                         type="number"
@@ -489,7 +454,7 @@ export default function AdminPetDetails({ token }: AdminPetDetailsProps) {
                       )}
                     </div>
                     <div>
-                      <Label className="text-white">Género</Label>
+                      <Label className="">Género</Label>
                       <div className="flex gap-4">
                         <Button
                           id="genderFemale"
@@ -537,7 +502,7 @@ export default function AdminPetDetails({ token }: AdminPetDetailsProps) {
                 </>
               ) : (
                 <div className="flex flex-col justify-start gap-4">
-                  <div className="flex flex-col justify-start items-start space-y-4 text-white">
+                  <div className="flex flex-col justify-start items-start space-y-4 ">
                     <div>
                       <Label>Dueño</Label>
                       {client ? (
@@ -601,74 +566,6 @@ export default function AdminPetDetails({ token }: AdminPetDetailsProps) {
                 </div>
               )}
             </div>
-          </div>
-          <div className="flex-col md:px-28 md:py-10 bg-white">
-            <div className="flex justify-center">
-              <div className="flex-col justify-center items-center w-full pb-7 pt-7">
-                <h2 className="text-2xl font-bold mb-3">Últimas visitas</h2>
-                <ul className="w-full">
-                  {visitasVisibles.map((visita) => (
-                    <li
-                      key={visita.id}
-                      className="mb-2 border border-gray-400 p-2 rounded"
-                    >
-                      <div className="flex justify-between">
-                        <p className="text-base">{visita.description}</p>
-                        <p className="text-sm text-gray-600">
-                          {convertDate(visita.fecha)}
-                        </p>
-                      </div>
-                      <p className="text-base text-left">
-                        {formatNumber(visita.costo)} Gs
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-                {visitas.length > 4 && (
-                  <div className="flex justify-center">
-                    <button
-                      onClick={() => setShowAll(!showAll)}
-                      className="mt-3 bg-gray-400 rounded-lg p-2 pr-5 pl-5"
-                    >
-                      {showAll ? "Ver menos" : "Ver más"}
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="flex justify-between mb-14">
-              <div className="flex-col justify-center items-center w-full">
-                <h2 className="text-2xl font-bold mb-3">Visitas programadas</h2>
-                <ul className="w-full grid grid-cols-2 gap-4">
-                  {visitasProgramadasVisibles.map((visita) => (
-                    <li
-                      key={visita.id}
-                      className="border border-gray-400 p-2 rounded flex"
-                    >
-                      <AlertCircle className="w-5 h-5" />
-                      <div className="ml-3">
-                        <p className="text-base">{visita.description}</p>
-                        <p className="text-sm text-gray-600">
-                          {convertDate(visita.date)}
-                        </p>
-                        <Button>Añadir Recordatorio</Button>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-                {visitasProgramadas.length > 4 && (
-                  <Button
-                    onClick={() => setShowAllProg(!showAllProg)}
-                    className="mt-3 text-blue-500 hover:underline"
-                  >
-                    {showAllProg ? "Ver menos" : "Ver más"}
-                  </Button>
-                )}
-              </div>
-            </div>
-            <h2 className="text-2xl font-bold mb-3">Control de Vacunas</h2>
-            <PetVaccinationTable token={token} petId={Number(pet.id)} />
           </div>
         </>
       )}

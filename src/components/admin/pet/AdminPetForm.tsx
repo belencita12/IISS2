@@ -281,16 +281,16 @@ export default function AdminPetForm({ token }: AdminPetFormProps) {
                 {errors.userId && (
                   <p className="text-red-500">{errors.userId.message}</p>
                 )}
-                <div>
+                <div className="flex gap-1">
                   <span className="text-xs">
                     El usuario no existe? Podrías{" "}
                   </span>
-                  <a
-                    className="text-xs underline"
-                    href="../dashboard/clients/register"
+                  <p
+                    className="text-xs underline cursor-pointer"
+                    onClick={() => router.push("/dashboard/clients/register")}
                   >
                     registrar un usuario
-                  </a>
+                  </p>
                 </div>
               </div>
             </div>
