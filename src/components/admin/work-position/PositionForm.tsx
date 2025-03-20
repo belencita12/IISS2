@@ -103,8 +103,8 @@ export default function PositionForm({ token, position }: PositionFormProps) {
             }
             router.refresh()
 
-        } catch {
-            toast("error", `Error al ${isEditing ? "actualizar" : "registrar"} el puesto`);
+        } catch (error) {
+            toast("error", error instanceof Error ? error.message : "Ocurrió un error. Intenta nuevamente.");
         }
     };
 
