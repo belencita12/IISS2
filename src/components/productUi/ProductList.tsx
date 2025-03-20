@@ -49,8 +49,21 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
         const data = await response.json();
         const productDetails: ProductDetail[] = data.data;
 
+        // Agrupar productos sumando cantidades duplicadas
+        const mergedDetails = productDetails.reduce((acc, detail) => {
+          const key = `${detail.productId}`;
+          if (!acc[key]) {
+            acc[key] = { ...detail };
+          } else {
+            acc[key].amount += detail.amount;
+          }
+          return acc;
+        }, {} as Record<string, ProductDetail>);
+
+        const uniqueDetails = Object.values(mergedDetails);
+
         const fetchedProducts = await Promise.all(
-          productDetails.map(async (detail) => {
+          uniqueDetails.map(async (detail) => {
             const productRes = await fetch(`${apiUrl}/product/${detail.productId}`, {
               headers: { Authorization: `Bearer ${token}` },
             });
