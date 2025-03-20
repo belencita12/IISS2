@@ -1,6 +1,5 @@
 import DepositInfo from "@/components/depositUI/DepositInfo";
 import ProductList from "@/components/productUi/ProductList";
-import UserBar from "@/components/depositUI/UserBar";
 import { getServerSession } from "next-auth/next";
 import authOptions from "@/lib/auth/options";
 
@@ -17,7 +16,7 @@ export default async function Page({ params, }: { params: Promise<{ id: string }
 
   return (
     <div className="flex justify-center">
-      <div className="w-4/5 space-y-4">
+      <div className="w-4/5 space-y-4 mt-4">
         <DepositInfo token={token} depositoId={depositoId} />
         <ProductList token={token} depositoId={depositoId} />
       </div>

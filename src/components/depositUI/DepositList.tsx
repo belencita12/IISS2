@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import DepositCard from "./DepositCard";
+import { LoaderCircleIcon } from "lucide-react";
 
 interface Deposit {
   id: number;
@@ -15,12 +16,14 @@ interface DepositListProps {
 
 const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
   const [deposits, setDeposits] = useState<Deposit[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const fetchDeposits = async () => {
       try {
+        setIsLoading(true);
         const apiUrl = process.env.NEXT_PUBLIC_BASE_URL;
         if (!apiUrl) {
           console.error("Error: NEXT_PUBLIC_BASE_URL no está definido");
@@ -47,6 +50,9 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
       } catch (error) {
         console.error("Error fetching deposits:", error);
       }
+      finally {
+        setIsLoading(false);
+      }
     };
 
     fetchDeposits();
@@ -55,6 +61,13 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Depósitos</h2>
+        {
+          isLoading && (
+            <div className="space-y-4 flex justify-center items-center">
+              <LoaderCircleIcon className="lucide lucide-loader-circle animate-spin" />
+            </div>
+          )
+        }
       <div className="space-y-4">
         {deposits.map((deposit) => (
           <DepositCard key={deposit.id} nombre={deposit.name} ubicacion={deposit.address} id={deposit.id} />
