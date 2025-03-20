@@ -57,7 +57,7 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
       <h2 className="text-2xl font-bold mb-4">Depósitos</h2>
       <div className="space-y-4">
         {deposits.map((deposit) => (
-          <DepositCard key={deposit.id} nombre={deposit.name} ubicacion={deposit.address} />
+          <DepositCard key={deposit.id} nombre={deposit.name} ubicacion={deposit.address} id={deposit.id} />
         ))}
       </div>
       <div className="flex justify-center mt-4">
