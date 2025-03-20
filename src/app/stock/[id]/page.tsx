@@ -11,6 +11,9 @@ export default async function StockPage({ params }: { params: { id: string } }) 
   const token = session.user.token;
   const nombre = session.user.fullName;
 
+  const depositoId = Number(params.id);
+  if (isNaN(depositoId)) return <p>ID de depósito no válido</p>;
+
   return (
     <div className="flex justify-center">
       <div className="w-4/5 space-y-4">
