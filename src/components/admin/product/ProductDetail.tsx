@@ -131,14 +131,14 @@ export default function ProductDetail({ token }: ProductDetailProps) {
               <div className="flex gap-4 mt-6 justify-center">
                 <Button
                   variant="default"
-                  onClick={() => router.push(`/dashboard/products/delete/id`)}
+                  onClick={() => router.push(`/dashboard/products`)}
                   className="bg-black text-white hover:bg-gray-800 px-6 py-2"
                 >
                   Eliminar
                 </Button>
                 <Button
                   variant="default"
-                  onClick={() => router.push("/dashboard/products/update")}
+                  onClick={() => router.push(`/dashboard/products/update/${product.id}`)}
                   className="bg-black text-white hover:bg-gray-800 px-6 py-2"
                 >
                   Actualizar
