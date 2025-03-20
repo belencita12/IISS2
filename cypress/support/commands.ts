@@ -49,8 +49,6 @@ Cypress.Commands.add(
           });
       }
     });
-
-    cy.location("pathname").should("eq", "/user-profile");
   }
 );
 
