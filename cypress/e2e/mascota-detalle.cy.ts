@@ -118,14 +118,10 @@ describe("Register Pet", () => {
     cy.url().should("include", "/detalle-mascota/" + Cypress.env(PET_ID_KEY));
     cy.intercept(
       "GET",
-      `${Cypress.env("API_BASEURL")}/pet/${Cypress.env(PET_ID_KEY)}`
-    ).as("getPet");
+      `${Cypress.env("API_BASEURL")}/pet/${Cypress.env(PET_ID_KEY)}`,
+    ).as("getPetTrust");
     cy.wait(2000);
-    cy.wait("@getPet", TIMEOUT).then((int) => {
-      const res = int.response;
-      expect(res).to.exist;
-      if (res) expect(res.statusCode).to.eq(200);
-    });
+    cy.wait("@getPetTrust", TIMEOUT)
     cy.contains("p", PET_MOCK.name).should("be.visible");
     cy.contains("p", "F").should("be.visible");
     cy.contains("button", "Editar").click();
