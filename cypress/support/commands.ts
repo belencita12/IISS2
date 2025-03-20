@@ -26,6 +26,38 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 //
 
+type BaseUser = {
+  fullName: string;
+  email: string;
+  password: string;
+};
+
+Cypress.Commands.add("generateUser", (): Cypress.Chainable<BaseUser> => {
+  const fullName = `Test User${Date.now()}`;
+  const email = `${fullName}@gmail.com`;
+  const password = "12345678";
+
+  return cy.wrap({
+    fullName,
+    email,
+    password,
+  });
+});
+
+Cypress.Commands.add("register", (user: BaseUser): void => {
+  const names = user.fullName.split(" ");
+  cy.visit("/register");
+  if (names[0] && names[0] !== "") cy.get("input[name='name']").type(names[0]);
+  if (names[1] && names[1] !== "")
+    cy.get("input[name='lastname']").type(names[1]);
+  if (user.email.length > 0) cy.get("input[name='email']").type(user.email);
+  if (user.password.length > 0)
+    cy.get("input[name='password']").type(user.password);
+  if (user.password.length > 0)
+    cy.get("input[name='confirmPassword']").type(user.password);
+  cy.get("button").contains("Registrarme").click();
+});
+
 Cypress.Commands.add(
   "loginAndSetSession",
   (key: string, email: string, password: string): void => {
@@ -49,7 +81,6 @@ Cypress.Commands.add(
           });
       }
     });
-    
   }
 );
 
@@ -57,5 +88,7 @@ Cypress.Commands.add(
 declare namespace Cypress {
   interface Chainable {
     loginAndSetSession(key: string, email: string, password: string): void;
+    generateUser(): Cypress.Chainable<BaseUser>;
+    register(user: BaseUser): void;
   }
 }
