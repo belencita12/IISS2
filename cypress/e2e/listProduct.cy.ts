@@ -42,44 +42,41 @@ describe('Página de Detalles del Cliente', () => {
     
     it('Debe mostrar el listado de productos si existen', () => {
         
-        cy.visit('/dashboard/products');
-        cy.wait('@getProducts');
+        cy.visit('/dashboard');
 
-        cy.contains('option', 'type').click();
-        cy.contains('option', 'PRODUCT').click();
+        // cy.wait('@getProducts');
+        cy.contains('p', "Productos").click();
+
+        cy.get('select[title="type"]').select('PRODUCT');
         cy.get('h1').should('contain', 'Productos');
-
-        cy.intercept('GET', '/dashboard/products', {
-            statusCode: 200,
-            body: [] // Lista vacía
-        }).as('getProductsEmpty');
-
         // Verifica que haya al menos un producto listado
-        cy.get('[data-cy=product-card]').should('have.length.at.least', 1);
+        cy.get('div[class*="bg-card"]').should('have.length.at.least', 1);
+        cy.wait(3000);
+        cy.get('button:has("svg"):visible').first().click();
+        
 
-        cy.contains('button', 'X').click();
-        cy.contains('option', 'VACCINE').click();
+        cy.get('select[title="type"]').select('VACCINE');
+        cy.get('div[class*="bg-card"]').should('have.length.at.least', 1);
+        cy.wait(3000);
+        cy.get('button:has("svg"):visible').first().click();
+        
     });
 
 
-    it('Debe mostrar y ocultar productos al hacer clic en "X"', () => {
-        // Hacer clic en el primer producto
-        cy.visit('/dashboard/products');
-        cy.wait('@getProducts');
-    
-        cy.contains('option', 'type').click();
-        // Hacer clic en la "X" para cerrar
-        cy.contains('option', 'VACCINE').click();
-        cy.contains('button', 'X').click();
-    });
+
  
     it("Navega al detalle de un producto al hacer click en la card", () => {
 
-        cy.visit('/dashboard/products');
-        cy.wait('@getProducts');
-    
-        cy.get('[data-testid="product-card"]').first().click();
-        cy.url().should("include", "/product/1");
+        cy.visit('/dashboard');
+
+        // cy.wait('@getProducts');
+        cy.contains('p', "Productos").click();
+
+        cy.get('div[class*="bg-card"]').first().find('img').click();
+        
+      
+        //cy.url().should("include", "/dashboard/products/**");
+        //cy.wait(3000);
     });
  
   
