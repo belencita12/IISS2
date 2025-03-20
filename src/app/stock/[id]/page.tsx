@@ -8,18 +8,18 @@ export default async function StockPage({ params }: { params: { id: string } }) 
   const session = await getServerSession(authOptions);
   if (!session) return <p>No autorizado</p>;
 
-  const token = session.user.token;
-  const nombre = session.user.fullName;
-
   const depositoId = Number(params.id);
   if (isNaN(depositoId)) return <p>ID de depósito no válido</p>;
+
+  const token = session.user.token;
+  const nombre = session.user.fullName;
 
   return (
     <div className="flex justify-center">
       <div className="w-4/5 space-y-4">
         <UserBar token={token} nombre={nombre}/>
-        <DepositInfo token={token} depositoId={Number(params.id)} />
-        <ProductList token={token} depositoId={Number(params.id)} />
+        <DepositInfo token={token} depositoId={depositoId} />
+        <ProductList token={token} depositoId={depositoId} />
       </div>
 
     </div>
