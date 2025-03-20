@@ -1,10 +1,10 @@
 
 import { Position } from "./IPosition";
-import { BASE_API_URL } from "../env";
+import { WORK_POSITION_API } from "../urls";
 
 export const updatePosition = async (id: number, positionData: Position, token: string) => {
     try {
-        const response = await fetch(`${BASE_API_URL}/work-position/${id}`, {
+        const response = await fetch(`${WORK_POSITION_API}/${id}`, {
             method: 'PATCH',
             headers: {
                 'Authorization': `Bearer ${token}`,

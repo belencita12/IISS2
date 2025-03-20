@@ -1,12 +1,12 @@
 
 import { Position } from "./IPosition";
-import { BASE_API_URL } from "../env";
+import { WORK_POSITION_API } from "../urls";
 
 export const registerPosition = async (positionData: Position, token: string) => {
     console.log("Enviando a la API:", JSON.stringify(positionData, null, 2));
 
     try {
-        const response = await fetch(`${BASE_API_URL}/work-position`, {
+        const response = await fetch(`${WORK_POSITION_API}`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,

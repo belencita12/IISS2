@@ -1,8 +1,8 @@
 
-import { BASE_API_URL } from "../env";
+import { WORK_POSITION_API } from "../urls";
 export const getPositionById = async (id: number, token: string)=> {
     try {
-        const response = await fetch(`${BASE_API_URL}/work-position/${id}`, {
+        const response = await fetch(`${WORK_POSITION_API}/${id}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
