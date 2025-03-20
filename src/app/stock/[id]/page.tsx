@@ -4,11 +4,13 @@ import UserBar from "@/components/depositUI/UserBar";
 import { getServerSession } from "next-auth/next";
 import authOptions from "@/lib/auth/options";
 
-export default async function StockPage({ params }: { params: { id: string } }) {
+export default async function Page({ params, }: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
   if (!session) return <p>No autorizado</p>;
 
-  const depositoId = Number(params.id);
+  const { id } = await params;
+  if (!id) return <p>ID de depósito no proporcionado</p>;
+  const depositoId = Number(id);
   if (isNaN(depositoId)) return <p>ID de depósito no válido</p>;
 
   const token = session.user.token;
