@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "../ui/button";
 
 interface Props {
   onSearch?: (query: string) => void;
@@ -23,9 +24,9 @@ const ProductSearch: React.FC<Props> = ({ onSearch = () => {} }) => {
         onChange={(e) => setSearchTerm(e.target.value)}
         className="border p-2 rounded w-full"
       />
-      <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
+      <Button type="submit">
         Buscar
-      </button>
+      </Button>
     </form>
   );
 };
