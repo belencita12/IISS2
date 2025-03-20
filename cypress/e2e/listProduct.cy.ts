@@ -3,6 +3,9 @@ describe('Página de Detalles del Cliente', () => {
     const BASE_URL = "https://iiss2-backend-0q2e.onrender.com";
   
     beforeEach(() => {
+      cy.clearCookies();
+      cy.clearLocalStorage();
+      
       const sessionToken: string = Cypress.env(SESSION_KEY);
       if (sessionToken) cy.setCookie("next-auth.session-token", sessionToken);
 
