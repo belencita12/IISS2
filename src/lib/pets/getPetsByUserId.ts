@@ -3,7 +3,7 @@ import { PetDataResponse } from "./IPet";
 
 export const getPetsByUserId = async (userId: number, token: string) => {
     try {
-        const response = await fetch(`${PET_API}?page=4&userId=${userId}`, {
+        const response = await fetch(`${PET_API}?page=1&size=4&userId=${userId}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
 
