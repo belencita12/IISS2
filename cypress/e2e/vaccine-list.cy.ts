@@ -1,4 +1,4 @@
-describe('Listado de fabricantes de vacunas', () => {
+describe('Listado de vacunas', () => {
     const SESSION_KEY = "sessionToken";
     const USER = {
         email: Cypress.env("USER_EMAIL"),
@@ -11,32 +11,34 @@ describe('Listado de fabricantes de vacunas', () => {
             cy.wait(20000);
             cy.url().should('include', '/dashboard');
         });
-        cy.visit('dashboard/vaccine/manufacturer');
-        cy.url().should('include', 'dashboard/vaccine/manufacturer');
+        cy.visit('/dashboard/vaccine');
+        cy.url().should('include', '/dashboard/vaccine');
+        cy.wait(5000);
     });
 
-    it('Debe mostrar correctamente los datos de los fabricantes de vacunas', () => {
+    it('Debe mostrar correctamente la lista de vacunas', () => {
         cy.get('table tbody tr').each(($row) => {
             cy.wrap($row).within(() => {
                 cy.get('td').eq(0).should('not.be.empty'); // Nombre
-                cy.get('td').eq(1).should('not.be.empty'); // Acciones
+                cy.get('td').eq(1).should('not.be.empty'); // Fabricante
+                cy.get('td').eq(2).should('not.be.empty'); // Especie
+                cy.get('td').eq(3).should('not.be.empty'); // Acciones
             });
         });
     });
 
-
-    it('Debe buscar fabricantes de vacunas correctamente filtrandolos por nombre', () => {
-        cy.get('input[placeholder="Buscar por nombre o productor..."]').type('string1');
+    it('Debe buscar vacunas correctamente filtrandolos por nombre', () => {
+        cy.get('input[placeholder="Buscar por nombre o productor..."]').type('Vacuna X');
         cy.get('button').contains('Buscar').click();
-        cy.wait(10000);
-        cy.get('table tbody tr').should('contain', 'string1');
+        cy.wait(5000);
+        cy.get('table tbody tr').should('contain', 'Vacuna X');
     });
 
-    it('Debe abrir la página de registro de fabricantes de vacunas', () => {
-        cy.wait(10000);
-        cy.get('button').contains('Agregar').click();
-        cy.wait(10000);
-        cy.url().should('include', '/vaccine/manufacturer/new');
+    it('Debe buscar vacunas correctamente filtrandolos por fabricante', () => {
+        cy.get('input[placeholder="Buscar por nombre o productor..."]').type('Vacuna X');
+        cy.get('button').contains('Buscar').click();
+        cy.wait(5000);
+        cy.get('table tbody tr').should('contain', 'Vacuna X');
     });
 
     it('Debe verificar la paginación', () => {
