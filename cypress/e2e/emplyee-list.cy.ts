@@ -1,7 +1,7 @@
 describe('Lista de empleados', () => {
     const SESSION_KEY = "sessionToken";
     const USER = {
-        email:  Cypress.env("USER_EMAIL"),
+        email: Cypress.env("USER_EMAIL"),
         password: Cypress.env("USER_PASSWORD")
     };
 
@@ -13,7 +13,7 @@ describe('Lista de empleados', () => {
         });
         cy.visit('/dashboard/employee');
         cy.url().should('include', '/dashboard/employee');
-        cy.wait(20000);
+        cy.wait(5000);
     });
 
     it('Debe mostrar correctamente los datos de los empleados', () => {
@@ -30,38 +30,39 @@ describe('Lista de empleados', () => {
 
 
     it('Debe buscar empleados correctamente filtrandolos por nombre', () => {
-        cy.get('input[placeholder="Buscar un empleado..."]').type('Ferran Torres');
+        cy.get('input[placeholder="Buscar un empleado..."]').type('Nick Jonson');
         cy.get('button').contains('Buscar').click();
         cy.wait(20000);
-        cy.get('table tbody tr').should('contain', 'Ferran Torres');
+        cy.get('table tbody tr').should('contain', 'Nick Jonson');
     });
 
     it('Debe abrir la página de registro de empleados', () => {
-        cy.wait(20000);
         cy.get('button').contains('Agregar').click();
         cy.wait(10000);
         cy.url().should('include', '/dashboard/employee/register');
     });
 
     it('Debe verificar la paginación', () => {
-        if (cy.get('td').eq(8)) {
-            cy.contains('span', 'Next').click();
-            cy.wait(5000);
-            cy.get('table tbody tr').should('exist');
+        cy.get('td').its('length').then((length) => {
+            if (length > 10) {
+                cy.contains('span', 'Next').click();
+                cy.wait(5000);
+                cy.get('table tbody tr').should('exist');
 
-            cy.contains('span', 'Previous').click();
-            cy.wait(5000);
-            cy.get('table tbody tr').should('exist');
+                cy.contains('span', 'Previous').click();
+                cy.wait(5000);
+                cy.get('table tbody tr').should('exist');
 
-            cy.wait(5000);
-            cy.get('a').contains('2').click();
-            cy.wait(5000);
-            cy.get('table tbody tr').should('exist');
+                cy.wait(5000);
+                cy.get('a').contains('2').click();
+                cy.wait(5000);
+                cy.get('table tbody tr').should('exist');
 
-            cy.wait(5000);
-            cy.get('a').contains('1').click();
-            cy.wait(5000);
-            cy.get('table tbody tr').should('exist');
-        }
+                cy.wait(5000);
+                cy.get('a').contains('1').click();
+                cy.wait(5000);
+                cy.get('table tbody tr').should('exist');
+            }
+        });
     });
 });
