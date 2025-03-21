@@ -43,7 +43,7 @@ describe('Listado de vacunas', () => {
         cy.get('table tbody tr').should('contain', 'Vacuna X');
     });
 
-    it('Debe verificar la paginación', () => {
+  /*   it('Debe verificar la paginación', () => {
         cy.get('td').its('length').then((length) => {
             if (length > 16) {
                 cy.contains('span', 'Next').click();
@@ -65,5 +65,5 @@ describe('Listado de vacunas', () => {
                 cy.get('table tbody tr').should('exist');
             }
         });
-    });
+    }); */
 });

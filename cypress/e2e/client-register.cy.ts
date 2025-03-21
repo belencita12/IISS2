@@ -56,5 +56,6 @@ describe('Registro de Cliente', () => {
         cy.get('input[name="email"]').blur();
         cy.get('input[name="email"]').should('have.prop', 'validity').its('typeMismatch').should('be.true');
         cy.contains('Por favor, introduce un email válido').should('be.visible');
+        cy.contains("button", "Cancelar").click();
     });
 });

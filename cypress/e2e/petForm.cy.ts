@@ -5,7 +5,7 @@ describe('Registrar Mascota con PetForm', () => {
   const BASE_URL = "https://iiss2-backend-0q2e.onrender.com"
 
   const PET_MOCK = {
-    name: "Mike",
+    name: "Mimi",
     birthDate: "2023-01-01",
     weight: "123.5",
     gender: "Macho",
@@ -148,7 +148,7 @@ describe('Registrar Mascota con PetForm', () => {
     cy.wait("@getSpecies", TIMEOUT);
     cy.wait(3000);
   
-    cy.get("input[name='petName']").type(`${PET_MOCK.name} sin foto1`);
+    cy.get("input[name='petName']").type(`${PET_MOCK.name} sin foto2`);
     cy.get("input[name='birthDate']").type(`2023-02-01`);
     cy.get("input[name='weight']").type(`14`);
   

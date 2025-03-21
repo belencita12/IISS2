@@ -27,6 +27,7 @@ describe('Crear Vacunas', () => {
         cy.get('button').contains('Agregar Vacuna').click();
         cy.contains('El nombre es obligatorio').should('be.visible');
         cy.contains('Complete con valores numéricos adecuados').should('be.visible');
+        cy.wait(20000);
     });
 
     it('Debe permitir ingresar los datos correctamente y crear la vacuna', () => {
