@@ -35,32 +35,36 @@ describe('Crear Vacunas', () => {
         uniqueName = `VacunaTest${randomNumber}`;
 
         cy.get('input[placeholder="Ingrese un nombre"]').type(uniqueName);
-        cy.get('input[placeholder="Buscar fabricante..."]').type("FabricanteTest2710");
-        cy.get('input[placeholder="Buscar especie..."]').type("Canino");
         cy.get('input[placeholder="Ingrese el costo"]').type('1000');
         cy.get('input[placeholder="Ingrese el IVA"]').type('10');
         cy.get('input[placeholder="Ingrese el precio"]').type('1100');
+        cy.get('input[placeholder="Buscar especie..."]').type("Canino");
+        cy.get('div[class="p-2 hover:bg-gray-100 cursor-pointer"]:contains("Canino")').click();
+        cy.get('input[placeholder="Buscar fabricante..."]').type("FabricanteTest2710");
+        cy.get('div[class="p-2 hover:bg-gray-100 cursor-pointer"]:contains("FabricanteTest2710")').click();
         
         cy.get('button').contains('Agregar Vacuna').click();
+        cy.contains('Vacuna creada exitosamente')
+            .should('be.visible')
         cy.wait(5000);
         cy.url().should('include', '/dashboard/vaccine');
-        cy.get('section[aria-label="Notifications alt+T"]')
-            .should('be.visible')
     });
 
     it('Intentar crear una vacuna con un nombre repetido', () => {
         cy.get('input[placeholder="Ingrese un nombre"]').type(uniqueName);
-        cy.get('input[placeholder="Buscar fabricante..."]').type("FabricanteTest2710");
-        cy.get('input[placeholder="Buscar especie..."]').type("Canino");
         cy.get('input[placeholder="Ingrese el costo"]').type('1000');
         cy.get('input[placeholder="Ingrese el IVA"]').type('10');
         cy.get('input[placeholder="Ingrese el precio"]').type('1100');
+        cy.get('input[placeholder="Buscar especie..."]').type("Canino");
+        cy.get('div[class="p-2 hover:bg-gray-100 cursor-pointer"]:contains("Canino")').click();
+        cy.get('input[placeholder="Buscar fabricante..."]').type("FabricanteTest2710");
+        cy.get('div[class="p-2 hover:bg-gray-100 cursor-pointer"]:contains("FabricanteTest2710")').click();
         
         cy.get('button').contains('Agregar Vacuna').click();
-        cy.wait(5000);
-        
         cy.get('section[aria-label="Notifications alt+T"]')
             .should('be.visible')
+        cy.wait(5000);
+        
     });
 
     it('Presionar botón cancelar debe redirigir al listado de vacunas', () => {

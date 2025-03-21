@@ -10,7 +10,7 @@ describe('Lista de empleados', () => {
         cy.clearLocalStorage();
         cy.session(SESSION_KEY, () => {
             cy.loginAndSetSession(SESSION_KEY, USER.email, USER.password);
-            cy.wait(20000);
+            cy.wait(5000);
             cy.url().should('include', '/dashboard');
         });
         cy.visit('/dashboard/employee');
@@ -34,13 +34,13 @@ describe('Lista de empleados', () => {
     it('Debe buscar empleados correctamente filtrandolos por nombre', () => {
         cy.get('input[placeholder="Buscar un empleado..."]').type('Nick Jonson');
         cy.get('button').contains('Buscar').click();
-        cy.wait(20000);
+        cy.wait(5000);
         cy.get('table tbody tr').should('contain', 'Nick Jonson');
     });
 
     it('Debe abrir la página de registro de empleados', () => {
         cy.get('button').contains('Agregar').click();
-        cy.wait(10000);
+        cy.wait(5000);
         cy.url().should('include', '/dashboard/employee/register');
     });
 

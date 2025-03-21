@@ -1,5 +1,5 @@
 describe('Registro de Empleados', () => {
-  const BASE_URL = "https://iiss2-backend-0q2e.onrender.com";
+  
   let uniqueEmail = "";
   const SESSION_KEY = "sessionToken";
   const USER = {
@@ -40,7 +40,7 @@ describe('Registro de Empleados', () => {
 
   it('Debe registrar un empleado exitosamente con un email único', () => {
 
-    cy.intercept("GET", `${BASE_URL}/work-position?page=1`).as(
+    cy.intercept("GET", `${Cypress.env("API_BASEURL")}/work-position?page=1`).as(
       "getWorkPosition"
     );
 
@@ -56,7 +56,7 @@ describe('Registro de Empleados', () => {
     });
 
     uniqueEmail = `testuser${randomNumber}@gmail.com`;
-    cy.get('input[placeholder="Ingrese el RUC"]').type('5538222');
+    cy.get('input[placeholder="Ingrese el RUC"]').type(`${Math.floor(Math.random() * 1000000)}`);
     cy.get('input[placeholder="Ingrese el nombre completo"]').type('Juan Pérez');
     cy.get('input[placeholder="Ingrese el correo"]').type(uniqueEmail);
 
@@ -67,9 +67,11 @@ describe('Registro de Empleados', () => {
     cy.get('button[role="combobox"]').should('be.visible').click();
 
     // Seleccionamos el puesto (pon el nombre del puesto que te interese)
-    cy.get('div[role="option"]').contains('AuxiliarNuevo').click();
+    cy.get('div[role="option"]').contains('Auxiliar').click();
 
     cy.contains('button', 'Registrar').click();
+    cy.contains('Empleado registrado con éxito')
+            .should('be.visible')
     cy.wait(5000);
 
 
@@ -79,7 +81,7 @@ describe('Registro de Empleados', () => {
   });
 
   it('Debe mostrar error al registrar un empleado con el mismo email', () => {
-    cy.intercept("GET", `${BASE_URL}/work-position?page=*`).as(
+    cy.intercept("GET", `${Cypress.env("API_BASEURL")}/work-position?page=*`).as(
       "getWorkPosition"
     );
     //  cy.get().type('Pérez');
@@ -94,7 +96,7 @@ describe('Registro de Empleados', () => {
       expect(response?.statusCode).to.eq(200);
     });
 
-    cy.get('input[placeholder="Ingrese el RUC"]').type('5538222');
+    cy.get('input[placeholder="Ingrese el RUC"]').type(`${Math.floor(Math.random() * 1000000)}`);
     cy.get('input[placeholder="Ingrese el nombre completo"]').type('Juan Pérez');
     cy.get('input[placeholder="Ingrese el correo"]').type(uniqueEmail);
     
@@ -102,9 +104,11 @@ describe('Registro de Empleados', () => {
     cy.get('button[role="combobox"]').should('be.visible').click();
 
     // Seleccionamos el puesto (pon el nombre del puesto que te interese)
-    cy.get('div[role="option"]').contains('AuxiliarNuevo').click();
+    cy.get('div[role="option"]').contains('Auxiliar').click();
 
     cy.contains('button', 'Registrar').click();
+    cy.contains('Hubo un error desconocido')
+            .should('be.visible')
     cy.wait(5000);
   });
 });

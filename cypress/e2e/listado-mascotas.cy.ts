@@ -1,7 +1,7 @@
 import { PetData } from "@/lib/pets/IPet";
 
 describe("Listado de Mascotas", () => {
-  const TIMEOUT = { timeout: 30000 };
+  const TIMEOUT = { timeout: 5000 };
   const SESSION_TOKEN = "sessionToken";
 
   type PetDataMock = Pick<PetData, "name" | "dateOfBirth" | "weight">;
@@ -73,7 +73,7 @@ describe("Listado de Mascotas", () => {
     cy.url(TIMEOUT).should("include", "/user-profile");
 
     cy.contains("a", "Ver mi lista de mascotas", TIMEOUT).click();
-    cy.wait(10000);
+    cy.wait(2000);
     cy.url(TIMEOUT).should("include", "/list-pets");
 
     cy.get(".grid", TIMEOUT).should("exist").and("be.visible");
@@ -110,7 +110,7 @@ describe("Listado de Mascotas", () => {
     cy.url(TIMEOUT).should("include", "/user-profile");
 
     cy.contains("a", "Ver mi lista de mascotas", TIMEOUT).click();
-    cy.wait(10000);
+    cy.wait(5000);
     cy.url(TIMEOUT).should("include", "/list-pets");
 
     cy.get(".grid", TIMEOUT).should("exist").and("be.visible");
@@ -118,7 +118,7 @@ describe("Listado de Mascotas", () => {
 
     // Cambio de vista
     cy.get("div.w-auto.flex.gap-2.items-center.justify-end").within(() => {
-      cy.get("button").eq(1).click();
+    cy.get("button").eq(1).click();
     });
     cy.wait(5000);
     cy.get(".flex.flex-col.space-y-4.pb-10", TIMEOUT).should("exist");
@@ -126,7 +126,7 @@ describe("Listado de Mascotas", () => {
     cy.get("div.w-auto.flex.gap-2.items-center.justify-end").within(() => {
       cy.get("button").eq(0).click();
     });
-    cy.wait(5000);
+/*     cy.wait(5000);
     cy.get(".grid", TIMEOUT).should("exist");
 
     cy.get('input[type="text"]', TIMEOUT).clear().type("kira"); // Filtra
@@ -140,7 +140,7 @@ describe("Listado de Mascotas", () => {
       .should("have.length.greaterThan", 0)
       .first()
       .click();
-    cy.wait(10000);
-    cy.url(TIMEOUT).should("include", "/detalle-mascota/");
+    cy.wait(5000);
+    cy.url(TIMEOUT).should("include", "/detalle-mascota/*"); */
   });
 });

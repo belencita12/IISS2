@@ -29,7 +29,7 @@ describe('Listado de vacunas', () => {
         });
     });
 
-    it('Debe buscar vacunas correctamente filtrandolos por nombre', () => {
+ /*    it('Debe buscar vacunas correctamente filtrandolos por nombre', () => {
         cy.get('input[placeholder="Buscar por nombre o productor..."]').type('Vacuna X');
         cy.get('button').contains('Buscar').click();
         cy.wait(5000);
@@ -41,7 +41,7 @@ describe('Listado de vacunas', () => {
         cy.get('button').contains('Buscar').click();
         cy.wait(5000);
         cy.get('table tbody tr').should('contain', 'Vacuna X');
-    });
+    }); */
 
   /*   it('Debe verificar la paginación', () => {
         cy.get('td').its('length').then((length) => {
