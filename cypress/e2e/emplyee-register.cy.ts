@@ -1,8 +1,9 @@
 describe('Registro de Empleados', () => {
     let uniqueEmail = "";
+    let uniqueRUC = "";
     const SESSION_KEY = "sessionToken";
     const USER = {
-        email:  Cypress.env("USER_EMAIL"),
+        email: Cypress.env("USER_EMAIL"),
         password: Cypress.env("USER_PASSWORD")
     };
 
@@ -28,24 +29,28 @@ describe('Registro de Empleados', () => {
     it('Debe registrar un empleado exitosamente con un email único', () => {
         const randomNumber = Math.floor(Math.random() * 100000);
         uniqueEmail = `testuser${randomNumber}@gmail.com`;
-        cy.get('input[placeholder="Ingrese el RUC"]').type('Juan');
+        uniqueRUC = `${randomNumber}-1`;
+        
+        cy.get('input[placeholder="Ingrese el RUC"]').type(uniqueRUC);
         cy.get('input[placeholder="Ingrese el nombre completo"]').type('Pérez');
         cy.get('input[placeholder="Ingrese el correo"]').type(uniqueEmail);
-        cy.get('input[placeholder="Seleccione un puesto"]').type('Pérez');
-        cy.get('button').contains('Agregar cliente').click();
-        cy.wait(10000);
+        cy.contains('Seleccione un puesto').click(); 
+        cy.wait(500);
+        cy.get('select').invoke('show').select('Auxiliar', { force: true });  
+        cy.get('button').contains('Registrar').click();
         cy.get('section[aria-label="Notifications alt+T"]')
             .should('be.visible')
             .and('contain', 'Empleado registrado con éxito');
     });
 
     it('Debe mostrar error al registrar un empleado con el mismo email', () => {
-        cy.get('input[placeholder="Ingrese el RUC"]').type('Juan');
+        cy.get('input[placeholder="Ingrese el RUC"]').type(uniqueRUC);
         cy.get('input[placeholder="Ingrese el nombre completo"]').type('Pérez');
         cy.get('input[placeholder="Ingrese el correo"]').type(uniqueEmail);
-        cy.get('input[placeholder="Seleccione un puesto"]').type('Pérez');
-        cy.get('button').contains('Agregar cliente').click();
-        cy.wait(10000);
+        cy.contains('Seleccione un puesto').click(); 
+        cy.wait(500);
+        cy.get('select').invoke('show').select('Auxiliar', { force: true }); 
+        cy.get('button').contains('Registrar').click();
         cy.get('section[aria-label="Notifications alt+T"]')
             .should('be.visible')
             .and('contain', 'Hubo un error desconocido');
