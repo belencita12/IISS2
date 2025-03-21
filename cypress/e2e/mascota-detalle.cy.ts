@@ -10,6 +10,8 @@ describe("Register Pet", () => {
   let testUser: BaseUser;
 
   before(() => {
+    cy.clearCookies();
+   cy.clearLocalStorage();
     cy.intercept("POST", "**/auth/signup").as("register");
     cy.generateUser().then((user) => {
       testUser = user;

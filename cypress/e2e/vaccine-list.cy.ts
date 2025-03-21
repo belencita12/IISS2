@@ -6,6 +6,8 @@ describe('Listado de vacunas', () => {
     };
 
     beforeEach(() => {
+      cy.clearCookies();
+      cy.clearLocalStorage();
         cy.session(SESSION_KEY, () => {
             cy.loginAndSetSession(SESSION_KEY, USER.email, USER.password);
             cy.wait(20000);

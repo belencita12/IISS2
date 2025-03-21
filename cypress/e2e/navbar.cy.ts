@@ -21,6 +21,8 @@ describe("Navbar", () => {
     ];
 
     links.forEach((link) => {
+      cy.clearCookies();
+      cy.clearLocalStorage();
       cy.contains(link.label).click();
       cy.location("pathname").should("include", link.path);
     });

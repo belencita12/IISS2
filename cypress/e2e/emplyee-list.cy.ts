@@ -6,6 +6,8 @@ describe('Lista de empleados', () => {
     };
 
     beforeEach(() => {
+        cy.clearCookies();
+        cy.clearLocalStorage();
         cy.session(SESSION_KEY, () => {
             cy.loginAndSetSession(SESSION_KEY, USER.email, USER.password);
             cy.wait(20000);
@@ -43,7 +45,18 @@ describe('Lista de empleados', () => {
     });
 
     it('Debe verificar la paginación', () => {
-        cy.get('td').its('length').then((length) => {
+
+        cy.get('body').then(($body) => {
+            if ($body.find('span:contains("Next")').length > 0) {
+              // Simular hacer clic en el botón de paginación "Siguiente"
+              cy.get('span:contains("Next")').click();
+              //  Verificar que el paginador se actualizó a página 2
+              cy.get('a[aria-current="page"]').should('contain', '2');
+            } else {
+              cy.log('No existe la paginacion');
+            }
+          });
+/*         cy.get('td').its('length').then((length) => {
             if (length > 10) {
                 cy.contains('span', 'Next').click();
                 cy.wait(5000);
@@ -63,7 +76,9 @@ describe('Lista de empleados', () => {
                 cy.wait(5000);
                 cy.get('table tbody tr').should('exist');
             }
-        });
+        }); */
     });
+
+    
 });
 

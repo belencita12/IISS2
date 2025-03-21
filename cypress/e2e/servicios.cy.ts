@@ -1,5 +1,7 @@
 describe('Pantalla de Servicios', () => {
   beforeEach(() => {
+    cy.clearCookies();
+    cy.clearLocalStorage();
     cy.visit('/servicios');
   });
 

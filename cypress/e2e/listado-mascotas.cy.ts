@@ -40,6 +40,8 @@ describe("Listado de Mascotas", () => {
   };
 
   before(() => {
+    cy.clearCookies();
+    cy.clearLocalStorage();
     cy.intercept("POST", "**/auth/signup").as("register");
     cy.generateUser().then((user) => {
       testUser = user;

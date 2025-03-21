@@ -21,6 +21,8 @@ describe("Registro de usuario", () => {
   };
 
   beforeEach(() => {
+    cy.clearCookies();
+    cy.clearLocalStorage();
     cy.visit("/register");
     cy.url().should("include", "/register");
   });
