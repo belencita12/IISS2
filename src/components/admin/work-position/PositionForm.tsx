@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { X } from "lucide-react";
+import { Trash } from "lucide-react";
 import { registerPosition } from "@/lib/work-position/registerPosition";
 import { updatePosition } from "@/lib/work-position/updatePosition";
 import { toast } from "@/lib/toast";
@@ -175,8 +175,8 @@ export default function PositionForm({ token, position }: PositionFormProps) {
                                             />
                                             {errors.shifts?.[index]?.endTime && <p className="text-red-500 text-xs mt-1">{errors.shifts[index]?.endTime?.message}</p>}
                                         </div>
+                                        <Button type="button" variant="ghost"  onClick={() => removeShift(index)}><Trash/></Button>
                                     </div>
-                                    <Button type="button" variant="ghost" onClick={() => removeShift(index)}><X size={18} /></Button>
                                 </div>
                             );
                         })}
