@@ -7,18 +7,7 @@ import { AlertCircle} from "lucide-react";
 import { useParams } from "next/navigation";
 import { PET_API} from "@/lib/urls";  
 import PetVaccinationTable from "./PetVaccinationTable";
-
-
-interface Pet {
-  id: number;
-  name: string;
-  weight: number;
-  sex: string;
-  profileImg: string | null;
-  dateOfBirth: string;
-  species: Species;
-  race: Race;
-}
+import { PetData } from "@/lib/pets/IPet";
 
 interface EditablePet {
   name: string;
@@ -40,16 +29,6 @@ interface Visita_Programada {
   id: number;
   fecha: string;
   descripcion: string;
-}
-
-interface Species {
-  id: number;
-  name: string;
-}
-
-interface Race {
-  id: number;
-  name: string;
 }
 
 interface Props {
@@ -129,7 +108,7 @@ export default function PetDetails({ token }: Props) {
   const [showAll, setShowAll] = useState(false);
   const [showAllProg, setShowAllProg] = useState(false);
   const [data, setData] = useState(null);
-  const [pet, setPet] = useState<Pet | null | undefined>(undefined);
+  const [pet, setPet] = useState<PetData | null | undefined>(undefined);
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingName, setIsEditingName] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -257,9 +236,9 @@ export default function PetDetails({ token }: Props) {
         <div className="flex justify-center bg-gray-500 p-5">
           <div className=" flex-col justify-center items-center p-3 pr-8">
             <div className="w-[250px] h-[250px] rounded-full overflow-hidden border-[3px] border-black flex justify-center items-center">
-              {pet.profileImg ? (
+              {pet.profileImg?.originalUrl || pet.profileImg?.previewUrl ?(
                 <Image
-                  src={pet.profileImg}
+                  src={pet.profileImg.originalUrl || pet.profileImg.previewUrl}
                   alt={pet.name}
                   width={100}
                   height={100}
@@ -311,7 +290,7 @@ export default function PetDetails({ token }: Props) {
                           ? pet.species?.name
                           : name === "weight"
                             ? `${pet.weight} kg`
-                            : String(pet[name as keyof Pet])}
+                            : String(pet[name as keyof PetData])}
                   </p>
                 )}
               </div>
@@ -387,7 +366,7 @@ export default function PetDetails({ token }: Props) {
             </div>
           </div>
           <h2 className="text-2xl font-bold mb-3">Control de Vacunas</h2>
-        <PetVaccinationTable token={token} petId={pet.id}  />
+          <PetVaccinationTable token={token} petId={Number(pet.id)}  />
         </div>
       </>
     )}
