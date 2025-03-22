@@ -71,13 +71,21 @@ function calcularEdad(fechaNacimiento: string): string {
     } else {
       meses = mesActual - mesNacimiento;
     }
-    return `${meses} ${meses === 1 ? "Mes" : "Meses"}`;
+    if (meses === 1) {
+      return `${meses} Mes`;
+    } else {
+      return `${meses} Meses`;
+    }
   }
 
-  return `${edad} ${edad === 1 ? "Año" : "Años"}`;
+  if (edad === 1) {
+    return `${edad} Año`;
+  }
+  return `${edad} Años`;
 }
 
 function convertirFecha(fecha: string): string {
+  console.log(fecha);
   const meses: string[] = [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
     "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
