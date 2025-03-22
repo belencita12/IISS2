@@ -10,6 +10,8 @@ import { useRouter } from "next/navigation";
 import { EmployeeData } from "@/lib/employee/IEmployee";
 import { deleteEmployeeByID } from "@/lib/employee/deleteEmployeeByID";
 import { ConfirmationModal } from "../global/Confirmation-modal";
+import SearchBar from "../admin/client/SearchBar";
+import EmployeeTableSkeleton from "./skeleton/EmployeeTableSkeleton";
 
 interface EmployeesTableProps {
   token: string | null;
@@ -123,35 +125,23 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
   ];
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <div className="flex justify-between space-x-3 items-center mb-4">
-        <Input
-          className="w-full"
-          placeholder="Buscar un empleado..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <div className="flex"> 
-          <Button onClick={() => handleSearch(search)}>Buscar</Button>
+    <div className="p-4 mx-auto">
+        <SearchBar onSearch={handleSearch} />
+        <div className="flex justify-between items-center mb-4">
+            <h2 className="text-3xl font-bold">Empleados</h2>
+            <Button variant="outline" className="px-6" onClick={() => router.push("/dashboard/clients/register")}>
+                    Agregar
+            </Button>
         </div>
-      </div>
-      <div className="flex justify-between items-center mb-4 space-y-3">
-        <h1 className="text-2xl font-semibold">Empleados</h1>
-        <Button 
-          className="bg-white text-black border border-gray-300 hover:bg-gray-100"
-          onClick={() => router.push("/dashboard/employee/register")}
-        >
-          Agregar
-        </Button>
-      </div>
-      <GenericTable
-        data={data.employees}
-        columns={columns}
-        actions={actions}
-        pagination={data.pagination}
-        onPageChange={handlePageChange}
-        isLoading={loading}
-        emptyMessage="No se encontraron empleados"
+        <GenericTable
+          data={data.employees}
+          columns={columns}
+          actions={actions}
+          pagination={data.pagination}
+          onPageChange={handlePageChange}
+          isLoading={loading}
+          skeleton={<EmployeeTableSkeleton />}
+          emptyMessage="No se encontraron empleados"
       />
       <ConfirmationModal
         isOpen={isModalOpen}
