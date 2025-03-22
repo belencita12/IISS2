@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Pencil, Trash } from "lucide-react";
+import { Eye, Pencil, Trash } from "lucide-react";
 import GenericTable, { Column, TableAction, PaginationInfo } from "@/components/global/GenericTable";
 import { fetchEmployees } from "@/lib/employee/getEmployees";
 import { toast } from "@/lib/toast";
@@ -93,11 +93,23 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
   const columns: Column<EmployeeData>[] = [
     { header: "Nombre", accessor: "fullName" },
     { header: "Correo", accessor: "email" },
+    { header: "Ruc", accessor: "ruc" },
     { header: "Cargo", accessor: (employee) => employee.position.name },
   
   ];
 
   const actions: TableAction<EmployeeData>[] = [
+    {
+      icon: <Eye className="w-4 h-4" />,
+      onClick: (employee) => {
+        if (!employee.id || isNaN(Number(employee.id))) {
+          toast("error", "ID de empleado inválido");
+          return;
+        }
+        router.push(`/dashboard/employee/${employee.id}`);
+      },
+      label: "Ver detalles",
+    },
     {
       icon: <Pencil className="w-4 h-4" />, 
       onClick: (employee) => console.log("Editar", employee), 

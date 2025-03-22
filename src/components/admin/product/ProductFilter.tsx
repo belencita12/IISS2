@@ -1,6 +1,6 @@
-"use client";
+"use client"; 
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
@@ -23,14 +23,7 @@ interface ProductFiltersProps {
       maxCost: string;
     }>
   >;
-  onSearch: (updatedFilters?: {
-    code: string;
-    category: string;
-    minPrice: string;
-    maxPrice: string;
-    minCost: string;
-    maxCost: string;
-  }) => void;
+  onSearch: () => void;
   preventInvalidKeys: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
@@ -40,33 +33,62 @@ export default function ProductFilters({
   onSearch,
   preventInvalidKeys,
 }: ProductFiltersProps) {
-  // Función auxiliar para limpiar un filtro y ejecutar la búsqueda
-  const clearFilterAndSearch = (filterName: keyof typeof filters) => {
-    const updatedFilters = {
-      ...filters,
-      [filterName]: "",
-    };
+  // Estado local para el campo de código que no activa la búsqueda automática
+  const [localCodeValue, setLocalCodeValue] = useState(filters.code);
 
-    setFilters(updatedFilters);
-    onSearch(updatedFilters);
+  // Función auxiliar para limpiar un filtro
+  const clearFilter = (filterName: keyof typeof filters) => {
+    if (filterName === "code") {
+      setLocalCodeValue("");
+      setFilters((prev) => ({
+        ...prev,
+        [filterName]: "",
+      }));
+    } else {
+      setFilters((prev) => ({
+        ...prev,
+        [filterName]: "",
+      }));
+    }
+  };
+
+  // Manejar el evento de tecla "Enter" en el input de código
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      // Actualizar el filtro real y ejecutar la búsqueda al presionar Enter
+      handleSearch();
+    }
+  };
+
+  // Función para manejar la búsqueda
+  const handleSearch = () => {
+    // Actualizar el valor real del filtro de código antes de buscar
+    setFilters((prev) => ({
+      ...prev,
+      code: localCodeValue,
+    }));
+    
+    // Ejecutar la búsqueda
+    onSearch();
   };
 
   return (
     <div>
-      <div className="flex gap-4 mb-4">
+      {/* Fila superior: input de búsqueda y botón "Buscar" */}
+      <div className="flex flex-col sm:flex-row gap-4 mb-4">
         <div className="relative flex-1">
           <input
             type="text"
             placeholder="Buscar por código del producto"
-            value={filters.code}
-            onChange={(e) =>
-              setFilters((prev) => ({ ...prev, code: e.target.value }))
-            }
+            value={localCodeValue}
+            onChange={(e) => setLocalCodeValue(e.target.value)}
+            onKeyDown={handleKeyDown}
             className="border p-2 rounded w-full"
           />
-          {filters.code && (
+          {localCodeValue && (
             <button
-              onClick={() => clearFilterAndSearch("code")}
+              onClick={() => clearFilter("code")}
               className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
             >
               <X className="w-4 h-4" />
@@ -75,23 +97,26 @@ export default function ProductFilters({
         </div>
         <Button
           variant="default"
-          onClick={() => onSearch(filters)}
+          onClick={handleSearch}
           className="bg-black text-white hover:bg-gray-800"
         >
           Buscar
         </Button>
       </div>
-      <div className="flex items-center mb-6 relative w-full">
+
+      {/* Fila inferior: filtros de categoría, precio y costo */}
+      <div className="flex flex-col sm:flex-row items-center mb-6 relative w-full">
         {/* Filtro de categoría */}
         <div className="relative">
           <select
+            title="type"
             value={filters.category}
-            onChange={(e) =>
+            onChange={(e) => {
               setFilters((prev) => ({
                 ...prev,
                 category: e.target.value === "none" ? "" : e.target.value,
-              }))
-            }
+              }));
+            }}
             className="border p-2 rounded w-40"
           >
             <option value="" disabled hidden>
@@ -103,32 +128,33 @@ export default function ProductFilters({
           </select>
           {filters.category !== "" && (
             <button
-              onClick={() => clearFilterAndSearch("category")}
+              onClick={() => clearFilter("category")}
               className="absolute right-8 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
             >
               <X className="w-4 h-4" />
             </button>
           )}
         </div>
+
         {/* Filtros de precio */}
-        <div className="flex items-center gap-2 absolute left-1/2 transform -translate-x-1/2">
+        <div className="flex flex-col sm:flex-row items-center gap-2 mt-4 sm:mt-0 sm:absolute sm:left-1/2 sm:transform sm:-translate-x-1/2">
           <span className="text-sm">Precio</span>
           <div className="relative">
             <input
               type="number"
               min="0"
-              step="0.01"
+              step="100"
               placeholder="Desde"
               value={filters.minPrice}
-              onChange={(e) =>
-                setFilters((prev) => ({ ...prev, minPrice: e.target.value }))
-              }
+              onChange={(e) => {
+                setFilters((prev) => ({ ...prev, minPrice: e.target.value }));
+              }}
               onKeyDown={preventInvalidKeys}
               className="border p-1 rounded w-28"
             />
             {filters.minPrice && (
               <button
-                onClick={() => clearFilterAndSearch("minPrice")}
+                onClick={() => clearFilter("minPrice")}
                 className="absolute right-8 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
               >
                 <X className="w-3 h-3" />
@@ -140,18 +166,18 @@ export default function ProductFilters({
             <input
               type="number"
               min="0"
-              step="0.01"
+              step="100"
               placeholder="Hasta"
               value={filters.maxPrice}
-              onChange={(e) =>
-                setFilters((prev) => ({ ...prev, maxPrice: e.target.value }))
-              }
+              onChange={(e) => {
+                setFilters((prev) => ({ ...prev, maxPrice: e.target.value }));
+              }}
               onKeyDown={preventInvalidKeys}
               className="border p-1 rounded w-28"
             />
             {filters.maxPrice && (
               <button
-                onClick={() => clearFilterAndSearch("maxPrice")}
+                onClick={() => clearFilter("maxPrice")}
                 className="absolute right-8 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
               >
                 <X className="w-3 h-3" />
@@ -159,14 +185,15 @@ export default function ProductFilters({
             )}
           </div>
         </div>
+
         {/* Filtros de costo */}
-        <div className="flex items-center gap-2 ml-auto">
+        <div className="flex flex-col sm:flex-row items-center gap-2 mt-4 sm:mt-0 sm:ml-auto">
           <span className="text-sm">Costo</span>
           <div className="relative">
             <input
               type="number"
               min="0"
-              step="0.01"
+              step="100"
               placeholder="Desde"
               value={filters.minCost}
               onChange={(e) =>
@@ -177,7 +204,7 @@ export default function ProductFilters({
             />
             {filters.minCost && (
               <button
-                onClick={() => clearFilterAndSearch("minCost")}
+                onClick={() => clearFilter("minCost")}
                 className="absolute right-8 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
               >
                 <X className="w-3 h-3" />
@@ -189,7 +216,7 @@ export default function ProductFilters({
             <input
               type="number"
               min="0"
-              step="0.01"
+              step="100"
               placeholder="Hasta"
               value={filters.maxCost}
               onChange={(e) =>
@@ -200,7 +227,7 @@ export default function ProductFilters({
             />
             {filters.maxCost && (
               <button
-                onClick={() => clearFilterAndSearch("maxCost")}
+                onClick={() => clearFilter("maxCost")}
                 className="absolute right-8 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
               >
                 <X className="w-3 h-3" />
