@@ -9,6 +9,7 @@ import { toast } from "@/lib/toast";
 import { useRouter } from "next/navigation";
 import { EmployeeData } from "@/lib/employee/IEmployee";
 import { deleteEmployeeByID } from "@/lib/employee/deleteEmployeeByID";
+import { ConfirmationModal } from "../global/Confirmation-modal";
 
 interface EmployeesTableProps {
   token: string | null;
@@ -16,6 +17,8 @@ interface EmployeesTableProps {
 
 export default function EmployeesTable({ token }: EmployeesTableProps) {
   const router = useRouter();
+  const [selectedEmployee, setSelectedEmployee] = useState<EmployeeData | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [data, setData] = useState<{
     employees: EmployeeData[];
@@ -63,18 +66,29 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
       pagination: { ...prev.pagination, currentPage: page },
     }));
 
-    const handleDelete = async (employeeId: number) => {
-      if (!window.confirm("¿Estás seguro de que quieres eliminar este empleado?")) return;
-  
-      const success = await deleteEmployeeByID(token || "", employeeId);
-  
+    const confirmDelete = (employee: EmployeeData) => {
+      setSelectedEmployee(employee);
+      setIsModalOpen(true);
+    };
+    
+    const handleDelete = async () => {
+      if (!selectedEmployee) return;
+      
+      const success = selectedEmployee.id !== undefined 
+        ? await deleteEmployeeByID(token || "", selectedEmployee.id) 
+        : false;
+    
       if (success) {
         toast("success", "Empleado eliminado correctamente.");
-        loadEmployees(data.pagination.currentPage); 
+        loadEmployees(data.pagination.currentPage);
       } else {
         toast("error", "No se pudo eliminar el empleado.");
       }
+    
+      setIsModalOpen(false);
+      setSelectedEmployee(null);
     };
+    
 
   const columns: Column<EmployeeData>[] = [
     { header: "Nombre", accessor: "fullName" },
@@ -91,15 +105,9 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
     },
     {
       icon: <Trash className="w-4 h-4" />,
-      onClick: (employee) => {
-        if (employee.id !== undefined) {
-          handleDelete(employee.id);
-        } else {
-          toast("error", "Empleado sin ID, no se puede eliminar.");
-        }
-      },
+      onClick: confirmDelete, 
       label: "Eliminar",
-    }
+    },
   ];
 
   return (
@@ -132,6 +140,16 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
         onPageChange={handlePageChange}
         isLoading={loading}
         emptyMessage="No se encontraron empleados"
+      />
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleDelete}
+        title="Eliminar Empleado"
+        message={`¿Seguro que quieres eliminar a ${selectedEmployee?.fullName}?`}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="danger"
       />
     </div>
   );
