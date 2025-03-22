@@ -3,16 +3,6 @@
 import { useEffect, useState } from "react";
 import ProductSearch from "../depositUI/ProductSearch";
 import Image from "next/image";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationPrevious,
-  PaginationNext,
-} from "../ui/pagination";
-import { Card, CardContent } from "../ui/card";
-import { ZodNumberDef } from "zod";
 
 const apiUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -21,24 +11,15 @@ interface ProductDetail {
   amount: number;
 }
 
-interface Image {
-  id: number;
-  previewUrl: string;
-  originalUrl: string;
-}
-
 interface Product {
   id: number;
   name: string;
-  code: string;
-  cost: number;
-  iva: number;
   category: string;
   price: number;
-  image: Image | null;
+  cost: number;
+  imageUrl: string | null;
   stock: number;
 }
-
 
 interface Props {
   token: string;
@@ -93,12 +74,10 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
             return {
               id: productData.id,
               name: productData.name,
-              code: productData.code,
-              cost: productData.cost,
-              iva: productData.iva,
               category: productData.category,
               price: productData.price,
-              image: productData.image || null,
+              cost: productData.cost,
+              imageUrl: productData.image?.previewUrl || null,
               stock: detail.amount,
             };
           })
@@ -134,89 +113,33 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
     <div className="p-4 bg-white shadow-lg rounded-lg">
       <ProductSearch onSearch={handleSearch} />
       {filteredProducts.map((product) => (
-        <Card
-        key={product.id}
-        className="overflow-hidden mb-4 cursor-pointer hover:shadow-md transition-shadow"
-        onClick={() => {}}
-      >
-        <div className="flex flex-col sm:flex-row p-4">
-          <div className="w-[100px] h-[100px] mb-4 sm:mb-0 sm:mr-4 flex-shrink-0">
-            {product.image?.originalUrl ? (
-              <Image
-                src={product.image.originalUrl}
-                alt={product.name}
-                width={100}
-                height={100}
-                className="w-full h-full object-cover rounded"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded">
-                {product.name.charAt(0).toUpperCase()}
-              </div>
-            )}
-          </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold mb-4">{product.name}</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-              <div className="flex flex-col">
-                <p className="text-sm text-gray-500">Código</p>
-                <p className="text-sm text-gray-500 mt-2">Proveedor</p>
-                <p className="text-sm text-gray-500 mt-2">Categoría</p>
-                <p className="text-sm text-gray-500 mt-2">
-                  Precio Unitario
-                </p>
-              </div>
-              <div className="flex flex-col">
-              <p className="text-sm">{product.code}</p>
-                <p className="text-sm mt-2">La Mascota S.A.</p>
-                <p className="text-sm mt-2">{product.category}</p>
-                <p className="text-sm mt-2">
-                  {product.price.toLocaleString()} Gs
-                </p>
-              </div>
-              <div className="flex flex-col">
-                <p className="text-sm text-gray-500">Costo</p>
-                <p className="text-sm text-gray-500 mt-2">Stock</p>
-              </div>
-              <div className="flex flex-col">
-                <p className="text-sm">
-                  {product.cost?.toLocaleString()} Gs
-                </p>
-                <p className="text-sm mt-2">
-                  {product.stock?.toLocaleString()}
-                </p>
-              </div>
-            </div>
+        <div key={product.id} className="border p-4 rounded-lg flex gap-4 items-center">
+          <Image
+            src={product.imageUrl || "https://via.placeholder.com/150"}
+            alt={product.name}
+            width={64} height={64} 
+            className="object-cover rounded"
+          />
+          <div>
+            <h3 className="text-lg font-bold">{product.name}</h3>
+            <p className="text-gray-600">Categoría: {product.category}</p>
+            <p>Precio: {formatNumber(product.price)} Gs.</p>
+            <p>Costo: {formatNumber(product.cost)} Gs.</p>
+            <p>Stock: {formatNumber(product.stock)}</p>
           </div>
         </div>
-      </Card>
       ))}
-      <Pagination className="mt-4">
-        <PaginationContent>
-          <PaginationPrevious onClick={() => {
-              if (currentPage > 1) setCurrentPage(currentPage - 1);
-            }}
-          />
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <PaginationItem key={page}>
-              <PaginationLink
-                isActive={page === currentPage}
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setCurrentPage(page);
-                }}
-              >
-                {page}
-              </PaginationLink>
-            </PaginationItem>
-          ))}
-          <PaginationNext onClick={() => {
-              if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-            }}
-          />
-        </PaginationContent>
-      </Pagination>
+      <div className="flex justify-center mt-4 space-x-2">
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          <button
+            key={page}
+            onClick={() => setCurrentPage(page)}
+            className={`px-4 py-2 rounded ${currentPage === page ? "bg-gray-400" : "bg-gray-200"}`}
+          >
+            {page}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };
