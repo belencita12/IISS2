@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ProductSearch from "../depositUI/ProductSearch";
+import DepositInfo from "../depositUI/DepositInfo";
+import ProductFilters from "../admin/product/ProductFilter";
 import Image from "next/image";
 import {
   Pagination,
@@ -11,8 +12,7 @@ import {
   PaginationPrevious,
   PaginationNext,
 } from "../ui/pagination";
-import { Card, CardContent } from "../ui/card";
-import { ZodNumberDef } from "zod";
+import { Card } from "../ui/card";
 
 const apiUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -21,7 +21,7 @@ interface ProductDetail {
   amount: number;
 }
 
-interface Image {
+interface ImageType {
   id: number;
   previewUrl: string;
   originalUrl: string;
@@ -35,7 +35,7 @@ interface Product {
   iva: number;
   category: string;
   price: number;
-  image: Image | null;
+  image: ImageType | null;
   stock: number;
 }
 
@@ -54,6 +54,42 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [filters, setFilters] = useState({
+    code: "",
+    category: "",
+    minPrice: "",
+    maxPrice: "",
+    minCost: "",
+    maxCost: "",
+  });
+
+  useEffect(() => {
+    const filtered = products.filter((product) => {
+      // Filtro por código (se actualiza cuando se presiona Buscar)
+      const codeMatch =
+        filters.code === "" ||
+        product.code.toLowerCase().includes(filters.code.toLowerCase());
+      // Filtro por categoría (se actualiza de forma dinámica al cambiar el select)
+      const categoryMatch =
+        filters.category === "" || product.category === filters.category;
+      // Filtros por precio (mínimo y máximo) convertidos a número o null
+      const minPrice = filters.minPrice ? Number(filters.minPrice) : null;
+      const maxPrice = filters.maxPrice ? Number(filters.maxPrice) : null;
+      const priceMatch =
+        (minPrice === null || product.price >= minPrice) &&
+        (maxPrice === null || product.price <= maxPrice);
+      // Filtros por costo (mínimo y máximo)
+      const minCost = filters.minCost ? Number(filters.minCost) : null;
+      const maxCost = filters.maxCost ? Number(filters.maxCost) : null;
+      const costMatch =
+        (minCost === null || product.cost >= minCost) &&
+        (maxCost === null || product.cost <= maxCost);
+  
+      return codeMatch && categoryMatch && priceMatch && costMatch;
+    });
+    setFilteredProducts(filtered);
+  }, [filters, products]);
+  
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -119,12 +155,10 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
     };
     fetchProducts();
   }, [currentPage, depositoId, token]);
+   
 
-  const handleSearch = (query: string) => {
-    const filtered = products.filter((product) =>
-      product.name.toLowerCase().includes(query.toLowerCase())
-    );
-    setFilteredProducts(filtered);
+  const preventInvalidKeys = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "-" || e.key === "e") e.preventDefault();
   };
 
   if (loading) return <p>Cargando...</p>;
@@ -132,64 +166,73 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
 
   return (
     <div className="p-4 bg-white shadow-lg rounded-lg">
-      <ProductSearch onSearch={handleSearch} />
+      <ProductFilters
+        filters={filters}
+        setFilters={setFilters}
+        onSearch={() => {}}
+        preventInvalidKeys={preventInvalidKeys}
+      />
+
+      <div className="pt-3 pb-3 m-4"><DepositInfo token={token} depositoId={depositoId} /></div>
+      
+
       {filteredProducts.map((product) => (
         <Card
-        key={product.id}
-        className="overflow-hidden mb-4 cursor-pointer hover:shadow-md transition-shadow"
-        onClick={() => {}}
-      >
-        <div className="flex flex-col sm:flex-row p-4">
-          <div className="w-[100px] h-[100px] mb-4 sm:mb-0 sm:mr-4 flex-shrink-0">
-            {product.image?.originalUrl ? (
-              <Image
-                src={product.image.originalUrl}
-                alt={product.name}
-                width={100}
-                height={100}
-                className="w-full h-full object-cover rounded"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded">
-                {product.name.charAt(0).toUpperCase()}
-              </div>
-            )}
-          </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold mb-4">{product.name}</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-              <div className="flex flex-col">
-                <p className="text-sm text-gray-500">Código</p>
-                <p className="text-sm text-gray-500 mt-2">Proveedor</p>
-                <p className="text-sm text-gray-500 mt-2">Categoría</p>
-                <p className="text-sm text-gray-500 mt-2">
-                  Precio Unitario
-                </p>
-              </div>
-              <div className="flex flex-col">
-              <p className="text-sm">{product.code}</p>
-                <p className="text-sm mt-2">La Mascota S.A.</p>
-                <p className="text-sm mt-2">{product.category}</p>
-                <p className="text-sm mt-2">
-                  {product.price.toLocaleString()} Gs
-                </p>
-              </div>
-              <div className="flex flex-col">
-                <p className="text-sm text-gray-500">Costo</p>
-                <p className="text-sm text-gray-500 mt-2">Stock</p>
-              </div>
-              <div className="flex flex-col">
-                <p className="text-sm">
-                  {product.cost?.toLocaleString()} Gs
-                </p>
-                <p className="text-sm mt-2">
-                  {product.stock?.toLocaleString()}
-                </p>
+          key={product.id}
+          className="overflow-hidden mb-4 cursor-pointer hover:shadow-md transition-shadow"
+          onClick={() => {}}
+        >
+          <div className="flex flex-col sm:flex-row p-4">
+            <div className="w-[100px] h-[100px] mb-4 sm:mb-0 sm:mr-4 flex-shrink-0">
+              {product.image?.originalUrl ? (
+                <Image
+                  src={product.image.originalUrl}
+                  alt={product.name}
+                  width={100}
+                  height={100}
+                  className="w-full h-full object-cover rounded"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded">
+                  {product.name.charAt(0).toUpperCase()}
+                </div>
+              )}
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold mb-4">{product.name}</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <div className="flex flex-col">
+                  <p className="text-sm text-gray-500">Código</p>
+                  <p className="text-sm text-gray-500 mt-2">Proveedor</p>
+                  <p className="text-sm text-gray-500 mt-2">Categoría</p>
+                  <p className="text-sm text-gray-500 mt-2">
+                    Precio Unitario
+                  </p>
+                </div>
+                <div className="flex flex-col">
+                <p className="text-sm">{product.code}</p>
+                  <p className="text-sm mt-2">La Mascota S.A.</p>
+                  <p className="text-sm mt-2">{product.category}</p>
+                  <p className="text-sm mt-2">
+                    {product.price.toLocaleString()} Gs
+                  </p>
+                </div>
+                <div className="flex flex-col">
+                  <p className="text-sm text-gray-500">Costo</p>
+                  <p className="text-sm text-gray-500 mt-2">Stock</p>
+                </div>
+                <div className="flex flex-col">
+                  <p className="text-sm">
+                    {product.cost?.toLocaleString()} Gs
+                  </p>
+                  <p className="text-sm mt-2">
+                    {product.stock?.toLocaleString()}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </Card>
+        </Card>
       ))}
       <Pagination className="mt-4">
         <PaginationContent>
