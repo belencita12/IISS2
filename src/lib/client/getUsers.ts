@@ -16,6 +16,6 @@ export const fetchUsers = async (page: number, query: string, token: string | nu
         return data;
 
     } catch (error) {
-        console.error("Error en obtener filtrado de usuario", error);
+        throw error;
     }
 };
