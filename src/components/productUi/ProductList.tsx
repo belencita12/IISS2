@@ -1,18 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import DepositInfo from "../depositUI/DepositInfo";
-import ProductFilters from "../admin/product/ProductFilter";
+import ProductSearch from "../depositUI/ProductSearch";
 import Image from "next/image";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationPrevious,
-  PaginationNext,
-} from "../ui/pagination";
-import { Card } from "../ui/card";
 
 const apiUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -21,24 +11,15 @@ interface ProductDetail {
   amount: number;
 }
 
-interface ImageType {
-  id: number;
-  previewUrl: string;
-  originalUrl: string;
-}
-
 interface Product {
   id: number;
   name: string;
-  code: string;
-  cost: number;
-  iva: number;
   category: string;
   price: number;
-  image: ImageType | null;
+  cost: number;
+  imageUrl: string | null;
   stock: number;
 }
-
 
 interface Props {
   token: string;
@@ -54,42 +35,6 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState({
-    code: "",
-    category: "",
-    minPrice: "",
-    maxPrice: "",
-    minCost: "",
-    maxCost: "",
-  });
-
-  useEffect(() => {
-    const filtered = products.filter((product) => {
-      // Filtro por código (se actualiza cuando se presiona Buscar)
-      const codeMatch =
-        filters.code === "" ||
-        product.code.toLowerCase().includes(filters.code.toLowerCase());
-      // Filtro por categoría (se actualiza de forma dinámica al cambiar el select)
-      const categoryMatch =
-        filters.category === "" || product.category === filters.category;
-      // Filtros por precio (mínimo y máximo) convertidos a número o null
-      const minPrice = filters.minPrice ? Number(filters.minPrice) : null;
-      const maxPrice = filters.maxPrice ? Number(filters.maxPrice) : null;
-      const priceMatch =
-        (minPrice === null || product.price >= minPrice) &&
-        (maxPrice === null || product.price <= maxPrice);
-      // Filtros por costo (mínimo y máximo)
-      const minCost = filters.minCost ? Number(filters.minCost) : null;
-      const maxCost = filters.maxCost ? Number(filters.maxCost) : null;
-      const costMatch =
-        (minCost === null || product.cost >= minCost) &&
-        (maxCost === null || product.cost <= maxCost);
-  
-      return codeMatch && categoryMatch && priceMatch && costMatch;
-    });
-    setFilteredProducts(filtered);
-  }, [filters, products]);
-  
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -129,12 +74,10 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
             return {
               id: productData.id,
               name: productData.name,
-              code: productData.code,
-              cost: productData.cost,
-              iva: productData.iva,
               category: productData.category,
               price: productData.price,
-              image: productData.image || null,
+              cost: productData.cost,
+              imageUrl: productData.image?.previewUrl || null,
               stock: detail.amount,
             };
           })
@@ -155,10 +98,12 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
     };
     fetchProducts();
   }, [currentPage, depositoId, token]);
-   
 
-  const preventInvalidKeys = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "-" || e.key === "e") e.preventDefault();
+  const handleSearch = (query: string) => {
+    const filtered = products.filter((product) =>
+      product.name.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredProducts(filtered);
   };
 
   if (loading) return <p>Cargando...</p>;
@@ -166,100 +111,35 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
 
   return (
     <div className="p-4 bg-white shadow-lg rounded-lg">
-      <ProductFilters
-        filters={filters}
-        setFilters={setFilters}
-        onSearch={() => {}}
-        preventInvalidKeys={preventInvalidKeys}
-      />
-
-      <div className="pt-3 pb-3 m-4"><DepositInfo token={token} depositoId={depositoId} /></div>
-      
-
+      <ProductSearch onSearch={handleSearch} />
       {filteredProducts.map((product) => (
-        <Card
-          key={product.id}
-          className="overflow-hidden mb-4 cursor-pointer hover:shadow-md transition-shadow"
-          onClick={() => {}}
-        >
-          <div className="flex flex-col sm:flex-row p-4">
-            <div className="w-[100px] h-[100px] mb-4 sm:mb-0 sm:mr-4 flex-shrink-0">
-              {product.image?.originalUrl ? (
-                <Image
-                  src={product.image.originalUrl}
-                  alt={product.name}
-                  width={100}
-                  height={100}
-                  className="w-full h-full object-cover rounded"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded">
-                  {product.name.charAt(0).toUpperCase()}
-                </div>
-              )}
-            </div>
-            <div className="flex-1">
-              <h3 className="text-lg font-semibold mb-4">{product.name}</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                <div className="flex flex-col">
-                  <p className="text-sm text-gray-500">Código</p>
-                  <p className="text-sm text-gray-500 mt-2">Proveedor</p>
-                  <p className="text-sm text-gray-500 mt-2">Categoría</p>
-                  <p className="text-sm text-gray-500 mt-2">
-                    Precio Unitario
-                  </p>
-                </div>
-                <div className="flex flex-col">
-                <p className="text-sm">{product.code}</p>
-                  <p className="text-sm mt-2">La Mascota S.A.</p>
-                  <p className="text-sm mt-2">{product.category}</p>
-                  <p className="text-sm mt-2">
-                    {product.price.toLocaleString()} Gs
-                  </p>
-                </div>
-                <div className="flex flex-col">
-                  <p className="text-sm text-gray-500">Costo</p>
-                  <p className="text-sm text-gray-500 mt-2">Stock</p>
-                </div>
-                <div className="flex flex-col">
-                  <p className="text-sm">
-                    {product.cost?.toLocaleString()} Gs
-                  </p>
-                  <p className="text-sm mt-2">
-                    {product.stock?.toLocaleString()}
-                  </p>
-                </div>
-              </div>
-            </div>
+        <div key={product.id} className="border p-4 rounded-lg flex gap-4 items-center">
+          <Image
+            src={product.imageUrl || "https://via.placeholder.com/150"}
+            alt={product.name}
+            width={64} height={64} 
+            className="object-cover rounded"
+          />
+          <div>
+            <h3 className="text-lg font-bold">{product.name}</h3>
+            <p className="text-gray-600">Categoría: {product.category}</p>
+            <p>Precio: {formatNumber(product.price)} Gs.</p>
+            <p>Costo: {formatNumber(product.cost)} Gs.</p>
+            <p>Stock: {formatNumber(product.stock)}</p>
           </div>
-        </Card>
+        </div>
       ))}
-      <Pagination className="mt-4">
-        <PaginationContent>
-          <PaginationPrevious onClick={() => {
-              if (currentPage > 1) setCurrentPage(currentPage - 1);
-            }}
-          />
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <PaginationItem key={page}>
-              <PaginationLink
-                isActive={page === currentPage}
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setCurrentPage(page);
-                }}
-              >
-                {page}
-              </PaginationLink>
-            </PaginationItem>
-          ))}
-          <PaginationNext onClick={() => {
-              if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-            }}
-          />
-        </PaginationContent>
-      </Pagination>
+      <div className="flex justify-center mt-4 space-x-2">
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          <button
+            key={page}
+            onClick={() => setCurrentPage(page)}
+            className={`px-4 py-2 rounded ${currentPage === page ? "bg-gray-400" : "bg-gray-200"}`}
+          >
+            {page}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

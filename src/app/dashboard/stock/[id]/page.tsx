@@ -16,9 +16,11 @@ export default async function Page({ params, }: { params: Promise<{ id: string }
 
   return (
     <div className="flex justify-center">
-      <div className="w-full space-y-4 mt-4">
+      <div className="w-4/5 space-y-4 mt-4">
+        <DepositInfo token={token} depositoId={depositoId} />
         <ProductList token={token} depositoId={depositoId} />
       </div>
+
     </div>
   );
 }
