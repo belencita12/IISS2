@@ -1,12 +1,15 @@
 "use client";
 
+// components/admin/product/ProductListPage.tsx (o donde esté ubicado)
 import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { getProducts } from "@/lib/admin/products/getProducts";
+import { getStockDetails } from "@/lib/stock/getStockDetails";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Product, ProductResponse } from "@/lib/admin/products/IProducts";
+import { StockDetailsData } from "@/lib/stock/IStock";
 import {
   Pagination,
   PaginationContent,
@@ -16,7 +19,7 @@ import {
   PaginationNext,
 } from "@/components/ui/pagination";
 import ProductFilters from "@/components/admin/product/ProductFilter";
-import useDebounce from "@/lib/admin/products/useDebounceHook"; // Importamos el hook de debounce
+import useDebounce from "@/lib/admin/products/useDebounceHook";
 
 interface ProductListProps {
   token: string;
@@ -50,6 +53,21 @@ export default function ProductListPage({ token }: ProductListProps) {
     pageSize: 5,
   });
 
+  // Función para cargar el stock de un producto
+  const loadProductStock = useCallback(async (productId: string) => {
+    try {
+      const stockData = await getStockDetails(productId, token);
+      
+      // Calculamos el stock total sumando las cantidades de todos los detalles
+      const totalStock = stockData.data.reduce((total, detail) => total + detail.amount, 0);
+      
+      return totalStock;
+    } catch (error) {
+      console.error(`Error al cargar el stock del producto ${productId}:`, error);
+      return 0;
+    }
+  }, [token]);
+
   // La consulta se basa en searchFilters
   const loadProducts = useCallback(
     async (page: number, filterParams = searchFilters) => {
@@ -58,17 +76,21 @@ export default function ProductListPage({ token }: ProductListProps) {
         const params = { ...filterParams, page, size: pagination.pageSize };
         const data: ProductResponse = await getProducts(params, token);
 
-        setStockMap((prev) => {
-          const newMap = { ...prev };
-          data.data.forEach((product) => {
-            if (!newMap[product.id]) {
-              // Simular un stock aleatorio
-              newMap[product.id] = Math.floor(Math.random() * 300) + 1;
-            }
-          });
-          return newMap;
+        // Cargar el stock para cada producto
+        const stockPromises = data.data.map(async (product) => {
+          const productStock = await loadProductStock(product.id);
+          return { id: product.id, stock: productStock };
         });
 
+        const stockResults = await Promise.all(stockPromises);
+        
+        // Actualizar el mapa de stock
+        const newStockMap: Record<string, number> = {};
+        stockResults.forEach(result => {
+          newStockMap[result.id] = result.stock;
+        });
+        
+        setStockMap(newStockMap);
         setProducts(data.data);
         setPagination({
           currentPage: page,
@@ -82,7 +104,7 @@ export default function ProductListPage({ token }: ProductListProps) {
         setIsLoading(false);
       }
     },
-    [searchFilters, token, pagination.pageSize]
+    [searchFilters, token, pagination.pageSize, loadProductStock]
   );
 
   // Este useEffect se activará cuando los filtros debounced cambien
@@ -98,7 +120,7 @@ export default function ProductListPage({ token }: ProductListProps) {
     if (token) {
       loadProducts(1);
     }
-  }, [token]);
+  }, [token, loadProducts]);
 
   const handleSearch = () => {
     // Para búsquedas manuales (botón Buscar)
@@ -110,8 +132,9 @@ export default function ProductListPage({ token }: ProductListProps) {
   const handlePageChange = (page: number) => {
     if (page < 1 || page > pagination.totalPages) return;
     setPagination((prev) => ({ ...prev, currentPage: page }));
-    loadProducts(page);
+    loadProducts(page, searchFilters); // pasa searchFilters explícitamente
   };
+  
 
   const preventInvalidKeys = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "-" || e.key === "e") e.preventDefault();
