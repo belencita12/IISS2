@@ -27,6 +27,9 @@ export default function ProductDetail({ token }: ProductDetailProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [isStocksLoading, setIsStocksLoading] = useState<boolean>(false);
+  const [isStockDetailsLoading, setIsStockDetailsLoading] = useState<boolean>(false);
+
   // 1) Cargar producto
   useEffect(() => {
     if (!id || id === "create") return;
@@ -52,11 +55,14 @@ export default function ProductDetail({ token }: ProductDetailProps) {
     if (!product) return;
 
     async function fetchStockDetails() {
+      setIsStockDetailsLoading(true);
       try {
         const response = await getStockDetails(product!.id, token);
         setStockDetails(response.data);
       } catch (err) {
         console.error("Error al obtener stock del producto:", err);
+      } finally {
+        setIsStockDetailsLoading(false);
       }
     }
     fetchStockDetails();
@@ -65,11 +71,14 @@ export default function ProductDetail({ token }: ProductDetailProps) {
   // 3) Cargar sucursales (stocks) reales
   useEffect(() => {
     async function fetchStocks() {
+      setIsStocksLoading(true);
       try {
         const response = await getStocks({ page: 1, size: 100 }, token);
         setStocks(response.data);
       } catch (err) {
         console.error("Error al obtener la lista de sucursales:", err);
+      } finally {
+        setIsStocksLoading(false);
       }
     }
     fetchStocks();
@@ -134,7 +143,9 @@ export default function ProductDetail({ token }: ProductDetailProps) {
             <div className="flex">
               <span className="text-gray-600 w-24">Stock:</span>
               <span className="flex-grow text-right">
-                {stockDetails.reduce((acc, detail) => acc + detail.amount, 0)}
+                {isStockDetailsLoading
+                  ? "Cargando..."
+                  : stockDetails.reduce((acc, detail) => acc + detail.amount, 0)}
               </span>
             </div>
 
@@ -172,39 +183,45 @@ export default function ProductDetail({ token }: ProductDetailProps) {
           Cantidad por Sucursales
         </h3>
 
-        <div className="w-full mx-auto">
-          {(stocks.length === 0 || stockDetails.length === 0) ? (
-            <div className="text-center py-4">Cargando stock...</div>
-          ) : (
-            stockDetails.map((detail, index) => {
-              const matchedStock = stocks.find((s) => s.id === detail.stockId);
-              if (!matchedStock) return null;
-              return (
-                <Card
-                  key={`${matchedStock.id}-${index}`}
-                  className="mb-3 cursor-pointer hover:shadow-md transition-shadow"
-                >
-                  <div className="flex p-3 justify-between items-center">
-                    <div className="flex flex-col">
-                      <h3 className="text-lg font-semibold">
-                        {matchedStock.name}
-                      </h3>
-                      <p className="text-sm text-gray-500">
-                        {matchedStock.address}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm text-gray-500">
-                        {detail.amount} Unids.
-                      </p>
-                    </div>
+
+      <div className="w-full mx-auto">
+        {(isStocksLoading || isStockDetailsLoading) ? (
+          <div className="text-center py-4">
+            Cargando cantidad de productos unos momentos...
+          </div>
+        ) : stockDetails.length === 0 ? (
+          <div className="text-center py-4 text-gray-500 text-sm">
+            No se encuentra disponible este producto en ninguna sucursal
+          </div>
+        ) : (
+          stockDetails.map((detail, index) => {
+            const matchedStock = stocks.find((s) => s.id === detail.stockId);
+            if (!matchedStock) return null;
+            return (
+              <Card
+                key={`${matchedStock.id}-${index}`}
+                className="mb-3 cursor-pointer hover:shadow-md transition-shadow"
+              >
+                <div className="flex p-3 justify-between items-center">
+                  <div className="flex flex-col">
+                    <h3 className="text-lg font-semibold">
+                      {matchedStock.name}
+                    </h3>
+                    <p className="text-sm text-gray-500">
+                      {matchedStock.address}
+                    </p>
                   </div>
-                </Card>
-              );
-            })
-          )}
-        </div>
+                  <div className="text-right">
+                    <p className="text-sm text-gray-500">
+                      {detail.amount} Unids.
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            );
+          })
+        )}
       </div>
-    </div>
+    </div> </div>
   );
 }

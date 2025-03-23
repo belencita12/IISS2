@@ -1,15 +1,12 @@
 "use client";
 
-// components/admin/product/ProductListPage.tsx (o donde esté ubicado)
 import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { getProducts } from "@/lib/admin/products/getProducts";
 import { getStockDetails } from "@/lib/stock/getStockDetails";
-import Image from "next/image";
-import { Card } from "@/components/ui/card";
+import ProductCard from "@/components/admin/product/ProductCard"; 
 import { Product, ProductResponse } from "@/lib/admin/products/IProducts";
-import { StockDetailsData } from "@/lib/stock/IStock";
 import {
   Pagination,
   PaginationContent,
@@ -54,19 +51,22 @@ export default function ProductListPage({ token }: ProductListProps) {
   });
 
   // Función para cargar el stock de un producto
-  const loadProductStock = useCallback(async (productId: string) => {
-    try {
-      const stockData = await getStockDetails(productId, token);
-      
-      // Calculamos el stock total sumando las cantidades de todos los detalles
-      const totalStock = stockData.data.reduce((total, detail) => total + detail.amount, 0);
-      
-      return totalStock;
-    } catch (error) {
-      console.error(`Error al cargar el stock del producto ${productId}:`, error);
-      return 0;
-    }
-  }, [token]);
+  const loadProductStock = useCallback(
+    async (productId: string) => {
+      try {
+        const stockData = await getStockDetails(productId, token);
+        const totalStock = stockData.data.reduce(
+          (total, detail) => total + detail.amount,
+          0
+        );
+        return totalStock;
+      } catch (error) {
+        console.error(`Error al cargar el stock del producto ${productId}:`, error);
+        return 0;
+      }
+    },
+    [token]
+  );
 
   // La consulta se basa en searchFilters
   const loadProducts = useCallback(
@@ -84,7 +84,6 @@ export default function ProductListPage({ token }: ProductListProps) {
 
         const stockResults = await Promise.all(stockPromises);
         
-        // Actualizar el mapa de stock
         const newStockMap: Record<string, number> = {};
         stockResults.forEach(result => {
           newStockMap[result.id] = result.stock;
@@ -107,7 +106,7 @@ export default function ProductListPage({ token }: ProductListProps) {
     [searchFilters, token, pagination.pageSize, loadProductStock]
   );
 
-  // Este useEffect se activará cuando los filtros debounced cambien
+  // Actualizamos los filtros con debounce
   useEffect(() => {
     if (token) {
       setSearchFilters(debouncedFilters);
@@ -115,7 +114,7 @@ export default function ProductListPage({ token }: ProductListProps) {
     }
   }, [debouncedFilters, token, loadProducts]);
 
-  // Este useEffect es para la carga inicial
+  // Carga inicial
   useEffect(() => {
     if (token) {
       loadProducts(1);
@@ -123,7 +122,6 @@ export default function ProductListPage({ token }: ProductListProps) {
   }, [token, loadProducts]);
 
   const handleSearch = () => {
-    // Para búsquedas manuales (botón Buscar)
     setSearchFilters(inputFilters);
     setPagination((prev) => ({ ...prev, currentPage: 1 }));
     loadProducts(1, inputFilters);
@@ -132,10 +130,9 @@ export default function ProductListPage({ token }: ProductListProps) {
   const handlePageChange = (page: number) => {
     if (page < 1 || page > pagination.totalPages) return;
     setPagination((prev) => ({ ...prev, currentPage: page }));
-    loadProducts(page, searchFilters); // pasa searchFilters explícitamente
+    loadProducts(page, searchFilters);
   };
   
-
   const preventInvalidKeys = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "-" || e.key === "e") e.preventDefault();
   };
@@ -169,62 +166,12 @@ export default function ProductListPage({ token }: ProductListProps) {
         <p className="text-center py-4">No hay productos disponibles</p>
       ) : (
         products.map((product) => (
-          <Card
+          <ProductCard
             key={product.id}
-            className="overflow-hidden mb-4 cursor-pointer hover:shadow-md transition-shadow"
-            onClick={() => handleCardClick(product.id)}
-          >
-            <div className="flex flex-col sm:flex-row p-4">
-              <div className="w-[100px] h-[100px] mb-4 sm:mb-0 sm:mr-4 flex-shrink-0">
-                {product.image?.originalUrl ? (
-                  <Image
-                    src={product.image.originalUrl}
-                    alt={product.name}
-                    width={100}
-                    height={100}
-                    className="w-full h-full object-cover rounded"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded">
-                    {product.name.charAt(0).toUpperCase()}
-                  </div>
-                )}
-              </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold mb-4">{product.name}</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                  <div className="flex flex-col">
-                    <p className="text-sm text-gray-500">Código</p>
-                    <p className="text-sm text-gray-500 mt-2">Proveedor</p>
-                    <p className="text-sm text-gray-500 mt-2">Categoría</p>
-                    <p className="text-sm text-gray-500 mt-2">
-                      Precio Unitario
-                    </p>
-                  </div>
-                  <div className="flex flex-col">
-                   <p className="text-sm">{product.code}</p>
-                    <p className="text-sm mt-2">La Mascota S.A.</p>
-                    <p className="text-sm mt-2">{product.category}</p>
-                    <p className="text-sm mt-2">
-                      {product.price.toLocaleString()} Gs
-                    </p>
-                  </div>
-                  <div className="flex flex-col">
-                    <p className="text-sm text-gray-500">Costo</p>
-                    <p className="text-sm text-gray-500 mt-2">Stock</p>
-                  </div>
-                  <div className="flex flex-col">
-                    <p className="text-sm">
-                      {product.cost?.toLocaleString()} Gs
-                    </p>
-                    <p className="text-sm mt-2">
-                      {stockMap[product.id] || 0}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Card>
+            product={product}
+            stock={stockMap[product.id] || 0}
+            onClick={handleCardClick}
+          />
         ))
       )}
 
@@ -233,9 +180,7 @@ export default function ProductListPage({ token }: ProductListProps) {
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious
-              onClick={() =>
-                handlePageChange(pagination.currentPage - 1)
-              }
+              onClick={() => handlePageChange(pagination.currentPage - 1)}
               className={
                 pagination.currentPage <= 1
                   ? "pointer-events-none opacity-50"
@@ -243,10 +188,7 @@ export default function ProductListPage({ token }: ProductListProps) {
               }
             />
           </PaginationItem>
-          {Array.from(
-            { length: pagination.totalPages },
-            (_, i) => i + 1
-          ).map((page) => (
+          {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((page) => (
             <PaginationItem key={page}>
               <PaginationLink
                 isActive={pagination.currentPage === page}
@@ -258,9 +200,7 @@ export default function ProductListPage({ token }: ProductListProps) {
           ))}
           <PaginationItem>
             <PaginationNext
-              onClick={() =>
-                handlePageChange(pagination.currentPage + 1)
-              }
+              onClick={() => handlePageChange(pagination.currentPage + 1)}
               className={
                 pagination.currentPage >= pagination.totalPages
                   ? "pointer-events-none opacity-50"
