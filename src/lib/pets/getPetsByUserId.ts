@@ -33,7 +33,7 @@ export const getPetsByUserIdFull = async (userId: number, token: string,page=1) 
     }
 };
 
-export const getPetsByNameAndUserIdFull = async (userId: number, token: string, page=1, name: string) => {
+export const getPetsByNameAndUserIdFull = async (userId: number, token: string, page=1, name?: string) => {
     try {
         const nameQuery = name ? `&name=${name}` : "";
         const response = await fetch(`${PET_API}?page=${page}&userId=${userId}${nameQuery}`, {
