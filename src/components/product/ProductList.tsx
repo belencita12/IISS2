@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ProductSearch from "../depositUI/ProductSearch";
+import ProductSearch from "../deposit/ProductSearch";
 import Image from "next/image";
 
 const apiUrl = process.env.NEXT_PUBLIC_BASE_URL;

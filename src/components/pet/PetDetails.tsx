@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { AlertCircle} from "lucide-react";
 import { useParams } from "next/navigation";
 import { PET_API} from "@/lib/urls";  
-import PetVaccinationTable from "./PetVaccinationTable";
+import PetVaccinationTable from "../pet/PetVaccinationTable";
 
 
 interface Pet {

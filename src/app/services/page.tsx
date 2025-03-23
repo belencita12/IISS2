@@ -1,9 +1,9 @@
 
 import type { Metadata, Viewport } from "next";
-import { ServiceCard } from "@/components/serviceUi/ServiceCard";
-import Carousel from "@/components/serviceUi/Carousel";
+import { ServiceCard } from "@/components/service/ServiceCard";
+import Carousel from "@/components/service/Carousel";
 import Image from "next/image";
-import BestServices from "@/components/serviceUi/BestServices";
+import BestServices from "@/components/service/BestServices";
 
 
 export const metadata: Metadata = {
