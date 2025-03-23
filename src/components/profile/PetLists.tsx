@@ -81,10 +81,10 @@ export const PetsList = ({ userId, token }: PetsListProps) => {
             <p className="text-gray-500 mt-2">Administra la información de tus mascotas</p>
             <div className="flex gap-4 mt-4">
                 <Button variant="outline" className="border border-black">
-                    <Link href="/pet/register">Agregar Mascota</Link>
+                    <Link href="/user-profile/pet/register">Agregar Mascota</Link>
                 </Button>
                 <Button asChild className="border border-black">
-                    <Link href="/list-pets">Ver mi lista de mascotas</Link>
+                    <Link href="/user-profile/pet/list-pets">Ver mi lista de mascotas</Link>
                 </Button>
             </div>
             {loading ? (
@@ -95,7 +95,7 @@ export const PetsList = ({ userId, token }: PetsListProps) => {
                 <div className="mt-8 w-full max-w-[57rem]">
                     <div className="flex flex-wrap justify-center gap-6">
                         {pets.map((pet, index) => (
-                            <Link key={index} href={`/detalle-mascota/${pet.id}`} className="text-center w-48 flex-shrink-0 cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition">
+                            <Link key={index} href={`/user-profile/pet/${pet.id}`} className="text-center w-48 flex-shrink-0 cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition">
                                 <Avatar className="w-24 h-24 mx-auto bg-gray-200 flex items-center justify-center text-xl font-bold text-gray-700">
                                     {pet.profileImg?.previewUrl || pet.profileImg?.originalUrl ? (
                                         <Image
