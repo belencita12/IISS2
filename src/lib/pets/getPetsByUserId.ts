@@ -12,7 +12,6 @@ export const getPetsByUserId = async (userId: number, token: string) => {
         const data = await response.json();
         return data.data || [];
     } catch (error) {
-        console.error("Error en obtener mascotas por usuario", error);
         throw error;
     }
 };
