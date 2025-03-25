@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 import { getPetsByUserId } from "@/lib/pets/getPetsByUserId";
 import { PetData} from "@/lib/pets/IPet";
-import { toast } from 'sonner';
+import { toast } from "@/lib/toast";
 import Image from "next/image";
 
 interface PetsListProps {
@@ -23,7 +23,7 @@ export const PetsList = ({ userId, token }: PetsListProps) => {
                 const fetchedPets = await getPetsByUserId(userId, token);
                 setPets(fetchedPets);
             } catch {
-                toast.error("Error al obtener mascotas o razas:");
+                toast("error","Error al obtener mascotas");
             } finally {
                 setLoading(false);
             }
