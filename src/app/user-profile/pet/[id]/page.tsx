@@ -1,4 +1,4 @@
-import PetDetails from "@/components/petUI/PetDetails";
+import PetDetails from "@/components/pet/PetDetails";
 import authOptions from "@/lib/auth/options";
 import { getServerSession } from "next-auth/next";
 

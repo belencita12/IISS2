@@ -1,5 +1,5 @@
-import DepositInfo from "@/components/depositUI/DepositInfo";
-import ProductList from "@/components/productUi/ProductList";
+import DepositInfo from "@/components/deposit/DepositInfo";
+import ProductList from "@/components/product/ProductList";
 import { getServerSession } from "next-auth/next";
 import authOptions from "@/lib/auth/options";
 

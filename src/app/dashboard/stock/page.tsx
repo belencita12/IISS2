@@ -1,4 +1,4 @@
-import DepositList from "@/components/depositUI/DepositList";
+import DepositList from "@/components/deposit/DepositList";
 import authOptions from "@/lib/auth/options";
 import { getServerSession } from "next-auth/next";
 

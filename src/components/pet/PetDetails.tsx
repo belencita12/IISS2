@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
 import { useParams } from "next/navigation";
-import PetVaccinationTable from "./PetVaccinationTable";
+import PetVaccinationTable from "../pet/PetVaccinationTable";
 import { PetData } from "@/lib/pets/IPet";
 import { getPetById } from "@/lib/pets/getPetById";
 import { updatePet } from "@/lib/pets/updatePet";
