@@ -1,7 +1,7 @@
 
 import type { Metadata, Viewport } from "next";
-import { ProductCard } from "@/components/productUi/ProductCard";
-import Carousel from "@/components/productUi/Carousel";
+import { ProductCard } from "@/components/product/ProductCard";
+import Carousel from "@/components/product/Carousel";
 import Image from "next/image";
 
 

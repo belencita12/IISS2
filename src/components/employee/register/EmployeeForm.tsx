@@ -113,11 +113,6 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
       setIsSubmitting(false);
     }
   };
-  
-  
-  
-
-
 
   return (
     <div className="max-w-5xl mx-auto p-8">

@@ -1,4 +1,4 @@
-import PetVaccinationTable from "@/components/petUI/PetVaccinationTable";
+import PetVaccinationTable from "@/components/pet/PetVaccinationTable";
 import authOptions from "@/lib/auth/options";
 import { getPetById } from "@/lib/pets/getPetById";
 import { PetData } from "@/lib/pets/IPet";

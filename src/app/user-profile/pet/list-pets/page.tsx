@@ -1,10 +1,11 @@
-import PetList from '@/components/petUI/PetList'
+import PetList from '@/components/pet/PetList'
 import authOptions from '@/lib/auth/options'
 import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
 
 
 export default async function Page() {
+    // Get the user sessions
 
     const session = await getServerSession(authOptions)
 
