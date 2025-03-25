@@ -32,7 +32,7 @@ const linksUser = [
   { name: "Facturas", href: "/dashboard/facturas", icon: FileIcon },
   {
     name: "Configuración",
-    href: "/dashboard/configuration",
+    href: "/dashboard/settings",
     icon: SettingsIcon,
   },
   { name: "Ayuda", href: "/dashboard/ayuda", icon: CircleHelpIcon },
