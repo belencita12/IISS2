@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 
 
 export default async function Page() {
+    // Get the user sessions
 
     const session = await getServerSession(authOptions)
 
