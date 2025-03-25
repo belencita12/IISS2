@@ -1,4 +1,4 @@
-// lib/admin/stock/IStock.ts
+
 export interface StockData {
     id?: number;
     name: string;

@@ -1,16 +1,16 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import { Product } from "@/lib/admin/products/IProducts";
+import React, { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
 import { getProductById } from "@/lib/admin/products/getProductById";
 import { getStockDetails } from "@/lib/stock/getStockDetails";
-import { getStocks } from "@/lib/stock/getStock"; // IMPORTAR
-import { StockDetailsData, StockData } from "@/lib/stock/IStock"; // IMPORTAR
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import Image from "next/image";
+import { getStocks } from "@/lib/stock/getStock";
+import { Product } from "@/lib/admin/products/IProducts";
+import { StockDetailsData, StockData } from "@/lib/stock/IStock";
+import ProductInfo from "@/components/admin/product/ProductInfo";
+import StockList from "@/components/admin/product/ProductWithStockList";
 
 interface ProductDetailProps {
   token: string;
@@ -22,83 +22,43 @@ export default function ProductDetail({ token }: ProductDetailProps) {
 
   const [product, setProduct] = useState<Product | null>(null);
   const [stockDetails, setStockDetails] = useState<StockDetailsData[]>([]);
-  const [stocks, setStocks] = useState<StockData[]>([]); // Estado para las sucursales reales
-
-  const [isLoading, setIsLoading] = useState(false);
+  const [stocks, setStocks] = useState<StockData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [isStocksLoading, setIsStocksLoading] = useState<boolean>(false);
-  const [isStockDetailsLoading, setIsStockDetailsLoading] = useState<boolean>(false);
-
-  // 1) Cargar producto
   useEffect(() => {
-    if (!id || id === "create") return;
+    if (!id || id === "create") {
+      setIsLoading(false);
+      return;
+    }
 
-    async function fetchProduct() {
-      setIsLoading(true);
-      setError(null);
+    const fetchData = async () => {
       try {
-        const data = await getProductById(id as string, token);
-        setProduct(data);
+        const [productData, stockResponse, stocksResponse] = await Promise.all([
+          getProductById(id as string, token),
+          getStockDetails(id as string, token),
+          getStocks({ page: 1, size: 100 }, token)
+        ]);
+        setProduct(productData);
+        setStockDetails(stockResponse.data);
+        setStocks(stocksResponse.data);
       } catch (err) {
-        console.error("Error al obtener detalle del producto:", err);
-        setError("No se pudo cargar el producto.");
+        setError("No se pudo cargar la información del producto");
+        console.error(err);
       } finally {
         setIsLoading(false);
       }
-    }
-    fetchProduct();
+    };
+
+    fetchData();
   }, [id, token]);
 
-  // 2) Cargar detalles de stock del producto
-  useEffect(() => {
-    if (!product) return;
-
-    async function fetchStockDetails() {
-      setIsStockDetailsLoading(true);
-      try {
-        const response = await getStockDetails(product!.id, token);
-        setStockDetails(response.data);
-      } catch (err) {
-        console.error("Error al obtener stock del producto:", err);
-      } finally {
-        setIsStockDetailsLoading(false);
-      }
-    }
-    fetchStockDetails();
-  }, [product, token]);
-
-  // 3) Cargar sucursales (stocks) reales
-  useEffect(() => {
-    async function fetchStocks() {
-      setIsStocksLoading(true);
-      try {
-        const response = await getStocks({ page: 1, size: 100 }, token);
-        setStocks(response.data);
-      } catch (err) {
-        console.error("Error al obtener la lista de sucursales:", err);
-      } finally {
-        setIsStocksLoading(false);
-      }
-    }
-    fetchStocks();
-  }, [token]);
-
-  if (isLoading) {
-    return <div className="text-center mt-8">Cargando...</div>;
-  }
-
-  if (error) {
-    return <div className="text-center mt-8 text-red-500">{error}</div>;
-  }
-
-  if (!product) {
-    return <div className="text-center mt-8">No se encontró el producto.</div>;
-  }
+  if (isLoading) return <div className="text-center mt-8">Cargando...</div>;
+  if (error) return <div className="text-center mt-8 text-red-500">{error}</div>;
+  if (!product) return <div className="text-center mt-8">Producto no encontrado</div>;
 
   return (
     <div className="max-w-4xl mx-auto p-4">
-      {/* Encabezado con imagen e información básica */}
       <div className="flex flex-col md:flex-row justify-center items-start">
         <div className="w-full md:w-1/3 flex justify-center mb-4 md:mb-0">
           {product.image?.originalUrl ? (
@@ -116,46 +76,13 @@ export default function ProductDetail({ token }: ProductDetailProps) {
           )}
         </div>
 
-        {/* Columna de información */}
         <div className="w-full md:w-2/3 md:pl-6 self-start mt-3">
           <h1 className="text-2xl font-bold mb-4">{product.name}</h1>
-
-          <div className="space-y-2">
-            <div className="flex">
-              <span className="text-gray-600 w-24">Código:</span>
-              <span className="flex-grow text-right">{product.code}</span>
-            </div>
-
-            <div className="flex">
-              <span className="text-gray-600 w-24">Precio:</span>
-              <span className="flex-grow text-right">
-                {product.price?.toLocaleString()} Gs
-              </span>
-            </div>
-
-            <div className="flex">
-              <span className="text-gray-600 w-24">Costo:</span>
-              <span className="flex-grow text-right">
-                {product.cost?.toLocaleString()} Gs
-              </span>
-            </div>
-
-            <div className="flex">
-              <span className="text-gray-600 w-24">Stock:</span>
-              <span className="flex-grow text-right">
-                {isStockDetailsLoading
-                  ? "Cargando..."
-                  : stockDetails.reduce((acc, detail) => acc + detail.amount, 0)}
-              </span>
-            </div>
-
-            <div className="flex">
-              <span className="text-gray-600 w-24">Categoría:</span>
-              <span className="flex-grow text-right">{product.category}</span>
-            </div>
-          </div>
-
-          {/* Botones */}
+          <ProductInfo 
+            product={product} 
+            stockDetails={stockDetails}
+            isStockLoading={isLoading}
+          />
           <div className="flex gap-4 mt-6 justify-center">
             <Button
               variant="default"
@@ -166,9 +93,7 @@ export default function ProductDetail({ token }: ProductDetailProps) {
             </Button>
             <Button
               variant="default"
-              onClick={() =>
-                router.push(`/dashboard/products/update/${product.id}`)
-              }
+              onClick={() => router.push(`/dashboard/products/update/${product.id}`)}
               className="bg-black text-white hover:bg-gray-800 px-6 py-2"
             >
               Actualizar
@@ -177,51 +102,16 @@ export default function ProductDetail({ token }: ProductDetailProps) {
         </div>
       </div>
 
-      {/* Sección de sucursales */}
       <div className="mt-10 w-full">
         <h3 className="text-2xl font-semibold text-center mb-6">
           Cantidad por Sucursales
         </h3>
-
-
-      <div className="w-full mx-auto">
-        {(isStocksLoading || isStockDetailsLoading) ? (
-          <div className="text-center py-4">
-            Cargando cantidad de productos unos momentos...
-          </div>
-        ) : stockDetails.length === 0 ? (
-          <div className="text-center py-4 text-gray-500 text-sm">
-            No se encuentra disponible este producto en ninguna sucursal
-          </div>
-        ) : (
-          stockDetails.map((detail, index) => {
-            const matchedStock = stocks.find((s) => s.id === detail.stockId);
-            if (!matchedStock) return null;
-            return (
-              <Card
-                key={`${matchedStock.id}-${index}`}
-                className="mb-3 cursor-pointer hover:shadow-md transition-shadow"
-              >
-                <div className="flex p-3 justify-between items-center">
-                  <div className="flex flex-col">
-                    <h3 className="text-lg font-semibold">
-                      {matchedStock.name}
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                      {matchedStock.address}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-gray-500">
-                      {detail.amount} Unids.
-                    </p>
-                  </div>
-                </div>
-              </Card>
-            );
-          })
-        )}
+        <StockList
+          stockDetails={stockDetails}
+          stocks={stocks}
+          isLoading={isLoading}
+        />
       </div>
-    </div> </div>
+    </div>
   );
 }
