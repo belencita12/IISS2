@@ -47,23 +47,25 @@ export const ProviderDetail: React.FC<ProviderDetailProps> = ({
         <button
           onClick={onClose}
           className="absolute top-2 right-2 p-2 text-gray-600 hover:text-gray-800"
-          aria-label="Cerrar"
+          aria-label="Cerrar modal de detalles de proveedor"
         >
           <X size={16} />
         </button>
 
         {/* Encabezado del modal con padding superior para separar del botón de cierre */}
-        <div className="p-4 pt-10 border-b">
-          <h2 className="text-xl font-bold text-center">
+        <div className="px-6 pt-10 pb-0">
+          <h2 className="text-xl font-bold text-center mb-2">
             {isLoading ? "Cargando..." : provider?.businessName || "Detalles del Proveedor"}
           </h2>
+          {/* Línea debajo del título, ahora con padding horizontal para alinearse */}
+          <div className="border-t border-gray-300 mx-0"></div>
         </div>
 
         {/* Contenido del modal */}
         {isLoading ? (
           <div className="p-6 text-center">Cargando detalles...</div>
         ) : provider ? (
-          <div className="p-6 space-y-4">
+          <div className="px-6 pb-6 pt-3 space-y-2">
             <div>
               <p className="text-sm text-gray-600">Descripción:</p>
               <p className="font-medium">{provider.description}</p>
@@ -71,7 +73,7 @@ export const ProviderDetail: React.FC<ProviderDetailProps> = ({
 
             <div>
               <div className="border rounded-lg p-2">
-                <p className="text-sm text-gray-600 mb-4">Contacto:</p>
+                <p className="text-sm text-gray-600 mb-2">Contacto:</p>
                 <div className="flex items-center space-x-4">
                   <Phone size={22} className="text-black-600" />
                   <div>

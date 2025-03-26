@@ -1,8 +1,9 @@
 "use client";
 import React, { useState } from "react";
 import { Provider } from "@/lib/provider/IProvider";
-import { ProviderDetail } from "./ProviderDetail";
 import { EyeIcon } from "lucide-react";
+import { ProviderDetail } from "./ProviderDetail";
+import { Modal } from "@/components/global/Modal";  // Importa el componente Modal
 
 interface ProviderListProps {
   token: string;
@@ -69,12 +70,14 @@ export default function ProviderList({ token }: ProviderListProps) {
       </div>
 
       {/* Modal de detalles del proveedor */}
-      <ProviderDetail
-        token={token}
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        providerId={selectedProviderId}
-      />
+      <Modal isOpen={isModalOpen} onClose={handleCloseModal} size="lg" title="Detalles del Proveedor">
+        <ProviderDetail
+          token={token}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          providerId={selectedProviderId}
+        />
+      </Modal>
     </div>
   );
 }
