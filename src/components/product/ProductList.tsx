@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ProductSearch from "../deposit/ProductSearch";
-import Image from "next/image";
+import DepositInfo from "../deposit/DepositInfo";
+import ProductFilters from "../admin/product/ProductFilter";
+import { Pagination, PaginationContent,PaginationItem,PaginationLink,PaginationPrevious,PaginationNext,} from "../ui/pagination";
+import ProductStockCard from "./ProductStockCard";
 
 const apiUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -11,22 +13,29 @@ interface ProductDetail {
   amount: number;
 }
 
+interface ImageType {
+  id: number;
+  previewUrl: string;
+  originalUrl: string;
+}
+
 interface Product {
   id: number;
   name: string;
+  code: string;
+  cost: number;
+  iva: number;
   category: string;
   price: number;
-  cost: number;
-  imageUrl: string | null;
+  image: ImageType | null;
   stock: number;
 }
+
 
 interface Props {
   token: string;
   depositoId: number;
 }
-
-const formatNumber = (num: number) => num.toLocaleString("es-ES");
 
 const ProductList: React.FC<Props> = ({ token, depositoId }) => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -35,6 +44,35 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [filters, setFilters] = useState({
+    code: "",
+    category: "",
+    minPrice: "",
+    maxPrice: "",
+    minCost: "",
+    maxCost: "",
+  });
+
+  useEffect(() => {
+    const filtered = products.filter((product) => {
+      // Filtro por código (se actualiza cuando se presiona Buscar)
+      const codeMatch = filters.code === "" ||  product.code.toLowerCase().includes(filters.code.toLowerCase());
+      // Filtro por categoría (se actualiza de forma dinámica al cambiar el select)
+      const categoryMatch = filters.category === "" || product.category === filters.category;
+      // Filtros por precio (mínimo y máximo) convertidos a número o null
+      const minPrice = filters.minPrice ? Number(filters.minPrice) : null;
+      const maxPrice = filters.maxPrice ? Number(filters.maxPrice) : null;
+      const priceMatch = (minPrice === null || product.price >= minPrice) && (maxPrice === null || product.price <= maxPrice);
+      // Filtros por costo (mínimo y máximo)
+      const minCost = filters.minCost ? Number(filters.minCost) : null;
+      const maxCost = filters.maxCost ? Number(filters.maxCost) : null;
+      const costMatch = (minCost === null || product.cost >= minCost) && (maxCost === null || product.cost <= maxCost);
+  
+      return codeMatch && categoryMatch && priceMatch && costMatch;
+    });
+    setFilteredProducts(filtered);
+  }, [filters, products]);
+  
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -49,21 +87,8 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
         const data = await response.json();
         const productDetails: ProductDetail[] = data.data;
 
-        // Agrupar productos sumando cantidades duplicadas
-        const mergedDetails = productDetails.reduce((acc, detail) => {
-          const key = `${detail.productId}`;
-          if (!acc[key]) {
-            acc[key] = { ...detail };
-          } else {
-            acc[key].amount += detail.amount;
-          }
-          return acc;
-        }, {} as Record<string, ProductDetail>);
-
-        const uniqueDetails = Object.values(mergedDetails);
-
         const fetchedProducts = await Promise.all(
-          uniqueDetails.map(async (detail) => {
+          productDetails.map(async (detail) => {
             const productRes = await fetch(`${apiUrl}/product/${detail.productId}`, {
               headers: { Authorization: `Bearer ${token}` },
             });
@@ -74,10 +99,12 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
             return {
               id: productData.id,
               name: productData.name,
+              code: productData.code,
+              cost: productData.cost,
+              iva: productData.iva,
               category: productData.category,
               price: productData.price,
-              cost: productData.cost,
-              imageUrl: productData.image?.previewUrl || null,
+              image: productData.image || null,
               stock: detail.amount,
             };
           })
@@ -98,12 +125,9 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
     };
     fetchProducts();
   }, [currentPage, depositoId, token]);
-
-  const handleSearch = (query: string) => {
-    const filtered = products.filter((product) =>
-      product.name.toLowerCase().includes(query.toLowerCase())
-    );
-    setFilteredProducts(filtered);
+   
+  const preventInvalidKeys = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "-" || e.key === "e") e.preventDefault();
   };
 
   if (loading) return <p>Cargando...</p>;
@@ -111,35 +135,37 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
 
   return (
     <div className="p-4 bg-white shadow-lg rounded-lg">
-      <ProductSearch onSearch={handleSearch} />
+      <ProductFilters filters={filters} setFilters={setFilters}
+        onSearch={() => {}} preventInvalidKeys={preventInvalidKeys} />
+
+      <div className="pt-3 pb-3 m-4"><DepositInfo token={token} depositoId={depositoId} /></div>
+      
+
       {filteredProducts.map((product) => (
-        <div key={product.id} className="border p-4 rounded-lg flex gap-4 items-center">
-          <Image
-            src={product.imageUrl || "https://via.placeholder.com/150"}
-            alt={product.name}
-            width={64} height={64} 
-            className="object-cover rounded"
-          />
-          <div>
-            <h3 className="text-lg font-bold">{product.name}</h3>
-            <p className="text-gray-600">Categoría: {product.category}</p>
-            <p>Precio: {formatNumber(product.price)} Gs.</p>
-            <p>Costo: {formatNumber(product.cost)} Gs.</p>
-            <p>Stock: {formatNumber(product.stock)}</p>
-          </div>
-        </div>
+        <ProductStockCard key={product.id} product={product}/>
       ))}
-      <div className="flex justify-center mt-4 space-x-2">
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-          <button
-            key={page}
-            onClick={() => setCurrentPage(page)}
-            className={`px-4 py-2 rounded ${currentPage === page ? "bg-gray-400" : "bg-gray-200"}`}
-          >
-            {page}
-          </button>
-        ))}
-      </div>
+      <Pagination className="mt-4">
+        <PaginationContent>
+          <PaginationPrevious onClick={() => {
+              if (currentPage > 1) setCurrentPage(currentPage - 1);
+            }}
+          />
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <PaginationItem key={page}>
+              <PaginationLink isActive={page === currentPage} href="#" onClick={(e) => {
+                  e.preventDefault();
+                  setCurrentPage(page);
+                }}
+              >
+                {page}
+              </PaginationLink>
+            </PaginationItem>
+          ))}
+          <PaginationNext onClick={() => {
+            if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+          }}/>
+        </PaginationContent>
+      </Pagination>
     </div>
   );
 };

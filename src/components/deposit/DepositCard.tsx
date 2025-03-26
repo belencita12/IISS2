@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { PencilIcon } from "@heroicons/react/24/outline";
+import { Pencil } from "lucide-react";
 import Link from "next/link";
 
 interface DepositCardProps {
@@ -18,7 +18,7 @@ const DepositCard: React.FC<DepositCardProps> = ({ nombre, ubicacion,id }) => {
         <p className="text-sm text-gray-600">Direccion: {ubicacion}</p>
       </div>
       <button className="p-2 rounded hover:bg-gray-200">
-          <PencilIcon  className="w-5 h-5 text-gray-500" />
+          <Pencil  className="w-5 h-5 text-gray-500" />
       </button>
     </Link>
   );
