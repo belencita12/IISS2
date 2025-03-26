@@ -8,7 +8,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/lib/toast";
-import { getManufacturers } from "@/lib/vaccine-manufacturer/getAllManufacturers";
+import { getManufacturers } from "@/lib/vaccine-manufacturer/getVaccineManufacturerById";
 import { getSpecies } from "@/lib/pets/getRacesAndSpecies";
 import { Plus } from "lucide-react";
 
