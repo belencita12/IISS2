@@ -53,6 +53,9 @@ export default function SearchBar({
         }
     }, [debouncedQuery, manualSearch, triggerSearch]);
 
+    useEffect(() => {
+        setQuery(defaultQuery || "");
+      }, [defaultQuery]);      
 
     const handleManualSearch = () => {
         const trimmed = query.trim();
@@ -70,7 +73,7 @@ export default function SearchBar({
     };
 
     return (
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex items-center gap-2 mb-4 w-full">
             <div className="relative w-full">
                 <Input
                     placeholder={placeholder}

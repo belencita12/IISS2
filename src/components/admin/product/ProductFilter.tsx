@@ -1,8 +1,9 @@
-"use client"; 
+"use client";
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import SearchBar from "@/components/global/SearchBar";
 
 interface ProductFiltersProps {
   filters: {
@@ -34,11 +35,13 @@ export default function ProductFilters({
   preventInvalidKeys,
 }: ProductFiltersProps) {
   // Estado local para el campo de código que no activa la búsqueda automática
-  const [localCodeValue, setLocalCodeValue] = useState(filters.code);
+  //const [localCodeValue, setLocalCodeValue] = useState(filters.code);
+  const [searchInput, setSearchInput] = useState(filters.code);
+
 
   // Función auxiliar para limpiar un filtro
   const clearFilter = (filterName: keyof typeof filters) => {
-    if (filterName === "code") {
+    /*if (filterName === "code") {
       setLocalCodeValue("");
       setFilters((prev) => ({
         ...prev,
@@ -49,11 +52,21 @@ export default function ProductFilters({
         ...prev,
         [filterName]: "",
       }));
+    }*/
+
+    if (filterName === "code") {
+      setFilters((prev) => ({
+        ...prev,
+        [filterName]: "",
+      }));
+      onSearch(); // ✅ dispara la búsqueda limpia cuando se borra el código
     }
+
   };
 
+
   // Manejar el evento de tecla "Enter" en el input de código
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  /*const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       e.preventDefault();
       // Actualizar el filtro real y ejecutar la búsqueda al presionar Enter
@@ -68,16 +81,16 @@ export default function ProductFilters({
       ...prev,
       code: localCodeValue,
     }));
-    
+
     // Ejecutar la búsqueda
     onSearch();
-  };
+  };*/
 
   return (
-    <div>
+    <div className="flex flex-col w-full gap-4">
       {/* Fila superior: input de búsqueda y botón "Buscar" */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-4">
-        <div className="relative flex-1">
+      <div className="flex flex-col w-full sm:flex-row gap-4 mb-4">
+        {/*<div className="relative flex-1">
           <input
             type="text"
             placeholder="Buscar por código del producto"
@@ -101,7 +114,19 @@ export default function ProductFilters({
           className="bg-black text-white hover:bg-gray-800"
         >
           Buscar
-        </Button>
+        </Button>*/}
+
+        <SearchBar
+          onSearch={(query) => {
+            setSearchInput(query); // mantenerlo actualizado localmente
+            setFilters((prev) => ({ ...prev, code: query }));
+            onSearch(); // dispara la búsqueda desde el padre
+          }}
+          defaultQuery={searchInput}
+          manualSearch={true}
+          debounceDelay={400}
+          placeholder="Buscar por código del producto"
+        />
       </div>
 
       {/* Fila inferior: filtros de categoría, precio y costo */}
