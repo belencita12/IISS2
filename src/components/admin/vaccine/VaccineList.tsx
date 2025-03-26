@@ -12,7 +12,7 @@ import GenericTable, {
 import VaccineTableSkeleton from "./skeleton/VaccineTableSkeleton";
 import { useRouter } from "next/navigation";
 import { getVaccines } from "@/lib/vaccine/getVaccines";
-import SearchBar from "./SearchBar";
+import SearchBar from "@/components/global/SearchBar";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 
 interface Vaccine {
@@ -120,19 +120,21 @@ export default function VaccineList({ token }: VaccineListProps) {
     }
   }, [token, data.pagination.currentPage, loadVaccines]);
 
-  const handleSearch = (query: string) => {
+  const handleSearch = useCallback((query: string) => {
     if (!query) {
-      setFilteredData(data.vaccines); // Restaurar datos cuando query está vacío
+      setFilteredData(data.vaccines);
       return;
     }
+  
     const results = data.vaccines.filter(
       (vaccine) =>
         vaccine.name.toLowerCase().includes(query.toLowerCase()) ||
         vaccine.manufacturer.name.toLowerCase().includes(query.toLowerCase()) ||
         vaccine.species.name.toLowerCase().includes(query.toLowerCase())
     );
+  
     setFilteredData(results);
-  };
+  }, [data.vaccines]); // ✅ solo se vuelve a definir si cambian las vacunas  
 
   const handlePageChange = (page: number) =>
     setData((prev) => ({
@@ -173,7 +175,12 @@ export default function VaccineList({ token }: VaccineListProps) {
 
   return (
     <div className="p-4 mx-auto">
-      <SearchBar onSearch={handleSearch} />
+      <SearchBar
+        onSearch={handleSearch}
+        placeholder="Buscar por nombre, fabricante o especie"
+        manualSearch={false} 
+        debounceDelay={400}
+      />
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-3xl font-bold">Vacunas</h2>
         <div className="flex gap-2">
