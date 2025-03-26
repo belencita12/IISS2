@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 import DepositCard from "./DepositCard";
 import { LoaderCircleIcon } from "lucide-react";
+import { Button } from "../ui/button";
+import { StockForm } from "../stock/register/StockForm"; // Asegúrate de importar correctamente StockForm
 
 interface Deposit {
   id: number;
@@ -19,6 +21,7 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar la visibilidad del modal
 
   useEffect(() => {
     const fetchDeposits = async () => {
@@ -41,7 +44,7 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
             "Content-Type": "application/json",
           },
         });
-        
+
         const data = await response.json();
         console.log("Datos obtenidos del API:", data);
 
@@ -49,8 +52,7 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
         setTotalPages(data.totalPages);
       } catch (error) {
         console.error("Error fetching deposits:", error);
-      }
-      finally {
+      } finally {
         setIsLoading(false);
       }
     };
@@ -58,16 +60,30 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
     fetchDeposits();
   }, [currentPage, token]);
 
+  const handleAddDeposit = () => {
+    setIsModalOpen(true); 
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Depósitos</h2>
-        {
-          isLoading && (
-            <div className="space-y-4 flex justify-center items-center">
-              <LoaderCircleIcon className="lucide lucide-loader-circle animate-spin" />
-            </div>
-          )
-        }
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-2xl font-bold mb-4">Depósitos</h2>
+        <Button
+          className="bg-white text-black border border-gray-300 hover:bg-gray-100"
+          onClick={handleAddDeposit} 
+        >
+          Agregar
+        </Button>
+      </div>
+      {isLoading && (
+        <div className="space-y-4 flex justify-center items-center">
+          <LoaderCircleIcon className="lucide lucide-loader-circle animate-spin" />
+        </div>
+      )}
       <div className="space-y-4">
         {deposits.map((deposit) => (
           <DepositCard key={deposit.id} nombre={deposit.name} ubicacion={deposit.address} id={deposit.id} />
@@ -86,6 +102,10 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
           </button>
         ))}
       </div>
+
+      {isModalOpen && (
+        <StockForm token={token} isOpen={isModalOpen} onClose={handleCloseModal} />
+      )}
     </div>
   );
 };

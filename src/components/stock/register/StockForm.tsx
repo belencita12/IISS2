@@ -1,13 +1,13 @@
 "use client";
-
-import { useState } from "react";
+import React, { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogOverlay } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast } from "@/lib/toast";
 import { registerStock } from "@/lib/stock/registerStock";
 import { useRouter } from "next/navigation";
 
@@ -20,11 +20,13 @@ type StockFormValues = z.infer<typeof stockFormSchema>;
 
 interface StockFormProps {
   token: string;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-export default function StockForm({ token }: StockFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export const StockForm = ({ token, isOpen, onClose }: StockFormProps) => {
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
     register,
@@ -32,65 +34,45 @@ export default function StockForm({ token }: StockFormProps) {
     formState: { errors },
   } = useForm<StockFormValues>({
     resolver: zodResolver(stockFormSchema),
-    defaultValues: {
-      name: "",
-      address: "",
-    },
   });
 
   const onSubmit = async (data: StockFormValues) => {
-   setIsSubmitting(true);
+    setIsSubmitting(true);
     try {
-        await registerStock({ name: data.name, address: data.address }, token);
-        toast.success("Depósito registrado con éxito");
-      //  router.push("/dashboard/stock");
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast.error("Hubo un error desconocido al registrar el deposito");
-      } else if (
-        typeof error === "object" &&
-        error !== null &&
-        "response" in error &&
-        "data" in (error as { response: { data: { message: string } } }).response
-      ) {
-        const errorMessage = (error as { response: { data: { message: string } } }).response.data.message;
-        
-        if (typeof errorMessage === "string") {
-          if (errorMessage.includes("Uno o más campos ya están en uso")) {
-            toast.error("El nombre del deposito ya está registrado. Intente con otro.");
-          } else {
-            toast.error(errorMessage);
-          }
-        } else {
-          toast.error("Hubo un error al registrar el deposito");
-        }
-      } else {
-        toast.error("Hubo un error desconocido al registrar el deposito");
-      }
-    
+      await registerStock({ name: data.name, address: data.address }, token);
+      toast("success", "Depósito registrado con éxito"); // Usa el toast personalizado
+      onClose();
+    } catch (error) {
+      toast("error", "Hubo un error al registrar el depósito");
     } finally {
       setIsSubmitting(false);
     }
   };
+
   return (
-    <div className="max-w-5xl mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-6">Registro de Depósito</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div>
-          <Label>Nombre</Label>
-          <Input {...register("name")} placeholder="Ingrese el nombre del depósito" />
-          {errors.name && <p className="text-red-500">{errors.name.message}</p>}
-        </div>
-        <div>
-          <Label>Dirección</Label>
-          <Input {...register("address")} placeholder="Ingrese la dirección del depósito" />
-          {errors.address && <p className="text-red-500">{errors.address.message}</p>}
-        </div>
-        <div className="flex justify-end gap-4">
-          <Button type="button" variant="outline" onClick={() => router.push("/dashboard/stock")}>Cancelar</Button>
-          <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Registrando..." : "Registrar"}</Button>
-        </div>
-      </form>
-    </div>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogOverlay />
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Registro de Depósito</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div>
+            <Label>Nombre</Label>
+            <Input {...register("name")} placeholder="Ingrese el nombre del depósito" />
+            {errors.name && <p className="text-red-500">{errors.name.message}</p>}
+          </div>
+          <div>
+            <Label>Dirección</Label>
+            <Input {...register("address")} placeholder="Ingrese la dirección del depósito" />
+            {errors.address && <p className="text-red-500">{errors.address.message}</p>}
+          </div>
+          <div className="flex justify-end gap-4">
+            <Button type="button" variant="outline" onClick={onClose}>Cancelar</Button>
+            <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Registrando..." : "Registrar"}</Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
-}
+};

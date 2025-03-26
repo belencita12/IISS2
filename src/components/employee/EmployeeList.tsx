@@ -9,6 +9,9 @@ import { toast } from "@/lib/toast";
 import { useRouter } from "next/navigation";
 import { EmployeeData } from "@/lib/employee/IEmployee";
 import { deleteEmployeeByID } from "@/lib/employee/deleteEmployeeByID";
+import { ConfirmationModal } from "../global/Confirmation-modal";
+import SearchBar from "../admin/client/SearchBar";
+import EmployeeTableSkeleton from "./skeleton/EmployeeTableSkeleton";
 
 interface EmployeesTableProps {
   token: string | null;
@@ -16,6 +19,8 @@ interface EmployeesTableProps {
 
 export default function EmployeesTable({ token }: EmployeesTableProps) {
   const router = useRouter();
+  const [selectedEmployee, setSelectedEmployee] = useState<EmployeeData | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [data, setData] = useState<{
     employees: EmployeeData[];
@@ -63,18 +68,29 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
       pagination: { ...prev.pagination, currentPage: page },
     }));
 
-    const handleDelete = async (employeeId: number) => {
-      if (!window.confirm("¿Estás seguro de que quieres eliminar este empleado?")) return;
-  
-      const success = await deleteEmployeeByID(token || "", employeeId);
-  
+    const confirmDelete = (employee: EmployeeData) => {
+      setSelectedEmployee(employee);
+      setIsModalOpen(true);
+    };
+    
+    const handleDelete = async () => {
+      if (!selectedEmployee) return;
+      
+      const success = selectedEmployee.id !== undefined 
+        ? await deleteEmployeeByID(token || "", selectedEmployee.id) 
+        : false;
+    
       if (success) {
         toast("success", "Empleado eliminado correctamente.");
-        loadEmployees(data.pagination.currentPage); 
+        loadEmployees(data.pagination.currentPage);
       } else {
         toast("error", "No se pudo eliminar el empleado.");
       }
+    
+      setIsModalOpen(false);
+      setSelectedEmployee(null);
     };
+    
 
   const columns: Column<EmployeeData>[] = [
     { header: "Nombre", accessor: "fullName" },
@@ -103,47 +119,39 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
     },
     {
       icon: <Trash className="w-4 h-4" />,
-      onClick: (employee) => {
-        if (employee.id !== undefined) {
-          handleDelete(employee.id);
-        } else {
-          toast("error", "Empleado sin ID, no se puede eliminar.");
-        }
-      },
+      onClick: confirmDelete, 
       label: "Eliminar",
-    }
+    },
   ];
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <div className="flex justify-between space-x-3 items-center mb-4">
-        <Input
-          className="w-full"
-          placeholder="Buscar un empleado..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <div className="flex"> 
-          <Button onClick={() => handleSearch(search)}>Buscar</Button>
+    <div className="p-4 mx-auto">
+        <SearchBar onSearch={handleSearch} />
+        <div className="flex justify-between items-center mb-4">
+            <h2 className="text-3xl font-bold">Empleados</h2>
+            <Button variant="outline" className="px-6" onClick={() => router.push("/dashboard/clients/register")}>
+                    Agregar
+            </Button>
         </div>
-      </div>
-      <div className="flex justify-between items-center mb-4 space-y-3">
-        <h1 className="text-2xl font-semibold">Empleados</h1>
-        <Button 
-          className="bg-white text-black border border-gray-300 hover:bg-gray-100"
-          onClick={() => router.push("/dashboard/employee/register")}
-        >
-          Agregar
-        </Button>
-      </div>
-      <GenericTable
-        data={data.employees}
-        columns={columns}
-        actions={actions}
-        pagination={data.pagination}
-        onPageChange={handlePageChange}
-        isLoading={loading}
-        emptyMessage="No se encontraron empleados"
+        <GenericTable
+          data={data.employees}
+          columns={columns}
+          actions={actions}
+          pagination={data.pagination}
+          onPageChange={handlePageChange}
+          isLoading={loading}
+          skeleton={<EmployeeTableSkeleton />}
+          emptyMessage="No se encontraron empleados"
+      />
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleDelete}
+        title="Eliminar Empleado"
+        message={`¿Seguro que quieres eliminar a ${selectedEmployee?.fullName}?`}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="danger"
       />
     </div>
   );

@@ -12,7 +12,6 @@ export const getPetsByUserId = async (userId: number, token: string) => {
         const data = await response.json();
         return data.data || [];
     } catch (error) {
-        console.error("Error en obtener mascotas por usuario", error);
         throw error;
     }
 };
@@ -21,6 +20,23 @@ export const getPetsByUserId = async (userId: number, token: string) => {
 export const getPetsByUserIdFull = async (userId: number, token: string,page=1) => {
     try {
         const response = await fetch(`${PET_API}?page=${page}&userId=${userId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!response.ok) throw new Error("Error al obtener las mascotas");
+
+        const data = await response.json();
+        return data as PetDataResponse;
+    } catch (error) {
+        console.error("Error en obtener mascotas por usuario", error);
+        throw error;
+    }
+};
+
+export const getPetsByNameAndUserIdFull = async (userId: number, token: string, page=1, name?: string) => {
+    try {
+        const nameQuery = name ? `&name=${name}` : "";
+        const response = await fetch(`${PET_API}?page=${page}&userId=${userId}${nameQuery}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
 
