@@ -10,7 +10,7 @@ import { getStocks } from "@/lib/stock/getStock";
 import { Product } from "@/lib/admin/products/IProducts";
 import { StockDetailsData, StockData } from "@/lib/stock/IStock";
 import ProductInfo from "@/components/admin/product/ProductInfo";
-import StockList from "@/components/admin/product/ProductWithStockList";
+import StockList from "@/components/admin/product/ProductStockList";
 
 interface ProductDetailProps {
   token: string;
@@ -19,7 +19,6 @@ interface ProductDetailProps {
 export default function ProductDetail({ token }: ProductDetailProps) {
   const router = useRouter();
   const { id } = useParams();
-
   const [product, setProduct] = useState<Product | null>(null);
   const [stockDetails, setStockDetails] = useState<StockDetailsData[]>([]);
   const [stocks, setStocks] = useState<StockData[]>([]);

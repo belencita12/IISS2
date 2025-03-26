@@ -1,20 +1,25 @@
-import { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { getProducts } from "@/lib/admin/products/getProducts";
 import { getStockDetails } from "@/lib/stock/getStockDetails";
 import { Product, ProductResponse } from "@/lib/admin/products/IProducts";
+import useDebounce from "@/lib/admin/products/useDebounceHook";
 
 export function useProductList(token: string) {
-  // Definición de tipos para los filtros
+  // Estado de los filtros aplicados en la búsqueda
   const [searchFilters, setSearchFilters] = useState({
     code: "",
     category: "",
     minPrice: "",
     maxPrice: "",
-    minCost: "",
+    minCost: "", 
     maxCost: "",
   });
 
   const [inputFilters, setInputFilters] = useState({ ...searchFilters });
+  
+  // Aplicamos debounce a los filtros de entrada (500ms de retraso)
+  const debouncedFilters = useDebounce(inputFilters, 500);
+  
   const [products, setProducts] = useState<Product[]>([]);
   const [stockMap, setStockMap] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -43,13 +48,22 @@ export function useProductList(token: string) {
     [token]
   );
 
-  // Función para cargar productos
+  // La consulta se basa en searchFilters
   const loadProducts = useCallback(
     async (page: number, filterParams = searchFilters) => {
       setIsLoading(true);
       try {
-        const params = { ...filterParams, page, size: pagination.pageSize };
-        const data: ProductResponse = await getProducts(params, token);
+        const preparedParams = {
+          ...filterParams,
+          page,
+          size: pagination.pageSize,
+          minCost: filterParams.minCost !== "" ? parseFloat(filterParams.minCost) : undefined,
+          maxCost: filterParams.maxCost !== "" ? parseFloat(filterParams.maxCost) : undefined,
+          minPrice: filterParams.minPrice !== "" ? parseFloat(filterParams.minPrice) : undefined,
+          maxPrice: filterParams.maxPrice !== "" ? parseFloat(filterParams.maxPrice) : undefined,
+        };
+
+        const data: ProductResponse = await getProducts(preparedParams, token);
 
         // Cargar el stock para cada producto
         const stockPromises = data.data.map(async (product) => {
@@ -74,6 +88,7 @@ export function useProductList(token: string) {
         });
       } catch (error) {
         console.error("Error al obtener productos", error);
+        setProducts([]);
       } finally {
         setIsLoading(false);
       }
@@ -81,13 +96,13 @@ export function useProductList(token: string) {
     [searchFilters, token, pagination.pageSize, loadProductStock]
   );
 
-  // Efecto para manejar cambios en los filtros
+  // Actualizamos los filtros con debounce
   useEffect(() => {
     if (token) {
-      setSearchFilters(inputFilters);
-      loadProducts(1, inputFilters);
+      setSearchFilters(debouncedFilters);
+      loadProducts(1, debouncedFilters);
     }
-  }, [inputFilters, token, loadProducts]);
+  }, [debouncedFilters, token, loadProducts]);
 
   // Carga inicial
   useEffect(() => {
@@ -96,14 +111,12 @@ export function useProductList(token: string) {
     }
   }, [token, loadProducts]);
 
-  // Función de búsqueda
   const handleSearch = () => {
     setSearchFilters(inputFilters);
     setPagination((prev) => ({ ...prev, currentPage: 1 }));
     loadProducts(1, inputFilters);
   };
 
-  // Función de cambio de página
   const handlePageChange = (page: number) => {
     if (page < 1 || page > pagination.totalPages) return;
     setPagination((prev) => ({ ...prev, currentPage: page }));

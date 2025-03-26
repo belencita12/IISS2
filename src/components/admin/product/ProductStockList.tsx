@@ -8,7 +8,7 @@ interface StockListProps {
   isLoading: boolean;
 }
 
-const StockList: React.FC<StockListProps> = ({ 
+const ProductStockList: React.FC<StockListProps> = ({ 
   stockDetails, 
   stocks, 
   isLoading 
@@ -50,4 +50,4 @@ const StockList: React.FC<StockListProps> = ({
   );
 };
 
-export default StockList;
+export default ProductStockList;
