@@ -2,7 +2,7 @@ const SESSION_KEY = "sessionToken";
 
 describe('Registrar Mascota con PetForm', () => {
 
-  const BASE_URL = "https://iiss2-backend-0q2e.onrender.com"
+  const BASE_URL = Cypress.env("API_BASEURL");
 
   const PET_MOCK = {
     name: "Miau",
