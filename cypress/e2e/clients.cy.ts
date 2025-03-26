@@ -98,7 +98,7 @@ describe('Página de Detalles del Cliente', () => {
   });
 
   it('debería mostrar un mensaje cuando no haya mascotas disponibles', () => {
-    const clientId = 1;  // Ejemplo de ID de cliente
+    const clientId = 82;  // Ejemplo de ID de cliente
 
     // Intercepta la llamada al cliente
     cy.intercept("GET", `/api/auth/session`).as("getAuthData");
