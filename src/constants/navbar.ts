@@ -1,6 +1,6 @@
 export const clientLinks = [
   { label: "Inicio", href: "/" },
-  { label: "Nosotros", href: "/nosotros" },
-  { label: "Servicios", href: "/servicios" },
-  { label: "Tienda", href: "/tienda" },
+  { label: "Nosotros", href: "/about" },
+  { label: "Servicios", href: "/services" },
+  { label: "Tienda", href: "/shop" },
 ];

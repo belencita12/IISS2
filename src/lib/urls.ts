@@ -15,4 +15,6 @@ export const VACCINE_BATCH_API = `${BASE_API_URL}/vaccine-batch`;
 export const EMPLOYEE_API = `${BASE_API_URL}/employee`;
 export const WORK_POSITION_API = `${BASE_API_URL}/work-position`;
 export const STOCK_API = `${BASE_API_URL}/stock`;
+export const STOCK_DETAILS_API = `${BASE_API_URL}/stock-details`;
+
 
