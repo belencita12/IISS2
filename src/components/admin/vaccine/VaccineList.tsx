@@ -42,36 +42,25 @@ export default function VaccineList({ token }: VaccineListProps) {
 
   const handleConfirmDelete = async () => {
     if (!vaccineToDelete) return;
-
+  
     try {
-      const response = await fetch(
+      const res = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/vaccine/${vaccineToDelete.id}`,
         {
           method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
-
-      if (!response.ok) {
-        throw new Error("Error al eliminar la vacuna");
-      }
-
-      console.log("Vacuna eliminada:", vaccineToDelete.id);
-
-      setData((prevData) => ({
-        ...prevData,
-        vaccines: prevData.vaccines.filter(
-          (vaccine) => vaccine.id !== vaccineToDelete.id
-        ),
-        pagination: {
-          ...prevData.pagination,
-          totalItems: prevData.pagination.totalItems - 1,
-        },
-      }));
-
+  
+      if (!res.ok) throw new Error("Error al eliminar la vacuna");
+  
       toast("success", "Vacuna eliminada exitosamente");
+  
+      const currentPage = data.pagination.currentPage;
+      const isLastItemOnPage = data.vaccines.length === 1;
+      const newPage = isLastItemOnPage && currentPage > 1 ? currentPage - 1 : currentPage;
+  
+      await loadVaccines(newPage);
     } catch (error) {
       console.error("Error al eliminar vacuna:", error);
       toast("error", "Error al eliminar vacuna");
@@ -80,7 +69,8 @@ export default function VaccineList({ token }: VaccineListProps) {
       setVaccineToDelete(null);
     }
   };
-
+  
+  
   const loadVaccines = useCallback(
     async (page: number = 1) => {
       if (!token) return;
@@ -134,7 +124,7 @@ export default function VaccineList({ token }: VaccineListProps) {
     );
   
     setFilteredData(results);
-  }, [data.vaccines]); // ✅ solo se vuelve a definir si cambian las vacunas  
+  }, [data.vaccines]); 
 
   const handlePageChange = (page: number) =>
     setData((prev) => ({
