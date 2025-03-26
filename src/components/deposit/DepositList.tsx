@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import DepositCard from "./DepositCard";
 import { LoaderCircleIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { StockForm } from "../stock/register/StockForm";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext,} from "../ui/pagination";
-
 interface Deposit {
   id: number;
   name: string;
@@ -26,51 +25,61 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [allDeposits, setAllDeposits] = useState<Deposit[]>([]);
 
-  useEffect(() => {
-    const fetchDeposits = async () => {
-      try {
-        setIsLoading(true);
-        const apiUrl = process.env.NEXT_PUBLIC_BASE_URL;
-        if (!apiUrl) {
-          console.error("Error: NEXT_PUBLIC_BASE_URL no está definido");
-          return;
-        }
-        if (!token) {
-          console.error("Error: No hay token de autenticación");
-          return;
-        }
-
-        const response = await fetch(`${apiUrl}/stock?page=${currentPage}`, {
-          method: "GET",
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok){
-          throw new Error("Error al obtener los depositos");
-        }
-
-        const data = await response.json();
-        setAllDeposits(data.data);
-        setDeposits(data.data);
-        setTotalPages(data.totalPages);
-      } catch (error) {
-        console.error("Error fetching deposits:", error);
-      } finally {
-        setIsLoading(false);
+  const fetchDeposits = useCallback(async (
+    page: number, token: string, search: string = ""
+  ) => {
+    try {
+      setIsLoading(true);
+      const apiUrl = process.env.NEXT_PUBLIC_BASE_URL;
+      if (!apiUrl) {
+        console.error("Error: NEXT_PUBLIC_BASE_URL no está definido");
+        return;
       }
-    };
-
-    fetchDeposits();
-  }, [currentPage, token]);
+      if (!token) {
+        console.error("Error: No hay token de autenticación");
+        return;
+      }
+  
+      const params = new URLSearchParams();
+      params.append("page", page.toString());
+      if (search) params.append("name", search);
+  
+      const response = await fetch(`${apiUrl}/stock?${params.toString()}`, {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error("Error al obtener los depósitos");
+      }
+  
+      const data = await response.json();
+      setAllDeposits(data.data);
+      setDeposits(data.data);
+      setTotalPages(data.totalPages);
+    } catch (error) {
+      console.error("Error fetching deposits:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+  
+  
+  useEffect(() => {
+    if (token) {
+      fetchDeposits(currentPage, token);
+    }
+    
+  }, [currentPage, token, fetchDeposits]);
 
   const handleSearch = () => {
-    const filtered = allDeposits.filter((deposit) =>
-     deposit.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setDeposits(filtered);
+    if (token) {
+      setCurrentPage(1);
+      fetchDeposits(currentPage, token, searchTerm);
+    }
   }
 
   const handleAddDeposit = () => {
@@ -137,7 +146,11 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
       </Pagination>
 
       {isModalOpen && (
-        <StockForm token={token} isOpen={isModalOpen} onClose={handleCloseModal} />
+        <StockForm token={token} isOpen={isModalOpen} onClose={handleCloseModal} 
+         onRegisterSuccess={() => {
+          fetchDeposits(1, token);
+          setCurrentPage(1);
+         }}/>
       )}
     </div>
   );
