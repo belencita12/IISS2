@@ -77,7 +77,7 @@ export const ProviderDetail: React.FC<ProviderDetailContentProps> = ({
           </div>  
 
           {/* Sección con los datos de contacto */}           
-          <div className="border rounded-lg p-3 pl-2">             
+          <div className="border rounded-lg p-2 pl-2">             
             <p className="text-sm text-gray-600">Contacto:</p>             
             
             {/* Teléfono del proveedor */}             
