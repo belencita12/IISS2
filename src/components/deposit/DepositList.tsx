@@ -6,6 +6,9 @@ import { LoaderCircleIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { StockForm } from "../stock/register/StockForm";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext,} from "../ui/pagination";
+import SearchBar from "../admin/client/SearchBar";
+
+
 interface Deposit {
   id: number;
   name: string;
@@ -92,18 +95,13 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
 
   return (
     <div className="p-6">
-      <div className="flex flex-col md:flex-row gap-4 mb-4 items-center">
-        <input
-          type="text"
-          placeholder="Nombre de Sucursal..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="border border-gray-300 rounded px-4 py-2 w-full"
-        />
-        <Button onClick={handleSearch} className="w-full md:w-auto">
-          Buscar
-        </Button>
-      </div>
+      <SearchBar
+        onSearch={(term) => {
+          setSearchTerm(term);
+          setCurrentPage(1);
+          fetchDeposits(1, token, term);
+        }}
+      />
 
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold mb-4">Depósitos</h2>
@@ -117,11 +115,18 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
           <LoaderCircleIcon className="lucide lucide-loader-circle animate-spin" />
         </div>
       )}
-      <div className="space-y-4">
-        {deposits.map((deposit) => (
-          <DepositCard key={deposit.id} nombre={deposit.name} ubicacion={deposit.address} id={deposit.id} />
-        ))}
-      </div>
+      {!isLoading && (
+        <div className="space-y-4">
+          {deposits.map((deposit) => (
+            <DepositCard
+              key={deposit.id}
+              nombre={deposit.name}
+              ubicacion={deposit.address}
+              id={deposit.id}
+            />
+          ))}
+        </div>
+      )}
 
       <Pagination className="mt-6">
         <PaginationContent>
