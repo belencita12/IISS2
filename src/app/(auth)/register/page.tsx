@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ValidatedInput } from "@/components/global/ValidatedInput";
+import { set } from "zod";
 
 interface IFormData {
   name: string;
@@ -34,10 +35,12 @@ export default function RegisterForm() {
 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     setError(null);
     setSuccess(null);
 
@@ -59,11 +62,7 @@ export default function RegisterForm() {
       setError("Ingrese un correo válido.");
       return;
     }
-
-    if (!/^\d{9}$/.test(formData.phoneNumber)) {
-      setError("Ingrese un número de teléfono válido.");
-      return;
-    }
+    
 
     if (formData.address.length < 10) {
       setError("Ingrese una dirección válida.");
@@ -119,6 +118,9 @@ export default function RegisterForm() {
       }, 2000);
     } catch (error) {
       setError("Error de conexión. Inténtalo nuevamente.");
+    }
+    finally {
+      setIsLoading(false);
     }
   };
 
@@ -226,8 +228,8 @@ export default function RegisterForm() {
               <Button variant="outline" className="flex-1" asChild>
                 <Link href="/login">Tengo una cuenta</Link>
               </Button>
-              <Button type="submit" className="flex-1">
-                Registrarme
+              <Button type="submit" className="flex-1" disabled={isLoading}>
+                {isLoading ? "Registrando..." : "Registrarme"}
               </Button>
             </div>
           </form>
