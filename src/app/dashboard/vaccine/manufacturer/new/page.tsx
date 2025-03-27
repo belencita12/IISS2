@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import authOptions from "@/lib/auth/options";
 import { redirect } from "next/navigation";
-import VaccineManufacturerForm from "@/components/admin/vaccine/VaccineManufacturerForm";
+import VaccineManufacturerForm from "@/components/admin/vaccine-manufacturer/VaccineManufacturerForm";
 
 export default async function NewVaccineManufacturerPage() {
     const session = await getServerSession(authOptions);

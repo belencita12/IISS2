@@ -60,12 +60,20 @@ export async function getManufacturerById(token: string, id: number) {
 
 export async function deleteManufacturer(token: string, id: number) {
   const response = await fetch(`${VACCINE_MANUFACTURER_API}/${id}`, {
-    method: 'DELETE',
+    method: "DELETE",
     headers: {
-      'Authorization': `Bearer ${token}`
-    }
+      Authorization: `Bearer ${token}`,
+    },
   });
 
-  if (!response.ok) throw new Error('Error al eliminar fabricante');
-  return response.json();
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Error al eliminar fabricante: ${errorText}`);
+  }
+
+  const contentType = response.headers.get("content-type");
+  const hasBody = contentType && contentType.includes("application/json");
+
+  return hasBody ? await response.json() : null;
 }
+
