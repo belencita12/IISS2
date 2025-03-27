@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { getSpecies, getRacesBySpecies } from "@/lib/pets/getRacesAndSpecies";
-import SearchBar from "../vaccine/SearchBar";
+import SearchBar from "@/components/global/SearchBar";
 import { Pencil, Trash } from "lucide-react";
 import { toast } from "@/lib/toast";
 import GenericTable, {
@@ -48,21 +48,17 @@ export default function RaceList({ token }: RaceListProps) {
     
                 let races = [];
                 if (selectedSpecies !== null) {
-                    console.log(`Obteniendo razas para la especie ${selectedSpecies} con filtro "${query}"`);
                     races = await getRacesBySpecies(selectedSpecies, token);
                 } else {
-                    console.log(`Obteniendo todas las razas con filtro "${query}"`);
                     races = await getRaces(token);
                 }
-    
-                // Filtrar en frontend si el backend no tiene filtro por nombre
+
                 if (query) {
                     races = races.filter((race: any) =>
                         race.name.toLowerCase().includes(query.toLowerCase())
                     );
                 }
-    
-                console.log("Razas obtenidas:", races);
+
                 setData({
                     races: races.map((race: any) => ({
                         ...race,
@@ -116,7 +112,7 @@ export default function RaceList({ token }: RaceListProps) {
 
     return (
         <div className="p-4 mx-auto">
-            <SearchBar onSearch={handleSearch} /> {/* Agregamos la barra de búsqueda */}
+            <SearchBar onSearch={handleSearch} placeholder="Buscar raza..." manualSearch={true} />
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-3xl font-bold">Razas</h2>
                 <Button variant="outline" className="px-6" onClick={() => router.push("/dashboard/races/register")}>Agregar</Button>
