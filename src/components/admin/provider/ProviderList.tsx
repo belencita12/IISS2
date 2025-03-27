@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { EyeIcon } from "lucide-react";
-import { Modal } from "@/components/global/Modal"; 
+import { Modal } from "@/components/global/Modal";
 import { ProviderDetail } from "./ProviderDetail";
 
 interface ProviderListProps {
@@ -34,7 +34,7 @@ export default function ProviderList({ token }: ProviderListProps) {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Lista de Proveedores</h1>
-      
+
       <div className="space-y-4">
         {providersList.map((provider) => (
           <div key={provider.id} className="flex items-center justify-between border p-4 rounded">
@@ -44,7 +44,7 @@ export default function ProviderList({ token }: ProviderListProps) {
             </div>
             {/* Botón para seleccionar el proveedor y abrir el modal con los detalles */}
             <button
-              onClick={() => setSelectedProviderId(provider.id)} 
+              onClick={() => setSelectedProviderId(provider.id)}
               className="text-blue-500 hover:text-blue-700"
               title="Ver detalles"
             >
@@ -53,17 +53,21 @@ export default function ProviderList({ token }: ProviderListProps) {
           </div>
         ))}
       </div>
-      
+
       {/* Modal que muestra los detalles del proveedor seleccionado */}
-      <Modal isOpen={!!selectedProviderId} onClose={() => setSelectedProviderId(null)} size="lg">
+      <Modal 
+        isOpen={!!selectedProviderId} 
+        onClose={() => setSelectedProviderId(null)} 
+        size="lg"
+      >
         <div style={{ width: '600px', maxWidth: '100%' }}>
           {/* Componente que muestra los detalles del proveedor, pasando el id y el token */}
-          <ProviderDetail
-            token={token}
-            isOpen={!!selectedProviderId} 
-            onClose={() => setSelectedProviderId(null)} 
-            providerId={selectedProviderId} 
-          />
+          {selectedProviderId !== null && (
+            <ProviderDetail
+              token={token}
+              providerId={selectedProviderId}
+            />
+          )}
         </div>
       </Modal>
     </div>
