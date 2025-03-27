@@ -26,8 +26,8 @@ export async function getWorkPositions(
   });
 
   try {
-    console.log("GET URL:", url.toString());
-    console.log("Token:", token);
+    //console.log("GET URL:", url.toString());
+    //console.log("Token:", token);
 
     const response = await fetch(url.toString(), {
       method: 'GET',

@@ -7,7 +7,7 @@ import { toast } from "@/lib/toast";
 import GenericTable, { Column, TableAction, PaginationInfo } from "@/components/global/GenericTable";
 import WorkPositionTableSkeleton from "./skeleton/WorkPositionTableSkeleton";
 import { useRouter } from "next/navigation";
-import { getWorkPositions} from "@/lib/work-position/getAllPositions";
+import { getWorkPositions } from "@/lib/work-position/getAllPositions";
 import { deleteWorkPosition } from "@/lib/work-position/deletePosition";
 import SearchBar from "@/components/global/SearchBar";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
@@ -18,19 +18,21 @@ interface Props {
 }
 
 export default function WorkPositionList({ token }: Props) {
-    const router = useRouter();
-    const [data, setData] = useState<{
-        positions: Position[];
-        pagination: PaginationInfo;
-      }>({
-        positions: [],
-        pagination: { currentPage: 1, totalPages: 1, totalItems: 0, pageSize: 10 },
-      });
-      
+  const router = useRouter();
+  const [data, setData] = useState<{
+    positions: Position[];
+    pagination: PaginationInfo;
+  }>({
+    positions: [],
+    pagination: { currentPage: 1, totalPages: 1, totalItems: 0, pageSize: 10 },
+  });
+
   const [filteredData, setFilteredData] = useState<Position[]>([]);
   const [loading, setLoading] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [positionToDelete, setPositionToDelete] = useState<Position | null>(null);
+  const [lastSearch, setLastSearch] = useState("");
+
 
   const handleConfirmDelete = async () => {
     if (!positionToDelete) return;
@@ -53,11 +55,10 @@ export default function WorkPositionList({ token }: Props) {
   };
 
   const loadWorkPositions = useCallback(
-    async (page: number = 1) => {
+    async (page: number = 1, filters = {}) => {
       setLoading(true);
       try {
-        const result = await getWorkPositions(token, page);
-        console.log(result);
+        const result = await getWorkPositions(token, page, data.pagination.pageSize, filters);
         setData({
           positions: result.data,
           pagination: {
@@ -67,7 +68,6 @@ export default function WorkPositionList({ token }: Props) {
             pageSize: result.size || 10,
           },
         });
-        console.log(result.data);
         setFilteredData(result.data);
       } catch (error) {
         toast("error", "Error al cargar puestos");
@@ -76,59 +76,63 @@ export default function WorkPositionList({ token }: Props) {
         setLoading(false);
       }
     },
-    [token]
+    [token, data.pagination.pageSize]
   );
+
 
   useEffect(() => {
     loadWorkPositions(data.pagination.currentPage);
   }, [loadWorkPositions, data.pagination.currentPage]);
 
-  const handleSearch = useCallback((query: string) => {
-    const allData = data.positions;
-  
-    if (!query) {
-      setFilteredData(allData);
-      setData((prev) => ({
-        ...prev,
+
+  const handleSearch = useCallback(async (query: string) => {
+    setLoading(true);
+    setLastSearch(query);
+    try {
+      const result = await getWorkPositions(token, 1, data.pagination.pageSize, {
+        name: query,
+      });
+
+      setData({
+        positions: result.data,
         pagination: {
-          ...prev.pagination,
-          totalItems: allData.length,
-          totalPages: Math.ceil(allData.length / prev.pagination.pageSize),
-          currentPage: 1, // Reiniciar a la primera página
+          currentPage: result.currentPage || 1,
+          totalPages: result.totalPages || 1,
+          totalItems: result.total || 0,
+          pageSize: result.size || 10,
         },
-      }));
-      return;
+      });
+
+      setFilteredData(result.data);
+    } catch (error) {
+      toast("error", "Error al buscar puestos");
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
+  }, [token, data.pagination.pageSize]);
 
-    
 
-  
-    const filtered = allData.filter((p) =>
-      p.name.toLowerCase().includes(query.toLowerCase())
-    );
-  
-    setFilteredData(filtered);
-    setData((prev) => ({
-      ...prev,
-      pagination: {
-        ...prev.pagination,
-        totalItems: filtered.length,
-        totalPages: Math.ceil(filtered.length / prev.pagination.pageSize),
-        currentPage: 1, // Reiniciar a la primera página
-      },
-    }));
-  }, [data.positions]);
-  
 
-  const handlePageChange = (page: number) =>
-    setData((prev) => ({
-      ...prev,
-      pagination: { ...prev.pagination, currentPage: page },
-    }));
+
+  const handlePageChange = (page: number) => {
+    loadWorkPositions(page, { name: lastSearch }); // usamos el filtro actual
+  };
+
 
   const columns: Column<Position>[] = [
     { header: "Nombre", accessor: "name" },
-    { header: "Turnos", accessor: (row) => (row.shifts?.length ?? 0).toString() },
+    { 
+      header: "Turnos", 
+      accessor: (row) => {
+        //console.log("Row en la tabla:", row);
+        //console.log("Shifts:", row.shifts);
+        return (row.shifts?.length ?? 0).toString();
+      } 
+    }
+    
+
+
   ];
 
   const actions: TableAction<Position>[] = [
@@ -152,11 +156,6 @@ export default function WorkPositionList({ token }: Props) {
     },
   ];
 
-  const { currentPage, pageSize } = data.pagination;
-  const start = (currentPage - 1) * pageSize;
-  const end = start + pageSize;
-  const paginatedData = filteredData.slice(start, end);
-
   return (
     <div className="p-4 mx-auto">
       <SearchBar
@@ -168,13 +167,13 @@ export default function WorkPositionList({ token }: Props) {
 
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-3xl font-bold">Puestos de trabajo</h2>
-        <Button onClick={() => router.push("/dashboard/settings/positions/new")}>
+        <Button onClick={() => router.push("/dashboard/settings/positions/register")}>
           Agregar nuevo puesto
         </Button>
       </div>
 
       <GenericTable
-        data={paginatedData}
+        data={filteredData} 
         columns={columns}
         actions={actions}
         pagination={data.pagination}
@@ -183,6 +182,7 @@ export default function WorkPositionList({ token }: Props) {
         skeleton={<WorkPositionTableSkeleton />}
         emptyMessage="No se encontraron puestos"
       />
+
 
       <ConfirmationModal
         isOpen={isDeleteModalOpen}
