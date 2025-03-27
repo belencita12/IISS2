@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 const settingsOptions = [
-  { name: 'Razas', description: 'Listar, crear, editar o eliminar las razas soportadas por el sistema.', icon: '🐶', link: '/dashboard/settings/races' },
+  { name: 'Razas', description: 'Listar, crear, editar o eliminar las razas soportadas por el sistema.', icon: '🐶', link: '/dashboard/race' },
   { name: 'Especies', description: 'Gestionar las especies disponibles en el sistema.', icon: '🐾', link: '/dashboard/settings/species' },
   { name: 'Puestos', description: 'Administrar los puestos soportados en la veterinaria.', icon: '🏥', link: '/dashboard/settings/positions' },
 ];

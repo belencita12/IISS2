@@ -3,8 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { getSpecies, getRacesBySpecies } from "@/lib/pets/getRacesAndSpecies";
-import SearchBar from "../client/SearchBar";
-import { Eye, Pencil, Trash } from "lucide-react";
+import SearchBar from "../vaccine/SearchBar";
+import { Pencil, Trash } from "lucide-react";
 import { toast } from "@/lib/toast";
 import GenericTable, {
     Column,
@@ -13,6 +13,7 @@ import GenericTable, {
 } from "@/components/global/GenericTable";
 import RaceTableSkeleton from "./skelenton/RaceTableSkeleton";
 import { useRouter } from "next/navigation";
+import { getRaces } from "@/lib/pets/getRaces";
 
 export interface RaceWithSpecies {
     id: number;
@@ -35,26 +36,40 @@ export default function RaceList({ token }: RaceListProps) {
     const [selectedSpecies, setSelectedSpecies] = useState<number | null>(null);
 
     const loadRaces = useCallback(
-        async (page: number = 1) => {
+        async (page: number = 1, query: string = "") => {
             if (!token) return;
             setLoading(true);
-
+    
             try {
                 if (!species.length) {
                     const speciesData = await getSpecies(token);
                     setSpecies(speciesData);
                 }
-
+    
+                let races = [];
                 if (selectedSpecies !== null) {
-                    const races = await getRacesBySpecies(selectedSpecies, token);
-                    setData({
-                        races: races.map((race: any) => ({
-                            ...race,
-                            speciesName: species.find((s) => s.id === race.speciesId)?.name || "Desconocida",
-                        })),
-                        pagination: { currentPage: page, totalPages: 1, totalItems: races.length, pageSize: 10 },
-                    });
+                    console.log(`Obteniendo razas para la especie ${selectedSpecies} con filtro "${query}"`);
+                    races = await getRacesBySpecies(selectedSpecies, token);
+                } else {
+                    console.log(`Obteniendo todas las razas con filtro "${query}"`);
+                    races = await getRaces(token);
                 }
+    
+                // Filtrar en frontend si el backend no tiene filtro por nombre
+                if (query) {
+                    races = races.filter((race: any) =>
+                        race.name.toLowerCase().includes(query.toLowerCase())
+                    );
+                }
+    
+                console.log("Razas obtenidas:", races);
+                setData({
+                    races: races.map((race: any) => ({
+                        ...race,
+                        speciesName: species.find((s) => s.id === race.speciesId)?.name || "Desconocida",
+                    })),
+                    pagination: { currentPage: page, totalPages: 1, totalItems: races.length, pageSize: 10 },
+                });
             } catch (error) {
                 toast("error", "Error al cargar razas");
                 console.error("Error cargando razas:", error);
@@ -65,9 +80,14 @@ export default function RaceList({ token }: RaceListProps) {
         [token, species, selectedSpecies]
     );
 
+    const handleSearch = (query: string) => loadRaces(1, query);
+
+    
+
     useEffect(() => {
         if (token) loadRaces(data.pagination.currentPage);
     }, [token, data.pagination.currentPage, loadRaces]);
+    
 
     const handlePageChange = (page: number) =>
         setData((prev) => ({ ...prev, pagination: { ...prev.pagination, currentPage: page } }));
@@ -83,11 +103,6 @@ export default function RaceList({ token }: RaceListProps) {
 
     const actions: TableAction<RaceWithSpecies>[] = [
         {
-            icon: <Eye className="w-4 h-4" />,
-            onClick: (race) => console.log("Ver detalles:", race),
-            label: "Ver detalles",
-        },
-        {
             icon: <Pencil className="w-4 h-4" />,
             onClick: (race) => console.log("Editar:", race),
             label: "Editar",
@@ -101,6 +116,7 @@ export default function RaceList({ token }: RaceListProps) {
 
     return (
         <div className="p-4 mx-auto">
+            <SearchBar onSearch={handleSearch} /> {/* Agregamos la barra de búsqueda */}
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-3xl font-bold">Razas</h2>
                 <Button variant="outline" className="px-6" onClick={() => router.push("/dashboard/races/register")}>Agregar</Button>
