@@ -121,19 +121,16 @@ export default function WorkPositionList({ token }: Props) {
 
 
   const columns: Column<Position>[] = [
+    { header: "ID", accessor: (row) => row.id?.toString() ?? "—" },
     { header: "Nombre", accessor: "name" },
     { 
       header: "Turnos", 
       accessor: (row) => {
-        //console.log("Row en la tabla:", row);
-        //console.log("Shifts:", row.shifts);
         return (row.shifts?.length ?? 0).toString();
       } 
     }
-    
-
-
   ];
+  
 
   const actions: TableAction<Position>[] = [
     {
