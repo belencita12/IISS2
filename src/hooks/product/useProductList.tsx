@@ -5,7 +5,6 @@ import { Product, ProductResponse } from "@/lib/admin/products/IProducts";
 import useDebounce from "@/lib/admin/products/useDebounceHook";
 
 export function useProductList(token: string) {
-  // Initial filters state
   const initialFilters = useMemo(() => ({
     code: "",
     category: "",
@@ -18,7 +17,6 @@ export function useProductList(token: string) {
   const [searchFilters, setSearchFilters] = useState(initialFilters);
   const [inputFilters, setInputFilters] = useState(initialFilters);
   
-  // Debounce with a stable initial state
   const debouncedFilters = useDebounce(inputFilters, 500);
   
   const [products, setProducts] = useState<Product[]>([]);
@@ -31,7 +29,6 @@ export function useProductList(token: string) {
     pageSize: 5,
   });
 
-  // Memoize stock loading to prevent unnecessary recreations
   const loadProductStock = useCallback(
     async (productId: string) => {
       try {
@@ -45,7 +42,6 @@ export function useProductList(token: string) {
     [token]
   );
 
-  // Memoize product loading with stable dependencies
   const loadProducts = useCallback(
     async (page: number, filterParams = initialFilters) => {
       if (!token) return;
@@ -56,7 +52,6 @@ export function useProductList(token: string) {
           ...filterParams,
           page,
           size: pagination.pageSize,
-          // Improved code filtering: trim and make case-insensitive
           code: filterParams.code ? filterParams.code.trim().toLowerCase() : undefined,
           minCost: filterParams.minCost !== "" ? parseFloat(filterParams.minCost) : undefined,
           maxCost: filterParams.maxCost !== "" ? parseFloat(filterParams.maxCost) : undefined,
@@ -66,7 +61,6 @@ export function useProductList(token: string) {
 
         const data: ProductResponse = await getProducts(preparedParams, token);
 
-        // Load stock for each product concurrently
         const stockPromises = data.data.map(async (product) => ({
           id: product.id,
           stock: await loadProductStock(product.id)
@@ -96,7 +90,6 @@ export function useProductList(token: string) {
     [token, pagination.pageSize, loadProductStock, initialFilters]
   );
 
-  // Simplified effect for filter changes
   useEffect(() => {
     if (token && JSON.stringify(debouncedFilters) !== JSON.stringify(searchFilters)) {
       setSearchFilters(debouncedFilters);
@@ -104,7 +97,6 @@ export function useProductList(token: string) {
     }
   }, [debouncedFilters, token, searchFilters, loadProducts]);
 
-  // Initial load effect
   useEffect(() => {
     if (token) {
       loadProducts(1);
