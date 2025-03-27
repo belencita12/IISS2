@@ -121,7 +121,6 @@ export default function WorkPositionList({ token }: Props) {
 
 
   const columns: Column<Position>[] = [
-    { header: "ID", accessor: (row) => row.id?.toString() ?? "—" },
     { header: "Nombre", accessor: "name" }
   ];
   
