@@ -129,7 +129,7 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
         <SearchBar onSearch={handleSearch} />
         <div className="flex justify-between items-center mb-4">
             <h2 className="text-3xl font-bold">Empleados</h2>
-            <Button variant="outline" className="px-6" onClick={() => router.push("/dashboard/clients/register")}>
+            <Button variant="outline" className="px-6" onClick={() => router.push("/dashboard/employee/register")}>
                     Agregar
             </Button>
         </div>
