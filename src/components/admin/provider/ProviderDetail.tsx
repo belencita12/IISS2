@@ -1,100 +1,101 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { X, Phone, FileText } from 'lucide-react';
-import { Provider } from "@/lib/provider/IProvider";
-import { getProviderById } from "@/lib/provider/getProviderById";
+import { X, Phone, FileText } from "lucide-react";
+import { Provider } from "@/lib/provider/IProvider"; 
+import { getProviderById } from "@/lib/provider/getProviderById"; 
 
-interface ProviderDetailProps {
-  token: string;
-  isOpen: boolean;
-  onClose: () => void;
-  providerId: number | null;
+interface ProviderDetailContentProps {
+  token: string; 
+  isOpen: boolean; 
+  onClose: () => void; 
+  providerId: number | null; 
 }
 
-export const ProviderDetail: React.FC<ProviderDetailProps> = ({
+export const ProviderDetail: React.FC<ProviderDetailContentProps> = ({
   token,
   isOpen,
   onClose,
   providerId
 }) => {
   const [provider, setProvider] = useState<Provider | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); 
 
   useEffect(() => {
     const fetchProviderDetails = async () => {
       if (isOpen && providerId) {
-        setIsLoading(true);
+        setIsLoading(true); 
         try {
-          const fetchedProvider = await getProviderById(providerId, token);
+          const fetchedProvider = await getProviderById(providerId, token); 
           setProvider(fetchedProvider);
         } catch (error) {
-          console.error("Error fetching provider details:", error);
+          console.error("Error fetching provider details:", error); 
         } finally {
-          setIsLoading(false);
+          setIsLoading(false); 
         }
       }
     };
 
-    fetchProviderDetails();
+    fetchProviderDetails(); 
   }, [isOpen, providerId, token]);
-
-  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-lg w-[500px] max-w-lg relative">
-        {/* Botón de cierre en la esquina superior derecha con X más pequeña */}
+      <div className="bg-white rounded-lg shadow-lg w-[500px] max-w-lg relative p-6">
         <button
-          onClick={onClose}
+          onClick={onClose} 
           className="absolute top-2 right-2 p-2 text-gray-600 hover:text-gray-800"
-          aria-label="Cerrar modal de detalles de proveedor"
+          aria-label="Cerrar"
         >
-          <X size={16} />
+          <X size={16} /> 
         </button>
 
-        {/* Encabezado del modal con padding superior para separar del botón de cierre */}
-        <div className="px-6 pt-10 pb-0">
-          <h2 className="text-xl font-bold text-center mb-2">
-            {isLoading ? "Cargando..." : provider?.businessName || "Detalles del Proveedor"}
-          </h2>
-          {/* Línea debajo del título, ahora con padding horizontal para alinearse */}
-          <div className="border-t border-gray-300 mx-0"></div>
+        {/* Encabezado del modal */}
+        <div className="p-4">
+          <div className="text-center">
+            <h2 className="text-xl font-bold">
+              {isLoading ? "Cargando..." : provider?.businessName || "Detalles del Proveedor"}
+            </h2>
+          </div>
+          {/* Línea debajo del título */}
+          <div className="border-t border-gray-300 mt-2 w-full"></div>
         </div>
 
         {/* Contenido del modal */}
         {isLoading ? (
-          <div className="p-6 text-center">Cargando detalles...</div>
+          <div className="text-center mt-4">Cargando detalles...</div>
         ) : provider ? (
-          <div className="px-6 pb-6 pt-3 space-y-2">
-            <div>
+          <div className="space-y-4 px-4">
+            {/* Descripción del proveedor */}
+            <div className="pl-2">
               <p className="text-sm text-gray-600">Descripción:</p>
               <p className="font-medium">{provider.description}</p>
             </div>
 
-            <div>
-              <div className="border rounded-lg p-2">
-                <p className="text-sm text-gray-600 mb-2">Contacto:</p>
-                <div className="flex items-center space-x-4">
-                  <Phone size={22} className="text-black-600" />
-                  <div>
-                    <p className="text-xs text-gray-500">Teléfono</p>
-                    <p className="text-base">{provider.phoneNumber}</p>
-                  </div>
+            {/* Información de contacto */}
+            <div className="border rounded-lg p-3 pl-2">
+              <p className="text-sm text-gray-600">Contacto:</p>
+              {/* Teléfono del proveedor */}
+              <div className="mt-2 flex items-center space-x-3">
+                <Phone size={20} className="text-black-600" />
+                <div>
+                  <p className="text-xs text-gray-500">Teléfono</p>
+                  <p className="text-base">{provider.phoneNumber}</p>
                 </div>
-                <div className="mt-4 flex items-center space-x-4">
-                  <FileText size={22} className="text-black-600" />
-                  <div>
-                    <p className="text-xs text-gray-500">RUC</p>
-                    <p className="text-base">{provider.ruc}</p>
-                  </div>
+              </div>
+              {/* RUC del proveedor */}
+              <div className="mt-4 flex items-center space-x-3">
+                <FileText size={20} className="text-black-600" />
+                <div>
+                  <p className="text-xs text-gray-500">RUC</p>
+                  <p className="text-base">{provider.ruc}</p>
                 </div>
               </div>
             </div>
           </div>
         ) : (
-          <div className="p-6 text-center text-red-500">
+          <div className="text-center text-red-500 mt-4">
             No se pudieron cargar los detalles del proveedor
-          </div>
+          </div> 
         )}
       </div>
     </div>
