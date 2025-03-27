@@ -1,4 +1,4 @@
-import RaceList from "@/components/admin/race/RaceList";
+import RaceList from "@/components/admin/settings/races/RaceList";
 import { getServerSession } from "next-auth";
 import authOptions from "@/lib/auth/options";
 import { redirect } from "next/navigation";

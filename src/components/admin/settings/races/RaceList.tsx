@@ -10,7 +10,7 @@ import { Pencil, Trash } from "lucide-react";
 import { toast } from "@/lib/toast";
 import GenericTable, { Column, TableAction, PaginationInfo } from "@/components/global/GenericTable";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
-import RaceTableSkeleton from "./skelenton/RaceTableSkeleton";
+import RaceTableSkeleton from "./skeleton/RaceTableSkeleton";
 import { useRouter } from "next/navigation";
 
 export interface RaceWithSpecies {
