@@ -50,7 +50,7 @@ export default function ProviderList({ token }: ProviderListProps) {
       
       <ProviderDetailModal
         token={token}
-        isOpen={!!selectedProviderId}  // Si hay un proveedor seleccionado, el modal se abrirá
+        isOpen={!!selectedProviderId}  
         onClose={handleCloseModal}
         providerId={selectedProviderId}
       />

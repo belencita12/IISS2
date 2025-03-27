@@ -1,7 +1,7 @@
 "use client";
 import React from "react"; 
 import { Modal } from "@/components/global/Modal"; 
-import { ProviderDetail } from "./ProviderDetail";  
+import { ProviderDetail } from "./ProviderDetailContent";  
 
 interface ProviderDetailModalProps {   
   token: string;   
