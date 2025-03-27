@@ -43,19 +43,19 @@ export default function ProductFilters({
   );
 
   return (
-    <div className="flex flex-col w-full gap-4">
+    <div className="flex flex-col w-full">
       <div className="flex flex-col w-full sm:flex-row gap-4 mb-4">
-        <SearchBar
-          onSearch={(query) => {
-            setSearchInput(query);
-            setFilters((prev) => ({ ...prev, code: query }));
-            onSearch();
-          }}
-          defaultQuery={searchInput}
-          manualSearch={true}
-          debounceDelay={400}
-          placeholder="Buscar por código del producto"
-        />
+      <SearchBar
+        onSearch={(query) => {
+          setSearchInput(query);
+          setFilters((prev) => ({ ...prev, code: query }));
+        }}
+        defaultQuery={searchInput}
+        manualSearch={true}
+        debounceDelay={400}
+        placeholder="Buscar por código del producto"
+      />
+
       </div>
 
       <div className="flex flex-col sm:flex-row items-center mb-6 relative w-full">
@@ -82,7 +82,7 @@ export default function ProductFilters({
             onClearMax={() => clearFilter("maxPrice")}
             preventInvalidKeys={preventInvalidKeys}
           />
-
+        </div>
           <div className="sm:ml-auto">
             <NumericFilter
               label="Costo"
@@ -99,7 +99,6 @@ export default function ProductFilters({
               preventInvalidKeys={preventInvalidKeys}
             />
           </div>
-        </div>
       </div>
     </div>
   );
