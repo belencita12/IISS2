@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
+import { Race, Species } from "@/lib/pets/IPet";
 import { getSpecies, getRacesBySpecies } from "@/lib/pets/getRacesAndSpecies";
 import { getRaces } from "@/lib/pets/getRaces";
 import { deleteRaceByID } from "@/lib/pets/deleteRaceByID";
@@ -13,34 +14,29 @@ import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import RaceTableSkeleton from "./skeleton/RaceTableSkeleton";
 import { useRouter } from "next/navigation";
 
-export interface RaceWithSpecies {
-    id: number;
-    name: string;
-    speciesName: string;
-    speciesId: number;
-}
-
 interface RaceListProps {
     token: string | null;
 }
 
 export default function RaceList({ token }: RaceListProps) {
     const router = useRouter();
-    const [races, setRaces] = useState<RaceWithSpecies[]>([]);
+    const [races, setRaces] = useState<Race[]>([]);
     const [pagination, setPagination] = useState<PaginationInfo>({
         currentPage: 1, totalPages: 1, totalItems: 0, pageSize: 10,
     });
-    const [selectedRace, setSelectedRace] = useState<RaceWithSpecies | null>(null);
+    const [selectedRace, setSelectedRace] = useState<Race | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [species, setSpecies] = useState<{ id: number; name: string }[]>([]);
+    const [species, setSpecies] = useState<Species[]>([]);
     const [selectedSpecies, setSelectedSpecies] = useState<number | null>(null);
 
     useEffect(() => {
         if (token && species.length === 0) {
-            getSpecies(token).then(setSpecies).catch(() => toast("error", "Error al cargar especies"));
+            getSpecies(token)
+                .then(setSpecies)
+                .catch(() => toast("error", "Error al cargar especies"));
         }
-    }, [token, species.length]);
+    }, [token]);
 
     const loadRaces = useCallback(async (page = 1, query = "") => {
         if (!token) return;
@@ -52,14 +48,10 @@ export default function RaceList({ token }: RaceListProps) {
                 : await getRaces(token);
 
             const filteredRaces = query
-                ? (racesData as RaceWithSpecies[]).filter((race: RaceWithSpecies) => race.name.toLowerCase().includes(query.toLowerCase()))
+                ? racesData.filter((race: Race) => race.name.toLowerCase().includes(query.toLowerCase()))
                 : racesData;
 
-            setRaces(filteredRaces.map((race: RaceWithSpecies) => ({
-                ...race,
-                speciesName: species.find(s => s.id === race.speciesId)?.name || "Desconocida",
-            })));
-
+            setRaces(filteredRaces);
             setPagination(prev => ({
                 ...prev,
                 currentPage: page,
@@ -71,19 +63,19 @@ export default function RaceList({ token }: RaceListProps) {
         } finally {
             setLoading(false);
         }
-    }, [token, selectedSpecies, species]);
+    }, [token, selectedSpecies]);
 
     useEffect(() => {
         if (token) loadRaces(pagination.currentPage);
     }, [token, pagination.currentPage, loadRaces]);
 
-    const confirmDelete = (race: RaceWithSpecies) => {
+    const confirmDelete = (race: Race) => {
         setSelectedRace(race);
         setIsModalOpen(true);
     };
 
     const handleDelete = async () => {
-        if (!selectedRace || !selectedRace.id) return;
+        if (!selectedRace) return;
 
         const success = await deleteRaceByID(token || "", selectedRace.id);
         if (success) {
@@ -102,12 +94,15 @@ export default function RaceList({ token }: RaceListProps) {
     const handleSpeciesChange = (event: React.ChangeEvent<HTMLSelectElement>) =>
         setSelectedSpecies(Number(event.target.value) || null);
 
-    const columns: Column<RaceWithSpecies>[] = [
+    const columns: Column<Race>[] = [
         { header: "Nombre", accessor: "name" },
-        { header: "Especie", accessor: "speciesName" },
+        {
+            header: "Especie",
+            accessor: (race) => species.find(s => s.id === race.speciesId)?.name || "Desconocida",
+        },
     ];
 
-    const actions: TableAction<RaceWithSpecies>[] = [
+    const actions: TableAction<Race>[] = [
         { icon: <Pencil className="w-4 h-4" />, onClick: (race) => console.log("Editar:", race), label: "Editar" },
         { icon: <Trash className="w-4 h-4" />, onClick: confirmDelete, label: "Eliminar" },
     ];
