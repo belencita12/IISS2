@@ -84,12 +84,41 @@ export default function WorkPositionList({ token }: Props) {
   }, [loadWorkPositions, data.pagination.currentPage]);
 
   const handleSearch = useCallback((query: string) => {
-    if (!query) return setFilteredData(data.positions);
-    const results = data.positions.filter((p) =>
+    const allData = data.positions;
+  
+    if (!query) {
+      setFilteredData(allData);
+      setData((prev) => ({
+        ...prev,
+        pagination: {
+          ...prev.pagination,
+          totalItems: allData.length,
+          totalPages: Math.ceil(allData.length / prev.pagination.pageSize),
+          currentPage: 1, // Reiniciar a la primera página
+        },
+      }));
+      return;
+    }
+
+    
+
+  
+    const filtered = allData.filter((p) =>
       p.name.toLowerCase().includes(query.toLowerCase())
     );
-    setFilteredData(results);
+  
+    setFilteredData(filtered);
+    setData((prev) => ({
+      ...prev,
+      pagination: {
+        ...prev.pagination,
+        totalItems: filtered.length,
+        totalPages: Math.ceil(filtered.length / prev.pagination.pageSize),
+        currentPage: 1, // Reiniciar a la primera página
+      },
+    }));
   }, [data.positions]);
+  
 
   const handlePageChange = (page: number) =>
     setData((prev) => ({
@@ -105,12 +134,12 @@ export default function WorkPositionList({ token }: Props) {
   const actions: TableAction<Position>[] = [
     {
       icon: <Eye className="w-4 h-4" />,
-      onClick: (p) => router.push(`/dashboard/work-position/${p.id}`),
+      onClick: (p) => router.push(`/dashboard/settings/positions/${p.id}`),
       label: "Ver detalles",
     },
     {
       icon: <Pencil className="w-4 h-4" />,
-      onClick: (p) => router.push(`/dashboard/work-position/edit/${p.id}`),
+      onClick: (p) => router.push(`/dashboard/settings/positions/update/${p.id}`),
       label: "Editar",
     },
     {
@@ -123,6 +152,11 @@ export default function WorkPositionList({ token }: Props) {
     },
   ];
 
+  const { currentPage, pageSize } = data.pagination;
+  const start = (currentPage - 1) * pageSize;
+  const end = start + pageSize;
+  const paginatedData = filteredData.slice(start, end);
+
   return (
     <div className="p-4 mx-auto">
       <SearchBar
@@ -134,13 +168,13 @@ export default function WorkPositionList({ token }: Props) {
 
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-3xl font-bold">Puestos de trabajo</h2>
-        <Button onClick={() => router.push("/dashboard/work-position/new")}>
+        <Button onClick={() => router.push("/dashboard/settings/positions/new")}>
           Agregar nuevo puesto
         </Button>
       </div>
 
       <GenericTable
-        data={filteredData}
+        data={paginatedData}
         columns={columns}
         actions={actions}
         pagination={data.pagination}
