@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { getSpecies, getRacesBySpecies} from "@/lib/pets/getRacesAndSpecies";
+import { getSpecies, getRacesBySpecies } from "@/lib/pets/getRacesAndSpecies";
 import { getRaces } from "@/lib/pets/getRaces";
 import { deleteRaceByID } from "@/lib/pets/deleteRaceByID";
 import SearchBar from "@/components/global/SearchBar";
@@ -13,12 +13,11 @@ import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import RaceTableSkeleton from "./skelenton/RaceTableSkeleton";
 import { useRouter } from "next/navigation";
 
-
 export interface RaceWithSpecies {
     id: number;
     name: string;
     speciesName: string;
-    speciesId: number; 
+    speciesId: number;
 }
 
 interface RaceListProps {
@@ -27,9 +26,9 @@ interface RaceListProps {
 
 export default function RaceList({ token }: RaceListProps) {
     const router = useRouter();
-    const [data, setData] = useState<{ races: RaceWithSpecies[]; pagination: PaginationInfo }>({
-        races: [],
-        pagination: { currentPage: 1, totalPages: 1, totalItems: 0, pageSize: 10 },
+    const [races, setRaces] = useState<RaceWithSpecies[]>([]);
+    const [pagination, setPagination] = useState<PaginationInfo>({
+        currentPage: 1, totalPages: 1, totalItems: 0, pageSize: 10,
     });
     const [selectedRace, setSelectedRace] = useState<RaceWithSpecies | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,71 +36,71 @@ export default function RaceList({ token }: RaceListProps) {
     const [species, setSpecies] = useState<{ id: number; name: string }[]>([]);
     const [selectedSpecies, setSelectedSpecies] = useState<number | null>(null);
 
-    const loadRaces = useCallback(async (page: number = 1, query: string = "") => {
+    useEffect(() => {
+        if (token && species.length === 0) {
+            getSpecies(token).then(setSpecies).catch(() => toast("error", "Error al cargar especies"));
+        }
+    }, [token, species.length]);
+
+    const loadRaces = useCallback(async (page = 1, query = "") => {
         if (!token) return;
         setLoading(true);
 
         try {
-            if (species.length === 0) {
-                const speciesData = await getSpecies(token);
-                setSpecies(speciesData);
-            }
-
-            const races = selectedSpecies !== null
+            const racesData = selectedSpecies !== null
                 ? await getRacesBySpecies(selectedSpecies, token)
                 : await getRaces(token);
 
             const filteredRaces = query
-                ? races.filter((race: RaceWithSpecies) =>
-                      race.name.toLowerCase().includes(query.toLowerCase())
-                  )
-                : races;
+                ? (racesData as RaceWithSpecies[]).filter((race: RaceWithSpecies) => race.name.toLowerCase().includes(query.toLowerCase()))
+                : racesData;
 
-            setData({
-                races: filteredRaces.map((race: RaceWithSpecies) => ({
-                    ...race,
-                    speciesName: species.find((s) => s.id === race.speciesId)?.name || "Desconocida",
-                })),
-                pagination: { currentPage: page, totalPages: 1, totalItems: filteredRaces.length, pageSize: 10 },
-            });
-        } catch (error) {
+            setRaces(filteredRaces.map((race: RaceWithSpecies) => ({
+                ...race,
+                speciesName: species.find(s => s.id === race.speciesId)?.name || "Desconocida",
+            })));
+
+            setPagination(prev => ({
+                ...prev,
+                currentPage: page,
+                totalItems: filteredRaces.length,
+                totalPages: Math.ceil(filteredRaces.length / prev.pageSize),
+            }));
+        } catch {
             toast("error", "Error al cargar razas");
-            console.error("Error cargando razas:", error);
         } finally {
             setLoading(false);
         }
-    }, [token, species, selectedSpecies]);
+    }, [token, selectedSpecies, species]);
 
     useEffect(() => {
-        if (token) loadRaces(data.pagination.currentPage);
-    }, [token, data.pagination.currentPage, loadRaces]);
+        if (token) loadRaces(pagination.currentPage);
+    }, [token, pagination.currentPage, loadRaces]);
 
     const confirmDelete = (race: RaceWithSpecies) => {
-          setSelectedRace(race);
-          setIsModalOpen(true);
-        };
-        
+        setSelectedRace(race);
+        setIsModalOpen(true);
+    };
+
     const handleDelete = async () => {
-        if (!selectedRace) return;
-          
-        const success = selectedRace.id !== undefined 
-            ? await deleteRaceByID(token || "", selectedRace.id) 
-            : false;
-        
+        if (!selectedRace || !selectedRace.id) return;
+
+        const success = await deleteRaceByID(token || "", selectedRace.id);
         if (success) {
             toast("success", "Raza eliminada correctamente.");
-            loadRaces(data.pagination.currentPage);
-          } else {
+            loadRaces(pagination.currentPage);
+        } else {
             toast("error", "No se pudo eliminar la raza.");
-          }
-        
-          setIsModalOpen(false);
-          setSelectedRace(null);
-        };
+        }
+
+        setIsModalOpen(false);
+        setSelectedRace(null);
+    };
 
     const handleSearch = (query: string) => loadRaces(1, query);
-    const handlePageChange = (page: number) => setData((prev) => ({ ...prev, pagination: { ...prev.pagination, currentPage: page } }));
-    const handleSpeciesChange = (event: React.ChangeEvent<HTMLSelectElement>) => setSelectedSpecies(Number(event.target.value) || null);
+    const handlePageChange = (page: number) => setPagination(prev => ({ ...prev, currentPage: page }));
+    const handleSpeciesChange = (event: React.ChangeEvent<HTMLSelectElement>) =>
+        setSelectedSpecies(Number(event.target.value) || null);
 
     const columns: Column<RaceWithSpecies>[] = [
         { header: "Nombre", accessor: "name" },
@@ -110,11 +109,7 @@ export default function RaceList({ token }: RaceListProps) {
 
     const actions: TableAction<RaceWithSpecies>[] = [
         { icon: <Pencil className="w-4 h-4" />, onClick: (race) => console.log("Editar:", race), label: "Editar" },
-        {
-            icon: <Trash className="w-4 h-4" />,
-            onClick: confirmDelete, 
-            label: "Eliminar",
-          },
+        { icon: <Trash className="w-4 h-4" />, onClick: confirmDelete, label: "Eliminar" },
     ];
 
     return (
@@ -125,31 +120,31 @@ export default function RaceList({ token }: RaceListProps) {
                     <label className="font-semibold">Filtrar por especie:</label>
                     <select className="border p-2" onChange={handleSpeciesChange}>
                         <option value="">Todas</option>
-                        {species.map((s) => (
+                        {species.map(s => (
                             <option key={s.id} value={s.id}>{s.name}</option>
                         ))}
                     </select>
                 </div>
             </div>
-
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-3xl font-bold">Razas</h2>
                 <Button variant="outline" className="px-6" onClick={() => router.push("/dashboard/races/register")}>
                     Agregar
                 </Button>
             </div>
-           
+
             <GenericTable
-                data={data.races}
+                data={races}
                 columns={columns}
                 actions={actions}
-                pagination={data.pagination}
+                pagination={pagination}
                 onPageChange={handlePageChange}
                 isLoading={loading}
                 skeleton={<RaceTableSkeleton />}
                 emptyMessage="No se encontraron razas"
             />
-             <ConfirmationModal
+
+            <ConfirmationModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onConfirm={handleDelete}
