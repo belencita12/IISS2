@@ -4,11 +4,18 @@ import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Eye, Pencil, Trash } from "lucide-react";
 import { toast } from "@/lib/toast";
-import GenericTable, { Column, TableAction, PaginationInfo } from "@/components/global/GenericTable";
-import VaccineTableSkeleton from "./skeleton/VaccineTableSkeleton"; // Asegúrate de tener este componente
+import GenericTable, {
+  Column,
+  TableAction,
+  PaginationInfo,
+} from "@/components/global/GenericTable";
+import VaccineTableSkeleton from "../vaccine/skeleton/VaccineTableSkeleton";
 import { useRouter } from "next/navigation";
-import { getManufacturers, deleteManufacturer } from "@/lib/vaccine-manufacturer/getVaccineManufacturerById"; // Verifica la ruta del archivo
-import SearchBar from "./SearchBar";
+import {
+  getManufacturers,
+  deleteManufacturer,
+} from "@/lib/vaccine-manufacturer/getVaccineManufacturerById";
+import SearchBar from "@/components/global/SearchBar";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 
 interface Manufacturer {
@@ -27,19 +34,26 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
     pagination: PaginationInfo;
   }>({
     manufacturers: [],
-    pagination: { currentPage: 1, totalPages: 1, totalItems: 0, pageSize: 4 },
+    pagination: {
+      currentPage: 1,
+      totalPages: 1,
+      totalItems: 0,
+      pageSize: 4,
+    },
   });
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [manufacturerToDelete, setManufacturerToDelete] = useState<Manufacturer | null>(null);
+  const [manufacturerToDelete, setManufacturerToDelete] =
+    useState<Manufacturer | null>(null);
 
+  // ✅ Función reutilizable para cargar fabricantes con query
   const loadManufacturers = useCallback(
-    async (page: number = 1) => {
+    async (page: number = 1, query: string = "") => {
       if (!token) return;
       setLoading(true);
       try {
-        const results = await getManufacturers(token, page, searchQuery);
+        const results = await getManufacturers(token, page, query);
         if (!Array.isArray(results.data)) {
           throw new Error("La respuesta de la API no es un array");
         }
@@ -59,16 +73,25 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
         setLoading(false);
       }
     },
-    [token, searchQuery]
+    [token]
   );
 
+  // ✅ Cargar fabricantes cuando cambia la página o cuando se borra la búsqueda
   useEffect(() => {
-    if (token) loadManufacturers(data.pagination.currentPage);
-  }, [token, data.pagination.currentPage, loadManufacturers]);
+    if (token && searchQuery === "") {
+      loadManufacturers(data.pagination.currentPage);
+    }
+  }, [token, data.pagination.currentPage, searchQuery, loadManufacturers]);
+
+  // ✅ Cargar cuando se hace una búsqueda nueva
+  useEffect(() => {
+    if (token && searchQuery !== "") {
+      loadManufacturers(1, searchQuery);
+    }
+  }, [token, searchQuery, loadManufacturers]);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    loadManufacturers(1);
   };
 
   const handlePageChange = (page: number) =>
@@ -84,18 +107,21 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
   const actions: TableAction<Manufacturer>[] = [
     {
       icon: <Eye className="w-4 h-4" />,
-      onClick: (manufacturer) => router.push(`/dashboard/vaccine/manufacturer/${manufacturer.id}`),
+      onClick: (manufacturer) =>
+        router.push(`/dashboard/vaccine/manufacturer/${manufacturer.id}`),
       label: "Ver detalles",
     },
     {
       icon: <Pencil className="w-4 h-4" />,
-      onClick: (manufacturer) => router.push(`/dashboard/vaccine/manufacturer/${manufacturer.id}/edit`),
+      onClick: (manufacturer) =>
+        router.push(
+          `/dashboard/vaccine/manufacturer/edit/${manufacturer.id}`
+        ),
       label: "Editar",
     },
     {
       icon: <Trash className="w-4 h-4" />,
       onClick: (manufacturer) => {
-        console.log("Se quiere eliminar:", manufacturer);
         setManufacturerToDelete(manufacturer);
         setIsDeleteModalOpen(true);
       },
@@ -108,14 +134,13 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
     try {
       await deleteManufacturer(token, manufacturerToDelete.id);
       toast("success", "Fabricante eliminado exitosamente");
-      setData((prev) => ({
-        ...prev,
-        manufacturers: prev.manufacturers.filter((m) => m.id !== manufacturerToDelete.id),
-        pagination: {
-          ...prev.pagination,
-          totalItems: prev.pagination.totalItems - 1,
-        },
-      }));
+
+      const currentPage = data.pagination.currentPage;
+      const isLastItemOnPage = data.manufacturers.length === 1;
+      const newPage =
+        isLastItemOnPage && currentPage > 1 ? currentPage - 1 : currentPage;
+
+      await loadManufacturers(newPage, searchQuery);
     } catch (error) {
       console.error("Error al eliminar fabricante:", error);
       toast("error", "Error al eliminar fabricante");
@@ -127,7 +152,12 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
 
   return (
     <div className="p-4 mx-auto">
-      <SearchBar onSearch={handleSearch} />
+      <SearchBar
+        onSearch={handleSearch}
+        placeholder="Buscar por nombre..."
+        manualSearch={false}
+        debounceDelay={400}
+      />
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-3xl font-bold">Fabricantes de Vacunas</h2>
         <Button

@@ -1,5 +1,5 @@
 // app/dashboard/vaccine/manufacturer/[id]/page.tsx
-import VaccineManufacturerForm from "@/components/admin/vaccine/VaccineManufacturerForm";
+import VaccineManufacturerForm from "@/components/admin/vaccine-manufacturer/VaccineManufacturerForm";
 import authOptions from "@/lib/auth/options";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";

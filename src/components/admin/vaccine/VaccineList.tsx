@@ -12,7 +12,7 @@ import GenericTable, {
 import VaccineTableSkeleton from "./skeleton/VaccineTableSkeleton";
 import { useRouter } from "next/navigation";
 import { getVaccines } from "@/lib/vaccine/getVaccines";
-import SearchBar from "./SearchBar";
+import SearchBar from "@/components/global/SearchBar";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 
 interface Vaccine {
@@ -42,36 +42,25 @@ export default function VaccineList({ token }: VaccineListProps) {
 
   const handleConfirmDelete = async () => {
     if (!vaccineToDelete) return;
-
+  
     try {
-      const response = await fetch(
+      const res = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/vaccine/${vaccineToDelete.id}`,
         {
           method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
-
-      if (!response.ok) {
-        throw new Error("Error al eliminar la vacuna");
-      }
-
-      console.log("Vacuna eliminada:", vaccineToDelete.id);
-
-      setData((prevData) => ({
-        ...prevData,
-        vaccines: prevData.vaccines.filter(
-          (vaccine) => vaccine.id !== vaccineToDelete.id
-        ),
-        pagination: {
-          ...prevData.pagination,
-          totalItems: prevData.pagination.totalItems - 1,
-        },
-      }));
-
+  
+      if (!res.ok) throw new Error("Error al eliminar la vacuna");
+  
       toast("success", "Vacuna eliminada exitosamente");
+  
+      const currentPage = data.pagination.currentPage;
+      const isLastItemOnPage = data.vaccines.length === 1;
+      const newPage = isLastItemOnPage && currentPage > 1 ? currentPage - 1 : currentPage;
+  
+      await loadVaccines(newPage);
     } catch (error) {
       console.error("Error al eliminar vacuna:", error);
       toast("error", "Error al eliminar vacuna");
@@ -80,7 +69,8 @@ export default function VaccineList({ token }: VaccineListProps) {
       setVaccineToDelete(null);
     }
   };
-
+  
+  
   const loadVaccines = useCallback(
     async (page: number = 1) => {
       if (!token) return;
@@ -120,19 +110,21 @@ export default function VaccineList({ token }: VaccineListProps) {
     }
   }, [token, data.pagination.currentPage, loadVaccines]);
 
-  const handleSearch = (query: string) => {
+  const handleSearch = useCallback((query: string) => {
     if (!query) {
-      setFilteredData(data.vaccines); // Restaurar datos cuando query está vacío
+      setFilteredData(data.vaccines);
       return;
     }
+  
     const results = data.vaccines.filter(
       (vaccine) =>
         vaccine.name.toLowerCase().includes(query.toLowerCase()) ||
         vaccine.manufacturer.name.toLowerCase().includes(query.toLowerCase()) ||
         vaccine.species.name.toLowerCase().includes(query.toLowerCase())
     );
+  
     setFilteredData(results);
-  };
+  }, [data.vaccines]); 
 
   const handlePageChange = (page: number) =>
     setData((prev) => ({
@@ -173,7 +165,12 @@ export default function VaccineList({ token }: VaccineListProps) {
 
   return (
     <div className="p-4 mx-auto">
-      <SearchBar onSearch={handleSearch} />
+      <SearchBar
+        onSearch={handleSearch}
+        placeholder="Buscar por nombre, fabricante o especie"
+        manualSearch={false} 
+        debounceDelay={400}
+      />
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-3xl font-bold">Vacunas</h2>
         <div className="flex gap-2">
