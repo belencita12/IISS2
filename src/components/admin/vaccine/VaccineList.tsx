@@ -36,7 +36,6 @@ export default function VaccineList({ token }: VaccineListProps) {
     pagination: { currentPage: 1, totalPages: 1, totalItems: 0, pageSize: 4 },
   });
   const [loading, setLoading] = useState(false);
-  const [filteredData, setFilteredData] = useState<Vaccine[]>([]); // Inicializar vacío
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [vaccineToDelete, setVaccineToDelete] = useState<Vaccine | null>(null);
 
@@ -71,17 +70,19 @@ export default function VaccineList({ token }: VaccineListProps) {
   };
   
   
+  
   const loadVaccines = useCallback(
-    async (page: number = 1) => {
+    async (page: number = 1, filters = {}) => {
       if (!token) return;
       setLoading(true);
-
+  
       try {
-        const results = await getVaccines(token, page);
+        const results = await getVaccines(token, page, filters);
+  
         if (!Array.isArray(results.data)) {
           throw new Error("La respuesta de la API no es un array");
         }
-
+  
         setData({
           vaccines: results.data,
           pagination: {
@@ -91,9 +92,7 @@ export default function VaccineList({ token }: VaccineListProps) {
             pageSize: results.size || 4,
           },
         });
-
-        // Al cargar las vacunas, también actualizamos `filteredData`
-        setFilteredData(results.data);
+  
       } catch (error) {
         toast("error", "Error al cargar vacunas");
         console.error("Error cargando vacunas:", error);
@@ -101,8 +100,9 @@ export default function VaccineList({ token }: VaccineListProps) {
         setLoading(false);
       }
     },
-    [token]
+    [token, data.pagination.pageSize]
   );
+  
 
   useEffect(() => {
     if (token) {
@@ -110,31 +110,49 @@ export default function VaccineList({ token }: VaccineListProps) {
     }
   }, [token, data.pagination.currentPage, loadVaccines]);
 
-  const handleSearch = useCallback((query: string) => {
-    if (!query) {
-      setFilteredData(data.vaccines);
-      return;
+
+  const [lastSearch, setLastSearch] = useState("");
+
+  const handleSearch = useCallback(async (query: string) => {
+    if (!token) return;
+  
+    setLoading(true);
+    setLastSearch(query);
+  
+    try {
+      const result = await getVaccines(token, 1, {
+        name: query,
+      });
+  
+      setData({
+        vaccines: result.data,
+        pagination: {
+          currentPage: result.currentPage || 1,
+          totalPages: result.totalPages || 1,
+          totalItems: result.total || 0,
+          pageSize: result.size || 4,
+        },
+      });
+  
+    } catch (error) {
+      toast("error", "Error al buscar vacunas");
+      console.error("Error en búsqueda:", error);
+    } finally {
+      setLoading(false);
     }
+  }, [token, data.pagination.pageSize]);
   
-    const results = data.vaccines.filter(
-      (vaccine) =>
-        vaccine.name.toLowerCase().includes(query.toLowerCase()) ||
-        vaccine.manufacturer.name.toLowerCase().includes(query.toLowerCase()) ||
-        vaccine.species.name.toLowerCase().includes(query.toLowerCase())
-    );
+
+
+  const handlePageChange = (page: number) => {
+    loadVaccines(page, { name: lastSearch });
+    
+  };
   
-    setFilteredData(results);
-  }, [data.vaccines]); 
-
-  const handlePageChange = (page: number) =>
-    setData((prev) => ({
-      ...prev,
-      pagination: { ...prev.pagination, currentPage: page },
-    }));
-
-  const sortedVaccines = [...filteredData].sort((a, b) =>
+  const sortedVaccines = [...data.vaccines].sort((a, b) =>
     a.name.localeCompare(b.name)
   );
+  
 
   const columns: Column<Vaccine>[] = [
     { header: "Nombre", accessor: "name" },
@@ -191,7 +209,7 @@ export default function VaccineList({ token }: VaccineListProps) {
         </div>
       </div>
       <GenericTable
-        data={sortedVaccines} // Ahora usa `filteredData`
+        data={sortedVaccines} 
         columns={columns}
         actions={actions}
         pagination={data.pagination}
