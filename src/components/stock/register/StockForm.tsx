@@ -40,10 +40,15 @@ export const StockForm = ({ token, isOpen, onClose }: StockFormProps) => {
     setIsSubmitting(true);
     try {
       await registerStock({ name: data.name, address: data.address }, token);
-      toast("success", "Depósito registrado con éxito"); // Usa el toast personalizado
+      toast("success", "Depósito registrado con éxito"); 
       onClose();
-    } catch (error) {
-      toast("error", "Hubo un error al registrar el depósito");
+    } catch (error: unknown) {
+      if (typeof error === "object" && error !== null && "message" in error) {
+        const errorMessage = (error as { message: string }).message;          
+        toast("error", errorMessage);
+        return;
+      }   
+      toast("error", "Error inesperado al registrar el empleado");
     } finally {
       setIsSubmitting(false);
     }
