@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ValidatedInput } from "@/components/global/ValidatedInput";
+import { AUTH_API } from "@/lib/urls";
+import { toast } from "@/lib/toast";
 
 interface IFormData {
   name: string;
@@ -18,7 +20,6 @@ interface IFormData {
   ruc: string;
 }
 
-const HARDCODED_LOGIN_URL = `${process.env.NEXT_PUBLIC_BASE_URL}`;
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState<IFormData>({
@@ -79,7 +80,7 @@ export default function RegisterForm() {
     }
 
     try {
-      const response = await fetch(`${HARDCODED_LOGIN_URL}/auth/signup`, {
+      const response = await fetch(`${AUTH_API}/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -95,12 +96,11 @@ export default function RegisterForm() {
       });
 
       if (!response.ok) {
-        const data = await response.json();
-        setError(data.message || "Ocurrió un error al registrarse.");
+        toast("error", "Error al registrarse.");
         return;
       }
 
-      setSuccess("Registro exitoso. Redirigiendo...");
+      toast("success", "Registro exitoso. Redirigiendo...");
       setFormData({
         name: "",
         lastname: "",
