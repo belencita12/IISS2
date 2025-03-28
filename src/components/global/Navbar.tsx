@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import LogoutButton from "./LogoutButton";
 import { SessionProvider, useSession } from "next-auth/react";
 import NavbarSkeleton from "../skeleton/NavbarSkeleton";
-import { link } from "fs";
+
 type NavbarProps = {
   links: { label: string; href: string }[];
   isLogged? : boolean;

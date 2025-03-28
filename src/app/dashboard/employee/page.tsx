@@ -13,7 +13,7 @@ export default async function EmployeesPage() {
     const token = session?.user?.token || null;
 
     return (
-        <div>
+        <div className="mx-auto">
             <EmployeesTable token={token} />
         </div>
     );

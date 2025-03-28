@@ -1,0 +1,173 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import DepositInfo from "../deposit/DepositInfo";
+import ProductFilters from "../admin/product/filter/ProductFilter";
+import { Pagination, PaginationContent,PaginationItem,PaginationLink,PaginationPrevious,PaginationNext,} from "../ui/pagination";
+import ProductStockCard from "./ProductStockCard";
+
+const apiUrl = process.env.NEXT_PUBLIC_BASE_URL;
+
+interface ProductDetail {
+  productId: number;
+  amount: number;
+}
+
+interface ImageType {
+  id: number;
+  previewUrl: string;
+  originalUrl: string;
+}
+
+interface Product {
+  id: number;
+  name: string;
+  code: string;
+  cost: number;
+  iva: number;
+  category: string;
+  price: number;
+  image: ImageType | null;
+  stock: number;
+}
+
+
+interface Props {
+  token: string;
+  depositoId: number;
+}
+
+const ProductList: React.FC<Props> = ({ token, depositoId }) => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [filters, setFilters] = useState({
+    code: "",
+    category: "",
+    minPrice: "",
+    maxPrice: "",
+    minCost: "",
+    maxCost: "",
+  });
+
+  useEffect(() => {
+    const filtered = products.filter((product) => {
+      // Filtro por código (se actualiza cuando se presiona Buscar)
+      const codeMatch = filters.code === "" ||  product.code.toLowerCase().includes(filters.code.toLowerCase());
+      // Filtro por categoría (se actualiza de forma dinámica al cambiar el select)
+      const categoryMatch = filters.category === "" || product.category === filters.category;
+      // Filtros por precio (mínimo y máximo) convertidos a número o null
+      const minPrice = filters.minPrice ? Number(filters.minPrice) : null;
+      const maxPrice = filters.maxPrice ? Number(filters.maxPrice) : null;
+      const priceMatch = (minPrice === null || product.price >= minPrice) && (maxPrice === null || product.price <= maxPrice);
+      // Filtros por costo (mínimo y máximo)
+      const minCost = filters.minCost ? Number(filters.minCost) : null;
+      const maxCost = filters.maxCost ? Number(filters.maxCost) : null;
+      const costMatch = (minCost === null || product.cost >= minCost) && (maxCost === null || product.cost <= maxCost);
+  
+      return codeMatch && categoryMatch && priceMatch && costMatch;
+    });
+    setFilteredProducts(filtered);
+  }, [filters, products]);
+  
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`${apiUrl}/stock-details?page=${currentPage}&stockId=${depositoId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!response.ok) {
+          throw new Error("Error al obtener los productos");
+        }
+        const data = await response.json();
+        const productDetails: ProductDetail[] = data.data;
+
+        const fetchedProducts = await Promise.all(
+          productDetails.map(async (detail) => {
+            const productRes = await fetch(`${apiUrl}/product/${detail.productId}`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!productRes.ok) {
+              throw new Error("Error al obtener detalles del producto");
+            }
+            const productData = await productRes.json();
+            return {
+              id: productData.id,
+              name: productData.name,
+              code: productData.code,
+              cost: productData.cost,
+              iva: productData.iva,
+              category: productData.category,
+              price: productData.price,
+              image: productData.image || null,
+              stock: detail.amount,
+            };
+          })
+        );
+
+        setProducts(fetchedProducts);
+        setFilteredProducts(fetchedProducts);
+        setTotalPages(data.totalPages);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Error desconocido");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, [currentPage, depositoId, token]);
+   
+  const preventInvalidKeys = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "-" || e.key === "e") e.preventDefault();
+  };
+
+  if (loading) return <p>Cargando...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
+
+  return (
+    <div className="p-4 bg-white shadow-lg rounded-lg">
+      <ProductFilters filters={filters} setFilters={setFilters}
+        onSearch={() => {}} preventInvalidKeys={preventInvalidKeys} />
+
+      <div className="pt-3 pb-3 m-4"><DepositInfo token={token} depositoId={depositoId} /></div>
+      
+
+      {filteredProducts.map((product) => (
+        <ProductStockCard key={product.id} product={product}/>
+      ))}
+      <Pagination className="mt-4">
+        <PaginationContent>
+          <PaginationPrevious onClick={() => {
+              if (currentPage > 1) setCurrentPage(currentPage - 1);
+            }}
+          />
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <PaginationItem key={page}>
+              <PaginationLink isActive={page === currentPage} href="#" onClick={(e) => {
+                  e.preventDefault();
+                  setCurrentPage(page);
+                }}
+              >
+                {page}
+              </PaginationLink>
+            </PaginationItem>
+          ))}
+          <PaginationNext onClick={() => {
+            if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+          }}/>
+        </PaginationContent>
+      </Pagination>
+    </div>
+  );
+};
+
+export default ProductList;

@@ -24,7 +24,7 @@ const linksUser = [
   { name: "Clientes", href: "/dashboard/clients", icon: UserIcon },
   { name: "Productos", href: "/dashboard/products", icon: BoneIcon },  
   { name: "Vacunas", href: "/dashboard/vaccine", icon: SyringeIcon },
-  { name: "Depositos", href: "/dashboard/depositos", icon: StoreIcon },
+  { name: "Depositos", href: "/dashboard/stock", icon: StoreIcon },
   { name: "Movimientos", href: "/dashboard/movimientos", icon: BoxIcon },
   { name: "Compras", href: "/dashboard/compras", icon: CircleDollarSignIcon },
   { name: "Crear Venta", href: "/dashboard/ventas", icon: HandCoinsIcon },
@@ -32,7 +32,7 @@ const linksUser = [
   { name: "Facturas", href: "/dashboard/facturas", icon: FileIcon },
   {
     name: "Configuración",
-    href: "/dashboard/configuración",
+    href: "/dashboard/settings",
     icon: SettingsIcon,
   },
   { name: "Ayuda", href: "/dashboard/ayuda", icon: CircleHelpIcon },
