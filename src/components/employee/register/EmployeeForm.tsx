@@ -11,15 +11,18 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { registerEmployee } from "@/lib/employee/registerEmployee";
 import { getWorkPosition } from "@/lib/employee/getWorkPosition";
+import { validatePhoneNumber } from "@/lib/utils";
+import { rucFormatRegExp } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
 const employeeFormSchema = z.object({
-  ruc: z.string().min(1, "El RUC es obligatorio"),
+  ruc: z.string().min(1, "El RUC es obligatorio").regex(rucFormatRegExp, "El RUC debe tener el formato 12345678-1"),
   fullName: z.string().min(1, "El nombre completo es obligatorio"),
   email: z.string().email("Correo electrónico inválido"),
   position: z.string().min(1, "Debe seleccionar un puesto"),
   adress: z.string().optional(),
-  phoneNumber: z.string().min(1, "El número de teléfono es obligatorio"),
+  phoneNumber: z.string().min(1, "El número de teléfono es obligatorio").refine(validatePhoneNumber, {
+    message: "Número de teléfono inválido. Debe comenzar con + y tener al menos 7 dígitos."},),
   profileImg: z.instanceof(File).optional(),
 });
 
