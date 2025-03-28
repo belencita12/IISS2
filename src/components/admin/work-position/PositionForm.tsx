@@ -30,7 +30,7 @@ export default function PositionForm({ token, position }: PositionFormProps) {
         ? { name: position.name, shifts: position.shifts }
         : { name: "", shifts: [DEFAULT_SHIFT] };
 
-    const { register, handleSubmit,reset, control, getValues, watch, formState: { errors, isSubmitting } } = useForm<PositionFormValues>({
+    const { register, handleSubmit, reset, control, getValues, watch, formState: { errors, isSubmitting } } = useForm<PositionFormValues>({
         resolver: zodResolver(positionSchema),
         defaultValues,
     });
@@ -175,7 +175,7 @@ export default function PositionForm({ token, position }: PositionFormProps) {
                                             />
                                             {errors.shifts?.[index]?.endTime && <p className="text-red-500 text-xs mt-1">{errors.shifts[index]?.endTime?.message}</p>}
                                         </div>
-                                        <Button type="button" variant="ghost"  onClick={() => removeShift(index)}><Trash/></Button>
+                                        <Button type="button" variant="ghost" onClick={() => removeShift(index)}><Trash /></Button>
                                     </div>
                                 </div>
                             );
@@ -183,7 +183,15 @@ export default function PositionForm({ token, position }: PositionFormProps) {
                     </div>
                 </div>
                 <div className="flex gap-4 pt-4 justify-start">
-                    <Button type="button" variant="outline" className="py-3 border border-black rounded-md px-6">Cancelar</Button>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        className="py-3 border border-black rounded-md px-6"
+                        onClick={() => router.back()} 
+                    >
+                        Cancelar
+                    </Button>
+
                     <Button type="submit" className="py-3 bg-black text-white rounded-md px-6" disabled={isSubmitting}>
                         {isSubmitting ? (isEditing ? "Actualizando..." : "Agregando...") : (isEditing ? "Actualizar Puesto" : "Agregar Puesto")}
                     </Button>
