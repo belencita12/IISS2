@@ -11,13 +11,21 @@ import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation"; 
 import { registerClient } from "@/lib/client/registerClient"; 
 import { FormClient } from "@/lib/client/IUserProfile"; 
+import { validatePhoneNumber } from "@/lib/utils";
 
 const clientFormSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
   lastname: z.string().min(1, "El apellido es obligatorio"),
-  email: z.string().email("El correo electrónico es obligatorio"),
+  email: z
+  .string()
+  .min(1, "El correo electrónico es obligatorio") 
+  .email("El formato del correo electrónico no es válido"),
   adress: z.string().optional(),
-  phoneNumber: z.string().min(1, "El número de teléfono es obligatorio"),
+  phoneNumber: z.string()
+    .min(1, "El número de teléfono es obligatorio")
+    .refine(value => validatePhoneNumber(value), {
+      message: "El número de teléfono no es válido"
+    }),
   ruc: z.string().min(1, "El RUC es obligatorio"),
 });
 
@@ -76,7 +84,7 @@ export default function RegisterClientForm({ token }: RegisterClientFormProps) {
   return (
     <div className="max-w-5xl mx-auto p-8">
       <h1 className="text-3xl font-bold mb-6">Registro de Cliente</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
         <div>
           <Label>Nombre</Label>
           <Input {...register("name")} placeholder="Ingrese el nombre del cliente" />
