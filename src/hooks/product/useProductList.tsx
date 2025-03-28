@@ -1,8 +1,10 @@
+"use client";
 import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { getProducts } from "@/lib/admin/products/getProducts";
 import { getStockDetails } from "@/lib/stock/getStockDetails";
 import { Product, ProductResponse } from "@/lib/admin/products/IProducts";
 import useDebounce from "@/lib/admin/products/useDebounceHook";
+import { toast } from "@/lib/toast";
 
 export function useProductList(token: string) {
   const initialFilters = useMemo(() => ({
@@ -10,7 +12,7 @@ export function useProductList(token: string) {
     category: "",
     minPrice: "",
     maxPrice: "",
-    minCost: "", 
+    minCost: "",
     maxCost: "",
   }), []);
 
@@ -35,7 +37,7 @@ export function useProductList(token: string) {
         const stockData = await getStockDetails(productId, token);
         return stockData.data.reduce((total, detail) => total + detail.amount, 0);
       } catch (error) {
-        console.error(`Error loading stock for product ${productId}:`, error);
+        toast("error", `Error al cargar el stock del producto ${productId}`,);
         return 0;
       }
     },
@@ -81,7 +83,7 @@ export function useProductList(token: string) {
           pageSize: data.size,
         });
       } catch (error) {
-        console.error("Error fetching products", error);
+        toast("error", "Error al obtener productos");
         setProducts([]);
       } finally {
         setIsLoading(false);
