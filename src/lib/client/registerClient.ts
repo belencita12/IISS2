@@ -1,7 +1,7 @@
 import { AUTH_API } from "@/lib/urls";
-import { ClientData } from "./IClient";
+import { FormClient } from "./IUserProfile";
 
-export const registerClient = async (clientData: ClientData, token: string) => {
+export const registerClient = async (clientData: FormClient, token: string) => {
   try {
     const response = await fetch(`${AUTH_API}/admin/signup`, {
       method: "POST",
@@ -26,3 +26,4 @@ export const registerClient = async (clientData: ClientData, token: string) => {
     throw error;
   }
 };
+
