@@ -112,7 +112,7 @@ export default function RegisterClientForm({ token }: RegisterClientFormProps) {
             Cancelar
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Registrando..." : "Registrar"}
+            {isSubmitting ? "Registrando..." : "Agregar cliente"}
           </Button>
         </div>
       </form>
