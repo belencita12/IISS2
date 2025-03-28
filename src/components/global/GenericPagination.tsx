@@ -13,14 +13,17 @@ import {
   ChevronsRight,
 } from "lucide-react";
 
-type GenericPaginationProps = {
+interface GenericPaginationProps {
   handlePreviousPage: () => void;
   handlePageChange: (page: number) => void;
   handleNextPage: () => void;
   currentPage: number;
   totalPages: number;
-};
+}
 
+/**
+ * Manejo de la paginación general utilizando callbacks
+ */
 const GenericPagination = ({
   handlePreviousPage,
   handlePageChange,
