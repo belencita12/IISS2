@@ -7,7 +7,7 @@ import { Button } from "../ui/button";
 import { StockForm } from "../stock/register/StockForm";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext,} from "../ui/pagination";
 import SearchBar from "../admin/client/SearchBar";
-
+import { toast } from "@/lib/toast";
 
 interface Deposit {
   id: number;
@@ -27,6 +27,7 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [allDeposits, setAllDeposits] = useState<Deposit[]>([]);
+  const [selectedDeposit, setSelectedDeposit] = useState<Deposit | null>(null);
 
   const fetchDeposits = useCallback(async (
     page: number, token: string, search: string = ""
@@ -123,6 +124,35 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
               nombre={deposit.name}
               ubicacion={deposit.address}
               id={deposit.id}
+              onEdit={(id) => {
+                const selected = deposits.find((d) => d.id === id);
+                if(selected) {
+                  setSelectedDeposit(selected);
+                  setIsModalOpen(true);
+                }
+              }}
+              onDelete={async (id) => {
+                try {
+                  const apiUrl = process.env.NEXT_PUBLIC_BASE_URL;
+                  const res = await fetch(`${apiUrl}/stock/${id}`, {
+                    method: "DELETE",
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                    },
+                  });
+
+                  if (!res.ok) {
+                    throw new Error("No se pudo eliminar el depósito.");
+                  }
+
+                  toast("success", "Depósito eliminado correctamente ✅");
+                  
+                  fetchDeposits(currentPage, token, searchTerm);
+                } catch (error) {
+                  console.error("Error al eliminar el deposito", error);
+                  toast("error", "Ocurrió un error al eliminar el depósito.");
+                }
+              }}
             />
           ))}
         </div>
