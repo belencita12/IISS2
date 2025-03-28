@@ -11,22 +11,18 @@ import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation"; 
 import { registerClient } from "@/lib/client/registerClient"; 
 import { FormClient } from "@/lib/client/IUserProfile"; 
-import { validatePhoneNumber } from "@/lib/utils";
+import { phoneNumber, ruc } from "@/lib/schemas"; 
 
 const clientFormSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
   lastname: z.string().min(1, "El apellido es obligatorio"),
   email: z
-  .string()
-  .min(1, "El correo electrónico es obligatorio") 
-  .email("El formato del correo electrónico no es válido"),
+    .string()
+    .min(1, "El correo electrónico es obligatorio") 
+    .email("El formato del correo electrónico no es válido"),
   adress: z.string().optional(),
-  phoneNumber: z.string()
-    .min(1, "El número de teléfono es obligatorio")
-    .refine(value => validatePhoneNumber(value), {
-      message: "El número de teléfono no es válido"
-    }),
-  ruc: z.string().min(1, "El RUC es obligatorio"),
+  phoneNumber: phoneNumber(), //validación reutilizable
+  ruc: ruc(), //validación reutilizable
 });
 
 type ClientFormValues = z.infer<typeof clientFormSchema>;
