@@ -9,7 +9,7 @@ export const useQuery = <T extends BaseQueryParams>(init?: T) => {
     Object.entries(query).forEach(([key, value]) => {
       if (value) {
         if (value instanceof Date) url.set(key, value.toISOString());
-        url.set(key, String(value));
+        else url.set(key, String(value));
       }
     });
     return url.toString();
