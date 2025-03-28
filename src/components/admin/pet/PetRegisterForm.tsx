@@ -130,7 +130,7 @@ export default function PetRegisterForm({ token }: AdminPetFormProps) {
       name: data.petName,
       speciesId: data.animalType,
       raceId: data.breed,
-      clientId: id as string,
+      userId: id as string,
       weight: data.weight.toString(),
       sex: data.gender,
       dateOfBirth: new Date(data.birthDate).toISOString(),

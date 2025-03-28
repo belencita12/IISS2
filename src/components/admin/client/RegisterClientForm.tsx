@@ -15,7 +15,7 @@ import { FormClient } from "@/lib/client/IUserProfile";
 const clientFormSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
   lastname: z.string().min(1, "El apellido es obligatorio"),
-  email: z.string().email("Correo electrónico es obligatorio"),
+  email: z.string().email("El correo electrónico es obligatorio"),
   adress: z.string().optional(),
   phoneNumber: z.string().min(1, "El número de teléfono es obligatorio"),
   ruc: z.string().min(1, "El RUC es obligatorio"),
