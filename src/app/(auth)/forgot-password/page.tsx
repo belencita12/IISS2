@@ -6,6 +6,7 @@ import { useState, type FormEvent } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button" 
 import { cn } from "@/lib/utils"
+import { AUTH_API } from "@/lib/urls"
 
 interface IFormState {
     email: string
@@ -14,7 +15,6 @@ interface IFormState {
     isError: boolean
 }
 
-const HARDCODED_LOGIN_URL = `${process.env.NEXT_PUBLIC_BASE_URL}`;
 export default function PasswordRecoveryForm() {
     const [formState, setFormState] = useState<IFormState>({
         email: "",
@@ -27,7 +27,7 @@ export default function PasswordRecoveryForm() {
         setFormState((prev) => ({ ...prev, isLoading: true, message: "", isError: false }))
 
         try {
-            const response = await fetch(`${HARDCODED_LOGIN_URL}/auth/token/reset-password`, {
+            const response = await fetch(`${AUTH_API}/token/reset-password`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email: formState.email }),

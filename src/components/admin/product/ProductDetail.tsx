@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
@@ -11,6 +10,7 @@ import { Product } from "@/lib/admin/products/IProducts";
 import { StockDetailsData, StockData } from "@/lib/stock/IStock";
 import ProductInfo from "@/components/admin/product/ProductInfo";
 import StockList from "@/components/admin/product/ProductStockList";
+import { toast } from "@/lib/toast";
 
 interface ProductDetailProps {
   token: string;
@@ -23,7 +23,6 @@ export default function ProductDetail({ token }: ProductDetailProps) {
   const [stockDetails, setStockDetails] = useState<StockDetailsData[]>([]);
   const [stocks, setStocks] = useState<StockData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id || id === "create") {
@@ -42,7 +41,7 @@ export default function ProductDetail({ token }: ProductDetailProps) {
         setStockDetails(stockResponse.data);
         setStocks(stocksResponse.data);
       } catch (err) {
-        setError("No se pudo cargar la información del producto");
+        toast("error", "No se pudo cargar la información del producto");
         console.error(err);
       } finally {
         setIsLoading(false);
@@ -53,7 +52,6 @@ export default function ProductDetail({ token }: ProductDetailProps) {
   }, [id, token]);
 
   if (isLoading) return <div className="text-center mt-8">Cargando...</div>;
-  if (error) return <div className="text-center mt-8 text-red-500">{error}</div>;
   if (!product) return <div className="text-center mt-8">Producto no encontrado</div>;
 
   return (
