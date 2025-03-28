@@ -7,3 +7,11 @@ export type PaginationResponse<T> = {
     currentPage: number;
     totalPages: number;
 };
+
+export interface BaseQueryParams {
+    page: number;
+    size?: number;
+    from?: string;
+    to?: string;
+    includeDeleted?: boolean;
+}
