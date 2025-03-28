@@ -22,7 +22,6 @@ export const registerClient = async (clientData: FormClient, token: string) => {
     }
     return { success: true, status: response.status, data };
   } catch (error) {
-    console.error("Error en registerClient:", error);
     throw error;
   }
 };
