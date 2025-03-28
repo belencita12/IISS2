@@ -17,7 +17,7 @@ export interface IUserProfile {
 export interface FormClient {
   id?: number;
   fullName: string;
-  adress: string; 
+  adress?: string; 
   phoneNumber: string;
   ruc: string;
   email: string;
