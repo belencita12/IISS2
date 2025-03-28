@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import DepositInfo from "../deposit/DepositInfo";
-import ProductFilters from "../admin/product/ProductFilter";
+import ProductFilters from "../admin/product/filter/ProductFilter";
 import { Pagination, PaginationContent,PaginationItem,PaginationLink,PaginationPrevious,PaginationNext,} from "../ui/pagination";
 import ProductStockCard from "./ProductStockCard";
 
