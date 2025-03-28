@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ValidatedInput } from "@/components/global/ValidatedInput";
 import { AUTH_API } from "@/lib/urls";
 import { toast } from "@/lib/toast";
+import { validatePhoneNumber } from "@/lib/utils";
 
 interface IFormData {
   name: string;
@@ -40,7 +41,6 @@ export default function RegisterForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     setError(null);
     setSuccess(null);
 
@@ -63,6 +63,10 @@ export default function RegisterForm() {
       return;
     }
     
+    if(!validatePhoneNumber(formData.phoneNumber)) {
+      setError("Ingrese un número de teléfono válido.Ej:+595985405811");
+      return;
+    }
 
     if (formData.address.length < 10) {
       setError("Ingrese una dirección válida.");
@@ -80,6 +84,7 @@ export default function RegisterForm() {
     }
 
     try {
+      setIsLoading(true);
       const response = await fetch(`${AUTH_API}/signup`, {
         method: "POST",
         headers: {

@@ -45,3 +45,8 @@ export function formatDate(dateString: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString("es-ES");
 }
+
+export function validatePhoneNumber(phoneNumber: string): boolean {
+  const phoneRegex = /^\+\d{1,3}\d{7,}$/;
+  return phoneRegex.test(phoneNumber);
+}
