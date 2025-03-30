@@ -43,12 +43,11 @@ export const StockForm = ({ token, isOpen, onClose }: StockFormProps) => {
       toast("success", "Depósito registrado con éxito"); 
       onClose();
     } catch (error: unknown) {
-      if (typeof error === "object" && error !== null && "message" in error) {
-        const errorMessage = (error as { message: string }).message;          
-        toast("error", errorMessage);
-        return;
-      }   
-      toast("error", "Error inesperado al registrar el empleado");
+      if (error instanceof Error) {
+        toast("error", error.message);
+      } else {
+        toast("error", "Error inesperado al registrar el depósito");
+      }
     } finally {
       setIsSubmitting(false);
     }
