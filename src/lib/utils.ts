@@ -45,3 +45,18 @@ export function formatDate(dateString: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString("es-ES");
 }
+
+export function validatePhoneNumber(phoneNumber: string): boolean {
+  const phoneRegex = /^\+\d{1,3}\d{7,}$/;
+  return phoneRegex.test(phoneNumber);
+}
+
+/**
+ * Time format RegExp HH:MM 00:00 - 23:59
+ */
+export const timeFormatRegExp = /^([01]\d|2[0-3]):([0-5]\d)$/;
+
+/**
+ * RUC format RegExp 12345678-1 [7-9 digits]-[1-9]
+ */
+export const rucFormatRegExp = /^\d{7,9}-[1-9]$/;
