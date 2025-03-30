@@ -1,6 +1,7 @@
 import React from "react";
-import { Product } from "@/lib/products/IProducts";
+import { Product } from "@/lib/admin/products/IProducts";
 import { StockDetailsData } from "@/lib/stock/IStock";
+import { Badge } from "@/components/ui/badge"
 
 interface ProductInfoProps {
   product: Product;
@@ -40,12 +41,9 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
       {product.tags && product.tags.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-2">
           {product.tags.map((tag, index) => (
-            <span 
-              key={index} 
-              className="border border-black text-black px-2 py-1 text-sm rounded"
-            >
-              {tag}
-            </span>
+            <Badge key={index} variant="outline" className="px-2 py-1 text-sm text-gray-500 font-normal">
+              #{tag}
+            </Badge>
           ))}
         </div>
       )}

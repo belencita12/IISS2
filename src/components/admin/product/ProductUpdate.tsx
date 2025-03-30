@@ -10,9 +10,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import { updateProduct } from "@/lib/products/updateProduct";
-import { getProductById } from "@/lib/products/getProductById";
-import { Product } from "@/lib/products/IProducts";
+import { updateProduct } from "@/lib/admin/products/updateProduct";
+import { getProductById } from "@/lib/admin/products/getProductById";
+import { Product } from "@/lib/admin/products/IProducts";
 
 const MAX_FILE_SIZE = 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];

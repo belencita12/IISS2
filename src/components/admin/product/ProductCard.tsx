@@ -2,7 +2,7 @@
 import React from "react";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
-import { Product } from "@/lib/products/IProducts";
+import { Product } from "@/lib/admin/products/IProducts";
 
 interface ProductCardProps {
   product: Product;

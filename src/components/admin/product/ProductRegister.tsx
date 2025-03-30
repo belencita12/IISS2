@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
-import { registerProduct } from "@/lib/products/registerProduct";
+import { registerProduct } from "@/lib/admin/products/registerProduct";
 import { useRouter } from "next/navigation";
 
 const MAX_FILE_SIZE = 1024 * 1024;
