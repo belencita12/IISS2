@@ -1,14 +1,13 @@
 "use client";
 
-import type React from "react";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { ValidatedInput } from "@/components/global/ValidatedInput";
 import { AUTH_API } from "@/lib/urls";
 import { toast } from "@/lib/toast";
 import { validatePhoneNumber } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
 
 interface IFormData {
   name: string;
@@ -20,7 +19,6 @@ interface IFormData {
   phoneNumber: string;
   ruc: string;
 }
-
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState<IFormData>({
@@ -34,67 +32,42 @@ export default function RegisterForm() {
     ruc: "",
   });
 
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Partial<IFormData>>({});
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
+  const validate = () => {
+    const newErrors: Partial<IFormData> = {};
+
+    if (!formData.name) newErrors.name = "Ingrese un nombre válido";
+    if (!formData.lastname) newErrors.lastname = "Ingrese un apellido válido";
+    if (!formData.email) newErrors.email = "Ingrese un email válido. Ej: juanperez@gmail.com";
+    if (!formData.password) newErrors.password = "Ingrese una contraseña válida";
+    if (!formData.confirmPassword) newErrors.confirmPassword = "Ingrese una contraseña válida";
+    if (!formData.phoneNumber || !validatePhoneNumber(formData.phoneNumber)) newErrors.phoneNumber = "Ingrese un número de teléfono válido. Ej: +595985405811";
+    if (!formData.ruc) newErrors.ruc = "Ingrese un RUC";
+    if (!formData.address || formData.address.length < 10) newErrors.address = "Ingrese una dirección válida.Ej: Av. España 1234, Asunción, Paraguay";
+    if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = "Las contraseñas no coinciden";
+    if (formData.password.length < 8) newErrors.password = "Debe tener al menos 8 caracteres";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-    setSuccess(null);
-
-    if (
-      !formData.name ||
-      !formData.lastname ||
-      !formData.email ||
-      !formData.password ||
-      !formData.confirmPassword ||
-      !formData.address ||
-      !formData.phoneNumber ||
-      !formData.ruc
-    ) {
-      setError("Todos los campos son obligatorios.");
-      return;
-    }
-
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(formData.email)) {
-      setError("Ingrese un correo válido.");
-      return;
-    }
-    
-    if(!validatePhoneNumber(formData.phoneNumber)) {
-      setError("Ingrese un número de teléfono válido.Ej:+595985405811");
-      return;
-    }
-
-    if (formData.address.length < 10) {
-      setError("Ingrese una dirección válida.");
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      setError("Las contraseñas no coinciden.");
-      return;
-    }
-
-    if (formData.password.length < 8) {
-      setError("La contraseña debe tener al menos 8 caracteres.");
-      return;
-    }
+    if (!validate()) return;
 
     try {
       setIsLoading(true);
       const response = await fetch(`${AUTH_API}/signup`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          fullName: formData.name.trim() + " " + formData.lastname.trim(),
+          fullName: formData.name + " " + formData.lastname,
           email: formData.email,
           password: formData.password,
-          adress: formData.address,
+          address: formData.address,
           phoneNumber: formData.phoneNumber,
           ruc: formData.ruc,
         }),
@@ -106,139 +79,58 @@ export default function RegisterForm() {
       }
 
       toast("success", "Registro exitoso. Redirigiendo...");
-      setFormData({
-        name: "",
-        lastname: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-        address: "",
-        phoneNumber: "",
-        ruc: "",
-      });
-
-      setTimeout(() => {
-        router.push("/login");
-      }, 2000);
-    } catch (error) {
-      setError("Error de conexión. Inténtalo nuevamente.");
-    }
-    finally {
+      setTimeout(() => router.push("/login"), 2000);
+    } catch {
+      toast("error", "Error de conexión. Inténtalo nuevamente.");
+    } finally {
       setIsLoading(false);
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   return (
-    <div className="mt-[30px] mb-[50px] flex items-center justify-center px-4 sm:px-6 ">
-      <div className="flex flex-col sm:flex-row justify-between items-center w-full max-w-3xl mx-auto gap-x-8">
-        <div className="w-full sm:w-1/2 text-center sm:text-left mb-6 sm:mb-0">
-          <h1 className="text-2xl font-semibold text-black m-0">Registro</h1>
-          <p className="text-sm text-gray-600 mt-2 mb-6">
-            Crea una nueva cuenta
-          </p>
+    <div className="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md my-10">
+      <h1 className="text-2xl font-bold text-gray-900 text-center">Registro</h1>
+      <p className="text-sm text-gray-600 text-center mb-6">Complete el formulario para crear una nueva cuenta</p>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <Input name="name" placeholder="Nombre" value={formData.name} onChange={handleChange} className={errors.name ? "border-red-500" : ""} />
+          <Input name="lastname" placeholder="Apellido" value={formData.lastname} onChange={handleChange} className={errors.lastname ? "border-red-500" : ""} />
         </div>
-        <div className="w-full sm:w-1/2 max-w-[400px]">
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            {error && <p className="text-red-500 text-sm">{error}</p>}
-            {success && <p className="text-green-500 text-sm">{success}</p>}
-            <br />
-
-            <div className="flex flex-col sm:flex-row gap-4">
-              <ValidatedInput
-                type="text"
-                name="name"
-                placeholder="Ingrese su nombre"
-                value={formData.name}
-                onChange={handleChange}
-                required
-              />
-              <ValidatedInput
-                type="text"
-                name="lastname"
-                placeholder="Ingrese su apellido"
-                value={formData.lastname}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <ValidatedInput
-                type="email"
-                name="email"
-                placeholder="Ingrese su correo"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-
-              <ValidatedInput
-                type="text"
-                name="address"
-                placeholder="Ingrese su dirección"
-                value={formData.address}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4">
-              <ValidatedInput
-                type="text"
-                name="phoneNumber"
-                placeholder="Ingrese su número de teléfono"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                required
-              />
-
-              <ValidatedInput
-                type="text"
-                name="ruc"
-                placeholder="Ingrese su RUC"
-                value={formData.ruc}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4">
-              <ValidatedInput
-                type="password"
-                name="password"
-                placeholder="Ingrese su contraseña"
-                value={formData.password}
-                onChange={handleChange}
-                required
-              />
-
-              <ValidatedInput
-                type="password"
-                name="confirmPassword"
-                placeholder="Confirme su contraseña"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4 mt-2">
-              <Button variant="outline" className="flex-1" asChild>
-                <Link href="/login">Tengo una cuenta</Link>
-              </Button>
-              <Button type="submit" className="flex-1" disabled={isLoading}>
-                {isLoading ? "Registrando..." : "Registrarme"}
-              </Button>
-            </div>
-          </form>
+        <div className="grid grid-cols-2 gap-4">
+        {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+        {errors.lastname && <p className="text-red-500 text-sm">{errors.lastname}</p>}
         </div>
-      </div>
+        <Input name="email" placeholder="Correo electrónico" value={formData.email} onChange={handleChange} className={errors.email ? "border-red-500" : ""} />
+        {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+        <Input name="address" placeholder="Dirección" value={formData.address} onChange={handleChange} className={errors.address ? "border-red-500" : ""} />
+        {errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
+        <div className="grid grid-cols-2 gap-4">
+          <Input name="phoneNumber" placeholder="Número de teléfono" value={formData.phoneNumber} onChange={handleChange} className={errors.phoneNumber ? "border-red-500" : ""} />
+          <Input name="ruc" placeholder="RUC" value={formData.ruc} onChange={handleChange} className={errors.ruc ? "border-red-500" : ""} />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+        {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber}</p>}
+        {errors.ruc && <p className="text-red-500 text-sm">{errors.ruc}</p>}
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <Input name="password" type="password" placeholder="Contraseña" value={formData.password} onChange={handleChange} className={errors.password ? "border-red-500" : ""} />
+          <Input name="confirmPassword" type="password" placeholder="Confirmar contraseña" value={formData.confirmPassword} onChange={handleChange} className={errors.confirmPassword ? "border-red-500" : ""} />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+        {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+        {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword}</p>}
+        </div>
+        <div className="flex justify-between mt-4">
+          <Button variant="outline" asChild>
+            <Link href="/login">Tengo una cuenta</Link>
+          </Button>
+          <Button type="submit" disabled={isLoading}>{isLoading ? "Registrando..." : "Registrarme"}</Button>
+        </div>
+      </form>
     </div>
   );
 }
