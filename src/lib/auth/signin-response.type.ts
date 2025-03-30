@@ -4,4 +4,6 @@ export interface SigninResponse {
     username: string;
     token: string;
     roles: string[];
+    employeeId: number,
+    clientId: number,
 }
