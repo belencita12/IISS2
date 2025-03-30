@@ -37,6 +37,13 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
           <span className="flex-grow text-right">{value}</span>
         </div>
       ))}
+      <div className="flex">
+        <span className="text-gray-600 w-24">
+          {product.tags?.map((tag, index) => (
+            <span key={index} className="mr-2 text-grey-500">#{tag}</span>
+          ))}    
+        </span>
+      </div>
     </div>
   );
 };
