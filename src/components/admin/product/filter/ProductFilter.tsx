@@ -6,6 +6,8 @@ import SearchBar from "@/components/global/SearchBar";
 import { CategoryFilter } from "./CategoryFilter";
 import { NumericFilter } from "./NumericFilter";
 import { useProductFilters } from "@/hooks/product/useProductFilter";
+import { TagsFilter } from "./TagsFilter";
+
 
 interface ProductFiltersProps {
   filters: {
@@ -15,6 +17,7 @@ interface ProductFiltersProps {
     maxPrice: string;
     minCost: string;
     maxCost: string;
+    tags: string[];
   };
   setFilters: React.Dispatch<
     React.SetStateAction<{
@@ -24,10 +27,12 @@ interface ProductFiltersProps {
       maxPrice: string;
       minCost: string;
       maxCost: string;
+      tags: string[];
     }>
   >;
   onSearch: () => void;
   preventInvalidKeys: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  availableTags: string[];
 }
 
 export default function ProductFilters({
@@ -35,6 +40,7 @@ export default function ProductFilters({
   setFilters,
   onSearch,
   preventInvalidKeys,
+  availableTags,
 }: ProductFiltersProps) {
   const { searchInput, setSearchInput, clearFilter } = useProductFilters(
     filters,
@@ -99,6 +105,19 @@ export default function ProductFilters({
               preventInvalidKeys={preventInvalidKeys}
             />
           </div>
+      </div>
+      {/* Sección de filtro por Tags */}
+      <div className="mb-4">
+            <TagsFilter
+            availableTags={availableTags}
+            selectedTags={filters.tags}  
+            onChange={(tags) =>
+              setFilters((prev) => ({
+                ...prev,
+                tags, 
+              }))
+            }
+          />
       </div>
     </div>
   );

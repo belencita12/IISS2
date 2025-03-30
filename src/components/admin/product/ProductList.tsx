@@ -14,6 +14,7 @@ import {
   PaginationPrevious,
   PaginationNext,
 } from "@/components/ui/pagination";
+import { useMemo } from "react";
 
 interface ProductListProps {
   token: string;
@@ -40,19 +41,29 @@ export default function ProductListPage({ token }: ProductListProps) {
     router.push(`/dashboard/products/${productId}`);
   };
 
+  // Dentro de tu componente donde tienes la lista de productos:
+  const availableTags = useMemo(() => {
+    const tagsSet = new Set<string>();
+    products.forEach((product) => {
+      product.tags?.forEach((tag) => tagsSet.add(tag));
+    });
+    return Array.from(tagsSet);
+  }, [products]);
+
   return (
     <div className="max-w-6xl mx-auto p-4">
       <ProductFilters
-        filters={inputFilters}
-        setFilters={setInputFilters}
-        onSearch={handleSearch}
-        preventInvalidKeys={preventInvalidKeys}
-      />
+      filters={inputFilters}
+      setFilters={setInputFilters}
+      onSearch={handleSearch}
+      preventInvalidKeys={preventInvalidKeys}
+      availableTags={availableTags} // Pass the availableTags here
+    />
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Productos</h1>
         <Button
           variant="default"
-          onClick={() => router.push(`/dashboard/products/register`)}
+          onClick={() => router.push("/dashboard/products/register")}
           className="bg-black text-white hover:bg-gray-800"
         >
           Crear Producto

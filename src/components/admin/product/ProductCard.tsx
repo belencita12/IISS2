@@ -59,6 +59,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, stock, onClick }) =>
               </p>
               <p className="text-sm mt-2">{stock}</p>
             </div>
+            <div className="mt-1">
+              <div className="flex flex-wrap gap-2"> 
+                {product.tags?.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="px-3 text-sm text-white bg-black rounded-full"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>

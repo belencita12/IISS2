@@ -14,11 +14,19 @@ export function useProductList(token: string) {
     maxPrice: "",
     minCost: "",
     maxCost: "",
+    tags: [] as string[],
   }), []);
 
   const [searchFilters, setSearchFilters] = useState(initialFilters);
-  const [inputFilters, setInputFilters] = useState(initialFilters);
-  
+  const [inputFilters, setInputFilters] = useState({
+    code: "",
+    category: "",
+    minPrice: "",
+    maxPrice: "",
+    minCost: "",
+    maxCost: "",
+    tags: [] as string[], // Initialize as string[] instead of never[]
+  });
   const debouncedFilters = useDebounce(inputFilters, 500);
   
   const [products, setProducts] = useState<Product[]>([]);
@@ -59,6 +67,8 @@ export function useProductList(token: string) {
           maxCost: filterParams.maxCost !== "" ? parseFloat(filterParams.maxCost) : undefined,
           minPrice: filterParams.minPrice !== "" ? parseFloat(filterParams.minPrice) : undefined,
           maxPrice: filterParams.maxPrice !== "" ? parseFloat(filterParams.maxPrice) : undefined,
+          tags: filterParams.tags && filterParams.tags.length > 0 ? filterParams.tags : undefined,
+
         };
 
         const data: ProductResponse = await getProducts(preparedParams, token);

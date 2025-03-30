@@ -7,6 +7,7 @@ interface Filters {
   maxPrice: string;
   minCost: string;
   maxCost: string;
+  tags: string[]; // Aseguramos que es string[]
 }
 
 export const useProductFilters = (
@@ -30,7 +31,7 @@ export const useProductFilters = (
     }
     setFilters((prev) => ({
       ...prev,
-      [filterName]: "",
+      [filterName]: filterName === "tags" ? [] as string[] : "",
     }));
     if (filterName === "code") {
       onSearch();
