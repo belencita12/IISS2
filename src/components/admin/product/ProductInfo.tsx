@@ -37,13 +37,18 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
           <span className="flex-grow text-right">{value}</span>
         </div>
       ))}
-      <div className="flex">
-        <span className="text-gray-600 w-24">
-          {product.tags?.map((tag, index) => (
-            <span key={index} className="mr-2 text-grey-500">#{tag}</span>
-          ))}    
-        </span>
-      </div>
+ {product.tags && product.tags.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-2">
+          {product.tags.map((tag, index) => (
+            <span 
+              key={index} 
+              className="border border-black text-black px-2 py-1 text-sm rounded"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
