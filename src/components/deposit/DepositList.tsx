@@ -8,6 +8,9 @@ import { StockForm } from "../stock/register/StockForm";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext,} from "../ui/pagination";
 import SearchBar from "../admin/client/SearchBar";
 import { toast } from "@/lib/toast";
+import { getStocks } from "@/lib/stock/getStock";
+import { StockData } from "@/lib/stock/IStock";
+import { deleteStockById } from "@/lib/stock/deleteStockById";
 
 interface Deposit {
   id: number;
@@ -29,43 +32,32 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
   const [allDeposits, setAllDeposits] = useState<Deposit[]>([]);
   const [selectedDeposit, setSelectedDeposit] = useState<Deposit | null>(null);
 
-  const fetchDeposits = useCallback(async (
-    page: number, token: string, search: string = ""
-  ) => {
+  const showDeposits = useCallback(
+    async (page: number, token: string, search: string = "") => {
     try {
       setIsLoading(true);
-      const apiUrl = process.env.NEXT_PUBLIC_BASE_URL;
-      if (!apiUrl) {
-        console.error("Error: NEXT_PUBLIC_BASE_URL no está definido");
-        return;
-      }
       if (!token) {
         console.error("Error: No hay token de autenticación");
         return;
       }
-  
-      const params = new URLSearchParams();
-      params.append("page", page.toString());
-      if (search) params.append("name", search);
-  
-      const response = await fetch(`${apiUrl}/stock?${params.toString()}`, {
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-  
-      if (!response.ok) {
-        throw new Error("Error al obtener los depósitos");
-      }
-  
-      const data = await response.json();
-      setAllDeposits(data.data);
-      setDeposits(data.data);
+
+      const data = await getStocks({ page, name: search }, token);
+
+      const cleanedData: Deposit[] = data.data
+        .filter((item): item is StockData & {id: number} => typeof item.id === 'number')
+        .map((item) => ({
+          id: item.id,
+          name: item.name,
+          address: item.address,
+        }));
+
+      setDeposits(cleanedData);
       setTotalPages(data.totalPages);
+      setAllDeposits(cleanedData);
     } catch (error) {
-      console.error("Error fetching deposits:", error);
+      console.error("Error al obtener los depósitos:", error);
+      toast("error", "Ocurrió un error al cargar los depósitos.");
+
     } finally {
       setIsLoading(false);
     }
@@ -74,15 +66,15 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
   
   useEffect(() => {
     if (token) {
-      fetchDeposits(currentPage, token);
+      showDeposits(currentPage, token);
     }
     
-  }, [currentPage, token, fetchDeposits]);
+  }, [currentPage, token, showDeposits]);
 
   const handleSearch = () => {
     if (token) {
       setCurrentPage(1);
-      fetchDeposits(currentPage, token, searchTerm);
+      showDeposits(currentPage, token, searchTerm);
     }
   }
 
@@ -100,7 +92,7 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
         onSearch={(term) => {
           setSearchTerm(term);
           setCurrentPage(1);
-          fetchDeposits(1, token, term);
+          showDeposits(1, token, term);
         }}
       />
 
@@ -133,21 +125,14 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
               }}
               onDelete={async (id) => {
                 try {
-                  const apiUrl = process.env.NEXT_PUBLIC_BASE_URL;
-                  const res = await fetch(`${apiUrl}/stock/${id}`, {
-                    method: "DELETE",
-                    headers: {
-                      Authorization: `Bearer ${token}`,
-                    },
-                  });
-
-                  if (!res.ok) {
-                    throw new Error("No se pudo eliminar el depósito.");
+                  const success = await deleteStockById(id, token);
+                  if (!success) {
+                    toast("error", "No se pudo eliminar el depósito.");
+                    return;
                   }
 
                   toast("success", "Depósito eliminado correctamente ✅");
-                  
-                  fetchDeposits(currentPage, token, searchTerm);
+                  showDeposits(currentPage, token, searchTerm);
                 } catch (error) {
                   console.error("Error al eliminar el deposito", error);
                   toast("error", "Ocurrió un error al eliminar el depósito.");
@@ -183,7 +168,7 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
       {isModalOpen && (
         <StockForm token={token} isOpen={isModalOpen} onClose={handleCloseModal} 
          onRegisterSuccess={() => {
-          fetchDeposits(1, token);
+          showDeposits(1, token);
           setCurrentPage(1);
          }}/>
       )}
