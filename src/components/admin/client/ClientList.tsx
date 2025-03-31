@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState,useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { fetchUsers } from "@/lib/client/getUsers";
-import SearchBar from "./SearchBar";
+import SearchBar from "@/components/global/SearchBar";
 import { Eye, Pencil, Trash } from "lucide-react";
 import { toast } from "@/lib/toast";
 import GenericTable, {
@@ -15,10 +15,8 @@ import ClientTableSkeleton from "./skeleton/ClientTableSkeleton";
 import { useRouter } from "next/navigation";
 import { IUserProfile } from "@/lib/client/IUserProfile";
 
-
-
 interface ClientListProps {
-    token: string | null;
+    token: string;
 }
 
 export default function ClientList({ token }: ClientListProps) {
@@ -31,6 +29,7 @@ export default function ClientList({ token }: ClientListProps) {
         pagination: { currentPage: 1, totalPages: 1, totalItems: 0, pageSize: 4 },
     });
     const [loading, setLoading] = useState(false);
+    const [filteredData, setFilteredData] = useState<IUserProfile[]>([]);
 
     const loadUsers = useCallback(
         async (page: number = 1, query: string = "") => {
@@ -41,7 +40,6 @@ export default function ClientList({ token }: ClientListProps) {
                 const results = await fetchUsers(page, query, token);
                 if (!results.data.length && query)
                     toast("info", "No se ha encontrado el cliente!");
-                console.log(results.data);
 
                 setData({
                     users: results.data,
@@ -52,6 +50,7 @@ export default function ClientList({ token }: ClientListProps) {
                         pageSize: results.size,
                     },
                 });
+                setFilteredData(results.data);
             } catch (error) {
                 toast("error", "Error al cargar clientes");
             } finally {
@@ -60,12 +59,16 @@ export default function ClientList({ token }: ClientListProps) {
         },
         [token]
     );
-
     useEffect(() => {
         if (token) loadUsers(data.pagination.currentPage);
     }, [token, data.pagination.currentPage, loadUsers]);
 
-    const handleSearch = (query: string) => loadUsers(1, query);
+    const handleSearch = useCallback(
+        (query: string) => {
+            loadUsers(data.pagination.currentPage, query);
+        },
+        [data.pagination.currentPage, loadUsers]
+    );
     const handlePageChange = (page: number) =>
         setData((prev) => ({
             ...prev,
@@ -75,10 +78,9 @@ export default function ClientList({ token }: ClientListProps) {
     const columns: Column<IUserProfile>[] = [
         { header: "Nombre", accessor: "fullName" },
         { header: "Email", accessor: "email" },
+        { header: "RUC", accessor: "ruc" },
         { header: "Dirección", accessor: "adress" },
         { header: "Teléfono", accessor: "phoneNumber" },
-        { header: "RUC", accessor: "ruc" },
-
     ];
 
     const actions: TableAction<IUserProfile>[] = [
@@ -101,15 +103,24 @@ export default function ClientList({ token }: ClientListProps) {
 
     return (
         <div className="p-4 mx-auto">
-            <SearchBar onSearch={handleSearch} />
+            <SearchBar
+                onSearch={handleSearch}
+                placeholder="Buscar por nombre,correo o ruc"
+                manualSearch={true}
+                debounceDelay={400}
+            />
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-3xl font-bold">Clientes</h2>
-                <Button variant="outline" className="px-6" onClick={() => router.push("/dashboard/clients/register")}>
+                <Button
+                    variant="outline"
+                    className="px-6"
+                    onClick={() => router.push("/dashboard/clients/register")}
+                >
                     Agregar
                 </Button>
             </div>
             <GenericTable
-                data={data.users}
+                data={filteredData}
                 columns={columns}
                 actions={actions}
                 pagination={data.pagination}
@@ -121,5 +132,3 @@ export default function ClientList({ token }: ClientListProps) {
         </div>
     );
 }
-
-
