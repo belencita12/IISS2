@@ -1,5 +1,5 @@
 import React from "react";
-import { Product } from "@/lib/admin/products/IProducts";
+import { Product } from "@/lib/products/IProducts";
 import { StockDetailsData } from "@/lib/stock/IStock";
 import { Badge } from "@/components/ui/badge"
 
