@@ -25,24 +25,9 @@ const ProductStockList: React.FC<StockListProps> = ({
     );
   }
 
-// Agrupar detalles por stockId y sumar las cantidades
-const groupedDetails = Object.values(
-  stockDetails.reduce((acc, detail) => {
-    // Si ya existe una entrada para este stockId en el acumulador
-    if (acc[detail.stockId]) {
-      // Sumar la cantidad del detalle actual al total acumulado
-      acc[detail.stockId].amount += detail.amount;
-    } else {
-      // Si no existe, se agrega el detalle al acumulador
-      acc[detail.stockId] = { ...detail };
-    }
-    return acc; 
-  }, {} as Record<string, StockDetailsData>) 
-);
-
   return (
     <div className="w-full mx-auto">
-      {groupedDetails.map((detail, index) => {
+      {stockDetails.map((detail, index) => {
         const matchedStock = stocks.find((s) => s.id === detail.stockId);
         return matchedStock ? (
           <Card 
