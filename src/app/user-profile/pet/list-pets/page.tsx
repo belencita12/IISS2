@@ -11,7 +11,11 @@ export default async function Page() {
   }
 
   const token = session.user.token;
-  const clientId = session.user.id;
+  const clientId = session.user.clientId;
+
+  if (!clientId) {
+    redirect("/login");
+  }
 
   return <PetList clientId={clientId} token={token} />;
 }
