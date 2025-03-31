@@ -5,32 +5,26 @@ import DepositCard from "./DepositCard";
 import { LoaderCircleIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { StockForm } from "../stock/register/StockForm";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext,} from "../ui/pagination";
+import GenericPagination from "../global/GenericPagination";
 import SearchBar from "../admin/client/SearchBar";
 import { toast } from "@/lib/toast";
 import { getStocks } from "@/lib/stock/getStock";
 import { StockData } from "@/lib/stock/IStock";
 import { deleteStockById } from "@/lib/stock/deleteStockById";
 
-interface Deposit {
-  id: number;
-  name: string;
-  address: string;
-}
-
 interface DepositListProps {
   token?: string;
 }
 
 const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
-  const [deposits, setDeposits] = useState<Deposit[]>([]);
+  const [deposits, setDeposits] = useState<StockData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [allDeposits, setAllDeposits] = useState<Deposit[]>([]);
-  const [selectedDeposit, setSelectedDeposit] = useState<Deposit | null>(null);
+  const [allDeposits, setAllDeposits] = useState<StockData[]>([]);
+  const [selectedDeposit, setSelectedDeposit] = useState<StockData | null>(null);
 
   const showDeposits = useCallback(
     async (page: number, token: string, search: string = "") => {
@@ -43,7 +37,7 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
 
       const data = await getStocks({ page, name: search }, token);
 
-      const cleanedData: Deposit[] = data.data
+      const cleanedData: StockData[] = data.data
         .filter((item): item is StockData & {id: number} => typeof item.id === 'number')
         .map((item) => ({
           id: item.id,
@@ -143,27 +137,18 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
         </div>
       )}
 
-      <Pagination className="mt-6">
-        <PaginationContent>
-          <PaginationPrevious onClick={() => {
-              if (currentPage > 1) setCurrentPage(currentPage - 1);
-          }}/>
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <PaginationItem key={page}>
-              <PaginationLink isActive={page === currentPage} href="#" onClick={(e) => {
-                  e.preventDefault();
-                  setCurrentPage(page);
-                }}
-              >
-                {page}
-              </PaginationLink>
-            </PaginationItem>
-          ))}
-          <PaginationNext onClick={() => {
-            if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-          }}/>
-        </PaginationContent>
-      </Pagination>
+      <GenericPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        handlePageChange={(page) => setCurrentPage(page)}
+        handlePreviousPage={() => {
+          if (currentPage > 1) setCurrentPage(currentPage - 1);
+        }}
+        handleNextPage={() => {
+          if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+        }}
+      />
+
 
       {isModalOpen && (
         <StockForm token={token}

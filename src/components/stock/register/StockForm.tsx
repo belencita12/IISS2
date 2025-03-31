@@ -60,8 +60,12 @@ export const StockForm = ({ token, isOpen, onClose, onRegisterSuccess, initialDa
       }
       onClose();
       onRegisterSuccess();
-    } catch (error) {
-      toast("error", "Hubo un error al guardar el depósito");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast("error", error.message);
+      } else {
+        toast("error", "Error inesperado al registrar el depósito");
+      }
     } finally {
       setIsSubmitting(false);
     }
