@@ -16,3 +16,14 @@ export interface IUserProfile {
   updatedAt: string;
   deletedAt: Record<string, never> | null;
 }
+
+export interface FormClient {
+  id?: number;
+  fullName: string;
+  adress?: string; 
+  phoneNumber: string;
+  ruc: string;
+  email: string;
+}
+
+

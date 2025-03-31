@@ -1,20 +1,21 @@
-import PetList from '@/components/pet/PetList'
-import authOptions from '@/lib/auth/options'
-import { getServerSession } from 'next-auth'
-import { redirect } from 'next/navigation'
-
+import PetList from "@/components/pet/PetList";
+import authOptions from "@/lib/auth/options";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 
 export default async function Page() {
-    // Get the user sessions
+  const session = await getServerSession(authOptions);
 
-    const session = await getServerSession(authOptions)
+  if (!session) {
+    redirect("/login");
+  }
 
-    if (session) {
-        const token = session.user.token
-        const userId = session.user.id 
+  const token = session.user.token;
+  const clientId = session.user.clientId;
 
-        return <PetList userId={userId} token={token}/>
-    }
-    
-    redirect('/login')
+  if (!clientId) {
+    redirect("/login");
+  }
+
+  return <PetList clientId={clientId} token={token} />;
 }
