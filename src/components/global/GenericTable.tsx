@@ -29,7 +29,7 @@ export interface PaginationInfo {
   pageSize: number;
 }
 
-interface GenericTableProps<T> {
+export interface GenericTableProps<T> {
   data: T[];
   columns: Column<T>[];
   actions?: TableAction<T>[];

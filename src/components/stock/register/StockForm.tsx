@@ -22,9 +22,10 @@ interface StockFormProps {
   token: string;
   isOpen: boolean;
   onClose: () => void;
+  onRegisterSuccess: () => void;
 }
 
-export const StockForm = ({ token, isOpen, onClose }: StockFormProps) => {
+export const StockForm = ({ token, isOpen, onClose, onRegisterSuccess }: StockFormProps) => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -42,6 +43,7 @@ export const StockForm = ({ token, isOpen, onClose }: StockFormProps) => {
       await registerStock({ name: data.name, address: data.address }, token);
       toast("success", "Depósito registrado con éxito"); 
       onClose();
+      onRegisterSuccess();
     } catch (error: unknown) {
       if (error instanceof Error) {
         toast("error", error.message);

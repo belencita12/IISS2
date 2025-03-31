@@ -3,6 +3,7 @@ import { Product } from "./IProducts";
 
 export async function getProductById(id: string, token: string): Promise<Product> {
   const url = `${PRODUCT_API}/${id}`;
+  console.log(url);
   const response = await fetch(url, {
     headers: {
       "Content-Type": "application/json",
