@@ -87,8 +87,8 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             {cancelText}
           </button>
           <button
-            onClick={() => {
-              onConfirm()
+            onClick={async () => {
+              await onConfirm()
               onClose()
             }}
             className={`px-4 py-2 rounded text-white ${colors.bg} ${colors.hover} transition`}
