@@ -166,11 +166,15 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
       </Pagination>
 
       {isModalOpen && (
-        <StockForm token={token} isOpen={isModalOpen} onClose={handleCloseModal} 
-         onRegisterSuccess={() => {
-          showDeposits(1, token);
-          setCurrentPage(1);
-         }}/>
+        <StockForm token={token}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal} 
+          onRegisterSuccess={() => {
+            showDeposits(1, token);
+            setCurrentPage(1);
+          }}
+          initialData={selectedDeposit}
+        />
       )}
     </div>
   );

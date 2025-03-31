@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogOverlay } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,6 +10,8 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/lib/toast";
 import { registerStock } from "@/lib/stock/registerStock";
 import { useRouter } from "next/navigation";
+import { setStock } from "@/lib/stock/setStock";
+import { StockData } from "@/lib/stock/IStock";
 
 const stockFormSchema = z.object({
   name: z.string().min(1, "El nombre del stock es obligatorio"),
@@ -23,29 +25,43 @@ interface StockFormProps {
   isOpen: boolean;
   onClose: () => void;
   onRegisterSuccess: () => void;
+  initialData?: StockData | null;
 }
 
-export const StockForm = ({ token, isOpen, onClose, onRegisterSuccess }: StockFormProps) => {
+export const StockForm = ({ token, isOpen, onClose, onRegisterSuccess, initialData}: StockFormProps) => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<StockFormValues>({
     resolver: zodResolver(stockFormSchema),
   });
 
+  useEffect(() => {
+    if (initialData) {
+      setValue("name", initialData.name);
+      setValue("address", initialData.address);
+    }
+  }, [initialData, setValue]);
+
   const onSubmit = async (data: StockFormValues) => {
     setIsSubmitting(true);
     try {
-      await registerStock({ name: data.name, address: data.address }, token);
-      toast("success", "Depósito registrado con éxito"); // Usa el toast personalizado
+      if(initialData?.id) {
+        await setStock({id:initialData.id, ...data}, token);
+        toast("success", "Depósito actualizado con éxito ✅");
+      } else {
+        await registerStock({ name: data.name, address:data.address}, token);
+        toast("success", "Depósito registrado con éxito ✅");
+      }
       onClose();
       onRegisterSuccess();
     } catch (error) {
-      toast("error", "Hubo un error al registrar el depósito");
+      toast("error", "Hubo un error al guardar el depósito");
     } finally {
       setIsSubmitting(false);
     }
@@ -56,7 +72,9 @@ export const StockForm = ({ token, isOpen, onClose, onRegisterSuccess }: StockFo
       <DialogOverlay />
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Registro de Depósito</DialogTitle>
+          <DialogTitle>
+            {initialData ? "Editar Depósito" : "Registro de Depósito"}
+            </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
@@ -71,7 +89,15 @@ export const StockForm = ({ token, isOpen, onClose, onRegisterSuccess }: StockFo
           </div>
           <div className="flex justify-end gap-4">
             <Button type="button" variant="outline" onClick={onClose}>Cancelar</Button>
-            <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Registrando..." : "Registrar"}</Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 
+                initialData ?
+                  "Guardando..." :
+                  "Registrando..." :
+                initialData ?
+                  "Guardar cambios" :
+                  "Registrar"}
+            </Button>
           </div>
         </form>
       </DialogContent>
