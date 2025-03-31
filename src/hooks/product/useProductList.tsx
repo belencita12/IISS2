@@ -3,7 +3,7 @@ import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { getProducts } from "@/lib/admin/products/getProducts";
 import { getStockDetails } from "@/lib/stock/getStockDetails";
 import { Product, ProductResponse } from "@/lib/admin/products/IProducts";
-import useDebounce from "@/lib/admin/products/useDebounceHook";
+import useDebounce from "@/hooks/useDebounce";
 import { toast } from "@/lib/toast";
 
 export function useProductList(token: string) {
