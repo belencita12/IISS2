@@ -42,11 +42,11 @@ const petFormSchema = z.object({
 
 type PetFormValues = z.infer<typeof petFormSchema>;
 interface PetFormProps {
-    userId?: number;
+    clientId?: number;
     token?: string;
 }
 
-export default function PetForm({ userId, token }: PetFormProps) {
+export default function PetForm({ clientId, token }: PetFormProps) {
     const [species, setSpecies] = useState<Species[]>([]);
     const [races, setRaces] = useState<Race[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -107,14 +107,14 @@ export default function PetForm({ userId, token }: PetFormProps) {
         reader.readAsDataURL(file)
     };
     const onSubmit = async (data: PetFormValues) => {
-        if (!userId || !token) {
+        if (!clientId || !token) {
             toast("error", "Debes estar autenticado para registrar una mascota.");
             return;
         }
         const formData = new FormData();
         Object.entries({
             name: data.petName,
-            userId: userId.toString(),
+            clientId: clientId.toString(),
             speciesId: data.animalType,
             raceId: data.breed,
             weight: data.weight.toString(),
