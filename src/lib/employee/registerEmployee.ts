@@ -11,13 +11,12 @@ export const registerEmployee = async (employeeData: FormData, token: string) =>
         });
 
         if (!response.ok) {
-            const errorData = await response.json(); // Obtener detalles del error
-            throw { response: { status: response.status, data: errorData } }; // Lanzar error formateado
+            const errorData = await response.json(); 
+            throw { status: response.status, message: errorData.message || "Error desconocido" };
           }
 
         return await response.json();
     } catch (error) {
-        console.error("Error en registerEmployee:", error);
         throw error;
     }
 };

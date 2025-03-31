@@ -41,7 +41,7 @@ export const StockForm = ({ token, isOpen, onClose, onRegisterSuccess }: StockFo
     setIsSubmitting(true);
     try {
       await registerStock({ name: data.name, address: data.address }, token);
-      toast("success", "Depósito registrado con éxito"); // Usa el toast personalizado
+      toast("success", "Depósito registrado con éxito"); 
       onClose();
       onRegisterSuccess();
     } catch (error: unknown) {

@@ -4,20 +4,25 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { registerEmployee } from "@/lib/employee/registerEmployee";
 import { getWorkPosition } from "@/lib/employee/getWorkPosition";
+import { validatePhoneNumber } from "@/lib/utils";
+import { rucFormatRegExp } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
 const employeeFormSchema = z.object({
-  ruc: z.string().min(1, "El RUC es obligatorio"),
+  ruc: z.string().min(1, "El RUC es obligatorio").regex(rucFormatRegExp, "El RUC debe tener el formato 12345678-1"),
   fullName: z.string().min(1, "El nombre completo es obligatorio"),
   email: z.string().email("Correo electrónico inválido"),
   position: z.string().min(1, "Debe seleccionar un puesto"),
+  adress: z.string().optional(),
+  phoneNumber: z.string().min(1, "El número de teléfono es obligatorio").refine(validatePhoneNumber, {
+    message: "Número de teléfono inválido. Debe comenzar con + y tener al menos 7 dígitos."},),
   profileImg: z.instanceof(File).optional(),
 });
 
@@ -45,6 +50,8 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
       fullName: "",
       email: "",
       position: "",
+      adress: "",
+      phoneNumber: "",
     },
   });
 
@@ -59,7 +66,7 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
           console.error("La respuesta no es un array:", data);
         }
       } catch {
-        toast.error("Error al obtener los puestos de trabajo");
+        toast("error", "Hubo un error al obtener los puestos de trabajo");
       }
     };
     fetchPositions();
@@ -85,7 +92,10 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
       fullName: data.fullName,
       email: data.email,
       positionId: data.position,
-    }).forEach(([key, value]) => formData.append(key, value));
+      adress: data.adress,
+      phoneNumber: data.phoneNumber,
+
+    }).forEach(([key, value]) => formData.append(key, value ?? ""));
   
     if (data.profileImg) {
       formData.append("profileImg", data.profileImg);
@@ -94,21 +104,17 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
     setIsSubmitting(true);
     try {
       await registerEmployee(formData, token);
-      toast.success("Empleado registrado con éxito");
+       toast("success", "Empleado registrado con éxito")
       router.push("/dashboard/employee");
-    } catch (error) {
-      if (error instanceof Response) {
-        try {
-          const errorData = await error.json();
-          toast.error(errorData.message || "Hubo un error al registrar el empleado");
-        } catch {
-          toast.error("Hubo un error inesperado");
-        }
-      } else if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("Hubo un error desconocido");
-      }
+    } catch (error: unknown) {
+    //  console.error("Error al registrar empleado:", error);
+    
+      if (typeof error === "object" && error !== null && "message" in error) {
+        const errorMessage = (error as { message: string }).message;          
+        toast("error", errorMessage);
+        return;
+      }   
+      toast("error", "Error inesperado al registrar el empleado");
     } finally {
       setIsSubmitting(false);
     }
@@ -148,6 +154,16 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
             </SelectContent>
           </Select>
           {errors.position && <p className="text-red-500">{errors.position.message}</p>}
+        </div>
+        <div>
+          <Label>Dirección</Label>
+          <Input {...register("adress")} placeholder="Ingrese la dirección" />
+          {errors.adress && <p className="text-red-500">{errors.adress.message}</p>}
+        </div>
+        <div>
+          <Label>Teléfono</Label>
+          <Input {...register("phoneNumber")} placeholder="Ingrese el número de teléfono" />
+          {errors.phoneNumber && <p className="text-red-500">{errors.phoneNumber.message}</p>}
         </div>
         <div>
           <Label>Foto del empleado (Opcional)</Label>
