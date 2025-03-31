@@ -44,8 +44,12 @@ export const StockForm = ({ token, isOpen, onClose, onRegisterSuccess }: StockFo
       toast("success", "Depósito registrado con éxito"); // Usa el toast personalizado
       onClose();
       onRegisterSuccess();
-    } catch (error) {
-      toast("error", "Hubo un error al registrar el depósito");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast("error", error.message);
+      } else {
+        toast("error", "Error inesperado al registrar el depósito");
+      }
     } finally {
       setIsSubmitting(false);
     }

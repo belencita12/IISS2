@@ -5,12 +5,12 @@ import DepositCard from "./DepositCard";
 import { LoaderCircleIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { StockForm } from "../stock/register/StockForm";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext,} from "../ui/pagination";
 import SearchBar from "../admin/client/SearchBar";
 import { toast } from "@/lib/toast";
 import { getStocks } from "@/lib/stock/getStock";
 import { StockData } from "@/lib/stock/IStock";
 import { deleteStockById } from "@/lib/stock/deleteStockById";
+import GenericPagination from "../global/GenericPagination";
 
 interface Deposit {
   id: number;
@@ -143,27 +143,17 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
         </div>
       )}
 
-      <Pagination className="mt-6">
-        <PaginationContent>
-          <PaginationPrevious onClick={() => {
-              if (currentPage > 1) setCurrentPage(currentPage - 1);
-          }}/>
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <PaginationItem key={page}>
-              <PaginationLink isActive={page === currentPage} href="#" onClick={(e) => {
-                  e.preventDefault();
-                  setCurrentPage(page);
-                }}
-              >
-                {page}
-              </PaginationLink>
-            </PaginationItem>
-          ))}
-          <PaginationNext onClick={() => {
-            if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-          }}/>
-        </PaginationContent>
-      </Pagination>
+      <GenericPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        handlePageChange={(page) => setCurrentPage(page)}
+        handlePreviousPage={() => {
+          if (currentPage > 1) setCurrentPage(currentPage - 1);
+        }}
+        handleNextPage={() => {
+          if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+        }}
+      />
 
       {isModalOpen && (
         <StockForm token={token} isOpen={isModalOpen} onClose={handleCloseModal} 
