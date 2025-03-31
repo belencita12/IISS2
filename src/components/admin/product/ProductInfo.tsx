@@ -26,7 +26,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
         { label: "Precio", value: `${product.price?.toLocaleString()} Gs` },
         { label: "Costo", value: `${product.cost?.toLocaleString()} Gs` },
         { 
-          label: "Stock", 
+          label: "Cantidad", 
           value: isStockLoading 
             ? "Cargando..." 
             : totalStock.toString()
