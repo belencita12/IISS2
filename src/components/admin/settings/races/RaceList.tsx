@@ -12,7 +12,6 @@ import { toast } from "@/lib/toast";
 import GenericTable, { Column, TableAction, PaginationInfo } from "@/components/global/GenericTable";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import RaceTableSkeleton from "./skeleton/RaceTableSkeleton";
-//import { useRouter } from "next/navigation";
 import { RaceForm } from "./register/RaceForm";
 
 interface RaceListProps {
@@ -20,7 +19,6 @@ interface RaceListProps {
 }
 
 export default function RaceList({ token }: RaceListProps) {
-    //const router = useRouter();
     const [races, setRaces] = useState<Race[]>([]);
     const [pagination, setPagination] = useState<PaginationInfo>({
         currentPage: 1, totalPages: 1, totalItems: 0, pageSize: 10,
@@ -28,6 +26,7 @@ export default function RaceList({ token }: RaceListProps) {
     const [selectedRace, setSelectedRace] = useState<Race | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isRaceModalOpen, setIsRaceModalOpen] = useState(false);
+    const [editingRace, setEditingRace] = useState<Race | null>(null);
     const [loading, setLoading] = useState(false);
     const [species, setSpecies] = useState<Species[]>([]);
     const [selectedSpecies, setSelectedSpecies] = useState<number | null>(null);
@@ -96,11 +95,21 @@ export default function RaceList({ token }: RaceListProps) {
     const handleSpeciesChange = (event: React.ChangeEvent<HTMLSelectElement>) =>
         setSelectedSpecies(Number(event.target.value) || null);
 
-    const openRaceModal = () => setIsRaceModalOpen(true);
+    const openRaceModal = () => {
+        setEditingRace(null);
+        setIsRaceModalOpen(true);
+    };
+    
+    const openEditRaceModal = (race: Race) => {
+        setEditingRace(race);
+        setIsRaceModalOpen(true);
+    };
+
     const closeRaceModal = () => {
         setIsRaceModalOpen(false);
-        loadRaces(pagination.currentPage);
+       loadRaces(pagination.currentPage); 
     };
+    
 
     const columns: Column<Race>[] = [
         { header: "Nombre", accessor: "name" },
@@ -111,7 +120,7 @@ export default function RaceList({ token }: RaceListProps) {
     ];
 
     const actions: TableAction<Race>[] = [
-        { icon: <Pencil className="w-4 h-4" />, onClick: (race) => console.log("Editar:", race), label: "Editar" },
+        { icon: <Pencil className="w-4 h-4" />, onClick: openEditRaceModal, label: "Editar" },
         { icon: <Trash className="w-4 h-4" />, onClick: confirmDelete, label: "Eliminar" },
     ];
 
@@ -147,8 +156,7 @@ export default function RaceList({ token }: RaceListProps) {
                 emptyMessage="No se encontraron razas"
             />
 
-            <RaceForm token={token || ""} isOpen={isRaceModalOpen} onClose={closeRaceModal} />
-
+            <RaceForm token={token || ""} isOpen={isRaceModalOpen} onClose={closeRaceModal} initialData={editingRace} />
 
             <ConfirmationModal
                 isOpen={isModalOpen}

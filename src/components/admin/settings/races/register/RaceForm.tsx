@@ -8,7 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/lib/toast";
+import { Race } from "@/lib/pets/IPet";
 import { registerRace } from "@/lib/pets/registerRace";
+import { updateRace } from "@/lib/pets/updateRace";
 import { getSpecies } from "@/lib/pets/getRacesAndSpecies";
 
 const raceFormSchema = z.object({
@@ -22,23 +24,13 @@ interface RaceFormProps {
   token: string;
   isOpen: boolean;
   onClose: () => void;
+  initialData?: Race | null; // <-- Agregar initialData para edición
 }
 
-export const RaceForm = ({ token, isOpen, onClose }: RaceFormProps) => {
+export const RaceForm = ({ token, isOpen, onClose, initialData }: RaceFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [species, setSpecies] = useState<{ id: number; name: string }[]>([]);
 
-  useEffect(() => {
-    const fetchSpecies = async () => {
-      try {
-        const speciesList = await getSpecies(token);
-        setSpecies(speciesList);
-      } catch (error) {
-        toast("error", "No se pudieron obtener las especies");
-      }
-    };
-    fetchSpecies();
-  }, [token]);
 
   const {
     register,
@@ -46,32 +38,52 @@ export const RaceForm = ({ token, isOpen, onClose }: RaceFormProps) => {
     formState: { errors },
   } = useForm<RaceFormValues>({
     resolver: zodResolver(raceFormSchema),
+    defaultValues: initialData || { name: "", speciesId: 0 }, // Inicializar con los datos si están
   });
 
-  const onSubmit = async (data: RaceFormValues) => {
-    setIsSubmitting(true);
-    try {
-        await registerRace({ name: data.name, speciesId: data.speciesId }, token);
-      toast("success", "Raza registrada con éxito");
-      onClose();
-    } catch (error: unknown) {
-          if (error instanceof Error) {
-            toast("error", error.message);
-          } else {
-            toast("error", "Error inesperado al registrar la raza");
-          }
-    } finally {
-      setIsSubmitting(false);
+  useEffect(() => {
+    if (isOpen) {
+        const fetchSpecies = async () => {
+            try {
+                const speciesList = await getSpecies(token);
+                setSpecies(speciesList);
+            } catch (error) {
+                toast("error", "No se pudieron obtener las especies");
+            }
+        };
+        fetchSpecies();
     }
-  };
-  
+}, [token, isOpen]);
+
+
+const onSubmit = async (data: RaceFormValues) => {
+  setIsSubmitting(true);
+  try {
+    if (initialData) {
+      const updatedRace = {
+        name: data.name,
+        speciesId: data.speciesId,
+      };
+      await updateRace(initialData.id, updatedRace, token);
+      toast("success", "Raza actualizada con éxito");
+    } else {
+      await registerRace({ name: data.name, speciesId: data.speciesId }, token);
+      toast("success", "Raza registrada con éxito");
+    }
+    onClose();  
+  } catch (error: unknown) {
+    toast("error", error instanceof Error ? error.message : "Error inesperado");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogOverlay />
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Registro de Raza</DialogTitle>
+          <DialogTitle>{initialData ? "Editar Raza" : "Registro de Raza"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
@@ -91,7 +103,9 @@ export const RaceForm = ({ token, isOpen, onClose }: RaceFormProps) => {
           </div>
           <div className="flex justify-end gap-4">
             <Button type="button" variant="outline" onClick={onClose}>Cancelar</Button>
-            <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Registrando..." : "Registrar"}</Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? (initialData ? "Actualizando..." : "Registrando...") : (initialData ? "Actualizar" : "Registrar")}
+            </Button>
           </div>
         </form>
       </DialogContent>
