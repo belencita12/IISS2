@@ -1,3 +1,4 @@
+"use client";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -5,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { phoneNumber, ruc } from "@/lib/schemas";
 import { FormField } from "./FormField";
-
+import { signup } from "@/lib/auth/signup";
+import { useRouter } from "next/navigation";
+import { toast } from "@/lib/toast";
 // Define the schema for registration
 export const RegisterFormSchema = z.object({
   name: z.string().min(1, "Ingrese un nombre válido"),
@@ -23,16 +26,22 @@ export const RegisterFormSchema = z.object({
 
 type RegisterFormValues = z.infer<typeof RegisterFormSchema>;
 
-interface RegisterFormProps {
-  onSubmit: (data: RegisterFormValues) => Promise<void>;
-  isLoading: boolean;
-}
 
-export function RegisterForm({ onSubmit, isLoading }: RegisterFormProps) {
-  const { register, handleSubmit, formState: { errors } } = useForm<RegisterFormValues>({
+export function RegisterForm() {
+  const { register, handleSubmit, formState: { errors, isLoading } } = useForm<RegisterFormValues>({
     resolver: zodResolver(RegisterFormSchema),
     mode: "onChange"
   });
+
+  const router = useRouter();
+
+  const onSubmit = async (data: RegisterFormValues) => {
+    signup(data).then(() => {
+      router.push("/login");
+    }).catch((error:Error) => {
+      toast("error", error.message);
+    });
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
