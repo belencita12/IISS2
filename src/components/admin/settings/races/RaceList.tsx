@@ -13,6 +13,7 @@ import GenericTable, { Column, TableAction, PaginationInfo } from "@/components/
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import RaceTableSkeleton from "./skeleton/RaceTableSkeleton";
 import { useRouter } from "next/navigation";
+import { RaceForm } from "./register/RaceForm";
 
 interface RaceListProps {
     token: string | null;
@@ -26,6 +27,7 @@ export default function RaceList({ token }: RaceListProps) {
     });
     const [selectedRace, setSelectedRace] = useState<Race | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isRaceModalOpen, setIsRaceModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [species, setSpecies] = useState<Species[]>([]);
     const [selectedSpecies, setSelectedSpecies] = useState<number | null>(null);
@@ -94,6 +96,12 @@ export default function RaceList({ token }: RaceListProps) {
     const handleSpeciesChange = (event: React.ChangeEvent<HTMLSelectElement>) =>
         setSelectedSpecies(Number(event.target.value) || null);
 
+    const openRaceModal = () => setIsRaceModalOpen(true);
+    const closeRaceModal = () => {
+        setIsRaceModalOpen(false);
+        loadRaces(pagination.currentPage);
+    };
+
     const columns: Column<Race>[] = [
         { header: "Nombre", accessor: "name" },
         {
@@ -123,7 +131,7 @@ export default function RaceList({ token }: RaceListProps) {
             </div>
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-3xl font-bold">Razas</h2>
-                <Button variant="outline" className="px-6" onClick={() => router.push("/dashboard/races/register")}>
+                <Button variant="outline" className="px-6" onClick={openRaceModal}>
                     Agregar
                 </Button>
             </div>
@@ -138,6 +146,9 @@ export default function RaceList({ token }: RaceListProps) {
                 skeleton={<RaceTableSkeleton />}
                 emptyMessage="No se encontraron razas"
             />
+
+            <RaceForm token={token || ""} isOpen={isRaceModalOpen} onClose={closeRaceModal} />
+
 
             <ConfirmationModal
                 isOpen={isModalOpen}

@@ -1,13 +1,14 @@
 import { RACE_API } from "../urls";
 
-export const registerRace = async (raceData: FormData, token: string) => {
+export const registerRace = async (raceData: { name: string; speciesId: number }, token: string) => {
     try {
         const response = await fetch(RACE_API, { 
             method: "POST",
             headers: {
+                "Content-Type": "application/json", // 📌 Especificar JSON
                 Authorization: `Bearer ${token}`
             },
-            body: raceData,
+            body: JSON.stringify(raceData), // 📌 Enviar JSON en lugar de FormData
         });
 
         if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
