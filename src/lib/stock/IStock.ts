@@ -1,3 +1,4 @@
+import {Product} from "@/lib/admin/products/IProducts"
 
 export interface StockData {
     id?: number;
@@ -27,7 +28,7 @@ export interface StockData {
   
   export interface StockDetailsData {
     stockId: number;
-    productId: number;
+    product: Product;
     amount: number;
   }
   
