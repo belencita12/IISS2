@@ -1,47 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import { getPositionById } from "@/lib/work-position/getPositionById";
 import { Position } from "@/lib/work-position/IPosition";
-import { toast } from "@/lib/toast";
+import { WEEKDAYS } from "@/constants/workPositions.constants";
 
-const WEEKDAYS = [
-  "Domingo",
-  "Lunes",
-  "Martes",
-  "Miércoles",
-  "Jueves",
-  "Viernes",
-  "Sábado",
-];
+interface Props {
+  position: Position;
+}
 
-export default function PositionDetail({ token }: { token: string }) {
-  const { id } = useParams();
-  const [position, setPosition] = useState<Position | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!id) return;
-
-    const fetchData = async () => {
-      try {
-        const response = await getPositionById(Number(id), token);
-        setPosition(response);
-      } catch (error) {
-        toast("error", "Error al cargar los detalles del puesto");
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [id, token]);
-
-  if (loading) return <p className="p-4">Cargando detalles...</p>;
-  if (!position) return <p className="p-4 text-red-500">No se encontró el puesto</p>;
-
+export default function PositionDetail({ position }: Props) {
   return (
     <div className="px-8 py-6 w-full">
       <h1 className="text-4xl font-bold mb-10">{position.name}</h1>

@@ -1,22 +1,23 @@
-import PositionDetail from "@/components/admin/work-position/Details";
-import authOptions from "@/lib/auth/options";
 import { getServerSession } from "next-auth";
+import authOptions from "@/lib/auth/options";
 import { redirect } from "next/navigation";
+import { getPositionById } from "@/lib/work-position/getPositionById";
+import PositionDetail from "@/components/admin/work-position/Details";
 
-interface Props {
-  params: {
-    id: string;
-  };
-}
-
-export default async function PositionDetailPage({ params }: Props) {
+export default async function Page({ 
+  params, 
+}: { 
+  params: Promise<{ id: string }> 
+}) {
   const session = await getServerSession(authOptions);
+  const { id } = await params
 
-  if (!session) {
-    redirect("/login");
-  }
+  if (!session) redirect("/login");
 
   const token = session.user.token;
+  const position = await getPositionById(Number(id) , token);
 
-  return <PositionDetail token={token} />;
+  if (!id) redirect("/dashboard/settings/positions");
+
+  return <PositionDetail position={position} />;
 }
