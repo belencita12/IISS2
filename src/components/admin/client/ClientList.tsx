@@ -106,7 +106,7 @@ export default function ClientList({ token }: ClientListProps) {
             <SearchBar
                 onSearch={handleSearch}
                 placeholder="Buscar por nombre,correo o ruc"
-                manualSearch={true}
+                manualSearch={false}
                 debounceDelay={400}
             />
             <div className="flex justify-between items-center mb-4">
