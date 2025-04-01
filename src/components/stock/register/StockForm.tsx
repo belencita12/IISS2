@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/lib/toast";
 import { registerStock } from "@/lib/stock/registerStock";
-import { useRouter } from "next/navigation";
+//import { useRouter } from "next/navigation";
 
 const stockFormSchema = z.object({
   name: z.string().min(1, "El nombre del stock es obligatorio"),
@@ -25,7 +25,7 @@ interface StockFormProps {
 }
 
 export const StockForm = ({ token, isOpen, onClose }: StockFormProps) => {
-  const router = useRouter();
+  //const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
