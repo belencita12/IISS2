@@ -17,7 +17,10 @@ export const signup = async (data: z.infer<typeof RegisterFormSchema>) => {
         }),
       });
       if (!response.ok) {
-        throw new Error("Error en el registro. Por favor, inténtelo de nuevo.");
+        const errorData = await response.json();
+        if (errorData && errorData.message) {
+          throw new Error(errorData.message);
+      }
       }
     } catch(error) {
       if (error instanceof Error) {

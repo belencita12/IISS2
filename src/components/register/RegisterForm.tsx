@@ -28,7 +28,7 @@ type RegisterFormValues = z.infer<typeof RegisterFormSchema>;
 
 
 export function RegisterForm() {
-  const { register, handleSubmit, formState: { errors, isLoading } } = useForm<RegisterFormValues>({
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<RegisterFormValues>({
     resolver: zodResolver(RegisterFormSchema),
     mode: "onChange"
   });
@@ -36,11 +36,13 @@ export function RegisterForm() {
   const router = useRouter();
 
   const onSubmit = async (data: RegisterFormValues) => {
-    signup(data).then(() => {
+    try {
+      await signup(data);
+      toast("success", "Registro exitoso");
       router.push("/login");
-    }).catch((error:Error) => {
-      toast("error", error.message);
-    });
+    } catch (error) {
+      toast("error", (error as Error).message);
+    }
   };
 
   return (
@@ -108,8 +110,8 @@ export function RegisterForm() {
         <Button variant="outline" asChild>
           <Link href="/login">Tengo una cuenta</Link>
         </Button>
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? "Registrando..." : "Registrarme"}
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Registrando..." : "Registrarme"}
         </Button>
       </div>
     </form>
