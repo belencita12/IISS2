@@ -14,9 +14,9 @@ import {
   PaginationNext,
 } from "@/components/ui/pagination";
 import { getStockDetailsByStock } from "@/lib/stock/getStockDetailsByStock";
-import { getProductById } from "@/lib/admin/products/getProductById";
+import { getProductById } from "@/lib/products/getProductById";
 import { StockData, StockDetailsResponse, StockDetailsData} from "@/lib/stock/IStock";
-import { Product } from "@/lib/admin/products/IProducts";
+import { Product } from "@/lib/products/IProducts";
 import { toast } from "@/lib/toast";
 
 interface DepositDetailsProps {

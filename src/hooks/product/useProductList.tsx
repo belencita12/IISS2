@@ -1,8 +1,8 @@
 "use client";
 import React, { useState, useCallback, useEffect, useMemo } from "react";
-import { getProducts } from "@/lib/admin/products/getProducts";
+import { getProducts } from "@/lib/products/getProducts";
 import { getStockDetails } from "@/lib/stock/getStockDetails";
-import { Product, ProductResponse } from "@/lib/admin/products/IProducts";
+import { Product, ProductResponse } from "@/lib/products/IProducts";
 import useDebounce from "@/hooks/useDebounce";
 import { toast } from "@/lib/toast";
 
