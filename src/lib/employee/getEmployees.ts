@@ -5,9 +5,6 @@ export const fetchEmployees = async (page: number, query: string, token: string 
         const url = query
             ? `${EMPLOYEE_API}?page=${page}&query=${encodeURIComponent(query)}`
             : `${EMPLOYEE_API}?page=${page}&size=7`; 
-
-        console.log("URL de petición:", url); 
-
         const response = await fetch(url, {
             headers: { Authorization: `Bearer ${token}` },
         });

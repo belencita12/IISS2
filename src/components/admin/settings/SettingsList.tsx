@@ -1,10 +1,38 @@
-import Link from 'next/link';
+import Link from "next/link";
 
 const settingsOptions = [
-  { name: 'Razas', description: 'Listar, crear, editar o eliminar las razas soportadas por el sistema.', icon: '🐶', link: '/dashboard/settings/races' },
-  { name: 'Especies', description: 'Gestionar las especies disponibles en el sistema.', icon: '🐾', link: '/dashboard/settings/species' },
-  { name: 'Puestos', description: 'Administrar los puestos soportados en la veterinaria.', icon: '🏥', link: '/dashboard/settings/positions' },
-  { name: 'Proveedores', description: '...', icon: '🏥', link: '/dashboard/settings/providers' },
+  {
+    name: "Razas",
+    description:
+      "Listar, crear, editar o eliminar las razas soportadas por el sistema.",
+    icon: "🐶",
+    link: "/dashboard/settings/races",
+  },
+  {
+    name: "Especies",
+    description: "Gestionar las especies disponibles en el sistema.",
+    icon: "🐾",
+    link: "/dashboard/settings/species",
+  },
+  {
+    name: "Puestos",
+    description: "Administrar los puestos soportados en la veterinaria.",
+    icon: "🏥",
+    link: "/dashboard/settings/positions",
+  },
+  {
+    name: "Proveedores",
+    description: "...",
+    icon: "🏥",
+    link: "/dashboard/settings/providers",
+  },
+  {
+    name: "Tags",
+    description:
+      "Administra las etiquetas que soporta el sistema para un mejor filtrado y busqueda de productos.",
+    icon: "🏷️",
+    link: "/dashboard/settings/tags",
+  },
 ];
 
 export function SettingsList() {
