@@ -12,7 +12,7 @@ import { toast } from "@/lib/toast";
 import GenericTable, { Column, TableAction, PaginationInfo } from "@/components/global/GenericTable";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import RaceTableSkeleton from "./skeleton/RaceTableSkeleton";
-import { useRouter } from "next/navigation";
+//import { useRouter } from "next/navigation";
 import { RaceForm } from "./register/RaceForm";
 
 interface RaceListProps {
@@ -20,7 +20,7 @@ interface RaceListProps {
 }
 
 export default function RaceList({ token }: RaceListProps) {
-    const router = useRouter();
+    //const router = useRouter();
     const [races, setRaces] = useState<Race[]>([]);
     const [pagination, setPagination] = useState<PaginationInfo>({
         currentPage: 1, totalPages: 1, totalItems: 0, pageSize: 10,
@@ -38,7 +38,7 @@ export default function RaceList({ token }: RaceListProps) {
                 .then(setSpecies)
                 .catch(() => toast("error", "Error al cargar especies"));
         }
-    }, [token]);
+    }, [token, species.length]);
 
     const loadRaces = useCallback(async (page = 1, query = "") => {
         if (!token) return;
