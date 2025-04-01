@@ -51,12 +51,7 @@ export const RaceForm = ({ token, isOpen, onClose }: RaceFormProps) => {
   const onSubmit = async (data: RaceFormValues) => {
     setIsSubmitting(true);
     try {
-      const payload = {
-        name: data.name,
-        speciesId: Number(data.speciesId),
-      };
-  
-      await registerRace(payload, token);
+        await registerRace({ name: data.name, speciesId: data.speciesId }, token);
       toast("success", "Raza registrada con éxito");
       onClose();
     } catch (error: unknown) {
