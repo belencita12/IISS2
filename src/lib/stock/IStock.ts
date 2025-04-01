@@ -1,4 +1,4 @@
-import {Product} from "@/lib/admin/products/IProducts"
+import {Product} from "@/lib/products/IProducts"
 
 export interface StockData {
     id?: number;

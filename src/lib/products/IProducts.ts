@@ -6,7 +6,7 @@ export interface Product {
     price: number;
     iva?: number;
     stock: number;
-    tags: string[],
+    tags?: string[],
     originalUrl?: string;
     image?: {
       originalUrl: string;
