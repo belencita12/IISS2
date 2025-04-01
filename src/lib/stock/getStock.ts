@@ -1,4 +1,3 @@
-
 import { STOCK_API } from "@/lib/urls";
 import { StockQueryParams, StockResponse } from "./IStock";
 

@@ -9,14 +9,14 @@ export default async function Home() {
   if (!session) {
     redirect("/login");
   }
-  const userId = session?.user?.id;
+  const clientId=session?.user?.clientId;
   const token = session?.user?.token;
 
-  console.log("Sesión:", { userId, token });
+  console.log("Sesión:", { clientId, token });
 
   return (
     <div>
-      <PetForm userId={userId} token={token} />
+      <PetForm clientId={clientId} token={token} />
     </div>
   );
 }

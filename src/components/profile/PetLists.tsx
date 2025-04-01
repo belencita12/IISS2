@@ -9,18 +9,18 @@ import { toast } from "@/lib/toast";
 import Image from "next/image";
 
 interface PetsListProps {
-    userId: number;
+    clientId: number;
     token: string;
 }
 
-export const PetsList = ({ userId, token }: PetsListProps) => {
+export const PetsList = ({ clientId, token }: PetsListProps) => {
     const [pets, setPets] = useState<PetData[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchPetsAndRaces = async () => {
             try {
-                const fetchedPets = await getPetsByUserId(userId, token);
+                const fetchedPets = await getPetsByUserId(clientId, token);
                 setPets(fetchedPets);
             } catch {
                 toast("error","Error al obtener mascotas");
@@ -29,10 +29,10 @@ export const PetsList = ({ userId, token }: PetsListProps) => {
             }
         };
 
-        if (userId && token) {
+        if (clientId && token) {
             fetchPetsAndRaces();
         }
-    }, [userId, token]);
+    }, [clientId, token]);
 
     // Función para calcular la edad en años, meses o días
     const calculateAge = (dateOfBirth: string): string => {

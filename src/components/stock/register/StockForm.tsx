@@ -22,9 +22,10 @@ interface StockFormProps {
   token: string;
   isOpen: boolean;
   onClose: () => void;
+  onRegisterSuccess: () => void;
 }
 
-export const StockForm = ({ token, isOpen, onClose }: StockFormProps) => {
+export const StockForm = ({ token, isOpen, onClose, onRegisterSuccess }: StockFormProps) => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -40,10 +41,15 @@ export const StockForm = ({ token, isOpen, onClose }: StockFormProps) => {
     setIsSubmitting(true);
     try {
       await registerStock({ name: data.name, address: data.address }, token);
-      toast("success", "Depósito registrado con éxito"); // Usa el toast personalizado
+      toast("success", "Depósito registrado con éxito"); 
       onClose();
-    } catch (error) {
-      toast("error", "Hubo un error al registrar el depósito");
+      onRegisterSuccess();
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast("error", error.message);
+      } else {
+        toast("error", "Error inesperado al registrar el depósito");
+      }
     } finally {
       setIsSubmitting(false);
     }
