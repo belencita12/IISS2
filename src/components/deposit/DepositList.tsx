@@ -5,12 +5,12 @@ import DepositCard from "./DepositCard";
 import { LoaderCircleIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { StockForm } from "../stock/register/StockForm";
-import GenericPagination from "../global/GenericPagination";
 import SearchBar from "../admin/client/SearchBar";
 import { toast } from "@/lib/toast";
 import { getStocks } from "@/lib/stock/getStock";
 import { StockData } from "@/lib/stock/IStock";
 import { deleteStockById } from "@/lib/stock/deleteStockById";
+import GenericPagination from "../global/GenericPagination";
 
 interface DepositListProps {
   token?: string;
@@ -148,7 +148,6 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
           if (currentPage < totalPages) setCurrentPage(currentPage + 1);
         }}
       />
-
 
       {isModalOpen && (
         <StockForm token={token}

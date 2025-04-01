@@ -66,6 +66,12 @@ export const StockForm = ({ token, isOpen, onClose, onRegisterSuccess, initialDa
       } else {
         toast("error", "Error inesperado al registrar el depósito");
       }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast("error", error.message);
+      } else {
+        toast("error", "Error inesperado al registrar el depósito");
+      }
     } finally {
       setIsSubmitting(false);
     }
