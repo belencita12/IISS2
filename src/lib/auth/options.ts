@@ -4,6 +4,7 @@ import { NextAuthOptions } from "next-auth";
 import { SigninResponse } from "./signin-response.type";
 import { AUTH_API } from "@/lib/urls";
 
+
 const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
@@ -48,6 +49,8 @@ const authOptions: NextAuthOptions = {
           username: user.username,
           token: user.token,
           roles: user.roles,
+          employeeId: user.employeeId,
+          clientId: user.clientId,
         };
       },
     }),
@@ -61,6 +64,8 @@ const authOptions: NextAuthOptions = {
         token.username = user.username;
         token.token = user.token;
         token.roles = user.roles;
+        token.employeeId = user.employeeId as number;
+        token.clientId = user.clientId as number;
       }
       return token;
     },
@@ -71,6 +76,8 @@ const authOptions: NextAuthOptions = {
         session.user.token = token.token;
         session.user.roles = token.roles;
         session.user.fullName = token.fullName;
+        session.user.employeeId = token.employeeId;
+        session.user.clientId = token.clientId;
       }
       return session;
     },

@@ -1,9 +1,9 @@
 import { PET_API} from "@/lib/urls";  
 import { PetDataResponse } from "./IPet";
 
-export const getPetsByUserId = async (userId: number, token: string) => {
+export const getPetsByUserId = async (clientId: number, token: string) => {
     try {
-        const response = await fetch(`${PET_API}?page=1&size=4&userId=${userId}`, {
+        const response = await fetch(`${PET_API}?page=1&size=4&clientId=${clientId}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -33,10 +33,10 @@ export const getPetsByUserIdFull = async (userId: number, token: string,page=1) 
     }
 };
 
-export const getPetsByNameAndUserIdFull = async (userId: number, token: string, page=1, name?: string) => {
+export const getPetsByNameAndUserIdFull = async (clientId: number, token: string, page=1, name?: string) => {
     try {
         const nameQuery = name ? `&name=${name}` : "";
-        const response = await fetch(`${PET_API}?page=${page}&userId=${userId}${nameQuery}`, {
+        const response = await fetch(`${PET_API}?page=${page}&clientId=${clientId}${nameQuery}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -45,7 +45,7 @@ export const getPetsByNameAndUserIdFull = async (userId: number, token: string, 
         const data = await response.json();
         return data as PetDataResponse;
     } catch (error) {
-        console.error("Error en obtener mascotas por usuario", error);
+        console.error("Error en obtener mascotas por nombre y usuario", error);
         throw error;
     }
 };

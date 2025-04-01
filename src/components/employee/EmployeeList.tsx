@@ -21,7 +21,6 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
   const router = useRouter();
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeData | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [search, setSearch] = useState("");
   const [data, setData] = useState<{
     employees: EmployeeData[];
     pagination: PaginationInfo;

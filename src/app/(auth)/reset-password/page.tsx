@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { AUTH_API } from "@/lib/urls";
 
 interface IFormState {
   password: string;
@@ -13,7 +14,6 @@ interface IFormState {
   message: string;
   isError: boolean;
 }
-const HARDCODED_LOGIN_URL = `${process.env.NEXT_PUBLIC_BASE_URL}`;
 export default function PasswordResetForm() {
   const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
@@ -73,7 +73,7 @@ export default function PasswordResetForm() {
 
     try {
       const response = await fetch(
-        `${HARDCODED_LOGIN_URL}/auth/reset-password?token=${token}`,
+        `${AUTH_API}/reset-password?token=${token}`,
         {
           method: "PUT",
           headers: {

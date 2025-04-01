@@ -1,10 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/admin/product/ProductCard"; 
-import ProductFilters from "@/components/admin/product/ProductFilter";
+import ProductFilters from "@/components/admin/product/filter/ProductFilter";
 import { useProductList } from "@/hooks/product/useProductList";
 import {
   Pagination,
