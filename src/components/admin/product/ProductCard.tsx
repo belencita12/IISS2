@@ -2,7 +2,7 @@
 import React from "react";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
-import { Product } from "@/lib/admin/products/IProducts";
+import { Product } from "@/lib/products/IProducts";
 
 interface ProductCardProps {
   product: Product;
@@ -51,7 +51,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, stock, onClick }) =>
             </div>
             <div className="flex flex-col">
               <p className="text-sm text-gray-500">Costo</p>
-              <p className="text-sm text-gray-500 mt-2">Stock</p>
+              <p className="text-sm text-gray-500 mt-2">Cantidad</p>
             </div>
             <div className="flex flex-col">
               <p className="text-sm">

@@ -4,7 +4,7 @@ export const PET_API = `${BASE_API_URL}/pet`;
 export const SPECIES_API = `${BASE_API_URL}/species`;
 export const RACE_API = `${BASE_API_URL}/race`;
 export const AUTH_API = `${BASE_API_URL}/auth`;
-export const CLIENT_API = `${BASE_API_URL}/user`;
+export const CLIENT_API = `${BASE_API_URL}/client`;
 export const ROLE_API = `${BASE_API_URL}/role`;
 export const PRODUCT_API = `${BASE_API_URL}/product`;
 export const PRODUCT_PRICE_API = `${BASE_API_URL}/product-price`;
@@ -17,5 +17,4 @@ export const WORK_POSITION_API = `${BASE_API_URL}/work-position`;
 export const STOCK_API = `${BASE_API_URL}/stock`;
 export const STOCK_DETAILS_API = `${BASE_API_URL}/stock-details`;
 export const PROVIDER_API = `${BASE_API_URL}/provider`;
-
-
+export const TAG_API = `${BASE_API_URL}/tags`;
