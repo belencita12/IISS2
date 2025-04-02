@@ -34,7 +34,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, stock, onClick }) =>
           )}
         </div>
         <div className="flex-1">
-          {/* Fila superior con la misma estructura de columnas que la fila inferior */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
             <div className="col-span-1 md:col-span-3">
               <h3 className="text-lg font-semibold">{product.name}</h3>
@@ -51,7 +50,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, stock, onClick }) =>
               ))}
             </div>
           </div>
-          {/* Fila inferior con detalles */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             <div className="flex flex-col">
               <p className="text-sm text-gray-500">Código</p>

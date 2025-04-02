@@ -6,15 +6,8 @@ import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/admin/product/ProductCard"; 
 import ProductFilters from "@/components/admin/product/filter/ProductFilter";
 import { useProductList } from "@/hooks/product/useProductList";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationPrevious,
-  PaginationNext,
-} from "@/components/ui/pagination";
 import { useProductTag } from "@/hooks/product/useProductTag";
+import GenericPagination from "@/components/global/GenericPagination";  
 
 interface ProductListProps {
   token: string;
@@ -109,42 +102,13 @@ export default function ProductListPage({ token }: ProductListProps) {
         ))
       )}
       
-      <Pagination>
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious
-              onClick={() => currentHandlePageChange(currentPagination.currentPage - 1)}
-              className={
-                currentPagination.currentPage <= 1
-                  ? "pointer-events-none opacity-50"
-                  : ""
-              }
-            />
-          </PaginationItem>
-          {Array.from({ length: currentPagination.totalPages }, (_, i) => i + 1).map(
-            (page) => (
-              <PaginationItem key={page}>
-                <PaginationLink
-                  isActive={currentPagination.currentPage === page}
-                  onClick={() => currentHandlePageChange(page)}
-                >
-                  {page}
-                </PaginationLink>
-              </PaginationItem>
-            )
-          )}
-          <PaginationItem>
-            <PaginationNext
-              onClick={() => currentHandlePageChange(currentPagination.currentPage + 1)}
-              className={
-                currentPagination.currentPage >= currentPagination.totalPages
-                  ? "pointer-events-none opacity-50"
-                  : ""
-              }
-            />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+      <GenericPagination
+        handlePreviousPage={() => currentHandlePageChange(currentPagination.currentPage - 1)}
+        handlePageChange={currentHandlePageChange}
+        handleNextPage={() => currentHandlePageChange(currentPagination.currentPage + 1)}
+        currentPage={currentPagination.currentPage}
+        totalPages={currentPagination.totalPages}
+      />
     </div>
   );
 }
