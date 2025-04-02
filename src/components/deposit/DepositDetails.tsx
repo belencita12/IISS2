@@ -10,6 +10,7 @@ import { getProductById } from "@/lib/products/getProductById";
 import { StockData, StockDetailsResponse, StockDetailsData} from "@/lib/stock/IStock";
 import { Product } from "@/lib/products/IProducts";
 import { toast } from "@/lib/toast";
+import GenericPagination from "../global/GenericPagination";
 
 interface DepositDetailsProps {
   token: string;
