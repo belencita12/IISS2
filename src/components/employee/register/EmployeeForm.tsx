@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -22,7 +23,8 @@ const employeeFormSchema = z.object({
   position: z.string().min(1, "Debe seleccionar un puesto"),
   adress: z.string().optional(),
   phoneNumber: z.string().min(1, "El número de teléfono es obligatorio").refine(validatePhoneNumber, {
-    message: "Número de teléfono inválido. Debe comenzar con + y tener al menos 7 dígitos."},),
+    message: "Número de teléfono inválido. Debe comenzar con + y tener al menos 7 dígitos.",
+  }),
   profileImg: z.instanceof(File).optional(),
 });
 
@@ -42,6 +44,7 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
     register,
     handleSubmit,
     setValue,
+    trigger,
     formState: { errors },
   } = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeFormSchema),
@@ -70,7 +73,7 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
       }
     };
     fetchPositions();
-  }, [token]);  
+  }, [token]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPreviewImage(null);
@@ -80,11 +83,12 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
       return;
     }
     setValue("profileImg", file);
+
     const reader = new FileReader();
     reader.onload = (e) => setPreviewImage(e.target?.result as string);
     reader.readAsDataURL(file);
   };
-  
+
   const onSubmit = async (data: EmployeeFormValues) => {
     const formData = new FormData();
     Object.entries({
@@ -94,26 +98,23 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
       positionId: data.position,
       adress: data.adress,
       phoneNumber: data.phoneNumber,
-
     }).forEach(([key, value]) => formData.append(key, value ?? ""));
-  
+
     if (data.profileImg) {
       formData.append("profileImg", data.profileImg);
     }
-  
+
     setIsSubmitting(true);
     try {
       await registerEmployee(formData, token);
-       toast("success", "Empleado registrado con éxito")
+      toast("success", "Empleado registrado con éxito");
       router.push("/dashboard/employee");
     } catch (error: unknown) {
-    //  console.error("Error al registrar empleado:", error);
-    
       if (typeof error === "object" && error !== null && "message" in error) {
-        const errorMessage = (error as { message: string }).message;          
+        const errorMessage = (error as { message: string }).message;
         toast("error", errorMessage);
         return;
-      }   
+      }
       toast("error", "Error inesperado al registrar el empleado");
     } finally {
       setIsSubmitting(false);
@@ -141,7 +142,12 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
         </div>
         <div>
           <Label>Puesto</Label>
-          <Select onValueChange={(value) => setValue("position", value)}>
+          <Select
+            onValueChange={(value) => {
+              setValue("position", value);
+              trigger("position");
+            }}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Seleccione un puesto" />
             </SelectTrigger>
@@ -168,12 +174,18 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
         <div>
           <Label>Foto del empleado (Opcional)</Label>
           <Input type="file" accept="image/*" onChange={handleImageChange} />
-          {previewImage && <img src={previewImage} alt="Vista previa" className="mt-4 w-24 h-24 rounded-full" />}
+          {previewImage && (
+            <Image src={previewImage} alt="Vista previa" width={96} height={96} className="mt-4 w-24 h-24 rounded-full" />
+          )}
           {errors.profileImg && <p className="text-red-500">{errors.profileImg.message}</p>}
         </div>
         <div className="flex justify-end gap-4">
-          <Button type="button" variant="outline" onClick={() => router.push("/dashboard/employee")}>Cancelar</Button>
-          <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Registrando..." : "Registrar"}</Button>
+          <Button type="button" variant="outline" onClick={() => router.push("/dashboard/employee")}>
+            Cancelar
+          </Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Registrando..." : "Registrar"}
+          </Button>
         </div>
       </form>
     </div>
