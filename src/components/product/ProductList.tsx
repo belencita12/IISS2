@@ -1,9 +1,7 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import DepositInfo from "../deposit/DepositInfo";
 import ProductFilters from "../admin/product/filter/ProductFilter";
-import { Pagination, PaginationContent,PaginationItem,PaginationLink,PaginationPrevious,PaginationNext,} from "../ui/pagination";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext } from "../ui/pagination";
 import ProductStockCard from "./ProductStockCard";
 
 const apiUrl = process.env.NEXT_PUBLIC_BASE_URL;
@@ -31,7 +29,6 @@ interface Product {
   stock: number;
 }
 
-
 interface Props {
   token: string;
   depositoId: number;
@@ -52,18 +49,15 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
     minCost: "",
     maxCost: "",
   });
+  const [selectedTags, setSelectedTags] = useState<string[]>([]); // Estado para las etiquetas seleccionadas
 
   useEffect(() => {
     const filtered = products.filter((product) => {
-      // Filtro por código (se actualiza cuando se presiona Buscar)
-      const codeMatch = filters.code === "" ||  product.code.toLowerCase().includes(filters.code.toLowerCase());
-      // Filtro por categoría (se actualiza de forma dinámica al cambiar el select)
+      const codeMatch = filters.code === "" || product.code.toLowerCase().includes(filters.code.toLowerCase());
       const categoryMatch = filters.category === "" || product.category === filters.category;
-      // Filtros por precio (mínimo y máximo) convertidos a número o null
       const minPrice = filters.minPrice ? Number(filters.minPrice) : null;
       const maxPrice = filters.maxPrice ? Number(filters.maxPrice) : null;
       const priceMatch = (minPrice === null || product.price >= minPrice) && (maxPrice === null || product.price <= maxPrice);
-      // Filtros por costo (mínimo y máximo)
       const minCost = filters.minCost ? Number(filters.minCost) : null;
       const maxCost = filters.maxCost ? Number(filters.maxCost) : null;
       const costMatch = (minCost === null || product.cost >= minCost) && (maxCost === null || product.cost <= maxCost);
@@ -72,7 +66,6 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
     });
     setFilteredProducts(filtered);
   }, [filters, products]);
-  
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -125,9 +118,13 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
     };
     fetchProducts();
   }, [currentPage, depositoId, token]);
-   
+
   const preventInvalidKeys = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "-" || e.key === "e") e.preventDefault();
+  };
+
+  const onTagsChange = (tags: string[]) => {
+    setSelectedTags(tags); // Actualiza las etiquetas seleccionadas
   };
 
   if (loading) return <p>Cargando...</p>;
@@ -135,35 +132,40 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
 
   return (
     <div className="p-4 bg-white shadow-lg rounded-lg">
-      <ProductFilters filters={filters} setFilters={setFilters}
-        onSearch={() => {}} preventInvalidKeys={preventInvalidKeys} />
+      <ProductFilters
+        filters={filters}
+        setFilters={setFilters}
+        onSearch={() => {}}
+        preventInvalidKeys={preventInvalidKeys}
+        selectedTags={selectedTags} // Pasa las etiquetas seleccionadas
+        onTagsChange={onTagsChange} // Pasa la función para cambiar las etiquetas
+        token={token} // Pasa el token
+      />
 
       <div className="pt-3 pb-3 m-4"><DepositInfo token={token} depositoId={depositoId} /></div>
-      
 
       {filteredProducts.map((product) => (
-        <ProductStockCard key={product.id} product={product}/>
+        <ProductStockCard key={product.id} product={product} />
       ))}
+
       <Pagination className="mt-4">
         <PaginationContent>
           <PaginationPrevious onClick={() => {
-              if (currentPage > 1) setCurrentPage(currentPage - 1);
-            }}
-          />
+            if (currentPage > 1) setCurrentPage(currentPage - 1);
+          }} />
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <PaginationItem key={page}>
               <PaginationLink isActive={page === currentPage} href="#" onClick={(e) => {
                   e.preventDefault();
                   setCurrentPage(page);
-                }}
-              >
+                }}>
                 {page}
               </PaginationLink>
             </PaginationItem>
           ))}
           <PaginationNext onClick={() => {
             if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-          }}/>
+          }} />
         </PaginationContent>
       </Pagination>
     </div>
