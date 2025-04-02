@@ -45,7 +45,6 @@ export default function ProductListPage({ token }: ProductListProps) {
     handlePageChange,
   } = useProductList(token);
 
-  // Sincronizamos el tamaño de página entre ambos sistemas de paginación
   useEffect(() => {
     if (pagination.pageSize !== tagPagination.pageSize) {
       setTagPageSize(pagination.pageSize);
@@ -65,12 +64,10 @@ export default function ProductListPage({ token }: ProductListProps) {
     router.push(`/dashboard/products/${productId}`);
   };
 
-  // Determinamos qué datos y controles de paginación usar según el modo actual
   const isFiltering = selectedTags.length > 0;
   const loading = isFiltering ? isTagFiltering : isLoading;
   const displayedProducts = isFiltering ? filteredProducts : products;
-  
-  // Usamos la paginación correcta según el modo de filtrado
+
   const currentPagination = isFiltering ? tagPagination : pagination;
   const currentHandlePageChange = isFiltering ? handleTagPageChange : handlePageChange;
 
@@ -112,7 +109,6 @@ export default function ProductListPage({ token }: ProductListProps) {
         ))
       )}
       
-      {/* Paginación - Ahora usa la paginación correcta según el modo */}
       <Pagination>
         <PaginationContent>
           <PaginationItem>

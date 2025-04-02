@@ -42,7 +42,7 @@ export function TagFilter({
   };
 
   const clearTags = () => {
-    onChange([]); // Limpia todas las etiquetas seleccionadas
+    onChange([]);
   };
 
   return (
@@ -108,8 +108,7 @@ export function TagFilter({
           </Command>
         </PopoverContent>
       </Popover>
-      
-      {/* Mostrar la "X" solo si hay etiquetas seleccionadas */}
+
       {selectedTags.length > 0 && (
         <button
           onClick={clearTags}
