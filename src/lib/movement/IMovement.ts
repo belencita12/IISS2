@@ -27,3 +27,10 @@ export interface MovementResponse {
     updatedAt: string;
     deletedAt: string | Record<string, never>;
 }
+
+export interface MovementProductItem {
+  productId: string; // viene de Product.id
+  code: string;
+  name: string;
+  quantity: number;
+}
