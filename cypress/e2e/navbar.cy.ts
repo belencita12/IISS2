@@ -15,9 +15,9 @@ describe("Navbar", () => {
     cy.visit("/");
     const links = [
       { label: "Inicio", path: "/" },
-      { label: "Nosotros", path: "/nosotros" },
-      { label: "Servicios", path: "/servicios" },
-      { label: "Tienda", path: "/tienda" },
+      { label: "Nosotros", path: "/about" },
+      { label: "Servicios", path: "/service" },
+      { label: "Tienda", path: "/shop" },
     ];
 
     links.forEach((link) => {
@@ -39,9 +39,9 @@ describe("Navbar", () => {
     const links = [
       { label: "Inicio", path: "/" },
       { label: "Mi Perfil", path: "/user-profile" },
-      { label: "Nosotros", path: "/nosotros" },
-      { label: "Servicios", path: "/servicios" },
-      { label: "Tienda", path: "/tienda" },
+      { label: "Nosotros", path: "/about" },
+      { label: "Servicios", path: "/service" },
+      { label: "Tienda", path: "/shop" },
     ];
 
     links.forEach((link) => {

@@ -34,9 +34,9 @@ describe("Register Pet", () => {
 
   it("Detalle de mascota con id invalido", () => {
     const ERR_PET_ID = 9999;
-    cy.visit("/detalle-mascota/" + ERR_PET_ID);
-    cy.url().should("include", "/detalle-mascota/" + ERR_PET_ID);
-    cy.intercept("GET", `**/pet/${ERR_PET_ID}`).as("registerPet");
+    cy.visit("/pet/list-pets/" + ERR_PET_ID);
+    cy.url().should("include", "/pet/list-pets/" + ERR_PET_ID);
+    cy.intercept("GET", `**/pet/list-pets/${ERR_PET_ID}`).as("registerPet");
     cy.wait(2000);
     cy.wait("@registerPet").then((int) => {
       const res = int.response;
@@ -98,8 +98,8 @@ describe("Register Pet", () => {
   });
 
   it("Detalle de mascota con id valido", () => {
-    cy.visit("/detalle-mascota/" + Cypress.env(PET_ID_KEY));
-    cy.url().should("include", "/detalle-mascota/" + Cypress.env(PET_ID_KEY));
+    cy.visit("/pet/list-pets" + Cypress.env(PET_ID_KEY));
+    cy.url().should("include", "/pet/list-pets" + Cypress.env(PET_ID_KEY));
     cy.intercept(
       "GET",
       `${Cypress.env("API_BASEURL")}/pet/${Cypress.env(PET_ID_KEY)}`

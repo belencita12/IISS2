@@ -33,8 +33,8 @@ describe('Página de Detalles del Cliente', () => {
 
     // establecer sesión
     const USER = {
-      email: "makiko.yamamoto@fiuni.edu.py",
-      password: "MakiYamaGin"
+      email: "makiko.yamamoto3@fiuni.edu.py",
+      password: "MakiYamaGin3"
     };
 
     cy.loginAndSetSession(SESSION_KEY, USER.email, USER.password);
@@ -80,13 +80,13 @@ describe('Página de Detalles del Cliente', () => {
       const $div = parent.find('div[class="w-full h-full flex items-center justify-center bg-gray-200 rounded"]');
 
       if ($img.length > 0) {
-        cy.log('✅ Found an <img>, clicking...');
+        cy.log(' Found an <img>, clicking...');
         cy.wrap($img.first()).click();
       } else if ($div.length > 0) {
-        cy.log('❌ No <img>, but found <div>, clicking...');
+        cy.log(' No <img>, but found <div>, clicking...');
         cy.wrap($div.first()).click();
       } else {
-        cy.log('❌ No <img> or <div> found.');
+        cy.log(' No <img> or <div> found.');
       }
     });
 

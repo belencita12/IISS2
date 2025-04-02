@@ -14,17 +14,18 @@ describe('Crear Vacunas', () => {
             cy.wait(20000);
             cy.url().should('include', '/dashboard');
         });
-        cy.visit('/dashboard/vaccine/new');
-        cy.url().should('include', '/dashboard/vaccine/new');
+        cy.visit('/dashboard');
+        cy.contains('p', "Vacunas").click();
+    
     });
 
     it('Los botones para interactuar con el formulario deben ser visibles', () => {
-        cy.get('button').contains('Agregar Vacuna').should('be.visible');
-        cy.get('button').contains('Cancelar').should('be.visible');
+        cy.get('button').contains('Agregar nueva vacuna').should('be.visible');
+        cy.get('button').contains('Fabricantes de Vacuna').should('be.visible');
     });
 
     it('Debe mostrar mensajes de error cuando se intenta enviar el formulario vacío', () => {
-        cy.get('button').contains('Agregar Vacuna').click();
+        cy.get('button').contains('Agregar nueva vacuna').click();
         cy.contains('El nombre es obligatorio').should('be.visible');
         cy.contains('Complete con valores numéricos adecuados').should('be.visible');
         cy.wait(20000);
