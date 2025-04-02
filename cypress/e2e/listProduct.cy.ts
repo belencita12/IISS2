@@ -1,4 +1,4 @@
-describe('Página de Detalles del Cliente', () => {
+describe('Página de Lista de Productos', () => {
   const SESSION_KEY = "sessionToken";
   const BASE_URL = Cypress.env("API_BASEURL");
 
