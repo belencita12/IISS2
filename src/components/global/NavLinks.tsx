@@ -26,7 +26,7 @@ const linksUser = [
   { name: "Vacunas", href: "/dashboard/vaccine", icon: SyringeIcon },
   { name: "Depositos", href: "/dashboard/stock", icon: StoreIcon },
   { name: "Movimientos", href: "/dashboard/movimientos", icon: BoxIcon },
-  { name: "Compras", href: "/dashboard/compras", icon: CircleDollarSignIcon },
+  { name: "Compras", href: "/dashboard/purchases", icon: CircleDollarSignIcon },
   { name: "Crear Venta", href: "/dashboard/ventas", icon: HandCoinsIcon },
   { name: "Empleados", href: "/dashboard/employee", icon: BookUserIcon },
   { name: "Facturas", href: "/dashboard/facturas", icon: FileIcon },
