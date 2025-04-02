@@ -30,33 +30,47 @@ type BaseUser = {
   fullName: string;
   email: string;
   password: string;
+  phoneNumbrer: string;
+  address: string;
+  ruc: string;
 };
 
 Cypress.Commands.add("generateUser", (): Cypress.Chainable<BaseUser> => {
   const fullName = `Test User${Date.now()}`;
   const email = `${fullName}@gmail.com`;
   const password = "12345678";
+  const phoneNumbrer = `+595981${Math.floor(100000 + Math.random() * 99999)}`;
+  const address = "Encarnacion";
+  const ruc = `${Math.floor(10000000 + Math.random() * 9999999)}-1`
 
   return cy.wrap({
     fullName,
     email,
     password,
+    phoneNumbrer,
+    address,
+    ruc
   });
 });
 
 Cypress.Commands.add("register", (user: BaseUser): void => {
   const names = user.fullName.split(" ");
   cy.visit("/register");
-  if (names[0] && names[0] !== "") cy.get("input[name='name']").type(names[0]);
-  if (names[1] && names[1] !== "")
-    cy.get("input[name='lastname']").type(names[1]);
-  if (user.email.length > 0) cy.get("input[name='email']").type(user.email);
-  if (user.password.length > 0)
+
+  if (names[0]) cy.get("input[name='name']").type(names[0]);
+  if (names[1]) cy.get("input[name='lastname']").type(names[1]);
+  if (user.email) cy.get("input[name='email']").type(user.email);
+  if (user.phoneNumbrer) cy.get("input[name='phoneNumber']").type(user.phoneNumbrer);
+  if (user.address) cy.get("input[name='address']").type(user.address);
+  if (user.ruc) cy.get("input[name='ruc']").type(user.ruc);
+  if (user.password) {
     cy.get("input[name='password']").type(user.password);
-  if (user.password.length > 0)
     cy.get("input[name='confirmPassword']").type(user.password);
+  }
   cy.get("button").contains("Registrarme").click();
+  cy.wait(10000)
 });
+
 
 Cypress.Commands.add(
   "loginAndSetSession",
@@ -71,6 +85,7 @@ Cypress.Commands.add(
       log: false,
     });
     cy.contains("Iniciar Sesión").click();
+    cy.wait(10000)
 
     cy.wait("@login").then((interception) => {
       if (interception.response?.statusCode === 200) {
