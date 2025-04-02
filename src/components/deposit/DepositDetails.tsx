@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/admin/product/ProductCard";
 import ProductFilters from "@/components/admin/product/filter/ProductFilter";
 import { getStockDetailsByStock } from "@/lib/stock/getStockDetailsByStock";
-import GenericPagination from "../global/GenericPagination";
-import { StockData,StockDetailsData} from "@/lib/stock/IStock";
-import { Product } from "@/lib/admin/products/IProducts";
+import { getProductById } from "@/lib/products/getProductById";
+import { StockData, StockDetailsResponse, StockDetailsData} from "@/lib/stock/IStock";
+import { Product } from "@/lib/products/IProducts";
 import { toast } from "@/lib/toast";
 
 interface DepositDetailsProps {
