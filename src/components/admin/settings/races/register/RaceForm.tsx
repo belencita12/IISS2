@@ -24,7 +24,7 @@ interface RaceFormProps {
   token: string;
   isOpen: boolean;
   onClose: () => void;
-  initialData?: Race | null; // <-- Agregar initialData para edición
+  initialData?: Race | null;
 }
 
 export const RaceForm = ({ token, isOpen, onClose, initialData }: RaceFormProps) => {
@@ -38,7 +38,7 @@ export const RaceForm = ({ token, isOpen, onClose, initialData }: RaceFormProps)
     formState: { errors },
   } = useForm<RaceFormValues>({
     resolver: zodResolver(raceFormSchema),
-    defaultValues: initialData || { name: "", speciesId: 0 }, // Inicializar con los datos si están
+    defaultValues: initialData || { name: "", speciesId: 0 },
   });
 
   useEffect(() => {
