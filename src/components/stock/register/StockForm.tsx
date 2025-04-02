@@ -22,6 +22,7 @@ interface StockFormProps {
   token: string;
   isOpen: boolean;
   onClose: () => void;
+  onRegisterSuccess?: () => void; 
 }
 
 export const StockForm = ({ token, isOpen, onClose }: StockFormProps) => {
