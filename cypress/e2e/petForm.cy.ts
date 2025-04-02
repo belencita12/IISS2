@@ -5,9 +5,9 @@ describe('Registrar Mascota con PetForm', () => {
   const BASE_URL = "https://iiss2-backend-0q2e.onrender.com"
 
   const PET_MOCK = {
-    name: "Wanko",
-    birthDate: "2022-01-01",
-    weight: "12.5",
+    name: "Pipaa",
+    birthDate: "2023-01-01",
+    weight: "123.5",
     gender: "Macho",
   };
 
@@ -146,7 +146,7 @@ describe('Registrar Mascota con PetForm', () => {
     cy.wait("@getSpecies", TIMEOUT);
     cy.wait(3000);
   
-    cy.get("input[name='petName']").type(`${PET_MOCK.name} sin imagen`);
+    cy.get("input[name='petName']").type(`${PET_MOCK.name} sin fo`);
     cy.get("input[name='birthDate']").type(`2023-02-01`);
     cy.get("input[name='weight']").type(`14`);
   
@@ -190,7 +190,7 @@ describe('Registrar Mascota con PetForm', () => {
     cy.wait("@getSpecies", TIMEOUT);
     cy.wait(3000);
   
-    cy.get("input[name='petName']").type("Grande");
+    cy.get("input[name='petName']").type(`${PET_MOCK.name} Grande1`);
     cy.get("input[name='birthDate']").type("2022-05-05");
     cy.get("input[name='weight']").type("15");
   
@@ -240,7 +240,7 @@ describe('Registrar Mascota con PetForm', () => {
     cy.wait("@getSpecies", TIMEOUT);
     cy.wait(3000);
   
-    cy.get("input[name='petName']").type("PesoInválido");
+    cy.get("input[name='petName']").type(`${PET_MOCK.name} PesoInválido2`);
     cy.get("input[name='birthDate']").type("2021-11-11");
   
     cy.get("button#animalType").click();
