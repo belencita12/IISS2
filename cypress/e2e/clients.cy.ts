@@ -1,8 +1,10 @@
 describe('Página de Detalles del Cliente', () => {
   const SESSION_KEY = "sessionToken";
-  const BASE_URL = "https://iiss2-backend-0q2e.onrender.com";
+  const BASE_URL = Cypress.env("API_BASEURL");
 
   beforeEach(() => {
+    cy.clearCookies();
+    cy.clearLocalStorage();
     const sessionToken: string = Cypress.env(SESSION_KEY);
     if (sessionToken) cy.setCookie("next-auth.session-token", sessionToken);
   });
@@ -11,21 +13,21 @@ describe('Página de Detalles del Cliente', () => {
 
     // Simular inicio de sesión válido y establecer sesión
     const USER = {
-      email: "makiko.yamamoto@fiuni.edu.py",
-      password: "MakiYamaGin"
+      email: "makiko.yamamoto3@fiuni.edu.py",
+      password: "MakiYamaGin3"
     };
 
     cy.loginAndSetSession(SESSION_KEY, USER.email, USER.password);
   })
 
   it('debería mostrar la información del perfil del cliente correctamente', () => {
-    const clientId = 7;
+    const clientId = 3;
 
     // Intercepta la llamada al cliente
     cy.intercept("GET", `/api/auth/session`).as("getAuthData");
 
     // Intercepta la llamada a las mascotas
-    cy.intercept("GET", `${BASE_URL}/pet?page=1&userId=${clientId}`).as("getPets");
+    cy.intercept("GET", `${BASE_URL}/pet?page=1&ClientId=${clientId}`).as("getPets");
 
     cy.visit(`/dashboard/clients/${clientId}`);
 
@@ -64,7 +66,7 @@ describe('Página de Detalles del Cliente', () => {
   });
 
   it('debería mostrar el botón "Agregar"', () => {
-    const clientId = 3;
+    const clientId = 12;
     cy.visit(`/dashboard/clients/${clientId}`);
     cy.intercept("GET", `/api/auth/session`).as("getAuthData");
     cy.get('button').contains('Agregar').should('be.visible');
@@ -72,7 +74,7 @@ describe('Página de Detalles del Cliente', () => {
 
   it('debería permitir la paginación en la tabla de mascotas', () => {
     // Test de Paginación en la tabla de mascotas
-    const clientId = 7;
+    const clientId = 2;
 
     // Intercepta la llamada al cliente
     cy.intercept("GET", `/api/auth/session`).as("getAuthData");
@@ -96,7 +98,7 @@ describe('Página de Detalles del Cliente', () => {
   });
 
   it('debería mostrar un mensaje cuando no haya mascotas disponibles', () => {
-    const clientId = 1;  // Ejemplo de ID de cliente
+    const clientId = 4;  // Ejemplo de ID de cliente
 
     // Intercepta la llamada al cliente
     cy.intercept("GET", `/api/auth/session`).as("getAuthData");

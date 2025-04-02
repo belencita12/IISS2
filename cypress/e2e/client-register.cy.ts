@@ -7,6 +7,8 @@ describe('Registro de Cliente', () => {
     };
 
     beforeEach(() => {
+      cy.clearCookies();
+      cy.clearLocalStorage();
         cy.session(SESSION_KEY, () => {
             cy.loginAndSetSession(SESSION_KEY, USER.email, USER.password);
             cy.wait(20000);
@@ -54,5 +56,6 @@ describe('Registro de Cliente', () => {
         cy.get('input[name="email"]').blur();
         cy.get('input[name="email"]').should('have.prop', 'validity').its('typeMismatch').should('be.true');
         cy.contains('Por favor, introduce un email válido').should('be.visible');
+        cy.contains("button", "Cancelar").click();
     });
 });

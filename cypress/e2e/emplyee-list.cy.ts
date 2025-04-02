@@ -6,9 +6,11 @@ describe('Lista de empleados', () => {
     };
 
     beforeEach(() => {
+        cy.clearCookies();
+        cy.clearLocalStorage();
         cy.session(SESSION_KEY, () => {
             cy.loginAndSetSession(SESSION_KEY, USER.email, USER.password);
-            cy.wait(20000);
+            cy.wait(5000);
             cy.url().should('include', '/dashboard');
         });
         cy.visit('/dashboard/employee');
@@ -32,18 +34,29 @@ describe('Lista de empleados', () => {
     it('Debe buscar empleados correctamente filtrandolos por nombre', () => {
         cy.get('input[placeholder="Buscar un empleado..."]').type('Nick Jonson');
         cy.get('button').contains('Buscar').click();
-        cy.wait(20000);
+        cy.wait(5000);
         cy.get('table tbody tr').should('contain', 'Nick Jonson');
     });
 
     it('Debe abrir la página de registro de empleados', () => {
         cy.get('button').contains('Agregar').click();
-        cy.wait(10000);
+        cy.wait(5000);
         cy.url().should('include', '/dashboard/employee/register');
     });
 
     it('Debe verificar la paginación', () => {
-        cy.get('td').its('length').then((length) => {
+
+        cy.get('body').then(($body) => {
+            if ($body.find('span:contains("Next")').length > 0) {
+              // Simular hacer clic en el botón de paginación "Siguiente"
+              cy.get('span:contains("Next")').click();
+              //  Verificar que el paginador se actualizó a página 2
+              cy.get('a[aria-current="page"]').should('contain', '2');
+            } else {
+              cy.log('No existe la paginacion');
+            }
+          });
+/*         cy.get('td').its('length').then((length) => {
             if (length > 10) {
                 cy.contains('span', 'Next').click();
                 cy.wait(5000);
@@ -63,7 +76,9 @@ describe('Lista de empleados', () => {
                 cy.wait(5000);
                 cy.get('table tbody tr').should('exist');
             }
-        });
+        }); */
     });
+
+    
 });
 

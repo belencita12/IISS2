@@ -1,9 +1,12 @@
 describe("Inicio de sesión", () => {
   const DELAY = { delay: 100 };
-
+  const BASE_URL = Cypress.env("API_BASEURL");
+  const SESSION_KEY = "sessionToken";
   let testUser: BaseUser;
 
-  before(() => {
+   before(() => {
+    cy.clearCookies();
+    cy.clearLocalStorage();
     cy.intercept("POST", "**/auth/signup").as("register");
     cy.generateUser().then((user) => {
       testUser = user;
@@ -11,9 +14,11 @@ describe("Inicio de sesión", () => {
       cy.register(user);
       cy.wait("@register", { timeout: 16000 });
     });
-  });
+  }); 
 
   beforeEach(() => {
+    cy.clearCookies();
+   cy.clearLocalStorage();
     cy.visit("/login");
     cy.url().should("include", "/login");
   });
@@ -61,7 +66,10 @@ describe("Inicio de sesión", () => {
     cy.get("input[name='email']").type(testUser.email, DELAY);
     cy.get("input[name='password']").type(testUser.password, DELAY);
     cy.get("form").submit();
-    cy.location("pathname", { timeout: 10000 }).should("eq", "/user-profile");
     cy.wait(2000);
+    cy.location("pathname", { timeout: 10000 }).should("eq", "/user-profile");
+    
   });
+
+ 
 });

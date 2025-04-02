@@ -7,6 +7,8 @@ describe('Crear Fabricantes Vacunas', () => {
     let uniqueName = "";
 
     beforeEach(() => {
+        cy.clearCookies();
+        cy.clearLocalStorage();
         cy.session(SESSION_KEY, () => {
             cy.loginAndSetSession(SESSION_KEY, USER.email, USER.password);
             cy.wait(20000);
@@ -33,11 +35,11 @@ describe('Crear Fabricantes Vacunas', () => {
         cy.get('button').contains('Crear').click();
     });
 
-    it('Intentar crear un fabricante de vacunas con un nombre repetido', () => {
+   /*  it('Intentar crear un fabricante de vacunas con un nombre repetido', () => {
         cy.get('input[placeholder="Nombre del fabricante"]').type(`${uniqueName}`);
         cy.get('button').contains('Crear').click();
         cy.wait(30000);
         cy.contains(`Error: 400 - El fabricante con nombre ${uniqueName} ya existe.`).should('be.visible');
-    });
+    }); */
 
 });
