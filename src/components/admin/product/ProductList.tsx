@@ -1,6 +1,5 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/admin/product/ProductCard"; 
