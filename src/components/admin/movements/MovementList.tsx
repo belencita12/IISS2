@@ -47,7 +47,7 @@ export default function MovementListPage({ token }: Props) {
       ) : (
         <div className="flex flex-col gap-4 w-full">
           {movements.map((movement) => (
-            <MovementCard key={movement.id} movement={movement} />
+            <MovementCard key={movement.id} movement={movement} token={token} />
           ))}
         </div>
       )}
