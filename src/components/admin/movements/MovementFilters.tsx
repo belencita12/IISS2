@@ -127,8 +127,9 @@ export default function MovementFilters({ token, filters, setFilters }: Props) {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="ALL">Todos</SelectItem>
-              <SelectItem value="INBOUND">Transferencia</SelectItem>
-              <SelectItem value="EXPIRED">Vencimiento</SelectItem>
+              <SelectItem value="INBOUND">Entrante</SelectItem>
+              <SelectItem value="OUTBOUND">Saliente</SelectItem>
+              <SelectItem value="TRANSFER">Transferencia</SelectItem>
             </SelectContent>
           </Select>
         </div>
