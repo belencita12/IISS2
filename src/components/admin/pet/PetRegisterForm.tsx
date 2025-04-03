@@ -1,153 +1,114 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Race, Species } from "@/lib/pets/IPet";
-import { getRacesBySpecies, getSpecies } from "@/lib/pets/getRacesAndSpecies";
 import { registerPet } from "@/lib/pets/registerPet";
-import { useParams, useRouter } from "next/navigation";
-import Image from "next/image";
-
-const MAX_FILE_SIZE = 1024 * 1024;
-const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useGetSpecies } from "@/hooks/species/useGetSpecies";
+import { useGetRaces } from "@/hooks/races/useGetRaces";
+import FormInput from "@/components/global/FormInput";
+import FormSelect from "@/components/global/FormSelect";
+import { blockExtraKeysNumber, mapToFormData } from "@/lib/utils";
+import { image } from "@/lib/schemas";
+import FormImgUploader from "@/components/global/FormImgUploader";
+import PetSexSelector from "./PetSexSelector";
 
 const petFormSchema = z.object({
-  petName: z.string().min(1, "El nombre es obligatorio"),
-  birthDate: z.string().min(1, "La fecha de nacimiento es obligatoria"),
-  breed: z.string().min(1, "La raza es obligatoria"),
-  animalType: z.string().min(1, "Debes seleccionar un tipo de animal"),
-  gender: z.string().min(1, "Debes seleccionar un género"),
-  weight: z
-    .union([z.string(), z.number()])
-    .refine(
-      (val) => !isNaN(parseFloat(String(val))) && parseFloat(String(val)) > 0,
-      {
-        message: "El peso debe ser un número válido mayor a 0",
-      }
-    )
-    .transform((val) => parseFloat(String(val))),
-  imageFile: z
-    .instanceof(File)
-    .refine((file) => ALLOWED_IMAGE_TYPES.includes(file.type), {
-      message: "Solo se permiten imágenes en formato JPG, PNG o WEBP",
-    })
-    .refine((file) => file.size <= MAX_FILE_SIZE, {
-      message: "La imagen no debe superar 1MB",
-    })
-    .optional(),
+  name: z.string().min(1, "El nombre es obligatorio"),
+  dateOfBirth: z.string().min(1, "La fecha de nacimiento es obligatoria"),
+  raceId: z.string().min(1, "La raza es obligatoria"),
+  speciesId: z.string().min(1, "Debes seleccionar un tipo de animal"),
+  sex: z.string().min(1, "Debes seleccionar un género"),
+  weight: z.coerce
+    .number()
+    .positive("El peso debe ser un número mayor a 0")
+    .min(0.1, "El peso debe ser al menos 0.1 kg"),
+  profileImg: image(),
 });
 
 type PetFormValues = z.infer<typeof petFormSchema>;
 interface AdminPetFormProps {
-  token?: string;
+  token: string;
+  clientId: number;
 }
 
-export default function PetRegisterForm({ token }: AdminPetFormProps) {
-  const { id } = useParams();
-
-  const [species, setSpecies] = useState<Species[]>([]);
-  const [races, setRaces] = useState<Race[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export default function PetRegisterForm({
+  token,
+  clientId,
+}: AdminPetFormProps) {
   const router = useRouter();
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
     watch,
     setValue,
-    formState: { errors },
+    reset,
+    formState: { errors, isSubmitting },
   } = useForm<PetFormValues>({
     resolver: zodResolver(petFormSchema),
     defaultValues: {
-      petName: "",
-      birthDate: "",
-      breed: "",
-      animalType: "",
-      gender: "",
-      imageFile: undefined,
+      name: "",
+      dateOfBirth: "",
+      raceId: "",
+      speciesId: "",
+      sex: "",
+      profileImg: undefined,
     },
   });
 
-  // Obtiene las especies para el select
-  useEffect(() => {
-    if (!token) return;
-    const fetchSpecies = async () => {
-      try {
-        const speciesData = await getSpecies(token);
-        setSpecies(speciesData);
-      } catch {
-        toast("error", "Error al obtener las especies.");
-      }
-    };
-    fetchSpecies();
-  }, [token]);
+  const selectedSpeciesId = Number(watch("speciesId"));
+  const selectedSex = watch("sex");
 
-  // Obtiene las razas a partir de las especies
-  const handleSpeciesChange = async (speciesId: string) => {
-    setRaces([]);
-    if (!speciesId || !token) return;
-    try {
-      const racesData = await getRacesBySpecies(parseInt(speciesId), token);
-      setRaces(racesData);
-    } catch {
-      toast("error", "Error al obtener las razas.");
-    }
+  const { data: species, isLoading: isGettingSpecies } = useGetSpecies({
+    token,
+  });
+  
+  const {
+    data: races,
+    isLoading: isGettingRaces,
+    setQuery: setRacesQuery,
+  } = useGetRaces({
+    token,
+    condition: !!selectedSpeciesId,
+  });
+
+  const handleSpeciesChange = (speciesId: string) => {
+    setValue("speciesId", speciesId, { shouldValidate: true });
+    setRacesQuery((prev) => ({ ...prev, speciesId: Number(speciesId) }));
   };
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPreviewImage(null);
-    const file = event.target.files?.[0];
-    if (!file) {
-      setValue("imageFile", undefined);
-      return;
-    }
-    setValue("imageFile", file);
-    const reader = new FileReader();
-    reader.onload = (e) => setPreviewImage(e.target?.result as string);
-    reader.readAsDataURL(file);
+  const handleRaceChange = (raceId: string) => {
+    setValue("raceId", raceId, { shouldValidate: true });
+  };
+
+  const handleImageChange = (file?: File) => {
+    setValue("profileImg", file);
+  };
+
+  const onSexChange = (sex: string) => {
+    setValue("sex", sex, { shouldValidate: true });
   };
 
   const onSubmit = async (data: PetFormValues) => {
-    if (!token) {
-      toast("error", "Debes estar autenticado para registrar una mascota.");
-      return;
-    }
-    const formData = new FormData();
-    Object.entries({
-      name: data.petName,
-      speciesId: data.animalType,
-      raceId: data.breed,
-      userId: id as string,
-      weight: data.weight.toString(),
-      sex: data.gender,
-      dateOfBirth: new Date(data.birthDate).toISOString(),
-    }).forEach(([key, value]) => formData.append(key, value));
-    if (data.imageFile) formData.append("profileImg", data.imageFile);
-    setIsSubmitting(true);
+    const formData = mapToFormData({
+      ...data,
+      clientId: String(clientId),
+      dateOfBirth: new Date(data.dateOfBirth),
+    });
     try {
       await registerPet(formData, token);
+      reset();
       toast("success", "Mascota registrada con éxito!", {
         duration: 2000,
-        onAutoClose: () => router.push(`/dashboard/clients/${id}`),
-        onDismiss: () => router.push(`/dashboard/clients/${id}`),
+        onAutoClose: () => router.push(`/dashboard/clients/${clientId}`),
+        onDismiss: () => router.push(`/dashboard/clients/${clientId}`),
       });
     } catch {
       toast("error", "Hubo un error al registrar la mascota.");
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -165,34 +126,10 @@ export default function PetRegisterForm({ token }: AdminPetFormProps) {
             <h3 className="text-sm font-semibold mb-2 text-gray-700">
               Imagen (Opcional)
             </h3>
-            <div className="w-full flex flex-col items-center relative">
-              <Label className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-md text-sm font-medium text-center cursor-pointer">
-                <Input
-                  type="file"
-                  accept="image/jpeg, image/png, image/webp"
-                  onChange={handleImageChange}
-                  className="hidden"
-                />
-                {previewImage ? "Cambiar imagen" : "Subir imagen de la mascota"}
-              </Label>
-              {previewImage && (
-                <div className="w-full mt-4">
-                  <Image
-                    src={previewImage}
-                    className="w-full h-auto rounded-md"
-                    alt="Vista previa de la mascota"
-                    width={96}
-                    height={96}
-                    priority
-                  />
-                </div>
-              )}
-              {errors.imageFile && (
-                <p className="text-red-500 text-sm mt-2">
-                  {errors.imageFile.message}
-                </p>
-              )}
-            </div>
+            <FormImgUploader
+              prevClassName="rounded"
+              onChange={handleImageChange}
+            />
           </div>
         </div>
         <div className="md:w-2/3 w-80">
@@ -201,123 +138,76 @@ export default function PetRegisterForm({ token }: AdminPetFormProps) {
             onSubmit={handleSubmit(onSubmit)}
             className="space-y-4"
           >
-            <div>
-              <Label>Nombre</Label>
-              <Input
-                id="petName"
-                {...register("petName")}
-                placeholder="Ej. Luna"
-              />
-              {errors.petName && (
-                <p className="text-red-500">{errors.petName.message}</p>
-              )}
-            </div>
-            <div>
-              <Label>Fecha de nacimiento</Label>
-              <Input
-                id="birthDate"
-                type="date"
-                {...register("birthDate")}
-                max={new Date().toISOString().split("T")[0]}
-              />
-              {errors.birthDate && (
-                <p className="text-red-500">{errors.birthDate.message}</p>
-              )}
-            </div>
-            <div>
-              <Label>Animal</Label>
-              <Select
-                onValueChange={(value) => {
-                  setValue("animalType", value);
-                  handleSpeciesChange(value);
-                }}
-              >
-                <SelectTrigger id="animalType">
-                  <SelectValue placeholder="Seleccionar" />
-                </SelectTrigger>
-                <SelectContent>
-                  {species.map((specie) => (
-                    <SelectItem key={specie.id} value={specie.id.toString()}>
-                      {specie.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.animalType && (
-                <p className="text-red-500">{errors.animalType.message}</p>
-              )}
-            </div>
-            <div>
-              <Label>Raza</Label>
-              <Select onValueChange={(value) => setValue("breed", value)}>
-                <SelectTrigger id="breed">
-                  <SelectValue
-                    placeholder={
-                      races.length > 0
-                        ? "Seleccionar"
-                        : "Selecciona una especie primero"
-                    }
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  {races.map((race) => (
-                    <SelectItem key={race.id} value={race.id.toString()}>
-                      {race.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.breed && (
-                <p className="text-red-500">{errors.breed.message}</p>
-              )}
-            </div>
-            <div>
-              <Label>Peso (kg)</Label>
-              <Input
-                id="weight"
-                type="number"
-                step={0.1}
-                min="0"
-                onKeyDown={(e) => {
-                  if (e.key === "-" || e.key === "e") e.preventDefault();
-                }}
-                {...register("weight")}
-              />
-              {errors.weight && (
-                <p className="text-red-500">{errors.weight.message}</p>
-              )}
-            </div>
-            <div>
-              <Label>Género</Label>
-              <div className="flex gap-4">
-                <Button
-                  id="genderFemale"
-                  type="button"
-                  variant={watch("gender") === "F" ? "default" : "outline"}
-                  onClick={() => setValue("gender", "F")}
-                >
-                  Hembra
-                </Button>
-                <Button
-                  id="genderMale"
-                  type="button"
-                  variant={watch("gender") === "M" ? "default" : "outline"}
-                  onClick={() => setValue("gender", "M")}
-                >
-                  Macho
-                </Button>
-              </div>
-              {errors.gender && (
-                <p className="text-red-500">{errors.gender.message}</p>
-              )}
-            </div>
-            <div className="flex justify-start gap-4 mt-8">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => router.push(`/dashboard/clients/${id}`)}
-              >
-                Cancelar
+            <FormInput
+              register={register("name")}
+              error={errors.name?.message}
+              label="Nombre"
+              placeholder="Luna"
+              name="name"
+            />
+            <FormInput
+              register={register("dateOfBirth")}
+              error={errors.dateOfBirth?.message}
+              label="Fecha de nacimiento"
+              type="date"
+              name="dateOfBirth"
+              max={new Date().toISOString().split("T")[0]}
+            />
+            <FormSelect
+              label="Especie"
+              name="speciesId"
+              disabled={isGettingSpecies}
+              onChange={handleSpeciesChange}
+              register={register("speciesId")}
+              error={errors.speciesId?.message}
+              placeholder={
+                isGettingSpecies
+                  ? "Cargando Especies..."
+                  : "Seleccionar Especie"
+              }
+              options={species?.data.map((s) => ({
+                value: s.id.toString(),
+                label: s.name,
+              }))}
+            />
+            <FormSelect
+              label="Raza"
+              name="raceId"
+              disabled={isGettingRaces || !selectedSpeciesId || !species}
+              register={register("raceId")}
+              onChange={handleRaceChange}
+              error={errors.raceId?.message}
+              placeholder={
+                !species || !selectedSpeciesId
+                  ? "Selecciona una especie"
+                  : isGettingRaces
+                  ? "Cargando Razas..."
+                  : "Seleccionar Raza"
+              }
+              options={races?.data?.map((r) => ({
+                value: r.id.toString(),
+                label: r.name,
+              }))}
+            />
+            <FormInput
+              id="weight"
+              type="number"
+              step={0.1}
+              min="0"
+              onKeyDown={blockExtraKeysNumber}
+              register={register("weight")}
+              error={errors.weight?.message}
+              label="Peso (kg)"
+              name="weight"
+            />
+            <PetSexSelector
+              error={errors.sex?.message}
+              selected={selectedSex}
+              onChange={onSexChange}
+            />
+            <div className="flex justify-start gap-4 mt-16">
+              <Button type="button" variant="outline">
+                <Link href={`/dashboard/clients/${clientId}`}>Cancelar</Link>
               </Button>
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? "Registrando..." : "Registrar Mascota"}
