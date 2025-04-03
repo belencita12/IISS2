@@ -1,10 +1,26 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { KeyboardEvent } from "react";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
+export const blockExtraKeysNumber = (e: KeyboardEvent<HTMLInputElement>) => {
+  if (e.key === "-" || e.key === "e") e.preventDefault();
+};
+
+export const mapToFormData = <T extends object>(obj: T) => {
+  const formData = new FormData();
+  Object.entries(obj).forEach(([key, value]) => {
+    if (value) {
+      if (value instanceof Date) formData.append(key, value.toISOString());
+      else if (value instanceof File) formData.append(key, value);
+      else formData.append(key, String(value));
+    }
+  });
+  return formData;
+};
 
 export function calcularEdad(fechaNacimiento: string): string {
   const nacimiento = new Date(fechaNacimiento);
@@ -18,7 +34,10 @@ export function calcularEdad(fechaNacimiento: string): string {
   const mesActual = hoy.getUTCMonth();
   const diaActual = hoy.getUTCDate();
 
-  if (mesActual < mesNacimiento || (mesActual === mesNacimiento && diaActual < diaNacimiento)) {
+  if (
+    mesActual < mesNacimiento ||
+    (mesActual === mesNacimiento && diaActual < diaNacimiento)
+  ) {
     edad--;
   }
 
@@ -29,9 +48,9 @@ export function calcularEdad(fechaNacimiento: string): string {
       meses = mesActual - mesNacimiento;
     }
     if (meses === 1) {
-      return `${meses} Mes`
+      return `${meses} Mes`;
     } else {
-      return `${meses} Meses`
+      return `${meses} Meses`;
     }
   }
 
