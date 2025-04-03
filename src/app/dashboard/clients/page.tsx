@@ -8,7 +8,7 @@ export default async function ClientesPage() {
 
   if (!session) redirect("/login");
 
-  const token = session?.user?.token || null;
+    const token = session?.user?.token;
 
   return (
     <div>

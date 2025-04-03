@@ -12,25 +12,19 @@ import { StockData } from "@/lib/stock/IStock";
 import { deleteStockById } from "@/lib/stock/deleteStockById";
 import GenericPagination from "../global/GenericPagination";
 
-interface Deposit {
-  id: number;
-  name: string;
-  address: string;
-}
-
 interface DepositListProps {
   token?: string;
 }
 
 const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
-  const [deposits, setDeposits] = useState<Deposit[]>([]);
+  const [deposits, setDeposits] = useState<StockData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [allDeposits, setAllDeposits] = useState<Deposit[]>([]);
-  const [selectedDeposit, setSelectedDeposit] = useState<Deposit | null>(null);
+  const [allDeposits, setAllDeposits] = useState<StockData[]>([]);
+  const [selectedDeposit, setSelectedDeposit] = useState<StockData | null>(null);
 
   const showDeposits = useCallback(
     async (page: number, token: string, search: string = "") => {
@@ -43,7 +37,7 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
 
       const data = await getStocks({ page, name: search }, token);
 
-      const cleanedData: Deposit[] = data.data
+      const cleanedData: StockData[] = data.data
         .filter((item): item is StockData & {id: number} => typeof item.id === 'number')
         .map((item) => ({
           id: item.id,
@@ -156,11 +150,15 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
       />
 
       {isModalOpen && (
-        <StockForm token={token} isOpen={isModalOpen} onClose={handleCloseModal} 
-         onRegisterSuccess={() => {
-          showDeposits(1, token);
-          setCurrentPage(1);
-         }}/>
+        <StockForm token={token}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal} 
+          onRegisterSuccess={() => {
+            showDeposits(1, token);
+            setCurrentPage(1);
+          }}
+          initialData={selectedDeposit}
+        />
       )}
     </div>
   );
