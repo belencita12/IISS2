@@ -4,7 +4,7 @@ import { MovementData } from "./IMovements";
 
 
 export const getMovements = async (token: string, queryParamsStr?: string) => {
-  const url = `${MOVEMENTS_API}/movements?${queryParamsStr ?? ""}`;
+  const url = `${MOVEMENTS_API}?${queryParamsStr ?? ""}`;
   const response = await fetch(url, {
     method: "GET",
     headers: {
