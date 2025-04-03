@@ -28,8 +28,8 @@ interface StockFormProps {
   initialData?: StockData | null;
 }
 
-export const StockForm = ({ token, isOpen, onClose,  initialData}: StockFormProps) => {
- // const router = useRouter();
+export const StockForm = ({ token, isOpen, onClose, onRegisterSuccess, initialData}: StockFormProps) => {
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
