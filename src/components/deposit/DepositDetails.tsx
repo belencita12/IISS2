@@ -6,10 +6,11 @@ import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/admin/product/ProductCard";
 import ProductFilters from "@/components/admin/product/filter/ProductFilter";
 import { getStockDetailsByStock } from "@/lib/stock/getStockDetailsByStock";
-import GenericPagination from "../global/GenericPagination";
-import { StockData,StockDetailsData} from "@/lib/stock/IStock";
-import { Product } from "@/lib/admin/products/IProducts";
+import { getProductById } from "@/lib/products/getProductById";
+import { StockData, StockDetailsResponse, StockDetailsData} from "@/lib/stock/IStock";
+import { Product } from "@/lib/products/IProducts";
 import { toast } from "@/lib/toast";
+import GenericPagination from "../global/GenericPagination";
 
 interface DepositDetailsProps {
   token: string;
@@ -125,8 +126,10 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
         setFilters={setFilters}
         onSearch={handleSearch}
         preventInvalidKeys={preventInvalidKeys}
+        selectedTags={[]} 
+        onTagsChange={() => {}}
+        token={token}
       />
-
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Productos del Deposito</h1>
         <Button

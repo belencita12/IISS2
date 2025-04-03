@@ -13,13 +13,11 @@ export const Header = ({ fullName }: HeaderProps) => {
             </Avatar>
             <div className="ml-4">
                 <h2 className="text-xl font-bold mt-2">{fullName}</h2>
-                <Badge className="bg-gray-300 text-black text-sm mt-2">Veterinaria Cliente Fiel</Badge>
+                <Badge className="bg-gray-300 text-black text-sm mt-2 hover:bg-gray-300">
+                    Veterinaria Cliente Fiel
+                </Badge>
                 <p className="text-base mt-2">Bienvenido a nuestro sistema de veterinaria</p>
             </div>
         </div>
     );
 };
-
-
-
-

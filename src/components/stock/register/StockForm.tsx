@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogOverlay } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,6 +11,7 @@ import { registerStock } from "@/lib/stock/registerStock";
 import { useRouter } from "next/navigation";
 import { setStock } from "@/lib/stock/setStock";
 import { StockData } from "@/lib/stock/IStock";
+import {Modal} from "@/components/global/Modal"
 
 const stockFormSchema = z.object({
   name: z.string().min(1, "El nombre del stock es obligatorio"),
@@ -72,39 +72,37 @@ export const StockForm = ({ token, isOpen, onClose, onRegisterSuccess, initialDa
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogOverlay />
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
-            {initialData ? "Editar Depósito" : "Registro de Depósito"}
-            </DialogTitle>
-        </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div>
-            <Label>Nombre</Label>
-            <Input {...register("name")} placeholder="Ingrese el nombre del depósito" />
-            {errors.name && <p className="text-red-500">{errors.name.message}</p>}
-          </div>
-          <div>
-            <Label>Dirección</Label>
-            <Input {...register("address")} placeholder="Ingrese la dirección del depósito" />
-            {errors.address && <p className="text-red-500">{errors.address.message}</p>}
-          </div>
-          <div className="flex justify-end gap-4">
-            <Button type="button" variant="outline" onClick={onClose}>Cancelar</Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 
-                initialData ?
-                  "Guardando..." :
-                  "Registrando..." :
-                initialData ?
-                  "Guardar cambios" :
-                  "Registrar"}
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+    <Modal
+  isOpen={isOpen}
+  onClose={onClose}
+  title={initialData ? "Editar Depósito" : "Registro de Depósito"}
+  size="md"
+>
+  <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <div>
+      <Label>Nombre</Label>
+      <Input {...register("name")} placeholder="Ingrese el nombre del depósito" />
+      {errors.name && <p className="text-red-500">{errors.name.message}</p>}
+    </div>
+    <div>
+      <Label>Dirección</Label>
+      <Input {...register("address")} placeholder="Ingrese la dirección del depósito" />
+      {errors.address && <p className="text-red-500">{errors.address.message}</p>}
+    </div>
+    <div className="flex justify-end gap-4">
+      <Button type="button" variant="outline" onClick={onClose}>Cancelar</Button>
+      <Button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? 
+          initialData ?
+            "Guardando..." :
+            "Registrando..." :
+          initialData ?
+            "Guardar cambios" :
+            "Registrar"}
+      </Button>
+    </div>
+  </form>
+</Modal>
+
   );
 };

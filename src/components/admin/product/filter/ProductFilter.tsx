@@ -1,10 +1,10 @@
-
 "use client";
 
 import React from "react";
 import SearchBar from "@/components/global/SearchBar";
 import { CategoryFilter } from "./CategoryFilter";
 import { NumericFilter } from "./NumericFilter";
+import { TagFilter } from "@/components/admin/product/filter/TagFilter";
 import { useProductFilters } from "@/hooks/product/useProductFilter";
 
 interface ProductFiltersProps {
@@ -28,6 +28,9 @@ interface ProductFiltersProps {
   >;
   onSearch: () => void;
   preventInvalidKeys: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  selectedTags: string[];
+  onTagsChange: (selectedTags: string[]) => void;
+  token: string;
 }
 
 export default function ProductFilters({
@@ -35,6 +38,9 @@ export default function ProductFilters({
   setFilters,
   onSearch,
   preventInvalidKeys,
+  selectedTags,
+  onTagsChange,
+  token,
 }: ProductFiltersProps) {
   const { searchInput, setSearchInput, clearFilter } = useProductFilters(
     filters,
@@ -44,21 +50,20 @@ export default function ProductFilters({
 
   return (
     <div className="flex flex-col w-full">
-      <div className="flex flex-col w-full sm:flex-row gap-4 mb-4">
-      <SearchBar
-        onSearch={(query) => {
-          setSearchInput(query);
-          setFilters((prev) => ({ ...prev, code: query }));
-        }}
-        defaultQuery={searchInput}
-        manualSearch={true}
-        debounceDelay={400}
-        placeholder="Buscar por código del producto"
-      />
-
+      <div className="flex flex-col w-full sm:flex-row gap-2">
+        <SearchBar
+          onSearch={(query) => {
+            setSearchInput(query);
+            setFilters((prev) => ({ ...prev, code: query }));
+          }}
+          defaultQuery={searchInput}
+          manualSearch={false}
+          debounceDelay={400}
+          placeholder="Buscar por código del producto"
+        />
       </div>
 
-      <div className="flex flex-col sm:flex-row items-center mb-6 relative w-full">
+      <div className="flex flex-col sm:flex-row items-center gap-20 mb-4 relative w-full">
         <CategoryFilter
           category={filters.category}
           onCategoryChange={(category) =>
@@ -67,7 +72,14 @@ export default function ProductFilters({
           onClearCategory={() => clearFilter("category")}
         />
 
-        <div className="flex flex-col sm:flex-row items-center gap-2 mt-4 sm:mt-0 sm:absolute sm:left-1/2 sm:transform sm:-translate-x-1/2">
+        <TagFilter
+          title="Etiqueta"
+          selectedTags={selectedTags}
+          onChange={onTagsChange}
+          token={token}
+        />
+
+        <div className="flex items-center gap-5 ml-auto">
           <NumericFilter
             label="Precio"
             minValue={filters.minPrice}
@@ -83,22 +95,22 @@ export default function ProductFilters({
             preventInvalidKeys={preventInvalidKeys}
           />
         </div>
-          <div className="sm:ml-auto">
-            <NumericFilter
-              label="Costo"
-              minValue={filters.minCost}
-              maxValue={filters.maxCost}
-              onMinChange={(minCost) =>
-                setFilters((prev) => ({ ...prev, minCost }))
-              }
-              onMaxChange={(maxCost) =>
-                setFilters((prev) => ({ ...prev, maxCost }))
-              }
-              onClearMin={() => clearFilter("minCost")}
-              onClearMax={() => clearFilter("maxCost")}
-              preventInvalidKeys={preventInvalidKeys}
-            />
-          </div>
+        <div className="sm:ml-auto">
+          <NumericFilter
+            label="Costo"
+            minValue={filters.minCost}
+            maxValue={filters.maxCost}
+            onMinChange={(minCost) =>
+              setFilters((prev) => ({ ...prev, minCost }))
+            }
+            onMaxChange={(maxCost) =>
+              setFilters((prev) => ({ ...prev, maxCost }))
+            }
+            onClearMin={() => clearFilter("minCost")}
+            onClearMax={() => clearFilter("maxCost")}
+            preventInvalidKeys={preventInvalidKeys}
+          />
+        </div>
       </div>
     </div>
   );

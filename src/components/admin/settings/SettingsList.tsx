@@ -22,7 +22,7 @@ const settingsOptions = [
   },
   {
     name: "Proveedores",
-    description: "...",
+    description: "Administrar los proveedores de productos y servicios.",
     icon: "🏥",
     link: "/dashboard/settings/providers",
   },
