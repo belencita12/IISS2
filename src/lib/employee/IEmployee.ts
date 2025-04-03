@@ -11,6 +11,8 @@ export interface EmployeeData {
     email: string;
     ruc: string;
     position: WorkPosition;
+    adress?: string;
+    phoneNumber: string;
     image?: Image | null;
 }
 

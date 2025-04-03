@@ -1,10 +1,26 @@
 "use client";
-import React, { useState, useCallback, useEffect, useMemo } from "react";
-import { getProducts } from "@/lib/admin/products/getProducts";
+import { useState, useCallback, useEffect, useMemo } from "react";
+import { getProducts } from "@/lib/products/getProducts";
 import { getStockDetails } from "@/lib/stock/getStockDetails";
-import { Product, ProductResponse } from "@/lib/admin/products/IProducts";
-import useDebounce from "@/lib/admin/products/useDebounceHook";
+import { Product, ProductResponse } from "@/lib/products/IProducts";
+import useDebounce from "@/hooks/useDebounce";
 import { toast } from "@/lib/toast";
+import { useQuery } from "@/hooks/useQuery";
+
+interface FiltersType {
+  code: string;
+  category: string;
+  minPrice: string;
+  maxPrice: string;
+  minCost: string;
+  maxCost: string;
+}
+
+// Extendemos para incluir parámetros de paginación
+interface QueryParams extends FiltersType {
+  page: number;
+  size: number;
+}
 
 export function useProductList(token: string) {
   const initialFilters = useMemo(() => ({
@@ -16,11 +32,17 @@ export function useProductList(token: string) {
     maxCost: "",
   }), []);
 
-  const [searchFilters, setSearchFilters] = useState(initialFilters);
-  const [inputFilters, setInputFilters] = useState(initialFilters);
+  const [inputFilters, setInputFilters] = useState<FiltersType>(initialFilters);
   
   const debouncedFilters = useDebounce(inputFilters, 500);
   
+  // Usamos useQuery para gestionar la búsqueda y paginación
+  const { query, setQuery, toQueryString } = useQuery<QueryParams>({
+    ...initialFilters,
+    page: 1,
+    size: 5
+  });
+
   const [products, setProducts] = useState<Product[]>([]);
   const [stockMap, setStockMap] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -37,9 +59,9 @@ export function useProductList(token: string) {
         const stockData = await getStockDetails(productId, token);
         return stockData.data.reduce((total, detail) => total + detail.amount, 0);
       } catch (error) {
-        toast("error", `Error al cargar el stock del producto ${productId}`,);
+        toast("error", `Error al cargar el stock del producto ${productId}`);
         return 0;
-      }
+      }      
     },
     [token]
   );
@@ -82,6 +104,13 @@ export function useProductList(token: string) {
           totalItems: data.total,
           pageSize: data.size,
         });
+        
+        // Actualizamos el query para mantener sincronizado el estado
+        setQuery({
+          ...filterParams,
+          page,
+          size: data.size
+        });
       } catch (error) {
         toast("error", "Error al obtener productos");
         setProducts([]);
@@ -89,15 +118,14 @@ export function useProductList(token: string) {
         setIsLoading(false);
       }
     },
-    [token, pagination.pageSize, loadProductStock, initialFilters]
+    [token, pagination.pageSize, loadProductStock, initialFilters, setQuery]
   );
 
   useEffect(() => {
-    if (token && JSON.stringify(debouncedFilters) !== JSON.stringify(searchFilters)) {
-      setSearchFilters(debouncedFilters);
+    if (token) {
       loadProducts(1, debouncedFilters);
     }
-  }, [debouncedFilters, token, searchFilters, loadProducts]);
+  }, [debouncedFilters, token, loadProducts]);
 
   useEffect(() => {
     if (token) {
@@ -106,15 +134,13 @@ export function useProductList(token: string) {
   }, [token]);
 
   const handleSearch = () => {
-    setSearchFilters(inputFilters);
-    setPagination(prev => ({ ...prev, currentPage: 1 }));
     loadProducts(1, inputFilters);
   };
 
   const handlePageChange = (page: number) => {
     if (page < 1 || page > pagination.totalPages) return;
     setPagination(prev => ({ ...prev, currentPage: page }));
-    loadProducts(page, searchFilters);
+    loadProducts(page, inputFilters);
   };
 
   return {
@@ -126,5 +152,6 @@ export function useProductList(token: string) {
     setInputFilters,
     handleSearch,
     handlePageChange,
+    queryString: toQueryString 
   };
 }

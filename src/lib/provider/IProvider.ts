@@ -5,3 +5,12 @@ export interface Provider {
     phoneNumber: string;
     ruc: string;
   }
+
+  export interface ProviderQueryParams {
+    page: number;
+    size?: number;
+    from?: string;
+    to?: string;
+    includeDeleted?: boolean;
+    query?: string;
+  }

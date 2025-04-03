@@ -28,7 +28,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
       <div className="w-[20%] md:sticky top-0">
         <SideNav />
       </div>
-      <div className="w-[80%] z-10 h-auto xs-pr-3 pr-2 pb-3">
+      <div className="w-[80%] z-10 h-auto xs-pr-3 pr-2 py-4">
         <Header fullName={session?.user?.fullName} />
         {children}
       </div>

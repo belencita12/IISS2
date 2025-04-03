@@ -1,6 +1,7 @@
 import React from "react";
-import { Product } from "@/lib/admin/products/IProducts";
+import { Product } from "@/lib/products/IProducts";
 import { StockDetailsData } from "@/lib/stock/IStock";
+import { Badge } from "@/components/ui/badge"
 
 interface ProductInfoProps {
   product: Product;
@@ -25,7 +26,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
         { label: "Precio", value: `${product.price?.toLocaleString()} Gs` },
         { label: "Costo", value: `${product.cost?.toLocaleString()} Gs` },
         { 
-          label: "Stock", 
+          label: "Cantidad", 
           value: isStockLoading 
             ? "Cargando..." 
             : totalStock.toString()
@@ -37,6 +38,15 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
           <span className="flex-grow text-right">{value}</span>
         </div>
       ))}
+      {product.tags && product.tags.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-2">
+          {product.tags.map((tag, index) => (
+            <Badge key={index} variant="outline" className="px-2 py-1 text-sm text-gray-500 font-normal">
+              #{tag}
+            </Badge>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

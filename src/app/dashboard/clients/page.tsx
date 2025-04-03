@@ -4,18 +4,15 @@ import authOptions from "@/lib/auth/options";
 import { redirect } from "next/navigation";
 
 export default async function ClientesPage() {
-    const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
 
-    if (!session) {
-        redirect("/login");
-    }
+  if (!session) redirect("/login");
 
-    const token = session?.user?.token || null;
+    const token = session?.user?.token;
 
-    return (
-        <div>
-            <ClientList token={token} />
-        </div>
-    );
-};
-
+  return (
+    <div>
+      <ClientList token={token} />
+    </div>
+  );
+}

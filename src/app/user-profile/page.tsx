@@ -5,6 +5,7 @@ import { VeterinaryProducts } from "@/components/profile/Product";
 import { getServerSession } from "next-auth";
 import authOptions from "@/lib/auth/options";
 import { redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 export default async function Profile() {
     const session = await getServerSession(authOptions);
@@ -14,11 +15,13 @@ export default async function Profile() {
     if (!session) {
         redirect("/login");
     }
+    const clientId = session?.user.clientId;
+    if(!clientId) return notFound();
 
     return (
         <div>
             <Header fullName={session?.user?.fullName} />
-            <PetsList userId={session?.user?.id} token={session?.user?.token} />
+            <PetsList clientId={clientId} token={session?.user?.token} />
             <Appointments />
             <VeterinaryProducts />
         </div>
