@@ -1,6 +1,8 @@
 describe('Pantalla de Servicios', () => {
   beforeEach(() => {
-    cy.visit('/servicios');
+    cy.clearCookies();
+    cy.clearLocalStorage();
+    cy.visit('/services');
   });
 
   it('Debería mostrar el título principal y subtítulo correctamente', () => {
