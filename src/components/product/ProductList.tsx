@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"; 
 import DepositInfo from "../deposit/DepositInfo";
 import ProductFilters from "../admin/product/filter/ProductFilter";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext } from "../ui/pagination";
 import ProductStockCard from "./ProductStockCard";
+import GenericPagination from "@/components/global/GenericPagination";
 
 const apiUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -49,7 +49,7 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
     minCost: "",
     maxCost: "",
   });
-  const [selectedTags, setSelectedTags] = useState<string[]>([]); // Estado para las etiquetas seleccionadas
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   useEffect(() => {
     const filtered = products.filter((product) => {
@@ -119,12 +119,21 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
     fetchProducts();
   }, [currentPage, depositoId, token]);
 
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  const handlePreviousPage = () => handlePageChange(currentPage - 1);
+  const handleNextPage = () => handlePageChange(currentPage + 1);
+
   const preventInvalidKeys = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "-" || e.key === "e") e.preventDefault();
   };
 
   const onTagsChange = (tags: string[]) => {
-    setSelectedTags(tags); // Actualiza las etiquetas seleccionadas
+    setSelectedTags(tags);
   };
 
   if (loading) return <p>Cargando...</p>;
@@ -137,37 +146,26 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
         setFilters={setFilters}
         onSearch={() => {}}
         preventInvalidKeys={preventInvalidKeys}
-        selectedTags={selectedTags} // Pasa las etiquetas seleccionadas
-        onTagsChange={onTagsChange} // Pasa la función para cambiar las etiquetas
-        token={token} // Pasa el token
+        selectedTags={selectedTags}
+        onTagsChange={onTagsChange}
+        token={token}
       />
 
-      <div className="pt-3 pb-3 m-4"><DepositInfo token={token} depositoId={depositoId} /></div>
+      <div className="pt-3 pb-3 m-4">
+        <DepositInfo token={token} depositoId={depositoId} />
+      </div>
 
       {filteredProducts.map((product) => (
         <ProductStockCard key={product.id} product={product} />
       ))}
 
-      <Pagination className="mt-4">
-        <PaginationContent>
-          <PaginationPrevious onClick={() => {
-            if (currentPage > 1) setCurrentPage(currentPage - 1);
-          }} />
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <PaginationItem key={page}>
-              <PaginationLink isActive={page === currentPage} href="#" onClick={(e) => {
-                  e.preventDefault();
-                  setCurrentPage(page);
-                }}>
-                {page}
-              </PaginationLink>
-            </PaginationItem>
-          ))}
-          <PaginationNext onClick={() => {
-            if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-          }} />
-        </PaginationContent>
-      </Pagination>
+      <GenericPagination
+        handlePreviousPage={handlePreviousPage}
+        handlePageChange={handlePageChange}
+        handleNextPage={handleNextPage}
+        currentPage={currentPage}
+        totalPages={totalPages}
+      />
     </div>
   );
 };
