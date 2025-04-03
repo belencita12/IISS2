@@ -154,11 +154,11 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
       />
 
       <div className="pt-3 pb-3 m-4">
-        <DepositInfo token={token} depositoId={depositoId} />
+        <DepositInfo token={token} depositoId={depositoId}/>
       </div>
 
       {filteredProducts.map((product) => (
-        <ProductStockCard key={product.id} product={product} />
+        <ProductStockCard key={product.id} product={product}/>
       ))}
 
       <GenericPagination
