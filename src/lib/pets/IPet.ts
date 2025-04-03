@@ -27,6 +27,7 @@ export interface Race {
 export interface Species {
     id: number;
     name: string;
+    deletedAt?: string | null;
 }
 
 export type PetDataResponse = PaginationResponse<PetData>
