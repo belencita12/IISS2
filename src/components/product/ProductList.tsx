@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react"; 
 import DepositInfo from "../deposit/DepositInfo";
 import ProductFilters from "../admin/product/filter/ProductFilter";
