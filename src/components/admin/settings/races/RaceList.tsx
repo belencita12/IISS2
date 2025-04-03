@@ -11,6 +11,7 @@ import { Pencil, Trash } from "lucide-react";
 import { toast } from "@/lib/toast";
 import GenericTable, { Column, TableAction, PaginationInfo } from "@/components/global/GenericTable";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
+import { Modal } from "@/components/global/Modal";
 import RaceTableSkeleton from "./skeleton/RaceTableSkeleton";
 import { RaceForm } from "./register/RaceForm";
 
@@ -30,6 +31,7 @@ export default function RaceList({ token }: RaceListProps) {
     const [loading, setLoading] = useState(false);
     const [species, setSpecies] = useState<Species[]>([]);
     const [selectedSpecies, setSelectedSpecies] = useState<number | null>(null);
+    
 
     useEffect(() => {
         if (token && species.length === 0) {
@@ -42,7 +44,6 @@ export default function RaceList({ token }: RaceListProps) {
     const loadRaces = useCallback(async (page = 1, query = "") => {
         if (!token) return;
         setLoading(true);
-
         try {
             const racesData = selectedSpecies !== null
                 ? await getRacesBySpecies(selectedSpecies, token)
@@ -59,8 +60,8 @@ export default function RaceList({ token }: RaceListProps) {
                 totalItems: filteredRaces.length,
                 totalPages: Math.ceil(filteredRaces.length / prev.pageSize),
             }));
-        } catch {
-            toast("error", "Error al cargar razas");
+        } catch (error: unknown) {
+            toast("error", error instanceof Error ? error.message : "Error inesperado");
         } finally {
             setLoading(false);
         }
@@ -104,13 +105,14 @@ export default function RaceList({ token }: RaceListProps) {
         setEditingRace(race);
         setIsRaceModalOpen(true);
     };
-
-    const closeRaceModal = () => {
+    const closeRaceModal = (shouldRefresh = true) => {
         setIsRaceModalOpen(false);
-       loadRaces(pagination.currentPage); 
+        if (shouldRefresh) {
+            loadRaces(pagination.currentPage);
+        }
     };
     
-
+    
     const columns: Column<Race>[] = [
         { header: "Nombre", accessor: "name" },
         {
@@ -156,7 +158,15 @@ export default function RaceList({ token }: RaceListProps) {
                 emptyMessage="No se encontraron razas"
             />
 
-            <RaceForm token={token || ""} isOpen={isRaceModalOpen} onClose={closeRaceModal} initialData={editingRace} />
+                <Modal isOpen={isRaceModalOpen} onClose={closeRaceModal} title={editingRace ? "Editar Raza" : "Agregar Raza"}>
+                    <RaceForm 
+                        token={token || ""} 
+                        isOpen={isRaceModalOpen} 
+                        onClose={() => closeRaceModal(true)} // Ahora pasa true solo si se necesita actualizar
+                        initialData={editingRace} 
+                    />
+                </Modal>
+
 
             <ConfirmationModal
                 isOpen={isModalOpen}

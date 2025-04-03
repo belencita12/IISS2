@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogOverlay } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,6 +11,8 @@ import { Race } from "@/lib/pets/IPet";
 import { registerRace } from "@/lib/pets/registerRace";
 import { updateRace } from "@/lib/pets/updateRace";
 import { getSpecies } from "@/lib/pets/getRacesAndSpecies";
+import { Modal } from "@/components/global/Modal";
+
 
 const raceFormSchema = z.object({
   name: z.string().min(1, "El nombre de la raza es obligatorio"),
@@ -47,8 +48,8 @@ export const RaceForm = ({ token, isOpen, onClose, initialData }: RaceFormProps)
             try {
                 const speciesList = await getSpecies(token);
                 setSpecies(speciesList);
-            } catch (error) {
-                toast("error", "No se pudieron obtener las especies");
+            } catch (error: unknown) {
+                toast("error", error instanceof Error ? error.message : "Error inesperado");
             }
         };
         fetchSpecies();
@@ -70,45 +71,44 @@ const onSubmit = async (data: RaceFormValues) => {
       await registerRace({ name: data.name, speciesId: data.speciesId }, token);
       toast("success", "Raza registrada con éxito");
     }
-    onClose();  
+    onClose();
   } catch (error: unknown) {
-    toast("error", error instanceof Error ? error.message : "Error inesperado");
+    if (error instanceof Error) {
+      toast("error", error.message);
+    } else {
+      toast("error", "Error inesperado al procesar la solicitud.");
+    }
   } finally {
     setIsSubmitting(false);
   }
 };
 
-  return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogOverlay />
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{initialData ? "Editar Raza" : "Registro de Raza"}</DialogTitle>
-        </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div>
-            <Label>Nombre</Label>
-            <Input {...register("name")} placeholder="Ingrese el nombre de la raza" />
-            {errors.name && <p className="text-red-500">{errors.name.message}</p>}
-          </div>
-          <div>
-            <Label>Especie</Label>
-            <select {...register("speciesId")} className="w-full p-2 border rounded">
-              <option value="">Seleccione una especie</option>
-              {species.map((specie) => (
-                <option key={specie.id} value={specie.id}>{specie.name}</option>
-              ))}
-            </select>
-            {errors.speciesId && <p className="text-red-500">{errors.speciesId.message}</p>}
-          </div>
-          <div className="flex justify-end gap-4">
-            <Button type="button" variant="outline" onClick={onClose}>Cancelar</Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? (initialData ? "Actualizando..." : "Registrando...") : (initialData ? "Actualizar" : "Registrar")}
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
-  );
+return (
+  <Modal isOpen={isOpen} onClose={onClose} title={initialData ? "Editar Raza" : "Registro de Raza" }>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <div>
+        <Label>Nombre</Label>
+        <Input {...register("name")} placeholder="Ingrese el nombre de la raza" />
+        {errors.name && <p className="text-red-500">{errors.name.message}</p>}
+      </div>
+      <div>
+        <Label>Especie</Label>
+        <select {...register("speciesId")} className="w-full p-2 border rounded">
+          <option value="">Seleccione una especie</option>
+          {species.map((specie) => (
+            <option key={specie.id} value={specie.id}>{specie.name}</option>
+          ))}
+        </select>
+        {errors.speciesId && <p className="text-red-500">{errors.speciesId.message}</p>}
+      </div>
+      <div className="flex justify-end gap-4">
+        <Button type="button" variant="outline" onClick={onClose}>Cancelar</Button>
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? (initialData ? "Actualizando..." : "Registrando...") : (initialData ? "Actualizar" : "Registrar")}
+        </Button>
+      </div>
+    </form>
+  </Modal>
+);
+
 };
