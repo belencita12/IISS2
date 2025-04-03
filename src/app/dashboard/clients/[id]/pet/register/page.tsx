@@ -3,15 +3,18 @@ import authOptions from "@/lib/auth/options";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 
-export default async function PetRegisterPage() {
+export default async function PetRegisterPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const session = await getServerSession(authOptions);
+  const { id } = await params;
   if (session) {
     const token = session?.user.token;
-    console.log(token);
-
     return (
       <div>
-        <PetRegisterForm token={token} />
+        <PetRegisterForm token={token} clientId={Number(id)} />
       </div>
     );
   }

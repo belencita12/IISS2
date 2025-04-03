@@ -3,6 +3,7 @@ import React from "react";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Product } from "@/lib/products/IProducts";
+import { Badge } from "@/components/ui/badge";
 
 interface ProductCardProps {
   product: Product;
@@ -33,7 +34,22 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, stock, onClick }) =>
           )}
         </div>
         <div className="flex-1">
-          <h3 className="text-lg font-semibold mb-4">{product.name}</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
+            <div className="col-span-1 md:col-span-3">
+              <h3 className="text-lg font-semibold">{product.name}</h3>
+            </div>
+            <div className="col-span-1 flex flex-wrap gap-1 items-center">
+              {product.tags?.map((tag, index) => (
+                <Badge
+                  key={index}
+                  variant="outline"
+                  className="px-2 py-1 text-sm text-gray-500 font-normal"
+                >
+                  #{tag}
+                </Badge>
+              ))}
+            </div>
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             <div className="flex flex-col">
               <p className="text-sm text-gray-500">Código</p>
@@ -45,18 +61,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, stock, onClick }) =>
               <p className="text-sm">{product.code}</p>
               <p className="text-sm mt-2">La Mascota S.A.</p>
               <p className="text-sm mt-2">{product.category}</p>
-              <p className="text-sm mt-2">
-                {product.price.toLocaleString()} Gs
-              </p>
+              <p className="text-sm mt-2">{product.price.toLocaleString()} Gs</p>
             </div>
             <div className="flex flex-col">
               <p className="text-sm text-gray-500">Costo</p>
               <p className="text-sm text-gray-500 mt-2">Cantidad</p>
             </div>
             <div className="flex flex-col">
-              <p className="text-sm">
-                {product.cost?.toLocaleString()} Gs
-              </p>
+              <p className="text-sm">{product.cost?.toLocaleString()} Gs</p>
               <p className="text-sm mt-2">{stock}</p>
             </div>
           </div>

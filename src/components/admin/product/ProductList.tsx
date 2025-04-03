@@ -1,25 +1,31 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/admin/product/ProductCard"; 
 import ProductFilters from "@/components/admin/product/filter/ProductFilter";
 import { useProductList } from "@/hooks/product/useProductList";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationPrevious,
-  PaginationNext,
-} from "@/components/ui/pagination";
+import { useProductTag } from "@/hooks/product/useProductTag";
+import GenericPagination from "@/components/global/GenericPagination";  
 
 interface ProductListProps {
   token: string;
 }
+
 export default function ProductListPage({ token }: ProductListProps) {
   const router = useRouter();
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  
+  // Usamos el hook mejorado con soporte de paginación
+  const { 
+    filteredProducts, 
+    isTagFiltering, 
+    fetchFilteredProducts,
+    tagPagination,
+    handleTagPageChange,
+    setTagPageSize
+  } = useProductTag(token);
 
   const {
     products,
@@ -32,6 +38,17 @@ export default function ProductListPage({ token }: ProductListProps) {
     handlePageChange,
   } = useProductList(token);
 
+  useEffect(() => {
+    if (pagination.pageSize !== tagPagination.pageSize) {
+      setTagPageSize(pagination.pageSize);
+    }
+  }, [pagination.pageSize, tagPagination.pageSize, setTagPageSize]);
+
+  const handleTagsChange = (tags: string[]) => {
+    setSelectedTags(tags);
+    fetchFilteredProducts(tags);
+  };
+
   const preventInvalidKeys = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "-" || e.key === "e") e.preventDefault();
   };
@@ -40,14 +57,26 @@ export default function ProductListPage({ token }: ProductListProps) {
     router.push(`/dashboard/products/${productId}`);
   };
 
+  const isFiltering = selectedTags.length > 0;
+  const loading = isFiltering ? isTagFiltering : isLoading;
+  const displayedProducts = isFiltering ? filteredProducts : products;
+
+  const currentPagination = isFiltering ? tagPagination : pagination;
+  const currentHandlePageChange = isFiltering ? handleTagPageChange : handlePageChange;
+
   return (
-    <div className="max-w-6xl mx-auto p-4">
-      <ProductFilters
-        filters={inputFilters}
-        setFilters={setInputFilters}
-        onSearch={handleSearch}
-        preventInvalidKeys={preventInvalidKeys}
-      />
+    <div className="max-w-screen-xl mx-auto p-4">
+      <div className="mb-2"> 
+        <ProductFilters
+          filters={inputFilters}
+          setFilters={setInputFilters}
+          onSearch={handleSearch}
+          preventInvalidKeys={preventInvalidKeys}
+          selectedTags={selectedTags}
+          onTagsChange={handleTagsChange}
+          token={token}
+        />
+      </div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Productos</h1>
         <Button
@@ -58,13 +87,12 @@ export default function ProductListPage({ token }: ProductListProps) {
           Crear Producto
         </Button>
       </div>
-
-      {isLoading ? (
+      {loading ? (
         <p className="text-center py-4">Cargando productos...</p>
-      ) : products.length === 0 ? (
+      ) : displayedProducts.length === 0 && !loading ? (
         <p className="text-center py-4">No hay productos disponibles</p>
       ) : (
-        products.map((product) => (
+        displayedProducts.map((product) => (
           <ProductCard
             key={product.id}
             product={product}
@@ -73,34 +101,14 @@ export default function ProductListPage({ token }: ProductListProps) {
           />
         ))
       )}
-
-      {/* Paginación */}
-      <Pagination>
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious
-              onClick={() => handlePageChange(pagination.currentPage - 1)}
-              className={pagination.currentPage <= 1 ? "pointer-events-none opacity-50" : ""}
-            />
-          </PaginationItem>
-          {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((page) => (
-            <PaginationItem key={page}>
-              <PaginationLink
-                isActive={pagination.currentPage === page}
-                onClick={() => handlePageChange(page)}
-              >
-                {page}
-              </PaginationLink>
-            </PaginationItem>
-          ))}
-          <PaginationItem>
-            <PaginationNext
-              onClick={() => handlePageChange(pagination.currentPage + 1)}
-              className={pagination.currentPage >= pagination.totalPages ? "pointer-events-none opacity-50" : ""}
-            />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+      
+      <GenericPagination
+        handlePreviousPage={() => currentHandlePageChange(currentPagination.currentPage - 1)}
+        handlePageChange={currentHandlePageChange}
+        handleNextPage={() => currentHandlePageChange(currentPagination.currentPage + 1)}
+        currentPage={currentPagination.currentPage}
+        totalPages={currentPagination.totalPages}
+      />
     </div>
   );
 }

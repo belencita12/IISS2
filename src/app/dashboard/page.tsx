@@ -7,7 +7,7 @@ export default function Dashboard() {
   return (
     <div className="text-sm sm:text-base flex flex-col gap-3">
       <div className="flex md:flex-row flex-col items-center w-full gap-3">
-        <div className="bg-white w-full md:flex-1 p-4 shadow rounded-lg flex items-center justify-between">
+        <div className="bg-white w-full md:flex-1 p-4 shadow rounded-lg flex items-center justify-between my-4">
           <div>
             <h3 className="text-sm text-gray-500">Total Facturado</h3>
             <p className="text-2xl font-bold">$10,000</p>
@@ -22,8 +22,8 @@ export default function Dashboard() {
           <Users size={32} className="text-blue-500" />
         </div>
       </div>
-      <div className="flex flex-col lg:flex-row gap-3">
-        <div className="flex flex-col flex-1 gap-3">
+      <div className="flex flex-col lg:flex-row gap-4">
+        <div className="flex flex-col flex-1 gap-4">
           <LineChart />
           <BarChart />
         </div>
