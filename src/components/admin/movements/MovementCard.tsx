@@ -12,10 +12,9 @@ export default function MovementCard({ movement }: { movement: MovementData }) {
   });
 
   return (
-    <Card
+    <Card 
       title={movement.type === "INBOUND" ? "Transferencia" : "Vencimiento de Productos"}
       description={`Deposito Origen: ${movement.originStock?.name || "—"}\nDeposito Destino: ${movement.destinationStock?.name || "—"}`}
-      image="/images/movimiento.jpg"
       alt="Movimiento"
       layout="horizontal"
       imagePosition="left"
@@ -23,7 +22,7 @@ export default function MovementCard({ movement }: { movement: MovementData }) {
       textColor="text-black"
       showButton={false}
     >
-      <div className="flex justify-between text-sm text-gray-600 mt-2">
+      <div className="flex justify-between text-sm text-gray-600 mt-2 w-full">
         <span><strong>{movement.manager?.fullName ?? "Encargado desconocido"} - {movement.manager?.ruc ?? "—"}</strong></span>
         <span>{fecha}</span>
       </div>
