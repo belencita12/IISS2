@@ -4,7 +4,12 @@ import { notFound } from "next/navigation";
 import { getProviderById } from "@/lib/provider/getProviderById";
 import ProviderForm from "@/components/admin/provider/ProviderForm";
 
-export default async function EditProviderPage({ params }: { params: { id: string } }) {
+export default async function EditProviderPage({ 
+  params 
+}: { 
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params; 
   const session = await getServerSession(authOptions);
   const token = session?.user?.token || null;
 
@@ -12,7 +17,7 @@ export default async function EditProviderPage({ params }: { params: { id: strin
     notFound();
   }
 
-  const providerId = parseInt(params.id, 10);
+  const providerId = parseInt(id, 10);
   if (isNaN(providerId)) {
     notFound();
   }
