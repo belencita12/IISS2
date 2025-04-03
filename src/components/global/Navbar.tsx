@@ -19,12 +19,16 @@ export function Navbar({ links }: NavbarProps) {
   const { data: session, status } = useSession();
   const isLoading = status === "loading";
   const isAuthenticated = !!session && !isLoading;
+
+
   const isAdmin = session?.user?.roles?.includes("ADMIN");
-
-
-  if (isLoading) return <NavbarSkeleton />;
-  
+ 
   if (isAdmin) return null;
+
+
+  if (isLoading ) return <NavbarSkeleton />;
+  
+
 
   return (
     <header className="w-full shadow-sm px-8 py-4 bg-white">
