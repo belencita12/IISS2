@@ -5,19 +5,12 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/admin/product/ProductCard";
 import ProductFilters from "@/components/admin/product/filter/ProductFilter";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationPrevious,
-  PaginationNext,
-} from "@/components/ui/pagination";
 import { getStockDetailsByStock } from "@/lib/stock/getStockDetailsByStock";
-import { getProductById } from "@/lib/admin/products/getProductById";
+import { getProductById } from "@/lib/products/getProductById";
 import { StockData, StockDetailsResponse, StockDetailsData} from "@/lib/stock/IStock";
-import { Product } from "@/lib/admin/products/IProducts";
+import { Product } from "@/lib/products/IProducts";
 import { toast } from "@/lib/toast";
+import GenericPagination from "../global/GenericPagination";
 
 interface DepositDetailsProps {
   token: string;
@@ -133,8 +126,10 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
         setFilters={setFilters}
         onSearch={handleSearch}
         preventInvalidKeys={preventInvalidKeys}
+        selectedTags={[]} 
+        onTagsChange={() => {}}
+        token={token}
       />
-
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Productos del Deposito</h1>
         <Button
@@ -161,32 +156,18 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
         ))
       )}
 
-      <Pagination>
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious
-              onClick={() => handlePageChange(currentPage - 1)}
-              className={currentPage <= 1 ? "pointer-events-none opacity-50" : ""}
-            />
-          </PaginationItem>
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <PaginationItem key={page}>
-              <PaginationLink
-                isActive={currentPage === page}
-                onClick={() => handlePageChange(page)}
-              >
-                {page}
-              </PaginationLink>
-            </PaginationItem>
-          ))}
-          <PaginationItem>
-            <PaginationNext
-              onClick={() => handlePageChange(currentPage + 1)}
-              className={currentPage >= totalPages ? "pointer-events-none opacity-50" : ""}
-            />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+      <GenericPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        handlePageChange={(page) => handlePageChange(page)}
+        handlePreviousPage={() => {
+          if (currentPage > 1) handlePageChange(currentPage - 1);
+        }}
+        handleNextPage={() => {
+          if (currentPage < totalPages) handlePageChange(currentPage + 1);
+        }}
+      />
+
     </div>
   );
 }
