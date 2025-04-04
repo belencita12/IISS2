@@ -38,7 +38,7 @@ const PurchaseDetail: React.FC<PurchaseDetailProps> = ({ token, initialPage = 1 
 
   useEffect(() => {
     if (!loading && !toastShown && (!purchaseDetails || purchaseDetails.length === 0)) {
-      toast("warning", "No se encontraron detalles de la compra.");
+      toast("warning", "No existen detalles para esta compra.");
       setToastShown(true);
     }
   }, [purchaseDetails, toastShown, loading]);
