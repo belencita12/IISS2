@@ -1,40 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Card } from "@/components/global/Card";
 import { MovementData } from "@/lib/movements/IMovements";
-import { getEmployeeByID } from "@/lib/employee/getEmployeeByID";
-import { EmployeeData } from "@/lib/employee/IEmployee";
 
 interface Props {
   movement: MovementData;
   token: string;
 }
 
-export default function MovementCard({ movement, token }: Props) {
-  const [manager, setManager] = useState<EmployeeData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    let isMounted = true;
-    if (movement.managerId) {
-      getEmployeeByID(token, movement.managerId)
-        .then((res) => {
-          if (isMounted) setManager(res);
-        })
-        .catch((err) => console.error("Error cargando encargado:", err))
-        .finally(() => {
-          if (isMounted) setIsLoading(false);
-        });
-    } else {
-      setIsLoading(false);
-    }
-
-    return () => {
-      isMounted = false;
-    };
-  }, [movement.managerId, token]);
-
+export default function MovementCard({ movement }: Props) {
   const fecha = new Date(movement.dateMovement).toLocaleString("es-ES", {
     day: "2-digit",
     month: "2-digit",
@@ -44,18 +18,13 @@ export default function MovementCard({ movement, token }: Props) {
     second: "2-digit",
   });
 
-  // Mostrar esqueleto o nada mientras se carga el encargado
-  if (isLoading) {
-    return (
-      <div className="w-full h-[150px] rounded-lg border bg-gray-100 animate-pulse" />
-    );
-  }
-
   return (
     <Card
       title={
         movement.type === "INBOUND"
           ? "Transferencia"
+          : movement.type === "DEPOSIT"
+          ? "Depósito"
           : "Vencimiento de Productos"
       }
       description=""
@@ -71,11 +40,13 @@ export default function MovementCard({ movement, token }: Props) {
         <div className="text-sm text-gray-700 space-y-1 md:w-1/2">
           <p>Depósito Origen: {movement.originStock?.name || "—"}</p>
           <p>Depósito Destino: {movement.destinationStock?.name || "—"}</p>
-          <div className="">
-            <strong>
-              {manager?.fullName ?? "Encargado desconocido"} –{" "}
-              {manager?.ruc ?? "—"}
-            </strong>
+          <div>
+            <p>
+              <strong>
+                {movement.manager?.fullName ?? "Encargado desconocido"} –{" "}
+                {movement.manager?.ruc ?? "—"}
+              </strong>
+            </p>
           </div>
         </div>
 

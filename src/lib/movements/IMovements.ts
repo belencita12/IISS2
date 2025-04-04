@@ -6,20 +6,18 @@ import { BaseQueryParams } from "../types";
     destinationStockId?: number;
     managerId?: number;
   }
-  
+
   export interface MovementData {
     id: number;
     description: string;
-    type: string;
+    type: "INBOUND" | "OUTBOUND" | "TRANSFER" ;
     dateMovement: string;
-    originStockId: number;
-    destinationStockId: number;
-    managerId: number;
-    createdAt: string;
-    updatedAt: string;
-    // Ideal: incluir relaciones si las tenés
-    originStock?: { name: string };
-    destinationStock?: { name: string };
-    manager?: { fullName: string; ruc: string };
+    originStock?: { id: number; name: string };
+    destinationStock?: { id: number; name: string };
+    manager?: {
+      id: number;
+      fullName: string;
+      ruc: string;
+    };
   }
   
