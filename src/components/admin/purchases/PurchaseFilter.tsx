@@ -160,7 +160,7 @@ const PurchaseFilter = ({ provider, deposito, token, onFilterChange }: PurchaseF
 
           <div className="flex flex-col w-full">
             <div className="flex gap-2 flex-wrap">
-              <div className="w-72">
+              <div className="w-64">
               <label className="text-xs text-gray-500">Fecha desde</label>
                 <Input
                   name="dateFrom"
@@ -171,7 +171,7 @@ const PurchaseFilter = ({ provider, deposito, token, onFilterChange }: PurchaseF
                   className="w-full"
                 />
               </div>
-              <div className="w-72">
+              <div className="w-64">
               <label className="text-xs text-gray-500">Fecha hasta</label>
                 <Input
                   name="dateTo"
