@@ -22,10 +22,10 @@ export default function MovementCard({ movement }: Props) {
     <Card
       title={
         movement.type === "INBOUND"
-          ? "Transferencia"
-          : movement.type === "DEPOSIT"
-          ? "Depósito"
-          : "Vencimiento de Productos"
+          ? "Movimiento Entrante"
+          : movement.type === "OUTBOUND"
+          ? "Movimiento Saliente"
+          : "Transferencia entre Depósitos"
       }
       description=""
       alt="Movimiento"
