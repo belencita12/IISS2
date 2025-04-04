@@ -36,19 +36,17 @@ export default function SpeciesList({ token }: SpeciesListProps) {
         setLoading(true);
         try {
             const data = await getSpecies(token);
+            /*const filtered = query
+                ? data.filter((s: Species) => s.name.toLowerCase().includes(query.toLowerCase()))
+                : data; */
             
-            const active = data.filter((s: Species) => s.deletedAt === null);
 
-            const filtered = query
-                ? active.filter((s: Species) => s.name.toLowerCase().includes(query.toLowerCase()))
-                : active;
-
-            setSpeciesList(filtered);
+            setSpeciesList(data);
             setPagination(prev => ({
                 ...prev,
                 currentPage: page,
-                totalItems: filtered.length,
-                totalPages: Math.ceil(filtered.length / prev.pageSize),
+                totalItems: data.length,
+                totalPages: Math.ceil(data.length / prev.pageSize),
             }));
         } catch {
             toast("error", "Error al cargar especies");
