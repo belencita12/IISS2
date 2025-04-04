@@ -1,14 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { getPurchaseDetailByPurchaseId } from "@/lib/purchases/getPurchaseDetailByPurchaseId";
 import { getPurchaseById } from "@/lib/purchases/getPurchaseDetailById";
-import PurchaseDetailCard from "@/components/admin/purchases/detailsCards/PurchaseProductCard";
-import PurchaseSummary from "@/components/admin/purchases/detailsCards/PurchaseProviderCard";
-import { PurchaseDetail as IPurchaseDetail, PurchaseDetailResponse } from "@/lib/purchases/IPurchaseDetail";
+import PurchaseDetailCard from "@/components/admin/purchases/detailCard/PurchaseProductCard";
+import PurchaseProviderCard from "@/components/admin/purchases/detailCard/PurchaseProviderCard";
 import { Purchase } from "@/lib/purchases/IPurchase";
 import { toast } from "@/lib/toast";
 import GenericPagination from "@/components/global/GenericPagination";
+import { usePurchaseDetail } from "@/hooks/purchases/usePurchaseDetail";
 
 interface PurchaseDetailProps {
   token: string;
@@ -16,43 +15,27 @@ interface PurchaseDetailProps {
 }
 
 const PurchaseDetail: React.FC<PurchaseDetailProps> = ({ token, initialPage = 1 }) => {
-  const { id } = useParams();
-  const [purchaseDetails, setPurchaseDetails] = useState<IPurchaseDetail[] | null>(null);
-  const [purchaseInfo, setPurchaseInfo] = useState<Purchase | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [page, setPage] = useState<number>(initialPage);
-  const [totalPages, setTotalPages] = useState<number>(1);
+  const { id } = useParams(); 
+  const [purchaseInfo, setPurchaseInfo] = useState<Purchase | null>(null); 
+  const [page, setPage] = useState<number>(initialPage); 
+  
+  const { data: purchaseDetails, totalPages, loading, error } = usePurchaseDetail(id as string, token, page);
 
+  // `useEffect` que obtiene la información de la compra inicial al cargar el componente
   useEffect(() => {
-    if (!id) {
-      setLoading(false);
-      return;
-    }
-
-    const fetchData = async () => {
+    if (!id) return; 
+    const fetchPurchaseInfo = async () => {
       try {
         const purchaseData = await getPurchaseById(id as string, token);
         setPurchaseInfo(purchaseData);
-
-        const detailsData: PurchaseDetailResponse = await getPurchaseDetailByPurchaseId(id as string, page, token);
-        
-        if (detailsData) {
-          setPurchaseDetails(detailsData.data);
-          setTotalPages(detailsData.totalPages);
-        } else {
-          throw new Error("La respuesta no contiene datos válidos.");
-        }
       } catch (err) {
-        setError("No se pudo cargar la información de la compra");
-        toast("error", "No se pudo cargar la información de la compra");
-      } finally {
-        setLoading(false);
+        const errorMessage = err instanceof Error ? err.message : "No se pudo cargar la información de la compra"; 
+        toast("error", errorMessage); 
       }
     };
 
-    fetchData();
-  }, [id, token, page]);
+    fetchPurchaseInfo(); 
+  }, [id, token]);
 
   const handlePageChange = (newPage: number) => {
     if (newPage !== page && newPage >= 1 && newPage <= totalPages) {
@@ -62,31 +45,35 @@ const PurchaseDetail: React.FC<PurchaseDetailProps> = ({ token, initialPage = 1 
 
   const handlePreviousPage = () => {
     if (page > 1) {
-      setPage(page - 1);
+      setPage(page - 1); 
     }
   };
 
   const handleNextPage = () => {
     if (page < totalPages) {
-      setPage(page + 1);
+      setPage(page + 1); 
     }
   };
 
   if (loading) return <p>Cargando...</p>;
+
   if (error) return <p>{error}</p>;
+
   if (!purchaseDetails || purchaseDetails.length === 0) return <p>No se encontraron detalles de la compra.</p>;
 
   return (
     <div>
       <h1 className="text-3xl font-bold text-center mt-4 mb-2">Compra Detalles</h1>
       
-      <PurchaseSummary
+      {/* Muestra los datos del proveedor que realizó la compra y datos resumidos de la compra*/}
+      <PurchaseProviderCard
         providerName={purchaseInfo?.provider?.businessName}
         total={purchaseInfo?.total}
         ivaTotal={purchaseInfo?.ivaTotal}
         date={purchaseInfo?.date}
       />
 
+      {/* Muestra los productos de la compra */}
       {purchaseDetails.map(detail => (
         <PurchaseDetailCard key={detail.id} detail={detail} />
       ))}

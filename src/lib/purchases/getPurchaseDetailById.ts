@@ -1,7 +1,6 @@
 import { PURCHASE_API } from "@/lib/urls";
 import { Purchase } from "@/lib/purchases/IPurchase";
 
-
 export const getPurchaseById = async (
   purchaseId: string,
   token: string
@@ -18,15 +17,15 @@ export const getPurchaseById = async (
     );
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(
-        error?.message || error?.error || `Error HTTP: ${response.status}`
-      );
+      const errorText = await response.text();
+      if (errorText.toLowerCase().includes("no encontrado")) {
+        throw new Error("La compra no existe");
+      }
+      throw new Error("Ocurrió un error. Intenta nuevamente.");
     }
 
-    const result = await response.json();
-    return result as Purchase;
+    return await response.json() as Purchase;
   } catch (error) {
-    throw error;
+    throw new Error(error instanceof Error ? error.message : "Ocurrió un error. Intenta nuevamente.");
   }
 };

@@ -4,12 +4,16 @@ import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 
+/**
+ * Componente para mostrar los detalles de un producto en la compra.
+ * Incluye imagen, nombre, etiquetas, código, categoría, precio, costo y cantidad.
+ */
 interface PurchaseProductCardProps {
   detail: PurchaseDetail;
 }
 
 const PurchaseProductCard: React.FC<PurchaseProductCardProps> = ({ detail }) => {
-  const { product, quantity, unitCost } = detail;
+  const { product, quantity } = detail;
   
   return (
     <div>
