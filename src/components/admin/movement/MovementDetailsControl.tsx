@@ -126,21 +126,26 @@ export default function MovementDetailsControl({
     <div className="w-full mt-4 space-y-2">
       <Label>Agregar Producto al Movimiento</Label>
   
-      <div className="flex flex-col md:flex-row flex-wrap gap-2 items-start">
+      <div className="flex flex-col md:flex-row gap-2 flex-wrap items-center">
         {!isSearching ? (
           <>
-            <SearchBar
-              placeholder="Buscar producto..."
-              manualSearch
-              onSearch={handleSearch}
+            <div className="flex w-[78%]">
+                <SearchBar
+                placeholder="Buscar producto..."
+                manualSearch
+                onSearch={handleSearch}
+                />
+            </div>
+            <Input
+              type="number"
+              placeholder="Cantidad"
+              min={1}
+              value={quantity}
+              onChange={(e) => setQuantity(parseInt(e.target.value))}
+              className="w-full md:w-28"
             />
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => handleSearch(selectedProductId)} // puede usar el mismo input como búsqueda
-              className="whitespace-nowrap"
-            >
-              Buscar
+            <Button type="button" onClick={handleAddProduct}>
+              Agregar
             </Button>
           </>
         ) : (
@@ -165,33 +170,27 @@ export default function MovementDetailsControl({
               type="button"
               variant="outline"
               onClick={handleCancelSearch}
-              className="whitespace-nowrap text-red-500"
+              className="text-red-500"
             >
               Cancelar
             </Button>
+  
+            <Input
+              type="number"
+              placeholder="Cantidad"
+              min={1}
+              value={quantity}
+              onChange={(e) => setQuantity(parseInt(e.target.value))}
+              className="w-full md:w-28"
+            />
+            <Button type="button" onClick={handleAddProduct}>
+              Agregar
+            </Button>
           </>
         )}
-  
-        {/* Siempre visibles */}
-        <Input
-          type="number"
-          placeholder="Cantidad"
-          min={1}
-          value={quantity}
-          onChange={(e) => setQuantity(parseInt(e.target.value))}
-          className="w-full md:w-32"
-        />
-  
-        <Button
-          type="button"
-          onClick={handleAddProduct}
-          className="w-full md:w-auto"
-        >
-          Agregar
-        </Button>
       </div>
   
-      {/* Tabla */}
+      {/* Tabla de productos */}
       <GenericTable
         data={tableData}
         columns={columns}
@@ -202,4 +201,5 @@ export default function MovementDetailsControl({
       />
     </div>
   );
+  
 }
