@@ -10,6 +10,7 @@ export const usePurchase = (token: string) => {
     handleSubmit,
     setValue,
     getValues,
+    control,
     watch,
     formState: { errors },
     reset,
@@ -51,10 +52,11 @@ export const usePurchase = (token: string) => {
   };
 
   const submitPurchase = async (data: Purchase) => {
+    console.log("Datos a enviar:", data); // 👀 Verifica el formato de los datos
     try {
       await registerPurchase(data, token);
       alert("Compra registrada exitosamente");
-      reset(); // Limpiar el formulario después de un registro exitoso
+      reset(); // Limpiar formulario tras éxito
       return true;
     } catch (error) {
       console.error("Error al registrar la compra:", error);
@@ -62,7 +64,7 @@ export const usePurchase = (token: string) => {
       return false;
     }
   };
-
+  
   return {
     register,
     handleSubmit,
@@ -72,6 +74,7 @@ export const usePurchase = (token: string) => {
     removeProduct,
     submitPurchase,
     watch,
+    control,
     errors,
   };
 };
