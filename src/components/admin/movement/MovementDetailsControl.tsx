@@ -35,10 +35,11 @@ export default function MovementDetailsControl({
   productDetails,
   setProductDetails,
 }: MovementDetailsControlProps) {
-    const [isSearching, setIsSearching] = useState(false);
-    const [searchResults, setSearchResults] = useState<ProductResult[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState<ProductResult[]>([]);
   const [selectedProductId, setSelectedProductId] = useState("");
   const [quantity, setQuantity] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = async (query: string) => {
     try {
@@ -52,7 +53,7 @@ export default function MovementDetailsControl({
             id: Number(product.id),
             name: product.name,
             code: product.code,
-        })) satisfies ProductResult[];
+        }));
 
       if (filtered.length === 0) {
         toast("info", "No se encontraron productos");
@@ -70,6 +71,7 @@ export default function MovementDetailsControl({
     setIsSearching(false);
     setSearchResults([]);
     setSelectedProductId("");
+    setSearchQuery("");
     setQuantity(1);
   };
 
@@ -129,12 +131,20 @@ export default function MovementDetailsControl({
       <div className="flex flex-col md:flex-row gap-2 flex-wrap items-center">
         {!isSearching ? (
           <>
-            <div className="flex w-[78%]">
-                <SearchBar
+            <div className="flex w-[78%] gap-2">
+              <Input
+                type="text"
                 placeholder="Buscar producto..."
-                manualSearch
-                onSearch={handleSearch}
-                />
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full md:w-64"
+              />
+              <Button
+                type="button"
+                onClick={() => handleSearch(searchQuery)}
+              >
+                Buscar
+              </Button>
             </div>
             <Input
               type="number"
