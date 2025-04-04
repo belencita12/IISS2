@@ -79,7 +79,12 @@ const TagForm = ({
           name="name"
         />
         <div className="flex justify-between items-center gap-2 pt-2">
-          <Button type="button" variant="outline" onClick={onClose}>
+          <Button
+            disabled={isSubmitting}
+            type="button"
+            variant="outline"
+            onClick={onClose}
+          >
             Cancelar
           </Button>
           <Button type="submit" disabled={isSubmitting}>
