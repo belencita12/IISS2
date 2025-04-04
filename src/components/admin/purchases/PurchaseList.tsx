@@ -19,6 +19,7 @@ export default function PurchaseList({ token }: PurchaseListProps) {
   const [filters, setFilters] = useState({
     provider: "all",
     deposito: "all",
+    
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);  

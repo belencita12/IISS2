@@ -171,7 +171,7 @@ const PurchaseFilter = ({ provider, deposito, token, onFilterChange }: PurchaseF
                   className="w-full"
                 />
               </div>
-              <div className="w-64">
+              <div className="w-">
               <label className="text-xs text-gray-500">Fecha hasta</label>
                 <Input
                   name="dateTo"
