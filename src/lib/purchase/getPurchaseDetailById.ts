@@ -1,10 +1,10 @@
 import { PURCHASE_API } from "@/lib/urls";
-import { Purchase } from "@/lib/purchases/IPurchase";
+import { PurchaseData } from "@/lib/purchase/IPurchase";
 
 export const getPurchaseById = async (
   purchaseId: string,
   token: string
-): Promise<Purchase> => {
+): Promise<PurchaseData> => {
   try {
     const response = await fetch(
       `${PURCHASE_API}/${purchaseId}`,
@@ -24,7 +24,7 @@ export const getPurchaseById = async (
       throw new Error("Ocurrió un error. Intenta nuevamente.");
     }
 
-    return await response.json() as Purchase;
+    return await response.json() as PurchaseData;
   } catch (error) {
     throw new Error(error instanceof Error ? error.message : "Ocurrió un error. Intenta nuevamente.");
   }

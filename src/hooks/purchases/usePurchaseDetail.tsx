@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getPurchaseDetailByPurchaseId } from "@/lib/purchases/getPurchaseDetailByPurchaseId";
-import { PurchaseDetail, PurchaseDetailResponse } from "@/lib/purchases/IPurchaseDetail";
+import { getPurchaseDetailByPurchaseId } from "@/lib/purchase/getPurchaseDetailByPurchaseId";
+import { PurchaseDetail, PurchaseDetailResponse } from "@/lib/purchase/IPurchaseDetail";
 
 /*Hook para obtener los detalles de una compra*/
 export const usePurchaseDetail = (id: string, token: string, page: number = 1) => {

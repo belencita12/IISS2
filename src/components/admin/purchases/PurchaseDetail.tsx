@@ -1,10 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { getPurchaseById } from "@/lib/purchases/getPurchaseDetailById";
+import { getPurchaseById } from "@/lib/purchase/getPurchaseDetailById";
 import PurchaseDetailCard from "@/components/admin/purchases/detailCard/PurchaseProductCard";
 import PurchaseProviderCard from "@/components/admin/purchases/detailCard/PurchaseProviderCard";
-import { Purchase } from "@/lib/purchases/IPurchase";
+import { PurchaseData } from "@/lib/purchase/IPurchase";
 import { toast } from "@/lib/toast";
 import GenericPagination from "@/components/global/GenericPagination";
 import { usePurchaseDetail } from "@/hooks/purchases/usePurchaseDetail";
@@ -16,7 +16,7 @@ interface PurchaseDetailProps {
 
 const PurchaseDetail: React.FC<PurchaseDetailProps> = ({ token, initialPage = 1 }) => {
   const { id } = useParams();
-  const [purchaseInfo, setPurchaseInfo] = useState<Purchase | null>(null);
+  const [purchaseInfo, setPurchaseInfo] = useState<PurchaseData | null>(null);
   const [page, setPage] = useState<number>(initialPage);
   const [toastShown, setToastShown] = useState<boolean>(false);
   
