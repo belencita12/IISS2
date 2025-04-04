@@ -22,7 +22,7 @@ const PurchaseProviderCard: React.FC<PurchaseProviderCardProps> = ({
   const displayDate = date ? formatDate(date) : "N/A";
 
   return (
-    <Card className="mb-4 p-7 border border-black">
+    <Card className="mb-4 p-7 border border-gray-700 shadow-md">
       <div className="flex justify-between items-start mb-2">
         <div className="space-y-3">
           <h2 className="text-xl font-bold">
