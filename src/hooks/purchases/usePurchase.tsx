@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { purchaseSchema } from "@/lib/purchases/purchaseSchema";
 import { registerPurchase } from "@/lib/purchases/registerPurchase";
 import { Purchase } from "@/lib/purchases/IPurchase";
+import { Product } from "@/lib/products/IProducts";
 
 export const usePurchase = (token: string) => {
   const {
@@ -24,24 +25,28 @@ export const usePurchase = (token: string) => {
     },
   });
 
-  const addProduct = (productId: number, quantity: number) => {
+  const addProduct = (product: Product, quantity: number) => {
     const currentDetails = getValues("details") || [];
-
-    // Verificar si el producto ya existe en los detalles
+  
     const existingIndex = currentDetails.findIndex(
-      (detail) => detail.productId === productId
+      (detail) => detail.productId === Number(product.id)
     );
-
+  
     if (existingIndex >= 0) {
-      // Actualizar la cantidad si el producto ya existe
       const updatedDetails = [...currentDetails];
       updatedDetails[existingIndex].quantity = quantity;
       setValue("details", updatedDetails);
     } else {
-      // Agregar nuevo producto si no existe
-      setValue("details", [...currentDetails, { productId, quantity }]);
+      setValue("details", [
+        ...currentDetails,
+        {
+          productId: Number(product.id),
+          quantity,
+        },
+      ]);
     }
   };
+  
 
   const removeProduct = (productId: number) => {
     const currentDetails = getValues("details") || [];
@@ -52,11 +57,11 @@ export const usePurchase = (token: string) => {
   };
 
   const submitPurchase = async (data: Purchase) => {
-    console.log("Datos a enviar:", data); // 👀 Verifica el formato de los datos
+    console.log("Datos a enviar:", data);
     try {
       await registerPurchase(data, token);
       alert("Compra registrada exitosamente");
-      reset(); // Limpiar formulario tras éxito
+      reset();
       return true;
     } catch (error) {
       console.error("Error al registrar la compra:", error);
