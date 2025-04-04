@@ -68,7 +68,7 @@ const PurchaseDetail: React.FC<PurchaseDetailProps> = ({ token, initialPage = 1 
     <div>
       {purchaseDetails && purchaseDetails.length > 0 && (
         <>
-          <h1 className="text-3xl font-bold text-center mt-4 mb-2">Detalles de la Compra</h1>
+          <h1 className="text-3xl font-bold text-center mt-4 mb-2">Compra Detalles</h1>
           {/* Muestra los datos del proveedor que realizó la compra y datos resumidos de la compra */}
           <PurchaseProviderCard 
             providerName={purchaseInfo?.provider?.businessName}
