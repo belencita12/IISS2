@@ -11,24 +11,27 @@ import { Pencil, Trash } from "lucide-react";
 import { toast } from "@/lib/toast";
 import GenericTable, { Column, TableAction, PaginationInfo } from "@/components/global/GenericTable";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
+import { Modal } from "@/components/global/Modal";
 import RaceTableSkeleton from "./skeleton/RaceTableSkeleton";
-import { useRouter } from "next/navigation";
+import { RaceForm } from "./register/RaceForm";
 
 interface RaceListProps {
     token: string | null;
 }
 
 export default function RaceList({ token }: RaceListProps) {
-    const router = useRouter();
     const [races, setRaces] = useState<Race[]>([]);
     const [pagination, setPagination] = useState<PaginationInfo>({
         currentPage: 1, totalPages: 1, totalItems: 0, pageSize: 10,
     });
     const [selectedRace, setSelectedRace] = useState<Race | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isRaceModalOpen, setIsRaceModalOpen] = useState(false);
+    const [editingRace, setEditingRace] = useState<Race | null>(null);
     const [loading, setLoading] = useState(false);
     const [species, setSpecies] = useState<Species[]>([]);
     const [selectedSpecies, setSelectedSpecies] = useState<number | null>(null);
+    
 
     useEffect(() => {
         if (token && species.length === 0) {
@@ -36,12 +39,11 @@ export default function RaceList({ token }: RaceListProps) {
                 .then(setSpecies)
                 .catch(() => toast("error", "Error al cargar especies"));
         }
-    }, [token]);
+    }, [token, species.length]);
 
     const loadRaces = useCallback(async (page = 1, query = "") => {
         if (!token) return;
         setLoading(true);
-
         try {
             const racesData = selectedSpecies !== null
                 ? await getRacesBySpecies(selectedSpecies, token)
@@ -58,8 +60,8 @@ export default function RaceList({ token }: RaceListProps) {
                 totalItems: filteredRaces.length,
                 totalPages: Math.ceil(filteredRaces.length / prev.pageSize),
             }));
-        } catch {
-            toast("error", "Error al cargar razas");
+        } catch (error: unknown) {
+            toast("error", error instanceof Error ? error.message : "Error inesperado");
         } finally {
             setLoading(false);
         }
@@ -94,6 +96,23 @@ export default function RaceList({ token }: RaceListProps) {
     const handleSpeciesChange = (event: React.ChangeEvent<HTMLSelectElement>) =>
         setSelectedSpecies(Number(event.target.value) || null);
 
+    const openRaceModal = () => {
+        setEditingRace(null);
+        setIsRaceModalOpen(true);
+    };
+    
+    const openEditRaceModal = (race: Race) => {
+        setEditingRace(race);
+        setIsRaceModalOpen(true);
+    };
+    const closeRaceModal = (shouldRefresh = true) => {
+        setIsRaceModalOpen(false);
+        if (shouldRefresh) {
+            loadRaces(pagination.currentPage);
+        }
+    };
+    
+    
     const columns: Column<Race>[] = [
         { header: "Nombre", accessor: "name" },
         {
@@ -103,7 +122,7 @@ export default function RaceList({ token }: RaceListProps) {
     ];
 
     const actions: TableAction<Race>[] = [
-        { icon: <Pencil className="w-4 h-4" />, onClick: (race) => console.log("Editar:", race), label: "Editar" },
+        { icon: <Pencil className="w-4 h-4" />, onClick: openEditRaceModal, label: "Editar" },
         { icon: <Trash className="w-4 h-4" />, onClick: confirmDelete, label: "Eliminar" },
     ];
 
@@ -123,7 +142,7 @@ export default function RaceList({ token }: RaceListProps) {
             </div>
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-3xl font-bold">Razas</h2>
-                <Button variant="outline" className="px-6" onClick={() => router.push("/dashboard/races/register")}>
+                <Button variant="outline" className="px-6" onClick={openRaceModal}>
                     Agregar
                 </Button>
             </div>
@@ -138,6 +157,16 @@ export default function RaceList({ token }: RaceListProps) {
                 skeleton={<RaceTableSkeleton />}
                 emptyMessage="No se encontraron razas"
             />
+
+                <Modal isOpen={isRaceModalOpen} onClose={closeRaceModal} title={editingRace ? "Editar Raza" : "Agregar Raza"}>
+                    <RaceForm 
+                        token={token || ""} 
+                        isOpen={isRaceModalOpen} 
+                        onClose={() => closeRaceModal(true)} // Ahora pasa true solo si se necesita actualizar
+                        initialData={editingRace} 
+                    />
+                </Modal>
+
 
             <ConfirmationModal
                 isOpen={isModalOpen}

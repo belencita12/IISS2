@@ -1,4 +1,5 @@
-import { SPECIES_API } from "../urls";
+import { SPECIES_API } from "@/lib/urls";
+import { toast } from "@/lib/toast";
 
 export const deleteSpeciesById = async (token: string, id: number): Promise<boolean> => {
     try {
@@ -10,14 +11,20 @@ export const deleteSpeciesById = async (token: string, id: number): Promise<bool
             },
         });
 
+        const result = await response.json();
+
         if (!response.ok) {
-            const errorText = await response.text();
-            console.error(`Error HTTP ${response.status}:`, errorText);
-            throw new Error(`Error ${response.status}: ${errorText}`);
+            if (response.status === 404){
+                toast("error", "La especie ya no existe o no fue encontrada.");
+            } else {
+                toast("error", result.message || "Error al eliminar la especie");
+            }
+            return false;
         }
 
         return true;
     } catch (error) {
+        toast("error", "Error inesperado al intentar eliminar la especie.");
         console.error("Error en deleteSpeciesById:", error);
         return false;
     }
