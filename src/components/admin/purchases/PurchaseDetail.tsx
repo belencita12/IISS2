@@ -15,27 +15,33 @@ interface PurchaseDetailProps {
 }
 
 const PurchaseDetail: React.FC<PurchaseDetailProps> = ({ token, initialPage = 1 }) => {
-  const { id } = useParams(); 
-  const [purchaseInfo, setPurchaseInfo] = useState<Purchase | null>(null); 
-  const [page, setPage] = useState<number>(initialPage); 
+  const { id } = useParams();
+  const [purchaseInfo, setPurchaseInfo] = useState<Purchase | null>(null);
+  const [page, setPage] = useState<number>(initialPage);
+  const [toastShown, setToastShown] = useState<boolean>(false);
   
   const { data: purchaseDetails, totalPages, loading, error } = usePurchaseDetail(id as string, token, page);
 
-  // `useEffect` que obtiene la información de la compra inicial al cargar el componente
   useEffect(() => {
-    if (!id) return; 
+    if (!id) return;
     const fetchPurchaseInfo = async () => {
       try {
         const purchaseData = await getPurchaseById(id as string, token);
         setPurchaseInfo(purchaseData);
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "No se pudo cargar la información de la compra"; 
-        toast("error", errorMessage); 
+        const errorMessage = err instanceof Error ? err.message : "No se pudo cargar la información de la compra";
+        toast("error", errorMessage);
       }
     };
-
-    fetchPurchaseInfo(); 
+    fetchPurchaseInfo();
   }, [id, token]);
+
+  useEffect(() => {
+    if (!loading && !toastShown && (!purchaseDetails || purchaseDetails.length === 0)) {
+      toast("warning", "No se encontraron detalles de la compra.");
+      setToastShown(true);
+    }
+  }, [purchaseDetails, toastShown, loading]);
 
   const handlePageChange = (newPage: number) => {
     if (newPage !== page && newPage >= 1 && newPage <= totalPages) {
@@ -45,46 +51,48 @@ const PurchaseDetail: React.FC<PurchaseDetailProps> = ({ token, initialPage = 1 
 
   const handlePreviousPage = () => {
     if (page > 1) {
-      setPage(page - 1); 
+      setPage(page - 1);
     }
   };
 
   const handleNextPage = () => {
     if (page < totalPages) {
-      setPage(page + 1); 
+      setPage(page + 1);
     }
   };
 
-  if (loading) return <p>Cargando...</p>;
-
+  if (loading) return <p className="text-center">Cargando detalles de la compra...</p>;
   if (error) return <p>{error}</p>;
-
-  if (!purchaseDetails || purchaseDetails.length === 0) return <p>No se encontraron detalles de la compra.</p>;
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-center mt-4 mb-2">Compra Detalles</h1>
+      {purchaseDetails && purchaseDetails.length > 0 && (
+        <>
+          <h1 className="text-3xl font-bold text-center mt-4 mb-2">Detalles de la Compra</h1>
+          {/* Muestra los datos del proveedor que realizó la compra y datos resumidos de la compra */}
+          <PurchaseProviderCard 
+            providerName={purchaseInfo?.provider?.businessName}
+            total={purchaseInfo?.total}
+            ivaTotal={purchaseInfo?.ivaTotal}
+            date={purchaseInfo?.date}
+          />
+        </>
+      )}
       
-      {/* Muestra los datos del proveedor que realizó la compra y datos resumidos de la compra*/}
-      <PurchaseProviderCard
-        providerName={purchaseInfo?.provider?.businessName}
-        total={purchaseInfo?.total}
-        ivaTotal={purchaseInfo?.ivaTotal}
-        date={purchaseInfo?.date}
-      />
-
       {/* Muestra los productos de la compra */}
-      {purchaseDetails.map(detail => (
+      {purchaseDetails && purchaseDetails.map(detail => (
         <PurchaseDetailCard key={detail.id} detail={detail} />
       ))}
-
-      <GenericPagination
-        handlePreviousPage={handlePreviousPage}
-        handlePageChange={handlePageChange}
-        handleNextPage={handleNextPage}
-        currentPage={page}
-        totalPages={totalPages}
-      />
+      
+      {totalPages > 1 && (
+        <GenericPagination
+          handlePreviousPage={handlePreviousPage}
+          handlePageChange={handlePageChange}
+          handleNextPage={handleNextPage}
+          currentPage={page}
+          totalPages={totalPages}
+        />
+      )}
     </div>
   );
 };
