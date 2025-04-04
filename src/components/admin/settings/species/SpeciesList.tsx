@@ -36,9 +36,6 @@ export default function SpeciesList({ token }: SpeciesListProps) {
         setLoading(true);
         try {
             const data = await getSpecies(token);
-            /*const filtered = query
-                ? data.filter((s: Species) => s.name.toLowerCase().includes(query.toLowerCase()))
-                : data; */
             
 
             setSpeciesList(data);
