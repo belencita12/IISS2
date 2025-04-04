@@ -41,7 +41,7 @@ Cypress.Commands.add("generateUser", (): Cypress.Chainable<BaseUser> => {
   const email = `${fullName}@gmail.com`;
   const password = "12345678";
   const address = `calle ${DateString}`
-  const phoneNumber = `+595985${DateString.substring(0, 5)}`;
+  const phoneNumber = `+595985${DateString.substring(0, 6)}`;
   const ruc = `${DateString.substring(0, 6)}-${DateString.substring(7, 8)}`
 
   return cy.wrap({
