@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { PurchaseData } from "@/lib/purchase/IPurchase";
 import { Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -26,9 +27,13 @@ const PurchaseCard = ({ purchase }: PurchaseCardProps) => {
 
       <div className="flex items-center gap-4">
         <p className="text-gray-500">{new Date(purchase.date || "").toLocaleDateString()}</p>
-        <button onClick={handleViewDetail} title="Ver detalles">
-          <Eye className="w-5 h-5 text-gray-700 hover:text-black cursor-pointer" />
-        </button>
+          <Button
+            className="bg-transparent hover:bg-gray-100"
+            onClick={handleViewDetail}
+            title="Ver detalles"
+          >
+            <Eye className="w-5 h-5 text-gray-700" />
+          </Button>
       </div>
     </div>
   );
