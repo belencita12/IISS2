@@ -1,4 +1,3 @@
-
 import { Provider } from "../provider/IProvider";
 import { StockData } from "../stock/IStock";
 

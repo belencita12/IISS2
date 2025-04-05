@@ -151,7 +151,6 @@ export default function WorkPositionList({ token }: Props) {
       <SearchBar
         onSearch={handleSearch}
         placeholder="Buscar por nombre"
-        manualSearch={false}
         debounceDelay={400}
       />
 

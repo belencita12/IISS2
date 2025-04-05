@@ -1,24 +1,23 @@
 "use client";
 import { PowerIcon, LogOutIcon } from "lucide-react";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 export default function SignOutButton() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
-
-  const logout = async () => {
-    console.log("logout");
-    setMessage("");
-  };
 
   const handleLogout = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
     setLoading(true);
-    await logout();
-    router.push("/login");
+    try {
+      await signOut({ callbackUrl: "/login" });
+    }
+    catch (error) {
+      const errorMessage = (error as Error).message || "Error al cerrar sesión";
+      setMessage(errorMessage);
+    }
   };
   return (
     <button

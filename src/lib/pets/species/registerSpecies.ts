@@ -1,4 +1,4 @@
-import { SPECIES_API } from "../urls";
+import { SPECIES_API } from "@/lib/urls";
 
 export const registerSpecies = async (
     speciesData: { name: string },

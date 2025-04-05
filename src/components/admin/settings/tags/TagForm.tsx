@@ -69,6 +69,7 @@ const TagForm = ({
       title={init ? "Editar Etiqueta" : "Crear Etiqueta"}
       isOpen={isOpen || isSubmitting}
       onClose={onClose}
+      size="sm"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <FormInput
@@ -77,9 +78,19 @@ const TagForm = ({
           label="Nombre"
           name="name"
         />
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Cargando..." : init ? "Editar" : "Guardar"}
-        </Button>
+        <div className="flex justify-between items-center gap-2 pt-2">
+          <Button
+            disabled={isSubmitting}
+            type="button"
+            variant="outline"
+            onClick={onClose}
+          >
+            Cancelar
+          </Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Cargando..." : init ? "Actualizar" : "Crear"}
+          </Button>
+        </div>
       </form>
     </Modal>
   );
