@@ -1,18 +1,17 @@
-// cypress/component/useQuery.cy.tsx
-import { mount } from 'cypress/react'
-//import {TestQueryComponent} from '@/components/TestQueryComponent'
-
-describe('useQuery Hook', () => {
+describe('Filtros en página de Razas', () => {
   beforeEach(() => {
-   // mount(<TestQueryComponent />)
+    cy.visit('/razas') // o la ruta real
   })
 
-  it('debe mostrar la query inicial', () => {
-    cy.get('[data-cy=query-string]').should('contain', 'page=1&category=vacuna')
+  it('al tocar filtro de categoría cambia el query param', () => {
+    cy.get('[data-cy="filter-category"]').select('Perros')  // suponiendo que hay un select
+
+    cy.url().should('include', 'category=Perros')
   })
 
-  it('debe actualizar la query al hacer click', () => {
-    cy.get('[data-cy=set-category]').click()
-    cy.get('[data-cy=query-string]').should('contain', 'page=1&category=productos')
+  it('al cambiar página, cambia query param', () => {
+    cy.get('[data-cy="pagination-next"]').click()
+
+    cy.url().should('include', 'page=2')
   })
 })
