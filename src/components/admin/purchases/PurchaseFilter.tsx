@@ -8,6 +8,7 @@ import { getStocks } from "@/lib/stock/getStock"
 import type { Provider } from "@/lib/provider/IProvider"
 import type { StockData } from "@/lib/stock/IStock"
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
 import { toast } from "@/lib/toast"
 
 interface PurchaseFilterProps {
@@ -26,6 +27,7 @@ const PurchaseFilter = ({ provider, deposito, token, onFilterChange }: PurchaseF
   const [filters, setFilters] = useState({
     provider,
     deposito,
+
   })
 
   useEffect(() => {
