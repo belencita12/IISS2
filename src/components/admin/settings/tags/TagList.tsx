@@ -78,7 +78,10 @@ const TagList = ({ token }: TagListProps) => {
     <>
       <div className="p-4 mx-auto">
         <div className="flex items-center gap-4 mb-4">
-          <SearchBar onSearch={handleSearch} placeholder="Buscar tag..." />
+          <SearchBar 
+            onSearch={handleSearch} 
+            placeholder="Buscar tag..." 
+          />
         </div>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-3xl font-bold">Tags</h2>
