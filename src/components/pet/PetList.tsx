@@ -91,7 +91,6 @@ const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
           <div className="w-full">
             <SearchBar
               onSearch={handleSearch}
-              manualSearch={true}
               defaultQuery={searchQuery}
               placeholder="Busca el nombre de tu mascota..."
             />
