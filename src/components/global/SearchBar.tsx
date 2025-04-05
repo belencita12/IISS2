@@ -1,10 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import { toast } from "@/lib/toast";
 import useDebounce from "@/hooks/useDebounce";
 
 interface SearchBarProps {
@@ -12,7 +10,6 @@ interface SearchBarProps {
   placeholder?: string;
   debounceDelay?: number;
   defaultQuery?: string;
-  manualSearch?: boolean;
 }
 
 export default function SearchBar({
@@ -20,18 +17,17 @@ export default function SearchBar({
   placeholder = "Buscar...",
   debounceDelay = 500,
   defaultQuery = "",
-  manualSearch = false,
 }: SearchBarProps) {
   const [query, setQuery] = useState(defaultQuery);
   const debouncedQuery = useDebounce(query, debounceDelay);
-  const [lastQuery, setLastQuery] = useState("");
+  const lastQueryRef = useRef(defaultQuery);
 
   useEffect(() => {
-    if (!manualSearch && debouncedQuery !== lastQuery) {
+    if (debouncedQuery !== lastQueryRef.current) {
+      lastQueryRef.current = debouncedQuery;
       onSearch(debouncedQuery);
-      setLastQuery(debouncedQuery);
     }
-  }, [debouncedQuery, lastQuery, onSearch, manualSearch]);
+  }, [debouncedQuery, onSearch]);
 
   const clearSearch = () => {
     setQuery("");
@@ -45,11 +41,6 @@ export default function SearchBar({
           className="pr-10"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && manualSearch) {
-              onSearch(query);
-            }
-          }}
         />
         {query && (
           <button
@@ -60,7 +51,6 @@ export default function SearchBar({
           </button>
         )}
       </div>
-      {manualSearch && <Button onClick={() => onSearch(query)}>Buscar</Button>}
     </div>
   );
 }

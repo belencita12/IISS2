@@ -104,7 +104,12 @@ export default function SpeciesList({ token }: SpeciesListProps) {
     return (
         <div className="w-4/5 mx-auto px-4 py-6">
             <div className="flex items-center gap-4 mb-4">
-                <SearchBar onSearch={handleSearch} placeholder="Buscar especie..."/>
+
+                <SearchBar 
+                    onSearch={handleSearch} 
+                    placeholder="Buscar especie..." 
+                />
+
             </div>
 
             <div className="flex justify-between items-center mb-4">

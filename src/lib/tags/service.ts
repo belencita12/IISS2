@@ -47,7 +47,8 @@ export const deleteTag = async (token: string, id: number) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  if (!response.ok) throw new Error("Error al eliminar etiqueta");
-  const data = await response.json();
-  return data as Tag;
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.message || "Error al eliminar etiqueta");
+  }
 };

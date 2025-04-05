@@ -13,15 +13,17 @@ import Image from "next/image";
 import { updateProduct } from "@/lib/products/updateProduct";
 import { getProductById } from "@/lib/products/getProductById";
 import { Product } from "@/lib/products/IProducts";
+import { TagFilter } from "./filter/TagFilter";
 
 const MAX_FILE_SIZE = 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 const productFormSchema = z.object({
   productName: z.string().min(1, "El nombre es obligatorio"),
-  cost: z.number().min(1, "El costo es obligatorio"),
-  price: z.number().min(1, "El precio es obligatorio"),
-  iva: z.number().min(1, "El IVA es obligatorio"),
+  cost: z.number({ message: "Complete con valores numéricos adecuados" }).min(1, "El costo debe ser mayor a 0"),
+  price: z.number({ message: "Complete con valores numéricos adecuados" }).min(1, "El precio debe ser mayor a 0"),
+  iva: z.number({ message: "Complete con valores numéricos adecuados" }).min(1, "El IVA debe ser mayor a 0"),
+  tags: z.string().min(1, "Selecciona al menos una etiqueta"),
   category: z.string().min(1, "Selecciona una categoría"),
   imageFile: z
     .instanceof(File)
@@ -50,6 +52,7 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [tags, setTags] = useState<string[]>([]);
   const {
     register,
     handleSubmit,
@@ -62,12 +65,13 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
       cost: 0,
       price: 0,
       iva: 0,
-      category: "",
+      tags: "",
+      category: "PRODUCT",
       imageFile: undefined,
     },
   });
 
-  //Obtiene las especies
+  //Obtiene el producto
   useEffect(() => {
     setIsLoading(true);
     setError(null);
@@ -82,6 +86,13 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
         setValue("price", productData.price ?? 0);
         setValue("iva", Number(productData.iva) ?? 0);
         setValue("category", productData.category);
+        
+        // Configurar las etiquetas
+        if (productData.tags && productData.tags.length > 0) {
+          setTags(productData.tags);
+          setValue("tags", productData.tags.join(","));
+        }
+        
         if (productData.image?.originalUrl) {
           setPreviewImage(productData.image.originalUrl);
         }
@@ -94,6 +105,11 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
     };
     fetchProduct();
   }, [id, token, setValue]);
+
+  const handleTagsChange = (selectedTags: string[]) => {
+    setTags(selectedTags);
+    setValue("tags", selectedTags.length > 0 ? selectedTags.join(",") : "");
+  };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPreviewImage(null);
@@ -121,6 +137,7 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
     Object.entries({
       name: data.productName,
       cost: data.cost,
+      tags: data.tags,
       category: data.category,
       iva: data.iva,
       price: data.price,
@@ -144,7 +161,7 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
     }
   };
   return (
-    <div className="flex flex-col md:flex-row justify-center items-center gap-16 p-10">
+    <div className="max-w-5xl mx-auto p-8">
       {isLoading ? (
         <div className="text-center mt-8">Cargando...</div>
       ) : error ? (
@@ -153,15 +170,15 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
         <div className="text-center mt-8">No se encontró el producto.</div>
       ) : (
         <div className="md:w-2/3 w-80">
+          <h1 className="text-3xl font-bold mb-6">Actualizar Producto</h1>
           <form
             id="productForm"
             onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col justify-start items-start w-1/2 min-w-80 space-y-4"
+            className="space-y-6"
           >
-            <div className="w-full">
+            <div>
               <Label>Nombre</Label>
               <Input
-                id="productName"
                 {...register("productName")}
                 placeholder="Ingrese el nombre del producto"
               />
@@ -169,10 +186,9 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
                 <p className="text-red-500">{errors.productName.message}</p>
               )}
             </div>
-            <div className="w-2/3">
+            <div>
               <Label>Costo</Label>
               <Input
-                id="birthDate"
                 type="number"
                 placeholder="Ingrese el costo"
                 step={0.1}
@@ -186,10 +202,9 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
                 <p className="text-red-500">{errors.cost.message}</p>
               )}
             </div>
-            <div className="w-2/3">
+            <div>
               <Label>Precio</Label>
               <Input
-                id="price"
                 type="number"
                 step={0.1}
                 min="0"
@@ -204,10 +219,9 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
               )}
             </div>
 
-            <div className="w-2/3">
+            <div>
               <Label>IVA</Label>
               <Input
-                id="iva"
                 type="number"
                 min="0"
                 onKeyDown={(e) => {
@@ -220,16 +234,16 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
                 <p className="text-red-500">{errors.iva.message}</p>
               )}
             </div>
-            <div className="w-2/3">
-              <Label>Categoría</Label>
-              <Input
-                id="category"
-                {...register("category")}
-                placeholder="Ingrese la categoría del producto"
+            <div>
+              <Label>Etiquetas</Label>
+              <TagFilter
+                token={token || ''}
+                selectedTags={tags}
+                onChange={handleTagsChange}
               />
-              {errors.category && (
-                <p className="text-red-500">{errors.category.message}</p>
-              )}
+              {errors.tags && 
+                <p className="text-red-500">{errors.tags.message}</p>
+              }
             </div>
             <div className="w-full flex flex-col items-start relative">
               <Label className="pb-2">Imagen</Label>
@@ -264,7 +278,10 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => router.push(`/dashboard/products/${id}`)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  router.push(`/dashboard/products/${id}`);
+                }}
               >
                 Cancelar
               </Button>
