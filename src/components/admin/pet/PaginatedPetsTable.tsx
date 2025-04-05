@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import PetsTableSkeleton from "./skeleton/PetsTableSkeleton";
 import { useRouter } from "next/navigation";
+import { toast } from "@/lib/toast";
 
 
 export default function PaginatedPetsTable({ token,id }: { token: string ,id:number}) {
@@ -93,7 +94,8 @@ export default function PaginatedPetsTable({ token,id }: { token: string ,id:num
           pageSize: data.size
         });
       } catch (error) {
-        console.error("Error al obtener mascotas", error);
+        const errorMessage = (error as Error).message || "Error al obtener las mascotas";
+        toast("error",errorMessage);
       }
       finally {
         setIsLoading(false);

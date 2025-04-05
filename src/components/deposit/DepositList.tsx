@@ -1,76 +1,75 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import DepositCard from "./DepositCard";
 import { LoaderCircleIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { StockForm } from "../stock/register/StockForm";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext,} from "../ui/pagination";
-
-interface Deposit {
-  id: number;
-  name: string;
-  address: string;
-}
+import SearchBar from "../admin/client/SearchBar";
+import { toast } from "@/lib/toast";
+import { getStocks } from "@/lib/stock/getStock";
+import { StockData } from "@/lib/stock/IStock";
+import { deleteStockById } from "@/lib/stock/deleteStockById";
+import GenericPagination from "../global/GenericPagination";
 
 interface DepositListProps {
   token?: string;
 }
 
 const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
-  const [deposits, setDeposits] = useState<Deposit[]>([]);
+  const [deposits, setDeposits] = useState<StockData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [allDeposits, setAllDeposits] = useState<Deposit[]>([]);
+  const [allDeposits, setAllDeposits] = useState<StockData[]>([]);
+  const [selectedDeposit, setSelectedDeposit] = useState<StockData | null>(null);
 
-  useEffect(() => {
-    const fetchDeposits = async () => {
-      try {
-        setIsLoading(true);
-        const apiUrl = process.env.NEXT_PUBLIC_BASE_URL;
-        if (!apiUrl) {
-          console.error("Error: NEXT_PUBLIC_BASE_URL no está definido");
-          return;
-        }
-        if (!token) {
-          console.error("Error: No hay token de autenticación");
-          return;
-        }
-
-        const response = await fetch(`${apiUrl}/stock?page=${currentPage}`, {
-          method: "GET",
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok){
-          throw new Error("Error al obtener los depositos");
-        }
-
-        const data = await response.json();
-        setAllDeposits(data.data);
-        setDeposits(data.data);
-        setTotalPages(data.totalPages);
-      } catch (error) {
-        console.error("Error fetching deposits:", error);
-      } finally {
-        setIsLoading(false);
+  const showDeposits = useCallback(
+    async (page: number, token: string, search: string = "") => {
+    try {
+      setIsLoading(true);
+      if (!token) {
+        console.error("Error: No hay token de autenticación");
+        return;
       }
-    };
 
-    fetchDeposits();
-  }, [currentPage, token]);
+      const data = await getStocks({ page, name: search }, token);
+
+      const cleanedData: StockData[] = data.data
+        .filter((item): item is StockData & {id: number} => typeof item.id === 'number')
+        .map((item) => ({
+          id: item.id,
+          name: item.name,
+          address: item.address,
+        }));
+
+      setDeposits(cleanedData);
+      setTotalPages(data.totalPages);
+      setAllDeposits(cleanedData);
+    } catch (error) {
+      console.error("Error al obtener los depósitos:", error);
+      toast("error", "Ocurrió un error al cargar los depósitos.");
+
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+  
+  
+  useEffect(() => {
+    if (token) {
+      showDeposits(currentPage, token);
+    }
+    
+  }, [currentPage, token, showDeposits]);
 
   const handleSearch = () => {
-    const filtered = allDeposits.filter((deposit) =>
-     deposit.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setDeposits(filtered);
+    if (token) {
+      setCurrentPage(1);
+      showDeposits(currentPage, token, searchTerm);
+    }
   }
 
   const handleAddDeposit = () => {
@@ -83,18 +82,13 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
 
   return (
     <div className="p-6">
-      <div className="flex flex-col md:flex-row gap-4 mb-4 items-center">
-        <input
-          type="text"
-          placeholder="Nombre de Sucursal..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="border border-gray-300 rounded px-4 py-2 w-full"
-        />
-        <Button onClick={handleSearch} className="w-full md:w-auto">
-          Buscar
-        </Button>
-      </div>
+      <SearchBar
+        onSearch={(term) => {
+          setSearchTerm(term);
+          setCurrentPage(1);
+          showDeposits(1, token, term);
+        }}
+      />
 
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold mb-4">Depósitos</h2>
@@ -108,36 +102,63 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
           <LoaderCircleIcon className="lucide lucide-loader-circle animate-spin" />
         </div>
       )}
-      <div className="space-y-4">
-        {deposits.map((deposit) => (
-          <DepositCard key={deposit.id} nombre={deposit.name} ubicacion={deposit.address} id={deposit.id} />
-        ))}
-      </div>
+      {!isLoading && (
+        <div className="space-y-4">
+          {deposits.map((deposit) => (
+            <DepositCard
+              key={deposit.id}
+              nombre={deposit.name}
+              ubicacion={deposit.address}
+              id={deposit.id}
+              onEdit={(id) => {
+                const selected = deposits.find((d) => d.id === id);
+                if(selected) {
+                  setSelectedDeposit(selected);
+                  setIsModalOpen(true);
+                }
+              }}
+              onDelete={async (id) => {
+                try {
+                  const success = await deleteStockById(id, token);
+                  if (!success) {
+                    toast("error", "No se pudo eliminar el depósito.");
+                    return;
+                  }
 
-      <Pagination className="mt-6">
-        <PaginationContent>
-          <PaginationPrevious onClick={() => {
-              if (currentPage > 1) setCurrentPage(currentPage - 1);
-          }}/>
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <PaginationItem key={page}>
-              <PaginationLink isActive={page === currentPage} href="#" onClick={(e) => {
-                  e.preventDefault();
-                  setCurrentPage(page);
-                }}
-              >
-                {page}
-              </PaginationLink>
-            </PaginationItem>
+                  toast("success", "Depósito eliminado correctamente ✅");
+                  showDeposits(currentPage, token, searchTerm);
+                } catch (error) {
+                  console.error("Error al eliminar el deposito", error);
+                  toast("error", "Ocurrió un error al eliminar el depósito.");
+                }
+              }}
+            />
           ))}
-          <PaginationNext onClick={() => {
-            if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-          }}/>
-        </PaginationContent>
-      </Pagination>
+        </div>
+      )}
+
+      <GenericPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        handlePageChange={(page) => setCurrentPage(page)}
+        handlePreviousPage={() => {
+          if (currentPage > 1) setCurrentPage(currentPage - 1);
+        }}
+        handleNextPage={() => {
+          if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+        }}
+      />
 
       {isModalOpen && (
-        <StockForm token={token} isOpen={isModalOpen} onClose={handleCloseModal} />
+        <StockForm token={token}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal} 
+          onRegisterSuccess={() => {
+            showDeposits(1, token);
+            setCurrentPage(1);
+          }}
+          initialData={selectedDeposit}
+        />
       )}
     </div>
   );

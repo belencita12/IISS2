@@ -1,25 +1,48 @@
-import React, { useState, useCallback, useEffect } from "react";
-import { getProducts } from "@/lib/admin/products/getProducts";
+"use client";
+import { useState, useCallback, useEffect, useMemo } from "react";
+import { getProducts } from "@/lib/products/getProducts";
 import { getStockDetails } from "@/lib/stock/getStockDetails";
-import { Product, ProductResponse } from "@/lib/admin/products/IProducts";
-import useDebounce from "@/lib/admin/products/useDebounceHook";
+import { Product, ProductResponse } from "@/lib/products/IProducts";
+import useDebounce from "@/hooks/useDebounce";
+import { toast } from "@/lib/toast";
+import { useQuery } from "@/hooks/useQuery";
+
+interface FiltersType {
+  code: string;
+  category: string;
+  minPrice: string;
+  maxPrice: string;
+  minCost: string;
+  maxCost: string;
+}
+
+// Extendemos para incluir parámetros de paginación
+interface QueryParams extends FiltersType {
+  page: number;
+  size: number;
+}
 
 export function useProductList(token: string) {
-  // Estado de los filtros aplicados en la búsqueda
-  const [searchFilters, setSearchFilters] = useState({
+  const initialFilters = useMemo(() => ({
     code: "",
     category: "",
     minPrice: "",
     maxPrice: "",
-    minCost: "", 
+    minCost: "",
     maxCost: "",
-  });
+  }), []);
 
-  const [inputFilters, setInputFilters] = useState({ ...searchFilters });
+  const [inputFilters, setInputFilters] = useState<FiltersType>(initialFilters);
   
-  // Aplicamos debounce a los filtros de entrada (500ms de retraso)
   const debouncedFilters = useDebounce(inputFilters, 500);
   
+  // Usamos useQuery para gestionar la búsqueda y paginación
+  const { query, setQuery, toQueryString } = useQuery<QueryParams>({
+    ...initialFilters,
+    page: 1,
+    size: 5
+  });
+
   const [products, setProducts] = useState<Product[]>([]);
   const [stockMap, setStockMap] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -30,33 +53,30 @@ export function useProductList(token: string) {
     pageSize: 5,
   });
 
-  // Función para cargar el stock de un producto
   const loadProductStock = useCallback(
     async (productId: string) => {
       try {
         const stockData = await getStockDetails(productId, token);
-        const totalStock = stockData.data.reduce(
-          (total, detail) => total + detail.amount,
-          0
-        );
-        return totalStock;
+        return stockData.data.reduce((total, detail) => total + detail.amount, 0);
       } catch (error) {
-        console.error(`Error al cargar el stock del producto ${productId}:`, error);
+        toast("error", `Error al cargar el stock del producto ${productId}`);
         return 0;
-      }
+      }      
     },
     [token]
   );
 
-  // La consulta se basa en searchFilters
   const loadProducts = useCallback(
-    async (page: number, filterParams = searchFilters) => {
+    async (page: number, filterParams = initialFilters) => {
+      if (!token) return;
+
       setIsLoading(true);
       try {
         const preparedParams = {
           ...filterParams,
           page,
           size: pagination.pageSize,
+          code: filterParams.code ? filterParams.code.trim().toLowerCase() : undefined,
           minCost: filterParams.minCost !== "" ? parseFloat(filterParams.minCost) : undefined,
           maxCost: filterParams.maxCost !== "" ? parseFloat(filterParams.maxCost) : undefined,
           minPrice: filterParams.minPrice !== "" ? parseFloat(filterParams.minPrice) : undefined,
@@ -65,18 +85,16 @@ export function useProductList(token: string) {
 
         const data: ProductResponse = await getProducts(preparedParams, token);
 
-        // Cargar el stock para cada producto
-        const stockPromises = data.data.map(async (product) => {
-          const productStock = await loadProductStock(product.id);
-          return { id: product.id, stock: productStock };
-        });
+        const stockPromises = data.data.map(async (product) => ({
+          id: product.id,
+          stock: await loadProductStock(product.id)
+        }));
 
         const stockResults = await Promise.all(stockPromises);
         
-        const newStockMap: Record<string, number> = {};
-        stockResults.forEach(result => {
-          newStockMap[result.id] = result.stock;
-        });
+        const newStockMap: Record<string, number> = Object.fromEntries(
+          stockResults.map(result => [result.id, result.stock])
+        );
         
         setStockMap(newStockMap);
         setProducts(data.data);
@@ -86,41 +104,43 @@ export function useProductList(token: string) {
           totalItems: data.total,
           pageSize: data.size,
         });
+        
+        // Actualizamos el query para mantener sincronizado el estado
+        setQuery({
+          ...filterParams,
+          page,
+          size: data.size
+        });
       } catch (error) {
-        console.error("Error al obtener productos", error);
+        toast("error", "Error al obtener productos");
         setProducts([]);
       } finally {
         setIsLoading(false);
       }
     },
-    [searchFilters, token, pagination.pageSize, loadProductStock]
+    [token, pagination.pageSize, loadProductStock, initialFilters, setQuery]
   );
 
-  // Actualizamos los filtros con debounce
   useEffect(() => {
     if (token) {
-      setSearchFilters(debouncedFilters);
       loadProducts(1, debouncedFilters);
     }
   }, [debouncedFilters, token, loadProducts]);
 
-  // Carga inicial
   useEffect(() => {
     if (token) {
       loadProducts(1);
     }
-  }, [token, loadProducts]);
+  }, [token]);
 
   const handleSearch = () => {
-    setSearchFilters(inputFilters);
-    setPagination((prev) => ({ ...prev, currentPage: 1 }));
     loadProducts(1, inputFilters);
   };
 
   const handlePageChange = (page: number) => {
     if (page < 1 || page > pagination.totalPages) return;
-    setPagination((prev) => ({ ...prev, currentPage: page }));
-    loadProducts(page, searchFilters);
+    setPagination(prev => ({ ...prev, currentPage: page }));
+    loadProducts(page, inputFilters);
   };
 
   return {
@@ -132,5 +152,6 @@ export function useProductList(token: string) {
     setInputFilters,
     handleSearch,
     handlePageChange,
+    queryString: toQueryString 
   };
 }

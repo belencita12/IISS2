@@ -9,12 +9,11 @@ export default async function CreateUserPage() {
   if (!session) {
     redirect("/login");
   }
-  
+
   const token = session?.user?.token;
 
   return (
     <div>
-
       <RegisterClientForm token={token} />
     </div>
   );

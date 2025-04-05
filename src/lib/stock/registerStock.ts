@@ -11,13 +11,15 @@ export const registerStock = async (stockData: { name: string; address: string }
             body: JSON.stringify(stockData),
         });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw { response: { status: response.status, data: errorData } };
-        }
+        const result = await response.json();
 
-        return await response.json();
+        if (!response.ok) {
+          throw new Error(result.message || "Error al registrar el depósito");
+        }
+      
+        return result;
     } catch (error) {
+       // console.error("Error registering stock:", error);
         throw error;
     }
 };

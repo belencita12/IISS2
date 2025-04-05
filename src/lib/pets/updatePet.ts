@@ -1,4 +1,3 @@
-
 import { PET_API } from "@/lib/urls";  
 
 export const updatePet = async (petId: number, petData: FormData, token: string) => {

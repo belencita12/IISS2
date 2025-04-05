@@ -9,17 +9,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
-import { registerProduct } from "@/lib/admin/products/registerProduct";
+import { registerProduct } from "@/lib/products/registerProduct";
 import { useRouter } from "next/navigation";
+import { TagFilter } from "./filter/TagFilter";
 
 const MAX_FILE_SIZE = 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 const productFormSchema = z.object({
   productName: z.string().min(1, "El nombre es obligatorio"),
-  cost: z.number().min(1, "El costo es obligatorio"),
-  price: z.number().min(1, "El precio es obligatorio"),
-  iva: z.number().min(1, "El IVA es obligatorio"),
+  cost: z.number({ message: "Complete con valores numéricos adecuados" }).min(1, "El costo debe ser mayor a 0"),
+  price: z.number({ message: "Complete con valores numéricos adecuados" }).min(1, "El precio debe ser mayor a 0"),
+  iva: z.number({ message: "Complete con valores numéricos adecuados" }).min(1, "El IVA debe ser mayor a 0"),
+  tags: z.string().min(1, "Selecciona al menos una etiqueta"),
   category: z.string().min(1, "Selecciona una categoría"),
   imageFile: z
     .instanceof(File)
@@ -44,6 +46,7 @@ export default function ProductRegisterForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [tags, setTags] = useState<string[]>([]);
   const {
     register,
     handleSubmit,
@@ -53,13 +56,19 @@ export default function ProductRegisterForm({
     resolver: zodResolver(productFormSchema),
     defaultValues: {
       productName: "",
-      cost: 0,
-      price: 0,
-      iva: 0,
-      category: "",
+      cost: undefined,
+      price: undefined,
+      iva: undefined,
+      tags: "",
+      category: "PRODUCT",
       imageFile: undefined,
     },
   });
+
+  const handleTagsChange = (selectedTags: string[]) => {
+    setTags(selectedTags);
+    setValue("tags", selectedTags.length > 0 ? selectedTags.join(",") : "");
+  };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPreviewImage(null);
@@ -84,6 +93,7 @@ export default function ProductRegisterForm({
     Object.entries({
       name: data.productName,
       cost: data.cost,
+      tags: data.tags,
       category: data.category,
       iva: data.iva,
       price: data.price,
@@ -107,17 +117,16 @@ export default function ProductRegisterForm({
     }
   };
   return (
-    <div className="flex flex-col md:flex-row justify-center items-center gap-16 p-10">
+    <div className="max-w-5xl mx-auto p-8">
+      <h1 className="text-3xl font-bold mb-6">Registrar Producto</h1>
       <div className="md:w-2/3 w-80">
         <form
-          id="productForm"
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col justify-start items-start w-1/2 min-w-80 space-y-4"
+          className="space-y-6"
         >
-          <div className="w-full">
+          <div>
             <Label>Nombre</Label>
             <Input
-              id="productName"
               {...register("productName")}
               placeholder="Ingrese el nombre del producto"
             />
@@ -125,7 +134,7 @@ export default function ProductRegisterForm({
               <p className="text-red-500">{errors.productName.message}</p>
             )}
           </div>
-          <div className="w-2/3">
+          <div>
             <Label>Costo</Label>
             <Input
               id="birthDate"
@@ -142,7 +151,7 @@ export default function ProductRegisterForm({
               <p className="text-red-500">{errors.cost.message}</p>
             )}
           </div>
-          <div className="w-2/3">
+          <div>
             <Label>Precio</Label>
             <Input
               id="price"
@@ -160,7 +169,7 @@ export default function ProductRegisterForm({
             )}
           </div>
 
-          <div className="w-2/3">
+          <div>
             <Label>IVA</Label>
             <Input
               id="iva"
@@ -174,16 +183,16 @@ export default function ProductRegisterForm({
             />
             {errors.iva && <p className="text-red-500">{errors.iva.message}</p>}
           </div>
-          <div className="w-2/3">
-            <Label>Categoría</Label>
-            <Input
-              id="category"
-              {...register("category")}
-              placeholder="Ingrese la categoría del producto"
+          <div>
+            <Label>Etiquetas</Label>
+            <TagFilter
+              token={token || ''}
+              selectedTags={tags}
+              onChange={handleTagsChange}
             />
-            {errors.category && (
-              <p className="text-red-500">{errors.category.message}</p>
-            )}
+            {errors.tags && 
+              <p className="text-red-500">{errors.tags.message}</p>
+            }
           </div>
           <div className="w-full flex flex-col items-start relative">
             <Label className="pb-2">Imagen</Label>

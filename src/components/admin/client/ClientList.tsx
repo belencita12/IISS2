@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState,useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { fetchUsers } from "@/lib/client/getUsers";
-import SearchBar from "./SearchBar";
+import SearchBar from "@/components/global/SearchBar";
 import { Eye, Pencil, Trash } from "lucide-react";
 import { toast } from "@/lib/toast";
 import GenericTable, {
@@ -12,28 +12,24 @@ import GenericTable, {
     PaginationInfo,
 } from "@/components/global/GenericTable";
 import ClientTableSkeleton from "./skeleton/ClientTableSkeleton";
-import { getPetsByUserIdFull } from "@/lib/pets/getPetsByUserId";
 import { useRouter } from "next/navigation";
 import { IUserProfile } from "@/lib/client/IUserProfile";
 
-export interface IUserWithPets extends IUserProfile {
-    petCount?: number;
-}
-
 interface ClientListProps {
-    token: string | null;
+    token: string;
 }
 
 export default function ClientList({ token }: ClientListProps) {
     const router = useRouter();
     const [data, setData] = useState<{
-        users: IUserWithPets[];
+        users: IUserProfile[];
         pagination: PaginationInfo;
     }>({
         users: [],
         pagination: { currentPage: 1, totalPages: 1, totalItems: 0, pageSize: 4 },
     });
     const [loading, setLoading] = useState(false);
+    const [filteredData, setFilteredData] = useState<IUserProfile[]>([]);
 
     const loadUsers = useCallback(
         async (page: number = 1, query: string = "") => {
@@ -45,25 +41,8 @@ export default function ClientList({ token }: ClientListProps) {
                 if (!results.data.length && query)
                     toast("info", "No se ha encontrado el cliente!");
 
-                const usersWithPets = await Promise.all(
-                    results.data.map(async (user: IUserProfile) => {
-                        try {
-                            const petResponse = await getPetsByUserIdFull(user.id, token);
-                            const petCount = petResponse?.total ?? 0;
-                            return { ...user, petCount } as IUserWithPets;
-                        } catch (error) {
-                            console.error(
-                                `Error obteniendo mascotas para usuario ${user.id}:`,
-                                error
-                            );
-                            toast("error", "Error obteniendo mascotas!");
-                            return { ...user, petCount: 0 } as IUserWithPets;
-                        }
-                    })
-                );
-
                 setData({
-                    users: usersWithPets,
+                    users: results.data,
                     pagination: {
                         currentPage: results.currentPage,
                         totalPages: results.totalPages,
@@ -71,34 +50,40 @@ export default function ClientList({ token }: ClientListProps) {
                         pageSize: results.size,
                     },
                 });
+                setFilteredData(results.data);
             } catch (error) {
                 toast("error", "Error al cargar clientes");
-                console.error("Error cargando usuarios:", error);
             } finally {
                 setLoading(false);
             }
         },
         [token]
     );
-
     useEffect(() => {
         if (token) loadUsers(data.pagination.currentPage);
     }, [token, data.pagination.currentPage, loadUsers]);
 
-    const handleSearch = (query: string) => loadUsers(1, query);
+    const handleSearch = useCallback(
+        (query: string) => {
+            loadUsers(data.pagination.currentPage, query);
+        },
+        [data.pagination.currentPage, loadUsers]
+    );
     const handlePageChange = (page: number) =>
         setData((prev) => ({
             ...prev,
             pagination: { ...prev.pagination, currentPage: page },
         }));
 
-    const columns: Column<IUserWithPets>[] = [
+    const columns: Column<IUserProfile>[] = [
         { header: "Nombre", accessor: "fullName" },
         { header: "Email", accessor: "email" },
-        { header: "Mascotas", accessor: "petCount", className: "text-center" },
+        { header: "RUC", accessor: "ruc" },
+        { header: "Dirección", accessor: "adress" },
+        { header: "Teléfono", accessor: "phoneNumber" },
     ];
 
-    const actions: TableAction<IUserWithPets>[] = [
+    const actions: TableAction<IUserProfile>[] = [
         {
             icon: <Eye className="w-4 h-4" />,
             onClick: (user) => router.push(`/dashboard/clients/${user.id}`),
@@ -118,15 +103,23 @@ export default function ClientList({ token }: ClientListProps) {
 
     return (
         <div className="p-4 mx-auto">
-            <SearchBar onSearch={handleSearch} />
+            <SearchBar
+                onSearch={handleSearch}
+                placeholder="Buscar por nombre,correo o ruc"
+                debounceDelay={400}
+            />
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-3xl font-bold">Clientes</h2>
-                <Button variant="outline" className="px-6" onClick={() => router.push("/dashboard/clients/register")}>
+                <Button
+                    variant="outline"
+                    className="px-6"
+                    onClick={() => router.push("/dashboard/clients/register")}
+                >
                     Agregar
                 </Button>
             </div>
             <GenericTable
-                data={data.users}
+                data={filteredData}
                 columns={columns}
                 actions={actions}
                 pagination={data.pagination}
@@ -138,5 +131,3 @@ export default function ClientList({ token }: ClientListProps) {
         </div>
     );
 }
-
-

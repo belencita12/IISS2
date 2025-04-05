@@ -8,14 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+import GenericPagination from "./GenericPagination";
 
 export type Column<T> = {
   header: string;
@@ -36,7 +29,7 @@ export interface PaginationInfo {
   pageSize: number;
 }
 
-interface GenericTableProps<T> {
+export interface GenericTableProps<T> {
   data: T[];
   columns: Column<T>[];
   actions?: TableAction<T>[];
@@ -53,7 +46,7 @@ export default function GenericTable<T extends { id?: string | number }>({
   data,
   columns,
   actions,
-  actionsTitle="Acciones",
+  actionsTitle = "Acciones",
   pagination,
   onPageChange,
   isLoading = false,
@@ -105,17 +98,16 @@ export default function GenericTable<T extends { id?: string | number }>({
 
   const renderCellContent = (item: T, column: Column<T>) => {
     const accessor = column.accessor;
-    
-    if (typeof accessor === 'function') {
+
+    if (typeof accessor === "function") {
       return accessor(item);
     }
-    
+
     return item[accessor] as React.ReactNode;
   };
 
   // Calculate total pages for both API and client-side pagination
   const totalPages = pagination?.totalPages || 1;
-  const showPagination = totalPages > 1;
 
   return (
     <div className={className}>
@@ -159,59 +151,13 @@ export default function GenericTable<T extends { id?: string | number }>({
         </TableBody>
       </Table>
 
-      {showPagination && (
-        <Pagination className="pt-6 pb-10">
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handlePreviousPage();
-                }}
-                className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
-                aria-disabled={currentPage === 1}
-              />
-            </PaginationItem>
-            
-            {Array.from({ length: totalPages }, (_, i) => i + 1)
-              // Show only 5 page links at a time with ellipsis
-              .filter(page => {
-                if (totalPages <= 5) return true;
-                if (page === 1 || page === totalPages) return true;
-                if (page >= currentPage - 1 && page <= currentPage + 1) return true;
-                return false;
-              })
-              .map((page) => (
-                <PaginationItem key={page}>
-                  <PaginationLink
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handlePageChange(page);
-                    }}
-                    className={currentPage === page ? "font-bold bg-gray-200" : ""}
-                    aria-current={currentPage === page ? "page" : undefined}
-                  >
-                    {page}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-              
-            <PaginationItem>
-              <PaginationNext
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNextPage();
-                }}
-                className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
-                aria-disabled={currentPage === totalPages}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      )}
+      <GenericPagination
+        handlePreviousPage={handlePreviousPage}
+        handlePageChange={handlePageChange}
+        handleNextPage={handleNextPage}
+        currentPage={currentPage}
+        totalPages={totalPages}
+      />
     </div>
   );
 }

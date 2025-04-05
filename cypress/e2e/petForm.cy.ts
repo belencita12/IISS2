@@ -2,12 +2,12 @@ const SESSION_KEY = "sessionToken";
 
 describe('Registrar Mascota con PetForm', () => {
 
-  const BASE_URL = "https://iiss2-backend-0q2e.onrender.com"
+  const BASE_URL = Cypress.env("API_BASEURL");
 
   const PET_MOCK = {
-    name: "Wanko",
-    birthDate: "2022-01-01",
-    weight: "12.5",
+    name: "Miau",
+    birthDate: "2023-01-01",
+    weight: "123.5",
     gender: "Macho",
   };
 
@@ -15,6 +15,8 @@ describe('Registrar Mascota con PetForm', () => {
   const waitOptions = { timeout: 30000 };
 
   beforeEach(() => {
+    cy.clearCookies();
+    cy.clearLocalStorage();
     const sessionToken: string = Cypress.env(SESSION_KEY);
     if (sessionToken) cy.setCookie("next-auth.session-token", sessionToken);
 
@@ -31,7 +33,7 @@ describe('Registrar Mascota con PetForm', () => {
   it('Muestra la información del perfil y mascotas cuando el usuario está autenticado', () => {
 
     cy.log('Verificando que la información del perfil y las mascotas se muestre correctamente');
-    cy.get('h2.text-xl.font-bold.mt-2', waitOptions).should('contain.text', 'Makiko Yamamoto');
+    cy.get('h2.text-xl.font-bold.mt-2', waitOptions).should('contain.text', 'Jose Valgaba');
     cy.contains('Tus Mascotas Registradas', waitOptions).should('be.visible');
     cy.url(waitOptions).should('include', '/user-profile');
 
@@ -45,7 +47,7 @@ describe('Registrar Mascota con PetForm', () => {
   
     cy.intercept(
       "GET",
-      `${BASE_URL}/race?page=1&speciesId=1`
+      `${BASE_URL}/race?page=1&speciesId=*`
     ).as("getRaces");
   
     cy.intercept("POST", `${BASE_URL}/pet`).as("registerPet");
@@ -137,7 +139,7 @@ describe('Registrar Mascota con PetForm', () => {
 
   it("Registrar mascota sin imagen", () => {
     cy.intercept("GET", `${BASE_URL}/species?page=1`).as("getSpecies");
-    cy.intercept("GET", `${BASE_URL}/race?page=1&speciesId=1`).as("getRaces");
+    cy.intercept("GET", `${BASE_URL}/race?page=1&speciesId=*`).as("getRaces");
     cy.intercept("POST", `${BASE_URL}/pet`).as("registerPet");
   
     cy.log('Navegar a la página de agregar mascota sin imagen');
@@ -146,7 +148,7 @@ describe('Registrar Mascota con PetForm', () => {
     cy.wait("@getSpecies", TIMEOUT);
     cy.wait(3000);
   
-    cy.get("input[name='petName']").type(`${PET_MOCK.name} sin imagen`);
+    cy.get("input[name='petName']").type(`${PET_MOCK.name} sin foto5`);
     cy.get("input[name='birthDate']").type(`2023-02-01`);
     cy.get("input[name='weight']").type(`14`);
   
@@ -181,7 +183,7 @@ describe('Registrar Mascota con PetForm', () => {
   
   it("Registrar mascota con imagen de tamaño grande", () => {
     cy.intercept("GET", `${BASE_URL}/species?page=1`).as("getSpecies");
-    cy.intercept("GET", `${BASE_URL}/race?page=1&speciesId=1`).as("getRaces");
+    cy.intercept("GET", `${BASE_URL}/race?page=1&speciesId=*`).as("getRaces");
     cy.intercept("POST", `${BASE_URL}/pet`).as("registerPet");
   
     cy.log('Navegar a la página de agregar mascota con imagen grande');
@@ -190,7 +192,7 @@ describe('Registrar Mascota con PetForm', () => {
     cy.wait("@getSpecies", TIMEOUT);
     cy.wait(3000);
   
-    cy.get("input[name='petName']").type("Grande");
+    cy.get("input[name='petName']").type(`${PET_MOCK.name} Grande1`);
     cy.get("input[name='birthDate']").type("2022-05-05");
     cy.get("input[name='weight']").type("15");
   
@@ -231,7 +233,7 @@ describe('Registrar Mascota con PetForm', () => {
 
   it("Intentar registrar mascota con peso inválido", () => {
     cy.intercept("GET", `${BASE_URL}/species?page=1`).as("getSpecies");
-    cy.intercept("GET", `${BASE_URL}/race?page=1&speciesId=1`).as("getRaces");
+    cy.intercept("GET", `${BASE_URL}/race?page=1&speciesId=*`).as("getRaces");
     cy.intercept("POST", `${BASE_URL}/pet`).as("registerPet");
   
     cy.log('Navegar a la página de agregar mascota con peso inválido');
@@ -240,7 +242,7 @@ describe('Registrar Mascota con PetForm', () => {
     cy.wait("@getSpecies", TIMEOUT);
     cy.wait(3000);
   
-    cy.get("input[name='petName']").type("PesoInválido");
+    cy.get("input[name='petName']").type(`${PET_MOCK.name} PesoInválido2`);
     cy.get("input[name='birthDate']").type("2021-11-11");
   
     cy.get("button#animalType").click();
@@ -284,8 +286,8 @@ describe('Registrar Mascota con PetForm', () => {
 //test inicial para ingresar sesion y guardar token
 it("iniciar sesión", () => {
   const USER = {
-    email: "makiko.yamamoto@fiuni.edu.py",
-    password: "MakiYamaGin"
+    email: "jose@gmail.com",
+    password: "12345678"
   };
 
   cy.loginAndSetSession(SESSION_KEY, USER.email, USER.password);
