@@ -16,11 +16,14 @@ export default async function Profile() {
     if (!session) redirect("/login");
 
     const user = session?.user;
-    if(!user?.clientId) return notFound();
+    
+    console.log(user.clientId);
+    if(!user?.clientId) return console.log("No hay clientId en la sesión");
 
-    const clientProfile = await getClientById(user.clientId, user.token);
+    const clientProfile = await getClientById(Number(user.clientId), user.token);
 
-    if(!clientProfile) return notFound();
+    if(!clientProfile) return console.log("No se encontró el perfil del cliente");
+
     return (
         <div>
             <Header user={clientProfile} />
