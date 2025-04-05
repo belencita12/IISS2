@@ -27,10 +27,8 @@ export function TagFilter({
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   
-  // Using the existing hook but properly controlling it
   const { data, isLoading, setQuery } = useGetTags({ token });
 
-  // Update the search query parameter when the search input changes
   useEffect(() => {
     setQuery((prev) => ({ ...prev, name: searchQuery }));
   }, [searchQuery, setQuery]);
@@ -51,11 +49,9 @@ export function TagFilter({
 
   const clearTags = () => {
     onChange([]);
-    // También limpiamos la búsqueda para restaurar todos los tags
     setSearchQuery("");
   };
 
-  // Handle search input change
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
   };
