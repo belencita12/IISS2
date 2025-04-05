@@ -1,108 +1,69 @@
 "use client";
-import { useEffect, useState } from "react";
-import { getPurchases } from "@/lib/purchase/getPurchases";
+
+import { useRouter } from "next/navigation";
+import { useGetPurchases } from "@/hooks/purchases/useGetPurchases";
 import { Button } from "@/components/ui/button";
 import PurchaseCard from "./PurchaseCard";
-import { PurchaseData } from "@/lib/purchase/IPurchase";
-import { toast } from "@/lib/toast";
-import PurchaseFilter from "./PurchaseFilter";
 import GenericPagination from "@/components/global/GenericPagination";
+import PurchaseSelectFilter from "./filters/PurchaseSelectFilter";
 
-interface PurchaseListProps {
-  token: string | null;
+interface Props {
+  token: string;
 }
 
-export default function PurchaseList({ token }: PurchaseListProps) {
-  const [purchases, setPurchases] = useState<PurchaseData[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error] = useState<string | null>(null);
-  const [filters, setFilters] = useState({
-    provider: "all",
-    deposito: "all",
-    
-  });
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);  
+export default function PurchaseList({ token }: Props) {
 
+  const router = useRouter();
+  const { data, query, setQuery,  isLoading, error } = useGetPurchases({ token });
 
-  const fetchPurchases = async () => {
-    if (!token) return;
-    setLoading(true);
-    try {
-      const data = await getPurchases(currentPage, "", token, {
-        providerId: filters.provider !== "all" ? filters.provider : undefined,
-        stockId: filters.deposito !== "all" ? filters.deposito : undefined,
-      });
-      console.log("📦 Respuesta de la API:", data);
-      setPurchases(data.data || []);
-      setTotalPages(data.totalPages || 1); 
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast("error", error.message);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleApplyFilters = (newFilters: typeof filters) => {
-    setFilters(newFilters);
-    setCurrentPage(1); 
-  };
-
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage((prevPage) => prevPage - 1);
-    }
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage((prevPage) => prevPage + 1);
-    }
-  };
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  useEffect(() => {
-    fetchPurchases();
-  }, [token, filters, currentPage]); 
+  const purchases = data?.data || [];
 
   return (
-    <div className="p-4 mx-auto">
-      <PurchaseFilter
-        token={token || ""}
-        provider={filters.provider}
-        deposito={filters.deposito}
-        onFilterChange={handleApplyFilters}
+    <div className="max-w-6xl mx-auto p-4">
+      <PurchaseSelectFilter
+        token={token}
+        filters={query}
+        setFilters={setQuery}
+
       />
 
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-3xl font-bold">Compras</h2>
-        <Button className="px-6">Registrar Compra</Button>
+      <div className="flex justify-between items-center mb-6 w-full">
+        <h1 className="text-2xl font-bold">Compras</h1>
+        <Button
+          variant="default"
+          onClick={() => router.push("/dashboard/purchase/register")}
+          className="bg-black text-white hover:bg-gray-800"
+        >
+          Registrar Compra
+        </Button>
       </div>
 
-      {loading ? (
-        <p className="text-gray-600">Cargando compras...</p>
-      ) : error ? (
-        <p className="text-red-500">{error}</p>
+      {error && <p className="text-center text-red-500">{error}</p>}
+
+      {isLoading ? (
+        <p className="text-center">Cargando compras...</p>
+      ) : purchases.length === 0 ? (
+        <p className="text-center">No hay compras registradas.</p>
       ) : (
-        <div className="space-y-4">
+        <div className="flex flex-col gap-4 w-full">
           {purchases.map((purchase) => (
             <PurchaseCard key={purchase.id} purchase={purchase} />
           ))}
         </div>
       )}
 
-      <GenericPagination
-        handlePreviousPage={handlePreviousPage}
-        handlePageChange={handlePageChange}
-        handleNextPage={handleNextPage}
-        currentPage={currentPage}
-        totalPages={totalPages}
-      />
+      {data && data.totalPages > 1 && (
+        <GenericPagination
+          currentPage={data.currentPage}
+          totalPages={data.totalPages}
+          handlePreviousPage={() =>
+            setQuery((prev) => ({ ...prev, page: (prev.page ?? 1) - 1 }))}
+          handleNextPage={() =>
+            setQuery((prev) => ({ ...prev, page: (prev.page ?? 1) + 1 }))}
+          handlePageChange={(page) =>
+            setQuery((prev) => ({ ...prev, page }))}
+        />
+      )}
     </div>
   );
 }

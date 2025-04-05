@@ -11,7 +11,7 @@ export default async function PurchasesPage() {
         redirect("/login");
     }
 
-    const token = session?.user?.token || null;
+    const token = session?.user?.token || "";
 
     return (
         <div className="mx-auto p-6">
