@@ -91,7 +91,6 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
     register,
     handleSubmit,
     setValue,
-    reset,
     formState: { errors },
   } = useForm<VaccineFormData>({
     resolver: zodResolver(vaccineSchema),
@@ -109,7 +108,7 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
     if (token) {
       // Cargar fabricantes
       getManufacturers(token)
-        .then((data) => {
+        .then(({data}) => {
           const sorted = data.sort((a: Manufacturer, b: Manufacturer) => a.name.localeCompare(b.name));
           setManufacturers(sorted);
         })
