@@ -2,19 +2,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Provider } from "@/lib/provider/IProvider";
+import { phoneNumber, ruc } from "@/lib/schemas";
 
 // Schema de validación con Zod
 export const providerSchema = z.object({
   businessName: z.string().min(1, "El nombre o razón social es obligatorio"),
   description: z.string().min(1, "La descripción es obligatoria"),
-  phoneNumber: z
-    .string()
-    .min(13, "El número de teléfono es obligatorio")
-    .regex(/^\+?[0-9\s\-()]{7,}$/, "Número inválido"),
-  ruc: z
-    .string()
-    .min(5, "El RUC es obligatorio")
-    .regex(/^\d{3,}-\d{1}$/, "RUC inválido, formato esperado: 1234567-1"),
+  phoneNumber: phoneNumber(),
+  ruc: ruc(),
 });
 
 export type ProviderFormValues = z.infer<typeof providerSchema>;
