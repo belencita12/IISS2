@@ -14,4 +14,5 @@ import { BaseQueryParams } from "../types";
     export interface GetPurchaseQueryParams extends BaseQueryParams {
         providerId?: number;
         stockId?: number;
+
     }

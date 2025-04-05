@@ -14,12 +14,12 @@ import { StockData } from "@/lib/stock/IStock";
 import { getStocks } from "@/lib/stock/getStock";
 import { Provider } from "@/lib/provider/IProvider";
 import { getProviders } from "@/lib/provider/getProviders";
+import { toast } from "@/lib/toast";
 
 interface Props {
   token: string;
   filters: GetPurchaseQueryParams;
   setFilters: (val: GetPurchaseQueryParams) => void;
-
 }
 
 export default function PurchaseSelectFilter({
@@ -40,14 +40,13 @@ export default function PurchaseSelectFilter({
       useEffect(() => {
         getStocks({ page: 1 }, token)
           .then((res) => setStocks(res.data))
-          .catch((err) => console.error("Error al obtener depósitos", err));
+          .catch((err:unknown) => toast("error", err instanceof Error ? err.message : "Error inesperado"));
 
           getProviders(token, { page: 1 })
           .then((res) => setProviders(res.data))
-          .catch((err) => console.error("Error al obtener proveedores", err));
+          .catch((err) => toast("error", err instanceof Error ? err.message : "Error inesperado"));
       
       }, [token]);
-
 
 return (
     <div className="mb-6 space-y-4">
@@ -97,7 +96,6 @@ return (
           </Select>
         </div>
       </div>
-
     </div>
   );
 }

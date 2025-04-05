@@ -3,6 +3,7 @@ import { getPurchases } from "@/lib/purchase/getPurchases";
 import { GetPurchaseQueryParams, PurchaseData } from "@/lib/purchase/IPurchase";
 import { PaginationResponse } from "@/lib/types";
 import { useQuery } from "../useQuery";
+import { toast } from "@/lib/toast";
 
 interface UsePurchaseListProps {
   token: string;
@@ -12,7 +13,7 @@ interface UsePurchaseListProps {
 export const useGetPurchases = ({ token, init }: UsePurchaseListProps) => {
   const [data, setData] = useState<PaginationResponse<PurchaseData> | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
   const { query, setQuery, toQueryString } = useQuery(init);
 
   const fetchPurchases = useCallback(async () => {
@@ -21,17 +22,21 @@ export const useGetPurchases = ({ token, init }: UsePurchaseListProps) => {
       const queryStr = toQueryString();
       const result = await getPurchases(token, queryStr);
       setData(result);
-    } catch (err) {
-      console.error(err);
-      setError("Error al obtener compras");
+    } catch (err:unknown) {
+      if (typeof error === "object" && error !== null && "message" in error) {
+        const errorMessage = (error as { message: string }).message;
+        toast("error", errorMessage);
+        return;
+      }
+      toast("error", "Error inesperado al obtener las compras");
     } finally {
       setLoading(false);
     }
-  }, [token, toQueryString]);
+  }, [token, toQueryString, error]);
 
   useEffect(() => {
     fetchPurchases();
-  }, [fetchPurchases]);
+  }, [fetchPurchases, token]);
 
   return {
     data,
