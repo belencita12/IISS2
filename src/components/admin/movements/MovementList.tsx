@@ -5,7 +5,7 @@ import MovementCard from "./MovementCard";
 import { Button } from "@/components/ui/button";
 import { useMovementList } from "@/hooks/movements/useMovementList";
 import MovementFilters from "./MovementFilters";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import GenericPagination from "@/components/global/GenericPagination";
 
 interface Props {
   token: string;
@@ -52,40 +52,17 @@ export default function MovementListPage({ token }: Props) {
         </div>
       )}
       {data && data.totalPages > 1 && (
-        <Pagination className="mt-6">
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() =>
-                  setQuery((prev) => ({ ...prev, page: (prev.page ?? 1) - 1 }))
-                }
-                className={data.prev ? "" : "pointer-events-none opacity-50"}
-              />
-            </PaginationItem>
-
-            {Array.from({ length: data.totalPages }, (_, i) => i + 1).map(
-              (page) => (
-                <PaginationItem key={page}>
-                  <PaginationLink
-                    isActive={data.currentPage === page}
-                    onClick={() => setQuery((prev) => ({ ...prev, page }))}
-                  >
-                    {page}
-                  </PaginationLink>
-                </PaginationItem>
-              )
-            )}
-
-            <PaginationItem>
-              <PaginationNext
-                onClick={() =>
-                  setQuery((prev) => ({ ...prev, page: (prev.page ?? 1) + 1 }))
-                }
-                className={data.next ? "" : "pointer-events-none opacity-50"}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+        <GenericPagination
+          currentPage={data.currentPage}
+          totalPages={data.totalPages}
+          handlePreviousPage={() =>
+            setQuery((prev) => ({ ...prev, page: (prev.page ?? 1) - 1 }))
+          }
+          handleNextPage={() =>
+            setQuery((prev) => ({ ...prev, page: (prev.page ?? 1) + 1 }))
+          }
+          handlePageChange={(page) => setQuery((prev) => ({ ...prev, page }))}
+        />
       )}
     </div>
   );
