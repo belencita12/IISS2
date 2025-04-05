@@ -17,9 +17,9 @@ export const getPetsByUserId = async (clientId: number, token: string) => {
 };
 
 
-export const getPetsByUserIdFull = async (userId: number, token: string,page=1) => {
+export const getPetsByUserIdFull = async (clientId: number, token: string,page=1) => {
     try {
-        const response = await fetch(`${PET_API}?page=${page}&userId=${userId}`, {
+        const response = await fetch(`${PET_API}?page=${page}&clientId=${clientId}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -28,7 +28,6 @@ export const getPetsByUserIdFull = async (userId: number, token: string,page=1) 
         const data = await response.json();
         return data as PetDataResponse;
     } catch (error) {
-        console.error("Error en obtener mascotas por usuario", error);
         throw error;
     }
 };

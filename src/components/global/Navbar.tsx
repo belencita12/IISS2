@@ -11,20 +11,27 @@ import NavbarSkeleton from "../skeleton/NavbarSkeleton";
 
 type NavbarProps = {
   links: { label: string; href: string }[];
-  isLogged? : boolean;
+  isLogged?: boolean;
 };
 
 export function Navbar({ links }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { data: session, status } = useSession();
-  const isLoading = status === 'loading';
+  const isLoading = status === "loading";
   const isAuthenticated = !!session && !isLoading;
-  console.log(status)
 
-  if(isLoading) return <NavbarSkeleton />
+
+  const isAdmin = session?.user?.roles?.includes("ADMIN");
+ 
+  if (isAdmin) return null;
+
+
+  if (isLoading ) return <NavbarSkeleton />;
+  
+
 
   return (
-      <header className="w-full shadow-sm px-8 py-4 bg-white">
+    <header className="w-full shadow-sm px-8 py-4 bg-white">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <Link href="/" className="flex items-center gap-4">
           <Image
@@ -48,18 +55,18 @@ export function Navbar({ links }: NavbarProps) {
               {link.label}
             </Link>
           ))}
-          {
-            isAuthenticated && (
-              <> 
+          {isAuthenticated && (
+            <>
               <Link
-              key="user-profile"
-              href="/user-profile"
-              className="hover:text-[#258084] transition-colors duration-200"
-            >Mi Perfil</Link>
-                <LogoutButton />
-              </>
-            )
-          }
+                key="user-profile"
+                href="/user-profile"
+                className="hover:text-[#258084] transition-colors duration-200"
+              >
+                Mi Perfil
+              </Link>
+              <LogoutButton />
+            </>
+          )}
         </nav>
 
         {/* Mobile Menu Button */}
@@ -85,24 +92,28 @@ export function Navbar({ links }: NavbarProps) {
               {link.label}
             </Link>
           ))}
-          {
-            isAuthenticated && (
-              <> 
+          {isAuthenticated && (
+            <>
               <Link
-              key="user-profile"
-              href="/user-profile"
-              className="hover:text-[#258084] transition-colors duration-200"
-            >Mi Perfil</Link>
-                <LogoutButton />
-              </>
-            )
-          }
+                key="user-profile"
+                href="/user-profile"
+                className="hover:text-[#258084] transition-colors duration-200"
+              >
+                Mi Perfil
+              </Link>
+              <LogoutButton />
+            </>
+          )}
         </nav>
       )}
     </header>
   );
 }
 
-export default function NavbarWrapped ({links}:NavbarProps) {
-  return <SessionProvider><Navbar links={links} /></SessionProvider>
+export default function NavbarWrapped({ links }: NavbarProps) {
+  return (
+    <SessionProvider>
+      <Navbar links={links} />
+    </SessionProvider>
+  );
 }

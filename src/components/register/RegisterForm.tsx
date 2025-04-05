@@ -5,32 +5,42 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { phoneNumber, ruc } from "@/lib/schemas";
-import { FormField } from "./FormField";
 import { signup } from "@/lib/auth/signup";
 import { useRouter } from "next/navigation";
 import { toast } from "@/lib/toast";
+import FormInput from "../global/FormInput";
 // Define the schema for registration
-export const RegisterFormSchema = z.object({
-  name: z.string().min(1, "Ingrese un nombre válido"),
-  lastname: z.string().min(1, "Ingrese un apellido válido"),
-  email: z.string().email("Ingrese un email válido. Ej: juanperez@gmail.com"),
-  password: z.string().min(8, "Debe tener al menos 8 caracteres"),
-  confirmPassword: z.string().min(1, "Ingrese una contraseña válida"),
-  address: z.string().min(10, "Ingrese una dirección válida. Ej: Av. España 1234, Asunción, Paraguay"),
-  phoneNumber: phoneNumber(),
-  ruc: ruc(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Las contraseñas no coinciden",
-  path: ["confirmPassword"],
-});
+export const RegisterFormSchema = z
+  .object({
+    name: z.string().min(1, "Ingrese un nombre válido"),
+    lastname: z.string().min(1, "Ingrese un apellido válido"),
+    email: z.string().email("Ingrese un email válido. Ej: juanperez@gmail.com"),
+    password: z.string().min(8, "Debe tener al menos 8 caracteres"),
+    confirmPassword: z.string().min(1, "Ingrese una contraseña válida"),
+    address: z
+      .string()
+      .min(
+        10,
+        "Ingrese una dirección válida. Ej: Av. España 1234, Asunción, Paraguay"
+      ),
+    phoneNumber: phoneNumber(),
+    ruc: ruc(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Las contraseñas no coinciden",
+    path: ["confirmPassword"],
+  });
 
 type RegisterFormValues = z.infer<typeof RegisterFormSchema>;
 
-
 export function RegisterForm() {
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<RegisterFormValues>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterFormValues>({
     resolver: zodResolver(RegisterFormSchema),
-    mode: "onChange"
+    mode: "onChange",
   });
 
   const router = useRouter();
@@ -49,58 +59,66 @@ export function RegisterForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {/* Nombre y apellido */}
       <div className="grid grid-cols-2 gap-4">
-        <FormField
+        <FormInput
           register={register("name")}
-          error={errors.name}
+          error={errors.name?.message}
           placeholder="Nombre"
+          name="name"
         />
-        <FormField
+        <FormInput
           register={register("lastname")}
-          error={errors.lastname}
+          error={errors.lastname?.message}
           placeholder="Apellido"
+          name="lastname"
         />
       </div>
 
       {/* Email */}
-      <FormField
+      <FormInput
         register={register("email")}
-        error={errors.email}
+        error={errors.email?.message}
         placeholder="Correo electrónico"
+        name="email"
       />
 
       {/* Dirección */}
-      <FormField
+      <FormInput
         register={register("address")}
-        error={errors.address}
+        error={errors.address?.message}
         placeholder="Dirección"
+        name="address"
       />
 
       {/* Teléfono y RUC */}
       <div className="grid grid-cols-2 gap-4">
-        <FormField
+        <FormInput
           register={register("phoneNumber")}
-          error={errors.phoneNumber}
+          error={errors.phoneNumber?.message}
           placeholder="Número de teléfono"
+          name="phoneNumber"
         />
-        <FormField
+        <FormInput
           register={register("ruc")}
-          error={errors.ruc}
+          error={errors.ruc?.message}
           placeholder="RUC"
+          name="ruc"
         />
       </div>
 
       {/* Contraseñas */}
       <div className="grid grid-cols-2 gap-4">
-        <FormField
+        <FormInput
           register={register("password")}
-          error={errors.password}
+          error={errors.password?.message}
           placeholder="Contraseña"
+          name="password"
           type="password"
         />
-        <FormField
+        <FormInput
           register={register("confirmPassword")}
-          error={errors.confirmPassword}
+          error={errors.confirmPassword?.message}
           placeholder="Confirmar contraseña"
+          name="confirmPassword"
           type="password"
         />
       </div>
