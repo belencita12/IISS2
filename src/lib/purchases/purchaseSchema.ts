@@ -2,8 +2,18 @@ import { z } from "zod";
 import { Purchase } from "./IPurchase";
 
 export const purchaseSchema: z.ZodType<Purchase> = z.object({
-  providerId: z.number().min(1, "Proveedor es obligatorio"),
-  stockId: z.number().min(1, "Sucursal es obligatoria"),
+  providerId: z
+    .number({
+      required_error: "Proveedor es obligatorio",
+    })
+    .min(1, "Proveedor es obligatorio"),
+
+  stockId: z
+    .number({
+      required_error: "Deposito es obligatorio",
+    })
+    .min(1, "Deposito es obligatorio"),
+
   date: z.string().min(1, "Fecha es obligatoria"),
   details: z
     .array(

@@ -1,64 +1,102 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import SearchBar from "@/components/global/SearchBar";
+import GenericTable, {
+  Column,
+  TableAction,
+} from "@/components/global/GenericTable";
 import { Product } from "@/lib/products/IProducts";
+import PurchaseSearchSkeleton from "./skeleton/PurchaseSearchSkeleton";
 
 type ProductSearchProps = {
   searchProducts: Product[];
-  quantity: number;
-  onQuantityChange: (value: number) => void;
   onSearch: (query: string) => void;
-  onAddProduct: (product: Product) => void;
+  onAddProduct: (product: Product, quantity: number) => void;
+  getQuantity: (productId: string) => number;
+  setQuantity: (productId: string, quantity: number) => void;
+  resetSearch: () => void;
+  isLoading?: boolean;
+  searchQuery?: string;
+  hasSearched?: boolean;
 };
 
 export default function ProductSearch({
   searchProducts,
-  quantity,
-  onQuantityChange,
   onSearch,
   onAddProduct,
+  getQuantity,
+  setQuantity,
+  resetSearch,
+  isLoading = false,
+  hasSearched = false,
 }: ProductSearchProps) {
+  const columns: Column<Product>[] = useMemo(
+    () => [
+      { header: "Código", accessor: "code" },
+      { header: "Nombre", accessor: "name" },
+      {
+        header: "Cantidad",
+        accessor: (product) => (
+          <Input
+            type="number"
+            className="w-24"
+            min={1}
+            onKeyDown={(e) => {
+              if (e.key === "-" || e.key === "e") e.preventDefault();
+            }}
+            value={getQuantity(product.id)}
+            onChange={(e) => setQuantity(product.id, Number(e.target.value))}
+          />
+        ),
+      },
+    ],
+    [getQuantity, setQuantity]
+  );
+
+  const actions: TableAction<Product>[] = useMemo(
+    () => [
+      {
+        label: "Agregar",
+        icon: (
+          <div className="px-4 py-2 border border-black bg-white text-black rounded-md">
+            Agregar
+          </div>
+        ),        
+        onClick: (product) => {
+          onAddProduct(product, getQuantity(product.id));
+          resetSearch();
+        },
+      },
+    ],
+    [onAddProduct, getQuantity, resetSearch]
+  );
   return (
-    <div>
+    <div className="w-full">
       <SearchBar
         onSearch={onSearch}
+        manualSearch={false}
+        debounceDelay={400}
         placeholder="Buscar por nombre del producto..."
       />
-      <div className="flex flex-col gap-2 mt-2">
-        {searchProducts.length > 0 ? (
-          searchProducts.map((product) => (
-            <div
-              key={product.id}
-              className="flex items-center gap-2 justify-between"
-            >
-              <span className="text-sm flex-1">
-                {product.name} - {product.price} USD
-              </span>
-              <Input
-                type="number"
-                placeholder="Cantidad"
-                className="w-24"
-                value={quantity}
-                min={1}
-                onChange={(e) => onQuantityChange(Number(e.target.value))}
-              />
-              <Button
-                variant="outline"
-                type="button"
-                onClick={() => onAddProduct(product)}
-              >
-                Agregar
-              </Button>
-            </div>
-          ))
-        ) : (
-          <span className="text-sm text-gray-500">
-            No hay productos para mostrar.
-          </span>
-        )}
-      </div>
+      {isLoading ? (
+        <PurchaseSearchSkeleton />
+      ) : searchProducts && searchProducts.length > 0 ? (
+        <GenericTable<Product>
+          data={searchProducts}
+          columns={columns}
+          actions={actions}
+          actionsTitle=""
+          isLoading={false}
+          skeleton={<PurchaseSearchSkeleton />}
+        />
+      ) : (
+        hasSearched &&
+        !isLoading && (
+          <p className="text-center mt-4">No se encontró el producto.</p>
+        )
+      )}
     </div>
   );
 }
