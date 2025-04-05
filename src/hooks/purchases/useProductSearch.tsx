@@ -72,9 +72,7 @@ export const useProductSearch = (token: string) => {
 
   const resetSearch = () => {
     setSearchQuery("");
-    setSearchProducts([]);
     setQuantities({});
-    setHasSearched(false);
   };
 
   return {

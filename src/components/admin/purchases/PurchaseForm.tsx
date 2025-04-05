@@ -55,11 +55,7 @@ export default function PurchaseForm({ token }: { token: string }) {
       date: new Date(data.date).toISOString(),
     };
     const success= await submitPurchase(formattedData);
-    if (success) {
-      router.push("/dashboard/purchases");
-    } else {
-      router.refresh();
-    }
+    success ? router.push("/dashboard/purchases") : router.refresh();
   };
   return (
     <div className="flex flex-col justify-center items-center p-6">
@@ -155,7 +151,7 @@ export default function PurchaseForm({ token }: { token: string }) {
         />
         {details.length > 0 && (
           <>
-            <h2 className="mb-6">Productos Seleccionados</h2>
+            <h2 className="p-4 font-bold">Productos Seleccionados</h2>
             <ProductList details={details} onRemove={removeProduct} onUpdateQuantity={updateQuantity}
             />
           </>

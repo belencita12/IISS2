@@ -28,14 +28,13 @@ export const usePurchase = (token: string) => {
 
   const addProduct = (product: Product, quantity: number) => {
     const currentDetails = getValues("details") || [];
-
     const existingIndex = currentDetails.findIndex(
       (detail) => detail.productId === Number(product.id)
     );
 
     if (existingIndex >= 0) {
       const updatedDetails = [...currentDetails];
-      updatedDetails[existingIndex].quantity = quantity;
+      updatedDetails[existingIndex].quantity += quantity;
       setValue("details", updatedDetails);
     } else {
       setValue("details", [
@@ -49,60 +48,56 @@ export const usePurchase = (token: string) => {
       ]);
     }
   };
-  const updateQuantity = (productId: number, newQuantity: number) => {
-    const currentDetails = getValues("details") || [];
-    const updatedDetails = currentDetails.map((detail) =>
-      detail.productId === productId
-        ? { ...detail, quantity: newQuantity }
-        : detail
-    );
-    setValue("details", updatedDetails);
-  };
+
   const removeProduct = (productId: number) => {
     const currentDetails = getValues("details") || [];
-    const filtered = currentDetails.filter(
-      (detail) => detail.productId !== productId
+    setValue("details", 
+      currentDetails.filter(detail => detail.productId !== productId)
     );
-    setValue("details", filtered);
+  };
+
+  const updateQuantity = (productId: number, quantity: number) => {
+    const currentDetails = getValues("details") || [];
+    setValue("details", 
+      currentDetails.map(detail =>
+        detail.productId === productId 
+          ? { ...detail, quantity } 
+          : detail
+      )
+    );
   };
 
   const submitPurchase = async (data: ExtendedPurchase) => {
-    const detailsToSend = data.details.map((detail) => ({
-      productId: detail.productId,
-      quantity: detail.quantity,
-    }));
-
-    const payload = {
-      providerId: data.providerId,
-      stockId: data.stockId,
-      date: data.date,
-      details: detailsToSend,
-    };
-
     try {
-      await registerPurchase(payload, token);
-      toast("success","Compra registrada con exito!")
+      const purchasesData = {
+        providerId: data.providerId,
+        stockId: data.stockId,
+        date: data.date,
+        details: data.details.map(d => ({
+          productId: d.productId,
+          quantity: d.quantity,
+        })),
+      };
+      await registerPurchase(purchasesData, token);
+      toast("success", "Compra registrada con éxito!");
       reset();
       return true;
     } catch (error) {
-      toast("error", error instanceof Error ? error.message : "Ocurrió un error. Intenta nuevamente.");
-  }
+      toast("error", error instanceof Error ? error.message : "Error al registrar compra");
+    }
   };
 
   return {
     register,
     handleSubmit,
-    setValue,
-    getValues,
+    control,
+    watch,
+    errors,
+    isSubmitting,
     addProduct,
     removeProduct,
-    submitPurchase,
-    watch,
-    control,
-    errors,
-    reset,
     updateQuantity,
-    isSubmitting,
+    submitPurchase
   };
 };
 

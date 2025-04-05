@@ -1,12 +1,8 @@
 "use client";
 
-import { useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import SearchBar from "@/components/global/SearchBar";
-import GenericTable, {
-  Column,
-  TableAction,
-} from "@/components/global/GenericTable";
+import GenericTable, { Column, TableAction } from "@/components/global/GenericTable";
 import { Product } from "@/lib/products/IProducts";
 import PurchaseSearchSkeleton from "./skeleton/PurchaseSearchSkeleton";
 
@@ -32,46 +28,41 @@ export default function ProductSearch({
   isLoading = false,
   hasSearched = false,
 }: ProductSearchProps) {
-  const columns: Column<Product>[] = useMemo(
-    () => [
-      { header: "Código", accessor: "code" },
-      { header: "Nombre", accessor: "name" },
-      {
-        header: "Cantidad",
-        accessor: (product) => (
-          <Input
-            type="number"
-            className="w-24"
-            min={1}
-            onKeyDown={(e) => {
-              if (e.key === "-" || e.key === "e") e.preventDefault();
-            }}
-            value={getQuantity(product.id)}
-            onChange={(e) => setQuantity(product.id, Number(e.target.value))}
-          />
-        ),
-      },
-    ],
-    [getQuantity, setQuantity]
-  );
+  const columns: Column<Product>[] = [
+    { header: "Código", accessor: "code" },
+    { header: "Nombre", accessor: "name" },
+    {
+      header: "Cantidad",
+      accessor: (product) => (
+        <Input
+          type="number"
+          className="w-24"
+          min={1}
+          onKeyDown={(e) => {
+            if (e.key === "-" || e.key === "e") e.preventDefault();
+          }}
+          value={getQuantity(product.id)}
+          onChange={(e) => setQuantity(product.id, Number(e.target.value))}
+        />
+      ),
+    },
+  ];
 
-  const actions: TableAction<Product>[] = useMemo(
-    () => [
-      {
-        label: "Agregar",
-        icon: (
-          <div className="px-4 py-2 border border-black bg-white text-black rounded-md">
-            Agregar
-          </div>
-        ),        
-        onClick: (product) => {
-          onAddProduct(product, getQuantity(product.id));
-          resetSearch();
-        },
+  const actions: TableAction<Product>[] = [
+    {
+      label: "Agregar",
+      icon: (
+        <div className="px-4 py-2 border border-black bg-white text-black rounded-md">
+          Agregar
+        </div>
+      ),
+      onClick: (product) => {
+        onAddProduct(product, getQuantity(product.id));
+        resetSearch();
       },
-    ],
-    [onAddProduct, getQuantity, resetSearch]
-  );
+    },
+  ];
+
   return (
     <div className="w-full">
       <SearchBar
