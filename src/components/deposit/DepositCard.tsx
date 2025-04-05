@@ -1,10 +1,10 @@
 "use client";
 
-import React, {useState} from "react";
-import { EyeIcon, Pencil, Trash} from "lucide-react";
+import React, { useState } from "react";
+import { EyeIcon, Pencil, Trash } from "lucide-react";
 import Link from "next/link";
-import {Button} from "../ui/button"
-import { ConfirmationModal } from "../global/Confirmation-modal"
+import { Button } from "../ui/button";
+import { ConfirmationModal } from "../global/Confirmation-modal";
 
 interface DepositCardProps {
   nombre: string;
@@ -15,10 +15,21 @@ interface DepositCardProps {
 }
 
 const DepositCard: React.FC<DepositCardProps> = ({
-  nombre, ubicacion, id, onEdit, onDelete
+  nombre,
+  ubicacion,
+  id,
+  onEdit,
+  onDelete,
 }) => {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  
+
+  const handleDelete = () => {
+    if (!id || !onDelete) return;
+    onDelete(id);
+  };
+
+  const onClose = () => setIsConfirmOpen(false);
+
   return (
     <>
       <div className="bg-white p-4 rounded-lg shadow-sm border flex justify-between items-center hover:-translate-y-1 transition-transform duration-300 hover:shadow-md">
@@ -52,17 +63,17 @@ const DepositCard: React.FC<DepositCardProps> = ({
           </Button>
         </div>
       </div>
-    <ConfirmationModal
-      isOpen={isConfirmOpen}
-      onClose={() => setIsConfirmOpen(false)}
-      onConfirm={() => id && onDelete?.(id)}
-      title="¿Estas seguro que deseas eliminar este Deposito?"
-      message={`Esta acción no se puede deshacer.`}
-      confirmText="Eliminar"
-      cancelText="Cancelar"
-      variant="danger"
-    />
-  </>
+      <ConfirmationModal
+        isOpen={isConfirmOpen}
+        onClose={onClose}
+        onConfirm={handleDelete}
+        title="¿Estas seguro que deseas eliminar este Deposito?"
+        message={`Esta acción no se puede deshacer.`}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="danger"
+      />
+    </>
   );
 };
 
