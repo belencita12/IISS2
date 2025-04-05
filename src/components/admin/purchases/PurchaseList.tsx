@@ -6,7 +6,7 @@ import PurchaseCard from "./PurchaseCard";
 import { PurchaseData } from "@/lib/purchase/IPurchase";
 import { toast } from "@/lib/toast";
 import PurchaseFilter from "./PurchaseFilter";
-import GenericPagination from "@/components/global/GenericPagination";// Importamos el componente de paginación
+import GenericPagination from "@/components/global/GenericPagination";
 
 interface PurchaseListProps {
   token: string | null;

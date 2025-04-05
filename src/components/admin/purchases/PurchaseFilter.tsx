@@ -8,7 +8,6 @@ import { getStocks } from "@/lib/stock/getStock"
 import type { Provider } from "@/lib/provider/IProvider"
 import type { StockData } from "@/lib/stock/IStock"
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
 import { toast } from "@/lib/toast"
 
 interface PurchaseFilterProps {
@@ -18,12 +17,6 @@ interface PurchaseFilterProps {
   onFilterChange: (filters: {
     provider: string
     deposito: string
-    totalCostMin?: string
-    totalCostMax?: string
-    ivaCostMin?: string
-    ivaCostMax?: string
-    dateFrom?: string
-    dateTo?: string
   }) => void
 }
 
@@ -33,12 +26,6 @@ const PurchaseFilter = ({ provider, deposito, token, onFilterChange }: PurchaseF
   const [filters, setFilters] = useState({
     provider,
     deposito,
-    totalCostMin: "",
-    totalCostMax: "",
-    ivaCostMin: "",
-    ivaCostMax: "",
-    dateFrom: "",
-    dateTo: "",
   })
 
   useEffect(() => {
@@ -57,12 +44,6 @@ const PurchaseFilter = ({ provider, deposito, token, onFilterChange }: PurchaseF
     fetchData()
   }, [token])
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    const updated = { ...filters, [name]: value }
-    setFilters(updated)
-    onFilterChange(updated)
-  }
 
   const handleSelectChange = (name: string, value: string) => {
     const updated = { ...filters, [name]: value }
@@ -110,80 +91,6 @@ const PurchaseFilter = ({ provider, deposito, token, onFilterChange }: PurchaseF
             </div>
           </div>
 
-          <div className="flex flex-col w-full mb-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-xs text-gray-500">Costo total</label>
-                <div className="flex gap-2">
-                  <Input
-                    name="totalCostMin"
-                    type="number"
-                    placeholder="Desde"
-                    value={filters.totalCostMin}
-                    onChange={handleInputChange}
-                    className="w-full"
-                  />
-                  <Input
-                    name="totalCostMax"
-                    type="number"
-                    placeholder="Hasta"
-                    value={filters.totalCostMax}
-                    onChange={handleInputChange}
-                    className="w-full"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs text-gray-500">Costo IVA</label>
-                <div className="flex gap-2">
-                  <Input
-                    name="ivaCostMin"
-                    type="number"
-                    placeholder="Desde"
-                    value={filters.ivaCostMin}
-                    onChange={handleInputChange}
-                    className="w-full"
-                  />
-                  <Input
-                    name="ivaCostMax"
-                    type="number"
-                    placeholder="Hasta"
-                    value={filters.ivaCostMax}
-                    onChange={handleInputChange}
-                    className="w-full"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-col w-full">
-            <div className="flex gap-2 flex-wrap">
-              <div className="w-64">
-              <label className="text-xs text-gray-500">Fecha desde</label>
-                <Input
-                  name="dateFrom"
-                  type="date"
-                  placeholder="Fecha desde"
-                  value={filters.dateFrom}
-                  onChange={handleInputChange}
-                  className="w-full"
-                />
-              </div>
-              <div className="w-64">
-              <label className="text-xs text-gray-500">Fecha hasta</label>
-                <Input
-                  name="dateTo"
-                  type="date"
-                  placeholder="Fecha hasta"
-                  value={filters.dateTo}
-                  onChange={handleInputChange}
-                  className="w-full"
-                />
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
