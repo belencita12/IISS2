@@ -48,7 +48,6 @@ export default function PurchaseList({ token }: PurchaseListProps) {
   const handleApplyFilters = (newFilters: typeof filters) => {
     setFilters(newFilters);
     setCurrentPage(1); 
-    fetchPurchases(); 
   };
 
   const handlePreviousPage = () => {
