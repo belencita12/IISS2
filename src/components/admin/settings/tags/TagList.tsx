@@ -17,7 +17,6 @@ type TagListProps = {
 };
 
 const TagList = ({ token }: TagListProps) => {
-  const { delTag } = useDelTag({ token });
   const [isDelOpen, setIsDelOpen] = useState(false);
   const { selectedTag, isFormOpen, setSelectedTag, onCreate, onEdit, onClose } =
     useTagForm();
@@ -25,6 +24,11 @@ const TagList = ({ token }: TagListProps) => {
     useGetTags({
       token,
     });
+  const {
+    delTag,
+    error: delError,
+    isLoading: isDelLoading,
+  } = useDelTag({ token });
 
   if (error) toast("error", error);
 
@@ -43,13 +47,17 @@ const TagList = ({ token }: TagListProps) => {
   const handleDelete = async () => {
     if (!selectedTag) return;
     await delTag(selectedTag.id);
-    setData((prev) => {
-      if (!prev) return null;
-      return {
-        ...prev,
-        data: prev.data.filter((tag) => tag.id !== selectedTag.id),
-      };
-    });
+    if (delError) toast("error", delError);
+    else {
+      setData((prev) => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          data: prev.data.filter((tag) => tag.id !== selectedTag.id),
+        };
+      });
+      toast("success", "Etiqueta eliminada con éxito");
+    }
   };
 
   // Create / Update logic
@@ -70,7 +78,10 @@ const TagList = ({ token }: TagListProps) => {
     <>
       <div className="p-4 mx-auto">
         <div className="flex items-center gap-4 mb-4">
-          <SearchBar onSearch={handleSearch} placeholder="Buscar tag..." />
+          <SearchBar 
+            onSearch={handleSearch} 
+            placeholder="Buscar tag..." 
+          />
         </div>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-3xl font-bold">Tags</h2>
@@ -103,6 +114,7 @@ const TagList = ({ token }: TagListProps) => {
       />
       <ConfirmationModal
         isOpen={isDelOpen}
+        isLoading={isDelLoading}
         onClose={onCloseDelModal}
         onConfirm={handleDelete}
         title="Eliminar"

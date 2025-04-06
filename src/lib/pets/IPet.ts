@@ -25,8 +25,9 @@ export interface Race {
 }
 
 export interface Species {
-  id: number;
-  name: string;
+    id: number;
+    name: string;
+    deletedAt?: string | null;
 }
 
 export interface SpeciesQueryParams extends BaseQueryParams {

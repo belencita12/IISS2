@@ -168,7 +168,6 @@ export default function VaccineList({ token }: VaccineListProps) {
       <SearchBar
         onSearch={handleSearch}
         placeholder="Buscar por nombre, fabricante o especie"
-        manualSearch={false} 
         debounceDelay={400}
       />
       <div className="flex justify-between items-center mb-4">
