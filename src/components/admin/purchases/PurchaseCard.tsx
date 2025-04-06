@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
+"use client";
+
 import { PurchaseData } from "@/lib/purchase/IPurchase";
-import { Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface PurchaseCardProps {
@@ -17,23 +17,21 @@ const PurchaseCard = ({ purchase }: PurchaseCardProps) => {
   };
 
   return (
-    <div className="border p-4 rounded-lg flex justify-between items-center bg-white shadow hover:shadow-md transition-shadow">
+    <div
+      onClick={handleViewDetail}
+      className="cursor-pointer border p-4 rounded-lg flex justify-between items-start bg-white shadow hover:-translate-y-1 transition-transform duration-300 hover:shadow-md"
+    >
       <div>
         <h3 className="font-bold text-lg">{purchase.provider?.businessName}</h3>
         <p>Costo Total: {purchase.total.toLocaleString()} Gs.</p>
         <p>Costo IVA Total: {purchase.ivaTotal.toLocaleString()} Gs.</p>
-        <p>Deposito: {purchase.stock?.name}</p>
+        <p>Depósito: {purchase.stock?.name}</p>
       </div>
 
-      <div className="flex items-center gap-4">
-        <p className="text-gray-500">{new Date(purchase.date || "").toLocaleDateString()}</p>
-          <Button
-            className="bg-transparent hover:bg-gray-100"
-            onClick={handleViewDetail}
-            title="Ver detalles"
-          >
-            <Eye className="w-5 h-5 text-gray-700" />
-          </Button>
+      <div className="flex flex-col justify-between items-end h-full">
+        <p className="text-black text-lg font-bold">
+          {new Date(purchase.date || "").toLocaleDateString()}
+        </p>
       </div>
     </div>
   );

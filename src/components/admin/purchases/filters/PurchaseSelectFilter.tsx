@@ -49,9 +49,8 @@ export default function PurchaseSelectFilter({
       }, [token]);
 
 return (
-    <div className="mb-6 space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="space-y-2">
           <Label>Proveedor</Label>
           <Select
             value={filters.providerId?.toString() ?? "ALL"}
@@ -74,7 +73,7 @@ return (
           </Select>
         </div>
 
-        <div>
+        <div className="space-y-2">
           <Label>Depósito</Label>
           <Select
             value={filters.stockId?.toString() ?? "ALL"}
@@ -96,6 +95,5 @@ return (
           </Select>
         </div>
       </div>
-    </div>
   );
 }

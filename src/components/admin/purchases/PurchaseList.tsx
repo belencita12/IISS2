@@ -20,7 +20,7 @@ export default function PurchaseList({ token }: Props) {
   const purchases = data?.data || [];
 
   return (
-    <div className="max-w-6xl mx-auto p-4 space-y-2">
+    <div className="max-w-6xl mx-auto p-4 space-y-6">
       <PurchaseSelectFilter
         token={token}
         filters={query}
