@@ -27,7 +27,6 @@ describe('Registro de Cliente', () => {
         });
         cy.visit('/dashboard/clients/register');
         cy.url().should('include', '/dashboard/clients/register');
-        cy.wait(2000);
     });
 
     it('Debe registrar un cliente exitosamente con un email único', () => {
@@ -43,6 +42,7 @@ describe('Registro de Cliente', () => {
         cy.get('input[placeholder="Ingrese la dirrección del cliente"]').type(uniqueAdress);
         cy.get('input[placeholder="Ingrese el número de teléfono"]').clear().type(uniquePhone);
         cy.get('input[placeholder="Ingrese el RUC"]').clear().type(uniqueRuc);
+        cy.get('button').contains('Agregar cliente').click();
         cy.wait(2000);
         cy.get('section[aria-label="Notifications alt+T"]')
             .should('be.visible') 

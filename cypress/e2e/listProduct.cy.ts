@@ -47,21 +47,28 @@ describe('Página de Lista de Productos', () => {
 
     cy.visit('/dashboard');
 
-    // cy.wait('@getProducts');
     cy.contains('p', "Productos").click();
+  
+    cy.get('button[role="combobox"]', { timeout: 10000 }).should('be.visible').click();
 
-    cy.get('select[title="type"]').select('PRODUCT');
-    cy.get('h1').should('contain', 'Productos');
-    // Verifica que haya al menos un producto listado
+    cy.contains('span', 'Producto').click();
+  
+    cy.get('h1').should('contain', 'PRODUCT');
     cy.get('div[class*="bg-card"]').should('have.length.at.least', 1);
     cy.wait(3000);
-    cy.get('button:has("svg"):visible').first().click();
+    cy.get('button:has(svg):visible').first().click();
+  
+    // Cambiar a "Vacuna"
+    cy.get('button[role="combobox"]', { timeout: 10000 }).should('be.visible').click();
 
-
-    cy.get('select[title="type"]').select('VACCINE');
+    cy.contains('span', 'Vacuna').click();
+  
     cy.get('div[class*="bg-card"]').should('have.length.at.least', 1);
     cy.wait(3000);
-    cy.get('button:has("svg"):visible').first().click();
+    cy.get('button:has(svg):visible').first().click();
+
+    
+ 
 
   });
 

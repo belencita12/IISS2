@@ -67,7 +67,7 @@ describe("Listado de Mascotas", () => {
     cy.visit("/user-profile");
     cy.get("h2.text-xl.font-bold.mt-2", TIMEOUT).should(
       "contain.text",
-      testUser.fullName
+      testUser.firstName
     );
     cy.contains("Tus Mascotas Registradas", TIMEOUT).should("be.visible");
     cy.url(TIMEOUT).should("include", "/user-profile");
@@ -79,7 +79,7 @@ describe("Listado de Mascotas", () => {
     cy.get(".grid", TIMEOUT).should("exist").and("be.visible");
     cy.wait(5000);
 
-    cy.contains("Lista vacía", TIMEOUT).should("be.visible");
+    cy.contains("No hay mascotas", TIMEOUT).should("be.visible");
   });
 
   it("Cargar mascotas para el nuevo usuario", () => {
@@ -104,7 +104,7 @@ describe("Listado de Mascotas", () => {
 
     cy.get("h2.text-xl.font-bold.mt-2", TIMEOUT).should(
       "contain.text",
-      testUser.fullName
+      testUser.firstName
     );
     cy.contains("Tus Mascotas Registradas", TIMEOUT).should("be.visible");
     cy.url(TIMEOUT).should("include", "/user-profile");
