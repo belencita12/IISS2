@@ -19,3 +19,4 @@ export const STOCK_DETAILS_API = `${BASE_API_URL}/stock-details`;
 export const PROVIDER_API = `${BASE_API_URL}/provider`;
 export const TAG_API = `${BASE_API_URL}/tags`;
 export const PURCHASE_API = `${BASE_API_URL}/purchase`;
+export const PURCHASE_DETAIL_API = `${BASE_API_URL}/purchase-detail`;

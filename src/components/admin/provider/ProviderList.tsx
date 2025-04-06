@@ -124,7 +124,6 @@ export default function ProviderList({ token }: { token: string }) {
       <SearchBar
         onSearch={handleSearch}
         placeholder="Buscar proveedor por su RUC o razón social"
-        manualSearch={true}
       />
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-4 mt-6">
           <h2 className="text-3xl font-bold">Lista de Proveedores</h2>

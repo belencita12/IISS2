@@ -57,7 +57,6 @@ export default function ProductFilters({
             setFilters((prev) => ({ ...prev, code: query }));
           }}
           defaultQuery={searchInput}
-          manualSearch={false}
           debounceDelay={400}
           placeholder="Buscar por código del producto"
         />
