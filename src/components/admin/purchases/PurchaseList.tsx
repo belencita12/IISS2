@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import PurchaseCard from "./PurchaseCard";
 import GenericPagination from "@/components/global/GenericPagination";
 import PurchaseSelectFilter from "./filters/PurchaseSelectFilter";
+import PurchaseNumericFilter from "./filters/PurchaseNumericFilter";
 
 interface Props {
   token: string;
@@ -22,6 +23,11 @@ export default function PurchaseList({ token }: Props) {
     <div className="max-w-6xl mx-auto p-4 space-y-2">
       <PurchaseSelectFilter
         token={token}
+        filters={query}
+        setFilters={setQuery}
+      />
+
+      <PurchaseNumericFilter
         filters={query}
         setFilters={setQuery}
       />
