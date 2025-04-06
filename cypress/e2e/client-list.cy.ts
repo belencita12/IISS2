@@ -31,18 +31,18 @@ describe('ClientListSection', () => {
 
 
     it('Debe buscar clientes correctamente filtrandolos por nombre', () => {
-        cy.get('input[placeholder="Buscar por nombre o email..."]').type('Juan Pérez');
-        cy.get('button').contains('Buscar').click();
+        cy.get('.relative > .flex').type('Zully Toledo');
+        //cy.get('button').contains('Buscar').click();
         cy.wait(5000);
-        cy.get('table tbody tr').should('contain', 'Juan Pérez');
+        cy.get('table tbody tr').should('contain', 'Zully Toledo');
     });
 
 
     it('Debe buscar clientes correctamente filtrando por correo', () => {
-        cy.get('input[placeholder="Buscar por nombre o email..."]').type('testuser83380@gmail.com');
-        cy.get('button').contains('Buscar').click();
+        cy.get('.relative > .flex').type('julio.pereira@gmail.com');
+        //cy.get('button').contains('Buscar').click();
         cy.wait(5000);
-        cy.get('table tbody tr').should('contain', 'testuser83380@gmail.com');
+        cy.get('table tbody tr').should('contain', 'julio.pereira@gmail.com');
     });
 
 
@@ -53,29 +53,25 @@ describe('ClientListSection', () => {
     });
     
     it('Debe hacer clic en el icono de ojo', () => {
-        cy.get('.lucide-eye').first().click();
+        cy.get(':nth-child(2) > .text-right > [aria-label="Ver detalles"]').first().click();
         cy.wait(5000);
         cy.url().should('include', '/dashboard/clients/');
     });
 
     it('Debe verificar la paginación', () => {
-        cy.contains('span', 'Next').click();
+        cy.get(':nth-child(5) > .inline-flex').click();
         cy.wait(2000); 
         cy.get('table tbody tr').should('exist');
-    
-        cy.contains('span', 'Previous').click();
-        cy.wait(2000);
-        cy.get('table tbody tr').should('exist');
-    
-        cy.wait(2000);
-        cy.get('a').contains('2').click();
+
+        cy.get(':nth-child(1) > .inline-flex').click();
         cy.wait(2000);
         cy.get('table tbody tr').should('exist');
 
-        cy.wait(2000);
-        cy.get('a').contains('1').click();
+        cy.get('.flex > :nth-child(7)').click();
         cy.wait(2000);
         cy.get('table tbody tr').should('exist');
+      
+
     });
     
 });

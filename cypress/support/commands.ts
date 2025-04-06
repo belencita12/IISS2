@@ -27,7 +27,8 @@
 //
 
 type BaseUser = {
-  fullName: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   address: string;
@@ -35,17 +36,42 @@ type BaseUser = {
   ruc: string;
 };
 
+Cypress.Commands.add("register", (user: BaseUser): void => {
+  const RandomGeneratedString = Date.now().toString();
+
+  // Asignar los valores a los campos si no están vacíos
+  if (user.firstName && user.firstName !== "") {
+    cy.get("input[name='name']").type(user.firstName);
+  }
+  if (user.lastName && user.lastName !== "") {
+    cy.get("input[name='lastname']").type(user.lastName);
+  }
+  if (user.email.length > 0) cy.get("input[name='email']").type(user.email);
+  if (user.password.length > 0) cy.get("input[name='password']").type(user.password);
+  if (user.password.length > 0)
+    cy.get("input[name='confirmPassword']").type(user.password);
+  if (user.address.length > 0) cy.get("input[name='address']").type(user.address);
+  if (user.ruc.length > 0) cy.get("input[name='ruc']").type(user.ruc);
+  if (user.phoneNumber.length > 0)
+    cy.get("input[name='phoneNumber']").type(user.phoneNumber);
+  
+  // Hacer clic en el botón de registro
+  cy.get("button").contains("Registrarme").click();
+});
+
 Cypress.Commands.add("generateUser", (): Cypress.Chainable<BaseUser> => {
-  const DateString =Date.now().toString();
-  const fullName = `Test User${DateString}`;
-  const email = `${fullName}@gmail.com`;
+  const RandomGeneratedString = Math.random().toString().substring(0, 30).replace('0.', '');
+  const firstName = `Test${RandomGeneratedString.substring(0, 2)}`;
+  const lastName = `User${RandomGeneratedString.substring(2, 5)}`;
+  const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}@gmail.com`;
   const password = "12345678";
-  const address = `calle ${DateString}`
-  const phoneNumber = `+595985${DateString.substring(0, 6)}`;
-  const ruc = `${DateString.substring(0, 6)}-${DateString.substring(7, 8)}`
+  const address = `calle ${RandomGeneratedString.substring(4, 10)}`
+  const phoneNumber = `+595985${RandomGeneratedString.substring(4, 10)}`;
+  const ruc = `${RandomGeneratedString.substring(0, 8)}-${Number(RandomGeneratedString.substring(7, 8) )> 0? RandomGeneratedString.substring(7, 8) : '1' }`
 
   return cy.wrap({
-    fullName,
+    firstName,
+    lastName,
     email,
     password,
     address,
@@ -55,11 +81,12 @@ Cypress.Commands.add("generateUser", (): Cypress.Chainable<BaseUser> => {
 });
 
 Cypress.Commands.add("register", (user: BaseUser): void => {
-  const names = user.fullName.split(" ");
+  
   cy.visit("/register");
-  if (names[0] && names[0] !== "") cy.get("input[name='name']").type(names[0]);
-  if (names[1] && names[1] !== "")
-    cy.get("input[name='lastname']").type(names[1]);
+  if (user.firstName && user.firstName !== "")
+    cy.get("input[name='name']").type(user.firstName);
+  if (user.lastName && user.lastName !== "")
+    cy.get("input[name='lastname']").type(user.lastName);
   if (user.email.length > 0) cy.get("input[name='email']").type(user.email);
   if (user.password.length > 0)
     cy.get("input[name='password']").type(user.password);

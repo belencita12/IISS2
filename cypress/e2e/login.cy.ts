@@ -28,7 +28,7 @@ describe("Inicio de sesión", () => {
     cy.contains("Iniciar Sesión").click();
     cy.get("body").click();
     cy.contains(
-      "Por favor, introduce un email válido. Ej: juanperez@gmail.com"
+      "Ingrese un email válido. Ej: juanperez@gmail.com"
     ).should("be.visible");
   });
 
@@ -36,7 +36,7 @@ describe("Inicio de sesión", () => {
     cy.get("input[name='email']").type("test@gmail.com", DELAY);
     cy.contains("Iniciar Sesión").click();
     cy.get("body").click();
-    cy.contains("Por favor, introduce una contraseña válida").should(
+    cy.contains("Ingrese una contraseña válida").should(
       "be.visible"
     );
   });
@@ -46,7 +46,7 @@ describe("Inicio de sesión", () => {
     cy.contains("Iniciar Sesión").click();
     cy.get("body").click();
     cy.contains(
-      "Por favor, introduce un email válido. Ej: juanperez@gmail.com"
+      "Ingrese un email válido. Ej: juanperez@gmail.com"
     ).should("be.visible");
     cy.get("input[name='password']").type("123", DELAY);
   });
@@ -55,9 +55,8 @@ describe("Inicio de sesión", () => {
     cy.get("input[name='email']").type("ian@gmail.com", DELAY);
     cy.get("input[name='password']").type("ian123", DELAY);
     cy.get("form").submit();
-    cy.contains("Credenciales incorrectas. Inténtalo de nuevo.").should(
-      "be.visible"
-    );
+    cy.contains("Credenciales incorrectas. Inténtalo de nuevo."
+    ).should("be.visible");
     cy.wait(2000);
   });
 

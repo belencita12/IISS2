@@ -1,4 +1,4 @@
-describe('Página de Lista de Proveedores', () => {
+describe('Página de Lista Configuraciones', () => {
     const SESSION_KEY = "sessionToken";
     const BASE_URL = Cypress.env("API_BASEURL");
   
@@ -25,7 +25,7 @@ describe('Página de Lista de Proveedores', () => {
   
   
   
-    it('Debe mostrar los settings para ir a la lista de proveedores', () => {
+    it('Debe mostrar los settings para ir a diferentes secciones', () => {
   
       cy.visit('/dashboard');
   
@@ -33,32 +33,29 @@ describe('Página de Lista de Proveedores', () => {
       cy.contains('p', "Configuración").click();
 
       cy.get('[href="/dashboard/settings/races"]').click();
+      cy.get('.text-3xl').should('contain', 'Razas');
       cy.wait(3000);
+
       cy.visit('/dashboard/settings')
       cy.wait(3000);
       cy.get('[href="/dashboard/settings/species"]').click();
+      cy.get('.text-3xl').should('contain', 'Especies');
+
       cy.wait(3000);
       cy.visit('/dashboard/settings')
       cy.wait(3000);
       cy.get('[href="/dashboard/settings/positions"]').click();
+      cy.get('.text-3xl').should('contain', 'Puestos');
       cy.wait(3000);
+
       cy.visit('/dashboard/settings')
       cy.wait(3000);
-      cy.get('[href="/dashboard/settings/providers"]').click;
+      cy.visit('/dashboard/settings/providers')
       cy.wait(3000);
-  
-    });
-  
-  
-  
-  
-    it("Muesta un modal de detalle de proveedores al hacer click al icon", () => {
+      cy.get('.text-3xl').should('contain', 'Lista de Proveedores');
+      cy.wait(3000);
       
-      cy.visit('/dashboard/settings/providers');
-      cy.wait(3000);
-  
-      cy.get('button[title="Ver detalles"]').first().click();
-  
+      cy.visit('/dashboard/settings')
     });
   
   

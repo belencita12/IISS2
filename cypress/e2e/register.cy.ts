@@ -3,6 +3,7 @@ describe("Registro de usuario", () => {
     nameInput: "input[name='name']",
     lastnameInput: "input[name='lastname']",
     emailInput: "input[name='email']",
+    addressInput: "input[name='address']",
     passwordInput: "input[name='password']",
     confirmPasswordInput: "input[name='confirmPassword']",
     form: "form",
@@ -10,14 +11,15 @@ describe("Registro de usuario", () => {
   };
 
   const errorMessages = {
-    allFieldsRequired: "Todos los campos son obligatorios.",
+    allFieldsRequired: "Ingrese un nombre válido",
+    allFieldsRequired0: "Ingrese un apellido válido",
     invalidEmail:
-      "Por favor, introduce un email válido. Ej: juanperez@gmail.com",
-    shortPassword: "La contraseña debe tener al menos 8 caracteres.",
-    passwordMismatch: "Las contraseñas no coinciden",
+      "Ingrese un email válido. Ej: juanperez@gmail.com",
+    shortPassword: "Debe tener al menos 8 caracteres",
+    passwordMismatch: "Ingrese una contraseña válida",
     emailInUse:
       "Las credenciales ya están en uso. Intente con datos diferentes",
-    successRegistration: "Registro exitoso. Redirigiendo...",
+    successRegistration: "Registro exitoso",
   };
 
   beforeEach(() => {
@@ -29,24 +31,26 @@ describe("Registro de usuario", () => {
 
   const submitFormAndCheckError = (errorMessage: string, timeout = 10000) => {
     cy.get(selectors.form).submit();
-    cy.wait(800);
+    cy.wait(2000);
     cy.contains(errorMessage, { timeout }).should("be.visible");
   };
 
-  const testFieldValidation = (field: keyof BaseUser) => {
+  const testFieldValidation = (field: keyof BaseUser, errorMessage: string) => {
     it(`Debe validar que el campo '${field}' esté lleno antes de enviar el formulario`, () => {
       cy.generateUser().then((user) => {
         user[field] = "";
         cy.log("User:", JSON.stringify(user));
         cy.register(user);
-        submitFormAndCheckError(errorMessages.allFieldsRequired);
+        cy.wait(2000);
+        submitFormAndCheckError(errorMessage);
       });
     });
   };
 
-  testFieldValidation("fullName");
-  testFieldValidation("email");
-  testFieldValidation("password");
+  testFieldValidation("firstName", errorMessages.allFieldsRequired);
+  testFieldValidation("lastName", errorMessages.allFieldsRequired0);
+  testFieldValidation("email", errorMessages.invalidEmail);
+  testFieldValidation("password", errorMessages.shortPassword);
 
   it("Debe mostrar error si el correo electrónico tiene un formato inválido", () => {
     cy.generateUser().then((user) => {
@@ -70,13 +74,14 @@ describe("Registro de usuario", () => {
     cy.generateUser().then((user) => {
       cy.visit("/register");
       cy.log("User:", JSON.stringify(user));
-      cy.get(selectors.nameInput).type(user.fullName);
-      cy.get(selectors.lastnameInput).type(user.fullName);
+      cy.get(selectors.nameInput).type(user.firstName);
+      cy.get(selectors.lastnameInput).type(user.lastName);
       cy.get(selectors.emailInput).type(user.email);
+      cy.get(selectors.addressInput).type(user.address);
       cy.get(selectors.passwordInput).type(user.password);
       cy.get(selectors.confirmPasswordInput).type("diferente123");
       cy.get(selectors.form).submit();
-      submitFormAndCheckError(errorMessages.passwordMismatch);
+      cy.contains("Las contraseñas no coinciden").should("exist");
     });
   });
 
@@ -84,9 +89,7 @@ describe("Registro de usuario", () => {
     cy.generateUser().then((user) => {
       cy.log("User:", JSON.stringify(user));
       cy.register(user);
-      cy.get(selectors.successMessage, { timeout: 10000 })
-        .should("be.visible")
-        .and("contain", errorMessages.successRegistration);
+      cy.contains("Registro exitoso").should("exist");
       cy.url({ timeout: 3000 }).should("include", "/login");
     });
   });

@@ -32,10 +32,9 @@ describe('Lista de empleados', () => {
 
 
     it('Debe buscar empleados correctamente filtrandolos por nombre', () => {
-        cy.get('input[placeholder="Buscar un empleado..."]').type('Nick Jonson');
-        cy.get('button').contains('Buscar').click();
+        cy.get('.relative > .flex').type('Richard Valgaba');
         cy.wait(5000);
-        cy.get('table tbody tr').should('contain', 'Nick Jonson');
+        cy.get('table tbody tr').should('contain', 'Richard Valgaba');
     });
 
     it('Debe abrir la página de registro de empleados', () => {
@@ -56,27 +55,7 @@ describe('Lista de empleados', () => {
               cy.log('No existe la paginacion');
             }
           });
-/*         cy.get('td').its('length').then((length) => {
-            if (length > 10) {
-                cy.contains('span', 'Next').click();
-                cy.wait(5000);
-                cy.get('table tbody tr').should('exist');
 
-                cy.contains('span', 'Previous').click();
-                cy.wait(5000);
-                cy.get('table tbody tr').should('exist');
-
-                cy.wait(5000);
-                cy.get('a').contains('2').click();
-                cy.wait(5000);
-                cy.get('table tbody tr').should('exist');
-
-                cy.wait(5000);
-                cy.get('a').contains('1').click();
-                cy.wait(5000);
-                cy.get('table tbody tr').should('exist');
-            }
-        }); */
     });
 
     
