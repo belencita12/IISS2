@@ -54,8 +54,7 @@ export default function PurchaseForm({ token }: { token: string }) {
       ...data,
       date: new Date(data.date).toISOString(),
     };
-    const success= await submitPurchase(formattedData);
-    success ? router.push("/dashboard/purchases") : router.refresh();
+    await submitPurchase(formattedData);
   };
   return (
     <div className="flex flex-col justify-center items-center p-6">

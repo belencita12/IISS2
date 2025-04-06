@@ -81,7 +81,6 @@ export const usePurchase = (token: string) => {
       await registerPurchase(purchasesData, token);
       toast("success", "Compra registrada con éxito!");
       reset();
-      return true;
     } catch (error) {
       toast("error", error instanceof Error ? error.message : "Error al registrar compra");
     }
