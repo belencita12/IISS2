@@ -11,8 +11,8 @@ export const useInitialData = (token: string) => {
   useEffect(() => {
     const fetchData = async () => {
       const [providerRes, stockRes] = await Promise.all([
-        getProviders(token, { page: 1, size: 10 }),
-        getStocks({ page: 1, size: 10 }, token),
+        getProviders(token, { page: 1}),
+        getStocks({ page: 1 }, token),
       ]);
       setProviders(providerRes.data);
       setStocks(stockRes.data);
