@@ -41,8 +41,12 @@ export default function ProviderForm({ token, initialData }: Props) {
       }
       router.push("/dashboard/settings/providers");
     } catch (err) {
-      console.error(err);
-      toast("error", "Ocurrió un error al guardar el proveedor");
+      if (err instanceof Error) {
+        toast("error", err.message);
+      }
+      else{
+        toast("error", "Ocurrió un error al guardar el proveedor");
+      }
     } finally {
       setIsSubmitting(false);
     }

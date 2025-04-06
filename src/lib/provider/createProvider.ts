@@ -12,7 +12,9 @@ export async function createProvider(token: string, data: Provider) {
   });
 
   if (!response.ok) {
-    throw new Error("Error al crear proveedor");
+    const data = await response.json();
+    const message = data.message || "Error al crear proveedor";
+    throw new Error(message);
   }
 
   return await response.json();
