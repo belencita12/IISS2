@@ -67,7 +67,6 @@ export default function ProductSearch({
     <div className="w-full">
       <SearchBar
         onSearch={onSearch}
-        manualSearch={false}
         debounceDelay={400}
         placeholder="Buscar por nombre del producto..."
       />
