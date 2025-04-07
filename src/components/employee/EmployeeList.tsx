@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, Pencil, Trash } from "lucide-react";
 import GenericTable, { Column, TableAction, PaginationInfo } from "@/components/global/GenericTable";
@@ -10,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { EmployeeData } from "@/lib/employee/IEmployee";
 import { deleteEmployeeByID } from "@/lib/employee/deleteEmployeeByID";
 import { ConfirmationModal } from "../global/Confirmation-modal";
-import SearchBar from "../admin/client/SearchBar";
+import SearchBar from "../global/SearchBar";
 import EmployeeTableSkeleton from "./skeleton/EmployeeTableSkeleton";
 
 interface EmployeesTableProps {
@@ -21,6 +20,7 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
   const router = useRouter();
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeData | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [query, setQuery] = useState("");
   const [data, setData] = useState<{
     employees: EmployeeData[];
     pagination: PaginationInfo;
@@ -57,10 +57,19 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
   );
 
   useEffect(() => {
-    if (token) loadEmployees(data.pagination.currentPage);
-  }, [token, data.pagination.currentPage, loadEmployees]);
+    if (token) {
+      loadEmployees(data.pagination.currentPage, query);
+    }
+  }, [token, data.pagination.currentPage, query, loadEmployees]);
 
-  const handleSearch = (query: string) => loadEmployees(1, query);
+  const handleSearch = (newQuery: string) => {
+    setQuery(newQuery);
+    setData((prev) => ({
+      ...prev,
+      pagination: { ...prev.pagination, currentPage: 1 },
+    }));
+  };
+  
   const handlePageChange = (page: number) =>
     setData((prev) => ({
       ...prev,

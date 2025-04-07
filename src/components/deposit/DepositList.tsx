@@ -5,7 +5,7 @@ import DepositCard from "./DepositCard";
 import { LoaderCircleIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { StockForm } from "../stock/register/StockForm";
-import SearchBar from "../admin/client/SearchBar";
+import SearchBar from "@/components/global/SearchBar";
 import { toast } from "@/lib/toast";
 import { getStocks } from "@/lib/stock/getStock";
 import { StockData } from "@/lib/stock/IStock";
