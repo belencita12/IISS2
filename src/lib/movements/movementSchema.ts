@@ -10,12 +10,8 @@ export const movementSchema: z.ZodType<Movement> = z.object({
         }),
 
     description: z.string().optional(),
-    dateMovement: z
-        .string()
-        .min(1, "Fecha es obligatoria")
-        .refine((date) => !isNaN(Date.parse(date)), {
-            message: "Fecha inválida",
-        }),
+
+    dateMovement: z.string().min(1, "Fecha es obligatoria"),
 
     originStockId: z
         .number({ required_error: "Depósito de origen es obligatorio" })   
@@ -30,8 +26,6 @@ export const movementSchema: z.ZodType<Movement> = z.object({
         .number({ required_error: "Responsable es obligatorio" })
         .min(1, "Responsable es obligatorio"),
 
-
-  date: z.string().min(1, "Fecha es obligatoria"),
 
   details: z
     .array(

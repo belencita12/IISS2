@@ -77,10 +77,15 @@ export default function MovementForm({ token }: { token: string }) {
   };
 
   const onSubmit = async (data: Movement) => {
+    if (!data.dateMovement) {
+      console.error("Fecha no seleccionada");
+      return;
+    }
       const formattedData = {
         ...data,
-        date: new Date(data.dateMovement).toISOString(),
+        dateMovement: new Date(data.dateMovement).toISOString(),
       };
+      console.log("Formatted Data:", formattedData);
       await submitMovement(formattedData);
     };
   return (

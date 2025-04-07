@@ -77,7 +77,7 @@ export const useRegisterMovement = (token: string) => {
         originStockId: data.originStockId,
         destinationStockId: data.destinationStockId,
         managerId: data.managerId,
-        dateMovement: data.dateMovement, // <-- Ya es string tipo "YYYY-MM-DD"
+        dateMovement: data.dateMovement,
         details: data.details.map((d) => ({
           productId: d.productId,
           quantity: d.quantity,
@@ -85,9 +85,10 @@ export const useRegisterMovement = (token: string) => {
       };
 
       await registerMovement(movementData, token);
+      console.log("Enviando datos:", movementData);
       toast("success", "Movimiento registrado con éxito!");
       reset();
-    } catch (error) {
+    } catch (error:unknown) {
       toast(
         "error",
         error instanceof Error ? error.message : "Error al registrar movimiento"
