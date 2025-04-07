@@ -129,7 +129,10 @@ export default function RaceList({ token }: RaceListProps) {
     return (
         <div className="p-4 mx-auto">
             <div className="flex items-center gap-4 mb-4">
-                <SearchBar onSearch={handleSearch} placeholder="Buscar raza..." manualSearch={true} />
+                <SearchBar 
+                    onSearch={handleSearch} 
+                    placeholder="Buscar raza..."  
+                />
                 <div className="flex items-center gap-2">
                     <label className="font-semibold">Filtrar por especie:</label>
                     <select className="border p-2" onChange={handleSpeciesChange}>

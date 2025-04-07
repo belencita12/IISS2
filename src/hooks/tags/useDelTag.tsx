@@ -7,17 +7,17 @@ export type UseDelTags = {
 };
 
 export const useDelTag = ({ token }: UseDelTags) => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const delTag = async (id: number) => {
     try {
+      setIsLoading(true);
       await deleteTag(token, id);
       toast("success", "Etiqueta eliminada con éxito");
     } catch (error) {
       if (error instanceof Error) setError(error.message);
-      else setError("Error al eliminar el tag");
-      toast("error", "Error al eliminar el tags");
+      else setError("Error al eliminar la etiqueta");
     } finally {
       setIsLoading(false);
     }

@@ -3,11 +3,22 @@
 import { Check, ChevronsUpDown, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import { useGetTags } from "@/hooks/tags/useGetTags";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface TagFilterProps {
   title?: string;
@@ -25,7 +36,13 @@ export function TagFilter({
   token,
 }: TagFilterProps) {
   const [open, setOpen] = useState(false);
-  const { data, isLoading } = useGetTags({ token });
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const { data, isLoading, setQuery } = useGetTags({ token });
+
+  useEffect(() => {
+    setQuery((prev) => ({ ...prev, name: searchQuery }));
+  }, [searchQuery, setQuery]);
 
   const options =
     data?.data?.map((tag) => ({
@@ -43,6 +60,11 @@ export function TagFilter({
 
   const clearTags = () => {
     onChange([]);
+    setSearchQuery("");
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
   };
 
   return (
@@ -68,6 +90,8 @@ export function TagFilter({
               <CommandInput
                 placeholder="Buscar"
                 className="border-0 focus:ring-0"
+                onValueChange={handleSearchChange}
+                value={searchQuery}
               />
             </div>
             {isLoading ? (
