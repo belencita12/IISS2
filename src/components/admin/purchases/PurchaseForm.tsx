@@ -59,6 +59,7 @@ export default function PurchaseForm({ token }: { token: string }) {
   return (
     <div className="flex flex-col justify-center items-center p-6">
       <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-4xl p-6">
+      <fieldset disabled={isSubmitting}>
         <h2 className="text-2xl font-bold mb-6">Registrar Compra</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="flex flex-col space-y-1">
@@ -68,8 +69,8 @@ export default function PurchaseForm({ token }: { token: string }) {
               control={control}
               render={({ field }) => (
                 <Select
-                  onValueChange={(value) => field.onChange(Number(value))}
-                  value={field.value?.toString()}
+                onValueChange={(value) => field.onChange(Number(value))}
+                value={field.value ? field.value.toString() : ""}
                 >
                   <SelectTrigger
                     className={`w-full ${
@@ -101,8 +102,8 @@ export default function PurchaseForm({ token }: { token: string }) {
               control={control}
               render={({ field }) => (
                 <Select
-                  onValueChange={(value) => field.onChange(Number(value))}
-                  value={field.value?.toString()}
+                onValueChange={(value) => field.onChange(Number(value))}
+                value={field.value ? field.value.toString() : ""}
                 >
                   <SelectTrigger
                     className={`w-full ${
@@ -129,6 +130,8 @@ export default function PurchaseForm({ token }: { token: string }) {
             <label className="text-sm font-medium">Fecha</label>
             <Input
               type="date"
+              min={new Date().toISOString().split("T")[0]}
+              max={new Date().toISOString().split("T")[0]}
               className={`w-full ${errors.date ? "border-red-500" : ""}`}
               {...register("date")}
             />
@@ -160,6 +163,7 @@ export default function PurchaseForm({ token }: { token: string }) {
         <Button variant="outline" type="button" onClick={() => router.push("/dashboard/purchases")}>Cancelar</Button>
         <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Registrando..." : "Registrar Compra"}</Button>
         </div>
+        </fieldset>
       </form>
     </div>
   );
