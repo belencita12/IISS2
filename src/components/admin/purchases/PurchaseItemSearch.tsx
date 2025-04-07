@@ -2,9 +2,10 @@
 
 import { Input } from "@/components/ui/input";
 import SearchBar from "@/components/global/SearchBar";
-import GenericTable, { Column, TableAction } from "@/components/global/GenericTable";
+import GenericTable, { Column } from "@/components/global/GenericTable";
 import { Product } from "@/lib/products/IProducts";
 import PurchaseSearchSkeleton from "./skeleton/PurchaseSearchSkeleton";
+import { Button } from "@/components/ui/button";
 
 type ProductSearchProps = {
   searchProducts: Product[];
@@ -46,20 +47,22 @@ export default function ProductSearch({
         />
       ),
     },
-  ];
-
-  const actions: TableAction<Product>[] = [
     {
-      label: "Agregar",
-      icon: (
-        <div className="px-4 py-2 border border-black bg-white text-black rounded-md">
+      header: "",
+      accessor: (product) => (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            onAddProduct(product, getQuantity(product.id));
+            resetSearch();
+          }}
+          className="border border-black px-4 py-2 bg-white text-black"
+          >
           Agregar
-        </div>
+        </Button>
       ),
-      onClick: (product) => {
-        onAddProduct(product, getQuantity(product.id));
-        resetSearch();
-      },
     },
   ];
 
@@ -76,8 +79,6 @@ export default function ProductSearch({
         <GenericTable<Product>
           data={searchProducts}
           columns={columns}
-          actions={actions}
-          actionsTitle=""
           isLoading={false}
           skeleton={<PurchaseSearchSkeleton />}
         />
