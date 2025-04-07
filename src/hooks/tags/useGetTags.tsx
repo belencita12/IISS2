@@ -3,18 +3,23 @@ import { useQuery } from "../useQuery";
 import { PaginationResponse } from "@/lib/types";
 import { useEffect, useState } from "react";
 import { getAllTags } from "@/lib/tags/service";
+import useDebounce from "@/hooks/useDebounce";
 
 export type UseGetTags = {
   init?: TagQueryParams;
   token: string;
+  debounceDelay?: number;
 };
 
-export const useGetTags = ({ init, token }: UseGetTags) => {
+export const useGetTags = ({ init, token, debounceDelay = 500 }: UseGetTags) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<PaginationResponse<Tag> | null>(null);
 
   const { query, setQuery, toQueryString } = useQuery(init);
+  
+  // Aplicamos el debounce al query para evitar múltiples llamadas
+  const debouncedQuery = useDebounce(query, debounceDelay);
 
   useEffect(() => {
     setIsLoading(true);
@@ -31,7 +36,7 @@ export const useGetTags = ({ init, token }: UseGetTags) => {
       }
     };
     fetchTags();
-  }, [query, toQueryString, token]);
+  }, [debouncedQuery, token]);
 
   const onPageChange = (page: number) => {
     setQuery((prev) => ({ ...prev, page }));

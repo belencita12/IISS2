@@ -3,8 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Species } from "@/lib/pets/IPet";
-import { getSpecies } from "@/lib/pets/getRacesAndSpecies";
-import {deleteSpeciesById} from "@/lib/pets/deleteSpecieById";
+import { getAllSpecies } from "@/lib/pets/getRacesAndSpecies";
+import {deleteSpeciesById} from "@/lib/pets/species/deleteSpecieById";
 import SearchBar from "@/components/global/SearchBar";
 import { Pencil, Trash } from "lucide-react";
 import { toast } from "@/lib/toast";
@@ -12,6 +12,7 @@ import GenericTable, { Column, TableAction, PaginationInfo } from "@/components/
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import { useRouter } from "next/navigation";
 import SpeciesTableSkeleton from "./skeleton/SpecieTableSkeleton";
+import SpeciesFormModal from "./SpeciesFormModal";
 
 interface SpeciesListProps {
     token: string | null;
@@ -26,22 +27,30 @@ export default function SpeciesList({ token }: SpeciesListProps) {
     const [selectedSpecies, setSelectedSpecies] = useState<Species | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [isFormOpen, setIsFormOpen] = useState(false);
+    const [speciesToEdit, setSpeciesToEdit] = useState<Species | null>(null);
+    const [searchQuery, setSearchQuery] = useState<string>("");
+
 
     const loadSpecies = useCallback(async (page = 1, query = "") => {
         if (!token) return;
         setLoading(true);
         try {
-            const data = await getSpecies(token);
-            const filtered = query
-                ? data.filter((s: Species) => s.name.toLowerCase().includes(query.toLowerCase()))
-                : data;
+            const params = new URLSearchParams({page: page.toString()});
+            
+            if(query.trim() !== "") {
+                params.append("name", query.trim());
+            }
+            
+            const response = await getAllSpecies(token, params.toString());
 
-            setSpeciesList(filtered);
+            setSpeciesList(response.data);
             setPagination(prev => ({
                 ...prev,
-                currentPage: page,
-                totalItems: filtered.length,
-                totalPages: Math.ceil(filtered.length / prev.pageSize),
+                currentPage: response.currentPage,
+                totalItems: response.totalPages,
+                totalPages: response.totalPages,
+                pageSize: pagination.pageSize,
             }));
         } catch {
             toast("error", "Error al cargar especies");
@@ -74,25 +83,38 @@ export default function SpeciesList({ token }: SpeciesListProps) {
         setSelectedSpecies(null);
     };
 
-    const handleSearch = (query: string) => loadSpecies(1, query);
-    const handlePageChange = (page: number) => setPagination(prev => ({ ...prev, currentPage: page }));
+    const handleSearch = (query: string) => {
+        setSearchQuery(query);
+        loadSpecies(1, query);
+    }
+    const handlePageChange = (page: number) => {
+        loadSpecies(page, searchQuery);
+    };
 
     const columns: Column<Species>[] = [{ header: "Nombre", accessor: "name" }];
 
     const actions: TableAction<Species>[] = [
-        { icon: <Pencil className="w-4 h-4" />, onClick: (s) => console.log("Editar:", s), label: "Editar" },
+        { icon: <Pencil className="w-4 h-4" />, onClick: (s) => {
+            setSpeciesToEdit(s);
+            setIsFormOpen(true);
+        }, label: "Editar" },
         { icon: <Trash className="w-4 h-4" />, onClick: confirmDelete, label: "Eliminar" },
     ];
 
     return (
         <div className="w-4/5 mx-auto px-4 py-6">
             <div className="flex items-center gap-4 mb-4">
-                <SearchBar onSearch={handleSearch} placeholder="Buscar especie..." manualSearch={true} />
+                <SearchBar 
+                    onSearch={handleSearch} 
+                    placeholder="Buscar especie..." 
+                />
             </div>
 
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-3xl font-bold">Especies</h2>
-                <Button variant="outline" className="px-6" onClick={() => router.push("/dashboard/species/register")}>
+                <Button variant="outline" className="px-6" onClick={() => {
+                    setSpeciesToEdit(null);
+                    setIsFormOpen(true);}}>
                     Agregar
                 </Button>
             </div>
@@ -104,7 +126,7 @@ export default function SpeciesList({ token }: SpeciesListProps) {
                 pagination={pagination}
                 onPageChange={handlePageChange}
                 isLoading={loading}
-                skeleton={<SpeciesTableSkeleton />} // Reemplaza con <SpeciesTableSkeleton /> si lo tienes
+                skeleton={<SpeciesTableSkeleton />}
                 emptyMessage="No se encontraron especies"
             />
 
@@ -118,6 +140,15 @@ export default function SpeciesList({ token }: SpeciesListProps) {
                 cancelText="Cancelar"
                 variant="danger"
             />
+
+            <SpeciesFormModal
+                isOpen={isFormOpen}
+                onClose={() => setIsFormOpen(false)}
+                token={token || ""}
+                onSuccess={() => loadSpecies(pagination.currentPage)}
+                defaultValues={speciesToEdit}
+            />
+
         </div>
     );
 }

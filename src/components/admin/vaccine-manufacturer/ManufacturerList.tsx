@@ -155,7 +155,6 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
       <SearchBar
         onSearch={handleSearch}
         placeholder="Buscar por nombre..."
-        manualSearch={false}
         debounceDelay={400}
       />
       <div className="flex justify-between items-center mb-4">
