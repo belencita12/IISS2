@@ -1,4 +1,4 @@
-import MovementRegisterForm from "@/components/admin/movement/MovementRegister";
+import MovementForm from "@/components/admin/movements/register/MovementForm";
 import authOptions from "@/lib/auth/options";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
@@ -8,7 +8,7 @@ export default async function MovementRegisterPage() {
 
   if (session) {
     const token = session.user.token;
-    return <MovementRegisterForm token={token} />;
+    return <MovementForm token={token} />;
   }
 
   redirect("/login");
