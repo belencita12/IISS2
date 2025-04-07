@@ -130,7 +130,6 @@ export default function PurchaseForm({ token }: { token: string }) {
             <label className="text-sm font-medium">Fecha</label>
             <Input
               type="date"
-              min={new Date().toISOString().split("T")[0]}
               max={new Date().toISOString().split("T")[0]}
               className={`w-full ${errors.date ? "border-red-500" : ""}`}
               {...register("date")}
