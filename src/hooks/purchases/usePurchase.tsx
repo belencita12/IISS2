@@ -5,6 +5,7 @@ import { registerPurchase } from "@/lib/purchases/registerPurchase";
 import { ExtendedPurchase } from "@/lib/purchases/IPurchase";
 import { Product } from "@/lib/products/IProducts";
 import { toast } from "@/lib/toast";
+import { useRouter } from "next/navigation";
 
 export const usePurchase = (token: string) => {
   const {
@@ -25,6 +26,7 @@ export const usePurchase = (token: string) => {
       details: [],
     },
   });
+  const router = useRouter();
 
   const addProduct = (product: Product, quantity: number) => {
     const currentDetails = getValues("details") || [];
@@ -58,24 +60,14 @@ export const usePurchase = (token: string) => {
 
   const updateQuantity = (productId: number, quantity: number) => {
     const currentDetails = getValues("details") || [];
-    const updatedDetails = currentDetails.map(detail =>
-      detail.productId === productId
-        ? { ...detail, quantity }
-        : detail
+    setValue("details", 
+      currentDetails.map(detail =>
+        detail.productId === productId 
+          ? { ...detail, quantity } 
+          : detail
+      )
     );
-  
-    setValue("details", updatedDetails, {
-      shouldDirty: true,
-      shouldTouch: false,
-      shouldValidate: false,
-    });
   };
-  const handleQuantityChange = (productId: number, event: React.ChangeEvent<HTMLInputElement>) => {
-    const newQuantity = Number(event.target.value);
-    updateQuantity(productId, newQuantity);
-  };
-  
-  
 
   const submitPurchase = async (data: ExtendedPurchase) => {
     try {
@@ -88,9 +80,11 @@ export const usePurchase = (token: string) => {
           quantity: d.quantity,
         })),
       };
+      console.log("Datos", purchasesData);
       await registerPurchase(purchasesData, token);
       toast("success", "Compra registrada con éxito!");
       reset();
+      router.push("/dashboard/purchases")
     } catch (error) {
       toast("error", error instanceof Error ? error.message : "Error al registrar compra");
     }
@@ -106,8 +100,7 @@ export const usePurchase = (token: string) => {
     addProduct,
     removeProduct,
     updateQuantity,
-    submitPurchase,
-    handleQuantityChange
+    submitPurchase
   };
 };
 
