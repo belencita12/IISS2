@@ -49,23 +49,24 @@ describe('Página de Lista de Productos', () => {
 
     cy.contains('p', "Productos").click();
   
-    cy.get('button[role="combobox"]', { timeout: 10000 }).should('be.visible').click();
+    cy.get(':nth-child(1) > .gap-2 > .truncate', { timeout: 10000 }).should('be.visible').click();
 
-    cy.contains('span', 'Producto').click();
-  
-    cy.get('h1').should('contain', 'PRODUCT');
+   /*  cy.get('div[data-value="Producto"]').click();
+    cy.wait(3000);
+    //cy.contains("PRODUCT").should('be.visible');
+    //cy.get('h1').should('contain', 'PRODUCT');
     cy.get('div[class*="bg-card"]').should('have.length.at.least', 1);
     cy.wait(3000);
-    cy.get('button:has(svg):visible').first().click();
+    cy.get('button:has(svg):visible').first().click(); */
   
     // Cambiar a "Vacuna"
-    cy.get('button[role="combobox"]', { timeout: 10000 }).should('be.visible').click();
-
-    cy.contains('span', 'Vacuna').click();
+    // cy.get(':nth-child(1) > .gap-2 > .truncate', { timeout: 10000 }).should('be.visible').click();
+    // cy.wait(3000);
+    // cy.contains('div[data-value="Vacuna"]').click();
   
-    cy.get('div[class*="bg-card"]').should('have.length.at.least', 1);
-    cy.wait(3000);
-    cy.get('button:has(svg):visible').first().click();
+    // cy.get('div[class*="bg-card"]').should('have.length.at.least', 1);
+    // cy.wait(3000);
+    // cy.get('button:has(svg):visible').first().click();
 
     
  

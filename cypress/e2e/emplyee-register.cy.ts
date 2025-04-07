@@ -1,13 +1,17 @@
 describe('Registro de Empleados', () => {
   
   let uniqueEmail = "";
+  
   const SESSION_KEY = "sessionToken";
   const USER = {
     email: Cypress.env("USER_EMAIL"),
     password: Cypress.env("USER_PASSWORD")
   };
 
-
+  const randomNumber = Math.floor(Math.random() * 100000);
+  const randomPhoneNumber = `+595971${Math.floor(100000 + Math.random() * 900000)}`;
+  const randomRuc = `${Math.floor(1000000 + Math.random() * 900000)}-1`;
+  const randomAddress = `Calle${randomNumber}`;
   const TIMEOUT = { timeout: 15000 };
 
   beforeEach(() => {
@@ -44,8 +48,8 @@ describe('Registro de Empleados', () => {
       "getWorkPosition"
     );
 
-    const randomNumber = Math.floor(Math.random() * 100000);
-
+    
+    
     cy.visit(`/dashboard/employee`);
     cy.intercept("GET", `/api/auth/session`).as("getAuthData");
     cy.get('button').contains('Agregar').click();
@@ -55,14 +59,14 @@ describe('Registro de Empleados', () => {
       expect(response?.statusCode).to.eq(200);
     });
 
-    uniqueEmail = `testuser${randomNumber}@gmail.com`;
-    cy.get('input[placeholder="Ingrese el RUC"]').type(`${Math.floor(Math.random() * 1000000)}`);
+    uniqueEmail = `test${randomNumber}@gmail.com`;
+    cy.get('input[placeholder="Ingrese el RUC"]').type(randomRuc);
     cy.get('input[placeholder="Ingrese el nombre completo"]').type('Juan Pérez');
     cy.get('input[placeholder="Ingrese el correo"]').type(uniqueEmail);
-
-    //  cy.get().type('Pérez');
-
-
+    cy.get('input[placeholder="Ingrese la dirección"]').type(randomRuc);
+    cy.get('input[placeholder="Ingrese el número de teléfono"]').type(randomPhoneNumber);
+    cy.get('input[placeholder="Ingrese la dirección"]').type(randomAddress);
+    
     // Abrimos el select de puesto
     cy.get('button[role="combobox"]').should('be.visible').click();
 
@@ -73,11 +77,6 @@ describe('Registro de Empleados', () => {
     cy.contains('Empleado registrado con éxito')
             .should('be.visible')
     cy.wait(5000);
-
-
-    /*   cy.get('section[aria-label="Notifications alt+T"]')
-          .should('be.visible')
-          .and('contain', 'Empleado registrado con éxito'); */
   });
 
   it('Debe mostrar error al registrar un empleado con el mismo email', () => {
@@ -96,19 +95,21 @@ describe('Registro de Empleados', () => {
       expect(response?.statusCode).to.eq(200);
     });
 
-    cy.get('input[placeholder="Ingrese el RUC"]').type(`${Math.floor(Math.random() * 1000000)}`);
+    cy.get('input[placeholder="Ingrese el RUC"]').type(randomRuc);
     cy.get('input[placeholder="Ingrese el nombre completo"]').type('Juan Pérez');
     cy.get('input[placeholder="Ingrese el correo"]').type(uniqueEmail);
+    cy.get('input[placeholder="Ingrese la dirección"]').type(randomRuc);
+    cy.get('input[placeholder="Ingrese el número de teléfono"]').type(randomPhoneNumber);
+    cy.get('input[placeholder="Ingrese la dirección"]').type(randomAddress);
     
     // Abrimos el select de puesto
     cy.get('button[role="combobox"]').should('be.visible').click();
 
-    // Seleccionamos el puesto (pon el nombre del puesto que te interese)
+    // Seleccionamos el puesto (con el nombre del puesto que te interese)
     cy.get('div[role="option"]').contains('Auxiliar').click();
 
     cy.contains('button', 'Registrar').click();
-    cy.contains('Hubo un error desconocido')
-            .should('be.visible')
+    cy.contains('Uno o más campos ya están en uso.').should('be.visible');
     cy.wait(5000);
   });
 });
