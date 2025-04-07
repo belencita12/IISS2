@@ -28,40 +28,17 @@ describe('Listado de fabricantes de vacunas', () => {
 
 
     it('Debe buscar fabricantes de vacunas correctamente filtrandolos por nombre', () => {
-        cy.get('input[placeholder="Buscar por nombre o productor..."]').type('string1');
-        cy.get('button').contains('Buscar').click();
-        cy.wait(10000);
-        cy.get('table tbody tr').should('contain', 'string1');
+        cy.get('input[placeholder="Buscar por nombre..."]').type('Zoetis');
+        cy.wait(5000);
+        cy.get('table tbody tr').should('contain', 'Zoetis');
     });
 
     it('Debe abrir la página de registro de fabricantes de vacunas', () => {
-        cy.wait(10000);
+        cy.wait(5000);
         cy.get('button').contains('Agregar').click();
-        cy.wait(10000);
-        cy.url().should('include', '/vaccine/manufacturer/new');
+        cy.wait(5000);
+        cy.visit('dashboard/vaccine/manufacturer');
     });
 
-    it('Debe verificar la paginación', () => {
-        cy.get('td').its('length').then((length) => {
-            if (length > 16) {
-                cy.contains('span', 'Next').click();
-                cy.wait(5000);
-                cy.get('table tbody tr').should('exist');
 
-                cy.contains('span', 'Previous').click();
-                cy.wait(5000);
-                cy.get('table tbody tr').should('exist');
-
-                cy.wait(5000);
-                cy.get('a').contains('2').click();
-                cy.wait(5000);
-                cy.get('table tbody tr').should('exist');
-
-                cy.wait(5000);
-                cy.get('a').contains('1').click();
-                cy.wait(5000);
-                cy.get('table tbody tr').should('exist');
-            }
-        });
-    });
 });

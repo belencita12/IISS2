@@ -5,7 +5,7 @@ describe('Registrar Mascota con PetForm', () => {
   const BASE_URL = Cypress.env("API_BASEURL");
 
   const PET_MOCK = {
-    name: "Miau",
+    name: "Mia",
     birthDate: "2023-01-01",
     weight: "123.5",
     gender: "Macho",
@@ -148,7 +148,7 @@ describe('Registrar Mascota con PetForm', () => {
     cy.wait("@getSpecies", TIMEOUT);
     cy.wait(3000);
   
-    cy.get("input[name='petName']").type(`${PET_MOCK.name} sin foto5`);
+    cy.get("input[name='petName']").type(`${PET_MOCK.name} sin foto6`);
     cy.get("input[name='birthDate']").type(`2023-02-01`);
     cy.get("input[name='weight']").type(`14`);
   

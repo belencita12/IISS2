@@ -26,20 +26,23 @@ describe('Crear Fabricantes Vacunas', () => {
     it('Debe mostrar mensajes de error cuando se intenta enviar el formulario vacío', () => {
         cy.get('button').contains('Crear').click();
         cy.contains('El nombre debe tener al menos 3 caracteres').should('be.visible');
+        cy.wait(2000);
     });
 
-    it('Debe mostrar mensajes de error cuando se intenta enviar el formulario vacío', () => {
+    it('Debe crear un nuevo fabricante con datos validos', () => {
         const randomNumber = Math.floor(Math.random() * 100000);
         uniqueName = `FabricanteTest${randomNumber}`;
         cy.get('input[placeholder="Nombre del fabricante"]').type(`${uniqueName}`);
         cy.get('button').contains('Crear').click();
+        cy.wait(2000);
+        cy.visit('/dashboard/vaccine/manufacturer');
     });
 
-   /*  it('Intentar crear un fabricante de vacunas con un nombre repetido', () => {
-        cy.get('input[placeholder="Nombre del fabricante"]').type(`${uniqueName}`);
-        cy.get('button').contains('Crear').click();
-        cy.wait(30000);
-        cy.contains(`Error: 400 - El fabricante con nombre ${uniqueName} ya existe.`).should('be.visible');
-    }); */
+    // it('Intentar crear un fabricante de vacunas con un nombre repetido', () => {
+    //     cy.get('input[placeholder="Nombre del fabricante"]').type(`${uniqueName}`);
+    //     cy.get('button').contains('Crear').click();
+    //     cy.wait(8000);
+    //     cy.contains(`Error: 400`).should('be.visible');
+    // });
 
 });
