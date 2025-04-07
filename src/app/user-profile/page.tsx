@@ -15,13 +15,13 @@ export default async function Profile() {
     if (!session) {
         redirect("/login");
     }
-    const clientId = session?.user.clientId;
-    if(!clientId) return notFound();
+    const user = session?.user;
+    if(!user.clientId) return notFound();
 
     return (
         <div>
-            <Header fullName={session?.user?.fullName} />
-            <PetsList clientId={clientId} token={session?.user?.token} />
+            <Header fullName={user?.fullName} token={user?.token}/>
+            <PetsList clientId={user.clientId} token={user?.token} />
             <Appointments />
             <VeterinaryProducts />
         </div>
