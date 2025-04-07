@@ -59,7 +59,7 @@ describe('ClientListSection', () => {
     });
 
     it('Debe verificar la paginación', () => {
-        cy.get(':nth-child(5) > .inline-flex').click();
+        cy.get(':nth-child(4) > .inline-flex').click();
         cy.wait(2000); 
         cy.get('table tbody tr').should('exist');
 
