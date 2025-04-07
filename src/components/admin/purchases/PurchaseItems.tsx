@@ -13,6 +13,7 @@ type ProductListProps = {
   details: ExtendedPurchaseDetail[];
   onRemove: (productId: number) => void;
   onUpdateQuantity: (productId: number, quantity: number) => void;
+  
 };
 
 export default function ProductList({

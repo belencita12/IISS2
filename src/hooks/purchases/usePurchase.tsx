@@ -58,14 +58,24 @@ export const usePurchase = (token: string) => {
 
   const updateQuantity = (productId: number, quantity: number) => {
     const currentDetails = getValues("details") || [];
-    setValue("details", 
-      currentDetails.map(detail =>
-        detail.productId === productId 
-          ? { ...detail, quantity } 
-          : detail
-      )
+    const updatedDetails = currentDetails.map(detail =>
+      detail.productId === productId
+        ? { ...detail, quantity }
+        : detail
     );
+  
+    setValue("details", updatedDetails, {
+      shouldDirty: true,
+      shouldTouch: false,
+      shouldValidate: false,
+    });
   };
+  const handleQuantityChange = (productId: number, event: React.ChangeEvent<HTMLInputElement>) => {
+    const newQuantity = Number(event.target.value);
+    updateQuantity(productId, newQuantity);
+  };
+  
+  
 
   const submitPurchase = async (data: ExtendedPurchase) => {
     try {
@@ -96,7 +106,8 @@ export const usePurchase = (token: string) => {
     addProduct,
     removeProduct,
     updateQuantity,
-    submitPurchase
+    submitPurchase,
+    handleQuantityChange
   };
 };
 
