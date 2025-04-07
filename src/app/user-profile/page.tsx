@@ -4,27 +4,24 @@ import { PetsList } from "@/components/profile/PetLists";
 import { VeterinaryProducts } from "@/components/profile/Product";
 import { getServerSession } from "next-auth";
 import authOptions from "@/lib/auth/options";
-import { redirect, notFound } from "next/navigation";
-import { getClientById } from "@/lib/client/getClientById";
-
+import { redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 export default async function Profile() {
     const session = await getServerSession(authOptions);
     console.log("Sesión:", session?.user?.fullName);
     console.log("Sesión:", session?.user?.token);
 
-    if (!session) redirect("/login");
+    if (!session) {
+        redirect("/login");
+    }
+    const clientId = session?.user.clientId;
+    if(!clientId) return notFound();
 
-    const user = session?.user;
-    if(!user?.clientId) return notFound();
-
-    const clientProfile = await getClientById(user.clientId, user.token);
-
-    if(!clientProfile) return notFound();
     return (
         <div>
-            <Header user={clientProfile} />
-            <PetsList clientId={user.clientId} token={user?.token} />
+            <Header fullName={session?.user?.fullName} />
+            <PetsList clientId={clientId} token={session?.user?.token} />
             <Appointments />
             <VeterinaryProducts />
         </div>
