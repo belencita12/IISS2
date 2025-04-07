@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Species } from "@/lib/pets/IPet";
-import { getSpecies } from "@/lib/pets/getRacesAndSpecies";
+import { getAllSpecies } from "@/lib/pets/getRacesAndSpecies";
 import {deleteSpeciesById} from "@/lib/pets/species/deleteSpecieById";
 import SearchBar from "@/components/global/SearchBar";
 import { Pencil, Trash } from "lucide-react";
@@ -29,21 +29,28 @@ export default function SpeciesList({ token }: SpeciesListProps) {
     const [loading, setLoading] = useState(false);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [speciesToEdit, setSpeciesToEdit] = useState<Species | null>(null);
+    const [searchQuery, setSearchQuery] = useState<string>("");
 
 
     const loadSpecies = useCallback(async (page = 1, query = "") => {
         if (!token) return;
         setLoading(true);
         try {
-            const data = await getSpecies(token);
+            const params = new URLSearchParams({page: page.toString()});
             
+            if(query.trim() !== "") {
+                params.append("name", query.trim());
+            }
+            
+            const response = await getAllSpecies(token, params.toString());
 
-            setSpeciesList(data);
+            setSpeciesList(response.data);
             setPagination(prev => ({
                 ...prev,
-                currentPage: page,
-                totalItems: data.length,
-                totalPages: Math.ceil(data.length / prev.pageSize),
+                currentPage: response.currentPage,
+                totalItems: response.totalPages,
+                totalPages: response.totalPages,
+                pageSize: pagination.pageSize,
             }));
         } catch {
             toast("error", "Error al cargar especies");
@@ -76,8 +83,13 @@ export default function SpeciesList({ token }: SpeciesListProps) {
         setSelectedSpecies(null);
     };
 
-    const handleSearch = (query: string) => loadSpecies(1, query);
-    const handlePageChange = (page: number) => setPagination(prev => ({ ...prev, currentPage: page }));
+    const handleSearch = (query: string) => {
+        setSearchQuery(query);
+        loadSpecies(1, query);
+    }
+    const handlePageChange = (page: number) => {
+        loadSpecies(page, searchQuery);
+    };
 
     const columns: Column<Species>[] = [{ header: "Nombre", accessor: "name" }];
 
