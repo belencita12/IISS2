@@ -80,7 +80,6 @@ export const usePurchase = (token: string) => {
           quantity: d.quantity,
         })),
       };
-      console.log("Datos", purchasesData);
       await registerPurchase(purchasesData, token);
       toast("success", "Compra registrada con éxito!");
       reset();
