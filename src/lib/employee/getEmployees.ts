@@ -22,3 +22,5 @@ export const fetchEmployees = async (page: number, query: string, token: string 
         throw error;
     }
 };
+
+
