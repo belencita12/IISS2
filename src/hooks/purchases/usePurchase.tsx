@@ -5,6 +5,7 @@ import { registerPurchase } from "@/lib/purchases/registerPurchase";
 import { ExtendedPurchase } from "@/lib/purchases/IPurchase";
 import { Product } from "@/lib/products/IProducts";
 import { toast } from "@/lib/toast";
+import { useRouter } from "next/navigation";
 
 export const usePurchase = (token: string) => {
   const {
@@ -25,6 +26,7 @@ export const usePurchase = (token: string) => {
       details: [],
     },
   });
+  const router = useRouter();
 
   const addProduct = (product: Product, quantity: number) => {
     const currentDetails = getValues("details") || [];
@@ -81,6 +83,7 @@ export const usePurchase = (token: string) => {
       await registerPurchase(purchasesData, token);
       toast("success", "Compra registrada con éxito!");
       reset();
+      router.push("/dashboard/purchases")
     } catch (error) {
       toast("error", error instanceof Error ? error.message : "Error al registrar compra");
     }

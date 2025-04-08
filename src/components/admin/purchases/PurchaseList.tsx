@@ -36,7 +36,7 @@ export default function PurchaseList({ token }: Props) {
         <h1 className="text-2xl font-bold">Compras</h1>
         <Button
           variant="default"
-          onClick={() => router.push("/dashboard/purchase/register")}
+          onClick={() => router.push("/dashboard/purchases/register")}
           className="bg-black text-white hover:bg-gray-800"
         >
           Registrar Compra
