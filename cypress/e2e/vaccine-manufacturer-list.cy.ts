@@ -1,8 +1,8 @@
 describe('Listado de fabricantes de vacunas', () => {
     const SESSION_KEY = "sessionToken";
     const USER = {
-        email: Cypress.env("USER_EMAIL"),
-        password: Cypress.env("USER_PASSWORD")
+        email: Cypress.env("USER_EMAIL_A"),
+        password: Cypress.env("USER_PASSWORD_A")
     };
 
     beforeEach(() => {

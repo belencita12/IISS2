@@ -17,8 +17,8 @@ describe('Página de Lista de Proveedores', () => {
   
       // establecer sesión
       const USER = {
-        email: "makiko.yamamoto3@fiuni.edu.py",
-        password: "MakiYamaGin3"
+        email:  Cypress.env("USER_EMAIL_A"),
+        password: Cypress.env("USER_PASSWORD_A")
       };
   
       cy.loginAndSetSession(SESSION_KEY, USER.email, USER.password);

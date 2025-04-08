@@ -286,8 +286,8 @@ describe('Registrar Mascota con PetForm', () => {
 //test inicial para ingresar sesion y guardar token
 it("iniciar sesión", () => {
   const USER = {
-    email: "makiko.yamamoto3@fiuni.edu.py",
-    password: "MakiYamaGin3"
+    email:  Cypress.env("USER_EMAIL"),
+    password: Cypress.env("USER_PASSWORD")
   };
 
   cy.loginAndSetSession(SESSION_KEY, USER.email, USER.password);
