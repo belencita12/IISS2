@@ -117,7 +117,7 @@ export default function MovementForm({ token }: { token: string }) {
                 </Select>
               )}
             />
-            {errors.type && <p className="text-red-500 text-sm">{errors.type.message}</p>}
+            {errors.type && <p className="text-red-500 text-sm">{errors.type?.message}</p>}
           </div>
 
           <MovementStockSelector
