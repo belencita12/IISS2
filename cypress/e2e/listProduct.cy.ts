@@ -48,6 +48,7 @@ describe('Página de Lista de Productos', () => {
     cy.visit('/dashboard');
 
     cy.contains('p', "Productos").click();
+    cy.wait(3000);
   
     cy.get(':nth-child(1) > .gap-2 > .truncate', { timeout: 10000 }).should('be.visible').click();
 

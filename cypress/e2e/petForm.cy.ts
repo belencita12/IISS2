@@ -5,7 +5,7 @@ describe('Registrar Mascota con PetForm', () => {
   const BASE_URL = Cypress.env("API_BASEURL");
 
   const PET_MOCK = {
-    name: "Mia",
+    name: "Mili2",
     birthDate: "2023-01-01",
     weight: "123.5",
     gender: "Macho",
@@ -33,7 +33,7 @@ describe('Registrar Mascota con PetForm', () => {
   it('Muestra la información del perfil y mascotas cuando el usuario está autenticado', () => {
 
     cy.log('Verificando que la información del perfil y las mascotas se muestre correctamente');
-    cy.get('h2.text-xl.font-bold.mt-2', waitOptions).should('contain.text', 'Jose Valgaba');
+    cy.get('h2.text-xl.font-bold.mt-2', waitOptions).should('contain.text', 'Makiko Yamamoto3');
     cy.contains('Tus Mascotas Registradas', waitOptions).should('be.visible');
     cy.url(waitOptions).should('include', '/user-profile');
 
@@ -148,7 +148,7 @@ describe('Registrar Mascota con PetForm', () => {
     cy.wait("@getSpecies", TIMEOUT);
     cy.wait(3000);
   
-    cy.get("input[name='petName']").type(`${PET_MOCK.name} sin foto6`);
+    cy.get("input[name='petName']").type(`${PET_MOCK.name} sinfoto`);
     cy.get("input[name='birthDate']").type(`2023-02-01`);
     cy.get("input[name='weight']").type(`14`);
   
@@ -286,8 +286,8 @@ describe('Registrar Mascota con PetForm', () => {
 //test inicial para ingresar sesion y guardar token
 it("iniciar sesión", () => {
   const USER = {
-    email: "jose@gmail.com",
-    password: "12345678"
+    email: "makiko.yamamoto3@fiuni.edu.py",
+    password: "MakiYamaGin3"
   };
 
   cy.loginAndSetSession(SESSION_KEY, USER.email, USER.password);
