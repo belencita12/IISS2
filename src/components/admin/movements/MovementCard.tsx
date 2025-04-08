@@ -9,15 +9,6 @@ interface Props {
 }
 
 export default function MovementCard({ movement }: Props) {
-  const fecha = new Date(movement.dateMovement).toLocaleString("es-ES", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "2-digit",
-    //hour: "2-digit",
-    //minute: "2-digit",
-    //second: "2-digit",
-  });
-
   return (
     <Card
       title={
@@ -53,7 +44,7 @@ export default function MovementCard({ movement }: Props) {
         {/* Columna 2 */}
         <div className="flex flex-col items-end text-right md:w-1/2">
           <span className="text-base md:text-lg font-semibold text-black">
-            {fecha}
+            {movement.dateMovement}
           </span>
           <p className="mt-1 text-sm text-gray-700">{movement.description}</p>
         </div>
