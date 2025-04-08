@@ -194,7 +194,7 @@ export default function MovementForm({ token }: { token: string }) {
         </div>
         </fieldset>
         <div className="flex justify-end gap-4">
-          <Button variant="outline" type="button" onClick={() => router.push("/dashboard/movement")}>Cancelar</Button>
+          <Button variant="outline" type="button" onClick={() => router.push("/dashboard/movement")} disabled={isSubmitting} >Cancelar</Button>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? "Registrando..." : "Registrar Movimiento"}
           </Button>

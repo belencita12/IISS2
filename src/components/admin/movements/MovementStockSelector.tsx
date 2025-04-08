@@ -32,7 +32,7 @@ export default function MovementStockSelector({ type, stocks, control, setValue,
           render={({ field }) => (
             <Select
               onValueChange={(v) => field.onChange(Number(v))}
-              value={field.value?.toString()}
+              value={field.value ? field.value.toString() : ""}
               disabled={type === "INBOUND"} 
             >
               <SelectTrigger className={errors.originStockId ? "border-red-500" : ""}>
@@ -61,7 +61,7 @@ export default function MovementStockSelector({ type, stocks, control, setValue,
           render={({ field }) => (
             <Select
               onValueChange={(v) => field.onChange(Number(v))}
-              value={field.value?.toString()}
+              value={field.value ? field.value.toString() : ""}
               disabled={type === "OUTBOUND"} 
             >
               <SelectTrigger className={errors.destinationStockId ? "border-red-500" : ""}>
