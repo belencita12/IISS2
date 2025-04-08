@@ -95,41 +95,40 @@ export default function MovementForm({ token }: { token: string }) {
         <h2 className="text-3xl font-bold mb-4 text-start">Registrar Movimiento</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-  <div className="flex flex-col">
-    <label className="text-sm font-medium mb-1">Tipo de Movimiento</label>
-    <Controller
-      name="type"
-      control={control}
-      render={({ field }) => (
-        <Select onValueChange={field.onChange} value={field.value}>
-          <SelectTrigger className={errors.type ? "border-red-500" : ""}>
-            <SelectValue placeholder="Seleccionar tipo" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="INBOUND">Ingreso</SelectItem>
-            <SelectItem value="OUTBOUND">Egreso</SelectItem>
-            <SelectItem value="TRANSFER">Transferencia</SelectItem>
-          </SelectContent>
-        </Select>
-      )}
-    />
-    {errors.type && <p className="text-red-500 text-sm">{errors.type.message}</p>}
-  </div>
+          <div className="flex flex-col">
+            <label className="text-sm font-medium mb-1">Tipo de Movimiento</label>
+            <Controller
+              name="type"
+              control={control}
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger className={errors.type ? "border-red-500" : ""}>
+                    <SelectValue placeholder="Seleccionar tipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="INBOUND">Ingreso</SelectItem>
+                    <SelectItem value="OUTBOUND">Egreso</SelectItem>
+                    <SelectItem value="TRANSFER">Transferencia</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.type && <p className="text-red-500 text-sm">{errors.type.message}</p>}
+          </div>
 
-  {/* MovimientoStockSelector maneja origen y destino */}
-  <MovementStockSelector
-    type={watch("type")}
-    stocks={stocks}
-    control={control}
-    setValue={setValue}
-    errors={errors}
-  />
-</div>
+          <MovementStockSelector
+            type={watch("type")}
+            stocks={stocks}
+            control={control}
+            setValue={setValue}
+            errors={errors}
+          />
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex flex-col">
             <label className="text-sm font-medium mb-1">Fecha</label>
-            <Input type="date" {...register("dateMovement")} className={errors.dateMovement ? "border-red-500" : ""} />
+            <Input type="date" {...register("dateMovement")}  max={new Date().toISOString().split("T")[0]} className={errors.dateMovement ? "border-red-500" : ""} />
             {errors.dateMovement && <p className="text-red-500 text-sm">{errors.dateMovement.message}</p>}
           </div>
 

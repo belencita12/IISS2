@@ -24,7 +24,6 @@ export default function MovementStockSelector({ type, stocks, control, setValue,
 
   return (
     <>
-      {/* Depósito Origen */}
       <div className="flex flex-col">
         <label className="text-sm font-medium mb-1">Depósito Origen</label>
         <Controller
@@ -34,7 +33,7 @@ export default function MovementStockSelector({ type, stocks, control, setValue,
             <Select
               onValueChange={(v) => field.onChange(Number(v))}
               value={field.value?.toString()}
-              disabled={type === "INBOUND"} // Bloqueado si es entrada
+              disabled={type === "INBOUND"} 
             >
               <SelectTrigger className={errors.originStockId ? "border-red-500" : ""}>
                 <SelectValue placeholder="Seleccionar origen" />
@@ -54,7 +53,6 @@ export default function MovementStockSelector({ type, stocks, control, setValue,
         )}
       </div>
 
-      {/* Depósito Destino */}
       <div className="flex flex-col">
         <label className="text-sm font-medium mb-1">Depósito Destino</label>
         <Controller
@@ -64,7 +62,7 @@ export default function MovementStockSelector({ type, stocks, control, setValue,
             <Select
               onValueChange={(v) => field.onChange(Number(v))}
               value={field.value?.toString()}
-              disabled={type === "OUTBOUND"} // Bloqueado si es salida
+              disabled={type === "OUTBOUND"} 
             >
               <SelectTrigger className={errors.destinationStockId ? "border-red-500" : ""}>
                 <SelectValue placeholder="Seleccionar destino" />
