@@ -40,8 +40,8 @@ describe('Página de Lista Configuraciones', () => {
       cy.wait(3000);
       cy.get('[href="/dashboard/settings/species"]').click();
       cy.get('.text-3xl').should('contain', 'Especies');
-
       cy.wait(3000);
+
       cy.visit('/dashboard/settings')
       cy.wait(3000);
       cy.get('[href="/dashboard/settings/positions"]').click();
@@ -53,6 +53,12 @@ describe('Página de Lista Configuraciones', () => {
       cy.visit('/dashboard/settings/providers')
       cy.wait(3000);
       cy.get('.text-3xl').should('contain', 'Lista de Proveedores');
+      cy.wait(3000);
+
+      cy.visit('/dashboard/settings')
+      cy.wait(3000);
+      cy.get('[href="/dashboard/settings/tags"]').click();
+      cy.get('.text-3xl').should('contain', 'Tags');
       cy.wait(3000);
       
       cy.visit('/dashboard/settings')
