@@ -1,5 +1,3 @@
-// lib/movements/registerMovement.ts
-
 import { Movement } from "@/lib/movements/IMovements";
 import { MOVEMENTS_API } from "../urls";
 
@@ -17,7 +15,9 @@ export const registerMovement = async (
   });
 
   if (!response.ok) {
-    throw new Error("Error al registrar el movimiento");
+    const errorData = await response.json();
+    const message = errorData?.message || "Error al registrar el movimiento";
+    throw new Error(message);
   }
 
   return response.json();

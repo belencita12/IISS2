@@ -16,11 +16,13 @@ import ProductList from "../../purchases/PurchaseItems";
 import { useRegisterMovement } from "@/hooks/movements/useRegisterMovements";
 import { useProductSearch } from "@/hooks/purchases/useProductSearch";
 import MovementEmployeeSearch from "../MovementEmployeeSearch";
+import MovementStockSelector from "../MovementStockSelector";
 import { Product } from "@/lib/products/IProducts";
 import { Movement } from "@/lib/movements/IMovements";
 import { useInitialData } from "@/hooks/purchases/useProviderStock";
 import { EmployeeData } from "@/lib/employee/IEmployee";
 import { useEmployeeSearch } from "@/hooks/employees/useEmployeeSearch";
+import MovementEmployeeSelected from "../MovementEmployeeSelected";
 
 export default function MovementForm({ token }: { token: string }) {
   const {
@@ -52,7 +54,6 @@ export default function MovementForm({ token }: { token: string }) {
   const {
     employees,
     isLoading,
-    hasSearched,
     searchEmployees,
     resetSearch: resetEmployeeSearch,
     hasSearched: hasSearchedEmployee,
@@ -77,33 +78,51 @@ export default function MovementForm({ token }: { token: string }) {
   };
 
   const onSubmit = async (data: Movement) => {
-    if (!data.dateMovement) {
-      console.error("Fecha no seleccionada");
-      return;
-    }
-      const formattedData = {
-        ...data,
-        dateMovement: new Date(data.dateMovement).toISOString(),
-      };
-      console.log("Formatted Data:", formattedData);
-      await submitMovement(formattedData);
+    if (!data.dateMovement) return;
+    const formattedData = {
+      ...data,
+      dateMovement: new Date(data.dateMovement).toISOString(),
     };
+    await submitMovement(formattedData);
+  };
+
   return (
-    <div className="flex flex-col justify-center items-center p-6">
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-4xl p-6">
-        <h2 className="text-2xl font-bold mb-6">Registrar Movimiento</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          {/* Select de origen */}
-          <div className="flex flex-col space-y-1">
-            <label className="text-sm font-medium">Depósito Origen</label>
+    <div className="flex flex-col justify-center">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="w-full  bg-white p-8  space-y-8"
+      >
+        <h2 className="text-3xl font-bold mb-4 text-start">Registrar Movimiento</h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="flex flex-col">
+            <label className="text-sm font-medium mb-1">Tipo de Movimiento</label>
+            <Controller
+              name="type"
+              control={control}
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger className={errors.type ? "border-red-500" : ""}>
+                    <SelectValue placeholder="Seleccionar tipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="INBOUND">Ingreso</SelectItem>
+                    <SelectItem value="OUTBOUND">Egreso</SelectItem>
+                    <SelectItem value="TRANSFER">Transferencia</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.type && <p className="text-red-500 text-sm">{errors.type.message}</p>}
+          </div>
+
+          <div className="flex flex-col">
+            <label className="text-sm font-medium mb-1">Depósito Origen</label>
             <Controller
               name="originStockId"
               control={control}
               render={({ field }) => (
-                <Select
-                  onValueChange={(value) => field.onChange(Number(value))}
-                  value={field.value?.toString()}
-                >
+                <Select onValueChange={(v) => field.onChange(Number(v))} value={field.value?.toString()}>
                   <SelectTrigger className={errors.originStockId ? "border-red-500" : ""}>
                     <SelectValue placeholder="Seleccionar origen" />
                   </SelectTrigger>
@@ -117,22 +136,16 @@ export default function MovementForm({ token }: { token: string }) {
                 </Select>
               )}
             />
-            {errors.originStockId && (
-              <p className="text-red-500 text-sm">{errors.originStockId.message}</p>
-            )}
+            {errors.originStockId && <p className="text-red-500 text-sm">{errors.originStockId.message}</p>}
           </div>
 
-          {/* Select de destino */}
-          <div className="flex flex-col space-y-1">
-            <label className="text-sm font-medium">Depósito Destino</label>
+          <div className="flex flex-col">
+            <label className="text-sm font-medium mb-1">Depósito Destino</label>
             <Controller
               name="destinationStockId"
               control={control}
               render={({ field }) => (
-                <Select
-                  onValueChange={(value) => field.onChange(Number(value))}
-                  value={field.value?.toString()}
-                >
+                <Select onValueChange={(v) => field.onChange(Number(v))} value={field.value?.toString()}>
                   <SelectTrigger className={errors.destinationStockId ? "border-red-500" : ""}>
                     <SelectValue placeholder="Seleccionar destino" />
                   </SelectTrigger>
@@ -146,96 +159,76 @@ export default function MovementForm({ token }: { token: string }) {
                 </Select>
               )}
             />
-            {errors.destinationStockId && (
-              <p className="text-red-500 text-sm">{errors.destinationStockId.message}</p>
-            )}
-          </div>
-
-          {/* Fecha */}
-          <div className="flex flex-col space-y-1">
-            <label className="text-sm font-medium">Fecha</label>
-            <Input
-              type="date"
-              {...register("dateMovement")}
-              className={errors.dateMovement ? "border-red-500" : ""}
-            />
-            {errors.dateMovement && (
-              <p className="text-red-500 text-sm">{errors.dateMovement.message}</p>
-            )}
+            {errors.destinationStockId && <p className="text-red-500 text-sm">{errors.destinationStockId.message}</p>}
           </div>
         </div>
 
-        {/* Descripción */}
-        <div className="mb-6">
-          <label className="text-sm font-medium mb-2 block">Descripción</label>
-          <Input
-            type="text"
-            placeholder="Descripción del movimiento"
-            {...register("description")}
-            className={errors.description ? "border-red-500" : ""}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex flex-col">
+            <label className="text-sm font-medium mb-1">Fecha</label>
+            <Input type="date" {...register("dateMovement")} className={errors.dateMovement ? "border-red-500" : ""} />
+            {errors.dateMovement && <p className="text-red-500 text-sm">{errors.dateMovement.message}</p>}
+          </div>
+
+          <div className="flex flex-col">
+            <label className="text-sm font-medium mb-1">Descripción</label>
+            <Input placeholder="Descripción del movimiento" {...register("description")}
+              className={errors.description ? "border-red-500" : ""} />
+            {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
+          </div>
+        </div>
+
+        <div className="p-6 border rounded-xl bg-gray-50">
+          <h3 className="font-semibold text-lg mb-4">Seleccionar Empleado</h3>
+          <MovementEmployeeSearch
+            searchEmployees={employees}
+            onSearch={searchEmployees}
+            onSelect={handleAddEmployee}
+            resetSearch={resetEmployeeSearch}
+            isLoading={isLoading}
+            hasSearched={hasSearchedEmployee}
           />
-          {errors.description && (
-            <p className="text-red-500 text-sm">{errors.description.message}</p>
+          {errors.managerId && <p className="text-red-500 text-sm mt-2">{errors.managerId.message}</p>}
+          {selectedEmployee && (
+            <MovementEmployeeSelected
+              employee={selectedEmployee}
+              onRemove={() => {
+                setSelectedEmployee(null);
+                setValue("managerId", 0);
+              }}
+            />
           )}
         </div>
 
-        {/* Selector de empleado */}
-        <MovementEmployeeSearch
-          searchEmployees={employees}
-          onSearch={searchEmployees}
-          onSelect={handleAddEmployee}
-          resetSearch={resetEmployeeSearch}
-          isLoading={isLoading}
-          hasSearched={hasSearchedEmployee}
-        />
-        {errors.managerId && (
-          <p className="text-red-500 text-sm mt-2">{errors.managerId.message}</p>
-        )}
+        <div className="p-6 border rounded-xl bg-gray-50">
+          <h3 className="font-semibold text-lg mb-4">Productos del Movimiento</h3>
+          <ProductSearch
+            searchProducts={searchProducts}
+            searchQuery={searchQuery}
+            hasSearched={hasSearchedProduct}
+            onSearch={handleSearchProduct}
+            getQuantity={getProductQuantity}
+            setQuantity={setProductQuantity}
+            onAddProduct={handleAddProduct}
+            resetSearch={resetSearch}
+            isLoading={isLoadingProduct}
+          />
 
-        {selectedEmployee && (
-          <div className="p-4 border mt-4 rounded-md">
-            <h3 className="font-semibold">Empleado Seleccionado</h3>
-            <p><strong>Nombre:</strong> {selectedEmployee.fullName}</p>
-            <p><strong>RUC:</strong> {selectedEmployee.ruc}</p>
-          </div>
-        )}
+          {details.length > 0 && (
+            <>
+              <h4 className="font-medium text-sm mt-6 mb-2">Productos Seleccionados</h4>
+              <ProductList
+                details={details}
+                onRemove={removeProduct}
+                onUpdateQuantity={updateQuantity}
+              />
+            </>
+          )}
+          {errors.details && <p className="text-red-500 text-sm mt-2">{errors.details.message}</p>}
+        </div>
 
-        {/* Productos */}
-        <ProductSearch
-          searchProducts={searchProducts}
-          searchQuery={searchQuery}
-          hasSearched={hasSearchedProduct}
-          onSearch={handleSearchProduct}
-          getQuantity={getProductQuantity}
-          setQuantity={setProductQuantity}
-          onAddProduct={handleAddProduct}
-          resetSearch={resetSearch}
-          isLoading={isLoadingProduct}
-        />
-
-        {details.length > 0 && (
-          <>
-            <h2 className="p-4 font-bold">Productos Seleccionados</h2>
-            <ProductList
-              details={details}
-              onRemove={removeProduct}
-              onUpdateQuantity={updateQuantity}
-            />
-          </>
-        )}
-        {errors.details && (
-          <p className="text-red-500 text-sm mt-2">{errors.details.message}</p>
-        )}
-
-        {/* Botones */}
-        <div className="flex justify-end gap-4 mt-6">
-          <Button
-            variant="outline"
-            type="button"
-            onClick={() => router.push("/dashboard/movements")}
-          >
-            Cancelar
-          </Button>
+        <div className="flex justify-end gap-4">
+          <Button variant="outline" type="button" onClick={() => router.push("/dashboard/movements")}>Cancelar</Button>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? "Registrando..." : "Registrar Movimiento"}
           </Button>

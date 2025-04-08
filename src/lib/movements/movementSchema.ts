@@ -14,17 +14,19 @@ export const movementSchema: z.ZodType<Movement> = z.object({
     dateMovement: z.string().min(1, "Fecha es obligatoria"),
 
     originStockId: z
-        .number({ required_error: "Depósito de origen es obligatorio" })   
+    .number({ required_error: "Depósito de origen es obligatorio" })
+    .min(1, "Depósito de origen es obligatorio")
+    .optional(), // se valida condicionalmente
 
-        .min(1, "Depósito de origen es obligatorio"),
-    destinationStockId: z   
-    
-            .number({ required_error: "Depósito de destino es obligatorio" })
-            .min(1, "Depósito de destino es obligatorio"),
+  destinationStockId: z
+    .number({ required_error: "Depósito de destino es obligatorio" })
+    .min(1, "Depósito de destino es obligatorio")
+    .optional(), // se valida condicionalmente
+
 
     managerId: z
-        .number({ required_error: "Responsable es obligatorio" })
-        .min(1, "Responsable es obligatorio"),
+        .number({ required_error: "Empleado es obligatorio" })
+        .min(1, "Empleado es obligatorio"),
 
 
   details: z
@@ -35,4 +37,12 @@ export const movementSchema: z.ZodType<Movement> = z.object({
       })
     )
     .min(1, "Debes agregar al menos un producto"),
+})
+.refine((data) => {
+  if (data.type === "INBOUND") return data.destinationStockId !== undefined;
+  if (data.type === "OUTBOUND") return data.originStockId !== undefined;
+  if (data.type === "TRANSFER") return data.originStockId !== undefined && data.destinationStockId !== undefined;
+  return true;
+}, {
+  message: "Los campos de origen y destino no son válidos según el tipo de movimiento",
 });

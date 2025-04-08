@@ -48,7 +48,7 @@ export default function MovementEmployeeSearch({
       <SearchBar
         onSearch={onSearch}
         debounceDelay={400}
-        placeholder="Buscar por nombre o DNI del empleado..."
+        placeholder="Buscar por nombre o RUC del empleado..."
       />
       {isLoading ? (
         <EmployeeTableSkeleton />

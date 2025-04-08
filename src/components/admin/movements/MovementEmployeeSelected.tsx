@@ -2,32 +2,47 @@
 
 import { EmployeeData } from "@/lib/employee/IEmployee";
 import { Trash } from "lucide-react";
+import GenericTable, { Column, TableAction } from "@/components/global/GenericTable";
 
-type MovementEmployeeProps = {
+type MovementEmployeeSelectedProps = {
   employee: EmployeeData | null;
   onRemove: () => void;
 };
 
-export default function MovementEmployee({
+export default function MovementEmployeeSelected({
   employee,
   onRemove,
-}: MovementEmployeeProps) {
+}: MovementEmployeeSelectedProps) {
   if (!employee) return null;
 
+  const columns: Column<EmployeeData>[] = [
+    {
+      header: "Nombre",
+      accessor: "fullName",
+    },
+    {
+      header: "RUC",
+      accessor: "ruc",
+    },
+  ];
+
+  const actions: TableAction<EmployeeData>[] = [
+    {
+      label: "Quitar encargado",
+      icon: <Trash className="w-4 h-4 text-red-500" />,
+      onClick: () => onRemove(),
+    },
+  ];
+
   return (
-    <div className="w-full border rounded-lg p-4 shadow-sm flex items-center justify-between">
-      <div>
-        <p className="font-semibold">Encargado seleccionado:</p>
-        <p>{employee.fullName}</p>
-        <p className="text-sm text-gray-500">RUC: {employee.ruc}</p>
-      </div>
-      <button
-        onClick={onRemove}
-        className="text-red-500 hover:text-red-700 flex items-center gap-1"
-      >
-        <Trash className="w-4 h-4" />
-        Quitar
-      </button>
-    </div>
+    <GenericTable
+      data={[employee]}
+      columns={columns}
+      actions={actions}
+      actionsTitle="Acciones"
+      emptyMessage="No hay encargado seleccionado"
+      pagination={undefined}
+      className="mt-4"
+    />
   );
 }
