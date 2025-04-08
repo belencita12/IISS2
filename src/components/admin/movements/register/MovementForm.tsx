@@ -160,7 +160,7 @@ export default function MovementForm({ token }: { token: string }) {
               employee={selectedEmployee}
               onRemove={() => {
                 setSelectedEmployee(null);
-                setValue("managerId", 0, { shouldValidate: true });
+                setValue("managerId", 0,{ shouldValidate: true });
               }}
             />
           )}

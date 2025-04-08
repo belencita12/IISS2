@@ -29,7 +29,7 @@ export default function MovementEmployeeSelected({
   const actions: TableAction<EmployeeData>[] = [
     {
       label: "Quitar encargado",
-      icon: <Trash className="w-4 h-4 text-red-500" />,
+      icon: <Trash className="w-5 h-5" />,
       onClick: () => onRemove(),
     },
   ];

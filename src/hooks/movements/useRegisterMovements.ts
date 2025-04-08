@@ -24,7 +24,7 @@ export const useRegisterMovement = (token: string) => {
       originStockId: undefined,
       destinationStockId: undefined,
       managerId: undefined,
-      type: "INBOUND",
+      type: undefined,
       description: "",
       dateMovement: new Date().toISOString().split("T")[0],
       details: [],
@@ -40,23 +40,31 @@ export const useRegisterMovement = (token: string) => {
     if (existingIndex >= 0) {
       const updatedDetails = [...currentDetails];
       updatedDetails[existingIndex].quantity += quantity;
-      setValue("details", updatedDetails);
+      setValue("details", updatedDetails, { shouldValidate: true });
     } else {
-      setValue("details", [
-        ...currentDetails,
-        {
-          productId: Number(product.id),
-          quantity,
-          code: product.code,
-          name: product.name,
-        },
-      ]);
+      setValue(
+        "details",
+        [
+          ...currentDetails,
+          {
+            productId: Number(product.id),
+            quantity,
+            code: product.code,
+            name: product.name,
+          },
+        ],
+        { shouldValidate: true }
+      );
     }
   };
 
   const removeProduct = (productId: number) => {
     const currentDetails = getValues("details") || [];
-    setValue("details", currentDetails.filter((d) => d.productId !== productId));
+    setValue(
+      "details",
+      currentDetails.filter((d) => d.productId !== productId),
+      { shouldValidate: true }
+    );
   };
 
   const updateQuantity = (productId: number, quantity: number) => {
@@ -65,7 +73,8 @@ export const useRegisterMovement = (token: string) => {
       "details",
       currentDetails.map((d) =>
         d.productId === productId ? { ...d, quantity } : d
-      )
+      ),
+      { shouldValidate: true }
     );
   };
 
@@ -89,8 +98,7 @@ export const useRegisterMovement = (token: string) => {
       toast("success", "Movimiento registrado con éxito!");
       reset();
       return true;
-      
-    } catch (error:unknown) {
+    } catch (error: unknown) {
       toast(
         "error",
         error instanceof Error ? error.message : "Error al registrar movimiento"
