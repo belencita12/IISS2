@@ -88,11 +88,14 @@ export const useRegisterMovement = (token: string) => {
       console.log("Enviando datos:", movementData);
       toast("success", "Movimiento registrado con éxito!");
       reset();
+      return true;
+      
     } catch (error:unknown) {
       toast(
         "error",
         error instanceof Error ? error.message : "Error al registrar movimiento"
       );
+      return false;
     }
   };
 

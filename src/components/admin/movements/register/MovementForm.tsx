@@ -73,17 +73,20 @@ export default function MovementForm({ token }: { token: string }) {
   const handleAddEmployee = (employee: EmployeeData) => {
     setSelectedEmployee(employee);
     if (employee.id) {
-      setValue("managerId", employee.id);
+      setValue("managerId", employee.id, { shouldValidate: true });
     }
   };
 
   const onSubmit = async (data: Movement) => {
-    if (!data.dateMovement) return;
+    if (!data.dateMovement ) return;
     const formattedData = {
       ...data,
       dateMovement: new Date(data.dateMovement).toISOString(),
     };
-    await submitMovement(formattedData);
+    const success = await submitMovement(formattedData);
+    if (success) {
+      router.push("/dashboard/movement");
+    }
   };
 
   return (
@@ -92,6 +95,7 @@ export default function MovementForm({ token }: { token: string }) {
         onSubmit={handleSubmit(onSubmit)}
         className="w-full  bg-white p-8  space-y-8"
       >
+
         <h2 className="text-3xl font-bold mb-4 text-start">Registrar Movimiento</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -128,7 +132,7 @@ export default function MovementForm({ token }: { token: string }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex flex-col">
             <label className="text-sm font-medium mb-1">Fecha</label>
-            <Input type="date" {...register("dateMovement")}  max={new Date().toISOString().split("T")[0]} className={errors.dateMovement ? "border-red-500" : ""} />
+            <Input type="date" {...register("dateMovement")} max={new Date().toISOString().split("T")[0]} className={errors.dateMovement ? "border-red-500" : ""} />
             {errors.dateMovement && <p className="text-red-500 text-sm">{errors.dateMovement.message}</p>}
           </div>
 
@@ -156,7 +160,7 @@ export default function MovementForm({ token }: { token: string }) {
               employee={selectedEmployee}
               onRemove={() => {
                 setSelectedEmployee(null);
-                setValue("managerId", 0);
+                setValue("managerId", 0, { shouldValidate: true });
               }}
             />
           )}
@@ -190,7 +194,7 @@ export default function MovementForm({ token }: { token: string }) {
         </div>
 
         <div className="flex justify-end gap-4">
-          <Button variant="outline" type="button" onClick={() => router.push("/dashboard/movements")}>Cancelar</Button>
+          <Button variant="outline" type="button" onClick={() => router.push("/dashboard/movement")}>Cancelar</Button>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? "Registrando..." : "Registrar Movimiento"}
           </Button>
