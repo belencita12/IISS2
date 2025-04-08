@@ -29,9 +29,7 @@ const PurchaseCard = ({ purchase }: PurchaseCardProps) => {
       </div>
 
       <div className="flex flex-col justify-between items-end h-full">
-        <p className="text-black text-lg font-bold">
-          {new Date(purchase.date || "").toLocaleDateString()}
-        </p>
+        <p className="text-black text-lg font-bold">{purchase.date}</p>
       </div>
     </div>
   );
