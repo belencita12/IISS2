@@ -4,6 +4,8 @@ describe("Recuperación de contraseña", () => {
   const serverId = Cypress.env("MAILOSAUR_SERVER_ID");
   const TIMEOUT = { timeout: 15000 };
 
+  let testUser: BaseUser;
+
   it('Verificar si la variable de entorno "MAILOSAUR_API_KEY" se ha establecido', () => {
     expect(Cypress.env("MAILOSAUR_API_KEY")).to.exist;
   });
@@ -11,7 +13,7 @@ describe("Recuperación de contraseña", () => {
   it("Crear el usuario en caso de que no exista", () => {
     cy.intercept("POST", "**/auth/signup").as("register");
     cy.generateUser().then((user) => {
-      const testUser = { ...user, email: `${Date.now()}${validEmail}` };
+      testUser = { ...user, email: `${Date.now()}${validEmail}` };
       cy.register(testUser);
       cy.wait("@register", TIMEOUT);
     });
@@ -19,35 +21,35 @@ describe("Recuperación de contraseña", () => {
 
   it("envía un correo con enlace de recuperación de contrasenha", () => {
     cy.visit("/forgot-password");
-    cy.get('input[id="email"]').type(validEmail);
+    cy.get('input[id="email"]').type(testUser.email);
     cy.get('button[type="submit"]').click();
 
     cy.contains("Email enviado correctamente", TIMEOUT).should("be.visible");
   });
 
   it("obtiene el token de Mailosaur y restablece la contrasenha", () => {
-    cy.mailosaurGetMessage(serverId, { sentTo: validEmail }).then((message) => {
-      expect(message).not.to.be.undefined;
-      expect(message.subject).to.include("Password reset");
+    cy.mailosaurGetMessage(serverId, { sentTo: testUser.email }).then(
+      (message) => {
+        expect(message).not.to.be.undefined;
+        expect(message.subject).to.include("Password reset");
 
-      expect(message.html).not.to.be.undefined;
-      const resetLink = message.html?.links?.find((link) =>
-        link.href?.includes("reset-password")
-      );
-      expect(resetLink).to.exist;
-      const resetToken = new URL(resetLink!.href!).searchParams.get("token");
+        expect(message.html).not.to.be.undefined;
+        const resetLink = message.html?.links?.find((link) =>
+          link.href?.includes("reset-password")
+        );
+        expect(resetLink).to.exist;
+        const resetToken = new URL(resetLink!.href!).searchParams.get("token");
 
-      Cypress.env("resetToken", resetToken);
-    });
+        Cypress.env("resetToken", resetToken);
+      }
+    );
   });
 
   it("restablece la contrasenha y redirecciona a login", () => {
     const resetToken = Cypress.env("resetToken") as string;
-
     expect(resetToken).to.exist;
 
     cy.visit(`/reset-password?token=${resetToken}`);
-
     cy.get('input[id="password"]').type(newPassword);
     cy.get('input[id="confirmPassword"]').type(newPassword);
     cy.get('button[type="submit"]').click();
@@ -57,5 +59,7 @@ describe("Recuperación de contraseña", () => {
     }).should("be.visible");
 
     cy.url(TIMEOUT).should("include", "/login");
+
+    cy.loginAndSetSession("sessionToken", testUser.email, newPassword);
   });
 });
