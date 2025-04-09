@@ -19,7 +19,7 @@ export default async function Page(
     return <div className="py-4">
         <section className="flex flex-wrap items-center gap-4 px-16 mx-auto md:gap-16 md:px-24 py-12">
               <Image
-                src={"/pelu1.png"}
+                src={pet.profileImg?.originalUrl || "/imagen-mascota/default.jpg"}
                 alt={pet.name}
                 width={250}
                 height={250}
