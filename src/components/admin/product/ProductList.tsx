@@ -1,13 +1,13 @@
 "use client";
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/admin/product/ProductCard"; 
 import ProductFilters from "@/components/admin/product/filter/ProductFilter";
 import { useProductList } from "@/hooks/product/useProductList";
 import { useProductTag } from "@/hooks/product/useProductTag";
-import GenericPagination from "@/components/global/GenericPagination";  
+import GenericPagination from "@/components/global/GenericPagination";
+import ProductListSkeleton from "./skeleton/ProductListSkeleton"; 
 
 interface ProductListProps {
   token: string;
@@ -17,9 +17,9 @@ export default function ProductListPage({ token }: ProductListProps) {
   const router = useRouter();
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   
-  // Usamos el hook mejorado con soporte de paginación
+  // Hook para filtrado por tags
   const { 
-    filteredProducts, 
+    filteredProducts: tagFilteredProducts, 
     isTagFiltering, 
     fetchFilteredProducts,
     tagPagination,
@@ -27,6 +27,7 @@ export default function ProductListPage({ token }: ProductListProps) {
     setTagPageSize
   } = useProductTag(token);
 
+  // Hook para filtrado normal
   const {
     products,
     stockMap,
@@ -38,11 +39,22 @@ export default function ProductListPage({ token }: ProductListProps) {
     handlePageChange,
   } = useProductList(token);
 
+  // Sincronizar tamaño de página
   useEffect(() => {
     if (pagination.pageSize !== tagPagination.pageSize) {
       setTagPageSize(pagination.pageSize);
     }
   }, [pagination.pageSize, tagPagination.pageSize, setTagPageSize]);
+
+  // Combinar los resultados de los filtros
+  const displayedProducts = useMemo(() => {
+    if (selectedTags.length > 0) {
+      // Si hay tags, intersectamos con los productos filtrados
+      const filteredIds = new Set(products.map(p => p.id));
+      return tagFilteredProducts.filter(product => filteredIds.has(product.id));
+    }
+    return products;
+  }, [selectedTags, products, tagFilteredProducts]);
 
   const handleTagsChange = (tags: string[]) => {
     setSelectedTags(tags);
@@ -57,16 +69,15 @@ export default function ProductListPage({ token }: ProductListProps) {
     router.push(`/dashboard/products/${productId}`);
   };
 
-  const isFiltering = selectedTags.length > 0;
-  const loading = isFiltering ? isTagFiltering : isLoading;
-  const displayedProducts = isFiltering ? filteredProducts : products;
-
-  const currentPagination = isFiltering ? tagPagination : pagination;
-  const currentHandlePageChange = isFiltering ? handleTagPageChange : handlePageChange;
+  // Determinar qué paginación usar
+  const isFilteringByTags = selectedTags.length > 0;
+  const currentPagination = isFilteringByTags ? tagPagination : pagination;
+  const currentHandlePageChange = isFilteringByTags ? handleTagPageChange : handlePageChange;
+  const loading = isLoading || (isFilteringByTags && isTagFiltering);
 
   return (
     <div className="max-w-screen-xl mx-auto p-4">
-      <div className="mb-2"> 
+      <div className="mb-2">
         <ProductFilters
           filters={inputFilters}
           setFilters={setInputFilters}
@@ -80,16 +91,17 @@ export default function ProductListPage({ token }: ProductListProps) {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Productos</h1>
         <Button
-          variant="default"
+          variant="outline"
           onClick={() => router.push(`/dashboard/products/register`)}
-          className="bg-black text-white hover:bg-gray-800"
+          className="px-6"
         >
-          Crear Producto
+          Agregar
         </Button>
       </div>
+      
       {loading ? (
-        <p className="text-center py-4">Cargando productos...</p>
-      ) : displayedProducts.length === 0 && !loading ? (
+        <ProductListSkeleton />
+      ) : displayedProducts.length === 0 ? (
         <p className="text-center py-4">No hay productos disponibles</p>
       ) : (
         displayedProducts.map((product) => (
