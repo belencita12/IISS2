@@ -16,7 +16,7 @@ interface ProductListProps {
 
 export default function ProductListPage({ token }: ProductListProps) {
   const router = useRouter();
-  
+
   // Hook para filtrado normal
   const {
     products,
@@ -39,51 +39,55 @@ export default function ProductListPage({ token }: ProductListProps) {
     syncPageSize,
     selectedTags,
     getFilteredProductIds,
-    recalculatePagination
+    recalculatePagination,
   } = useProductTag(token, pagination.pageSize);
 
   // Estado para almacenar productos combinados
   const [combinedProducts, setCombinedProducts] = useState<Product[]>([]);
-  
-  // Sincronizar tamaño de página cuando cambia en pagination principal
+
   useEffect(() => {
     syncPageSize(pagination.pageSize);
   }, [pagination.pageSize, syncPageSize]);
 
-  // Función para combinar filtros y recalcular paginación
   const combineFilters = useCallback(() => {
     if (selectedTags.length === 0) {
-      return; 
+      return;
     }
-    
+
     const tagProductIds = getFilteredProductIds();
-    
-    const filteredByBoth = products.filter(product => tagProductIds.has(product.id));
-    
+
+    const filteredByBoth = products.filter((product) =>
+      tagProductIds.has(product.id)
+    );
+
     // Recalcular paginación basada en la cantidad de productos filtrados
     recalculatePagination(filteredByBoth.length);
-    
+
     const startIndex = (tagPagination.currentPage - 1) * tagPagination.pageSize;
-    const endIndex = Math.min(startIndex + tagPagination.pageSize, filteredByBoth.length);
-    
+    const endIndex = Math.min(
+      startIndex + tagPagination.pageSize,
+      filteredByBoth.length
+    );
+
     // Establecer productos combinados para mostrar
     setCombinedProducts(filteredByBoth.slice(startIndex, endIndex));
   }, [
-    selectedTags, 
-    products, 
-    getFilteredProductIds, 
-    recalculatePagination, 
-    tagPagination.currentPage, 
-    tagPagination.pageSize
+    selectedTags,
+    products,
+    getFilteredProductIds,
+    recalculatePagination,
+    tagPagination.currentPage,
+    tagPagination.pageSize,
   ]);
 
   useEffect(() => {
     if (selectedTags.length > 0) {
       combineFilters();
+    } else {
+      setCombinedProducts([]);
     }
   }, [selectedTags, products, combineFilters]);
 
-  // Determina qué productos mostrar basados en filtros aplicados
   const displayedProducts = useMemo(() => {
     if (selectedTags.length > 0) {
       return combinedProducts;
@@ -94,9 +98,8 @@ export default function ProductListPage({ token }: ProductListProps) {
   // Maneja el cambio de tags seleccionados
   const handleTagsChange = async (tags: string[]) => {
     await fetchFilteredProducts(tags);
-    // Si no hay tags seleccionados, aseguramos que combinedProducts esté vacío
     if (tags.length === 0) {
-      setCombinedProducts([]);
+      handleSearch();
     }
   };
 
@@ -110,11 +113,11 @@ export default function ProductListPage({ token }: ProductListProps) {
 
   const isFilteringByTags = selectedTags.length > 0;
   const currentPagination = isFilteringByTags ? tagPagination : pagination;
-  const currentHandlePageChange = isFilteringByTags 
+  const currentHandlePageChange = isFilteringByTags
     ? (page: number) => {
         handleTagPageChange(page);
         setTimeout(combineFilters, 0);
-      } 
+      }
     : handlePageChange;
   const loading = isLoading || isTagFiltering;
 
