@@ -40,7 +40,7 @@ export function useProductList(token: string) {
   const { query, setQuery, toQueryString } = useQuery<QueryParams>({
     ...initialFilters,
     page: 1,
-    size: 5
+    size: 16
   });
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -50,7 +50,7 @@ export function useProductList(token: string) {
     currentPage: 1,
     totalPages: 1,
     totalItems: 0,
-    pageSize: 5,
+    pageSize: 16,
   });
 
   const loadProductStock = useCallback(
