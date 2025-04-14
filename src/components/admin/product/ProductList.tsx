@@ -1,13 +1,14 @@
 "use client";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import ProductCard from "@/components/admin/product/ProductCard"; 
+import ProductCard from "@/components/admin/product/ProductCard";
 import ProductFilters from "@/components/admin/product/filter/ProductFilter";
 import { useProductList } from "@/hooks/product/useProductList";
 import { useProductTag } from "@/hooks/product/useProductTag";
 import GenericPagination from "@/components/global/GenericPagination";
-import ProductListSkeleton from "./skeleton/ProductListSkeleton"; 
+import ProductListSkeleton from "./skeleton/ProductListSkeleton";
+import { Product } from "@/lib/products/IProducts";
 
 interface ProductListProps {
   token: string;
@@ -15,18 +16,7 @@ interface ProductListProps {
 
 export default function ProductListPage({ token }: ProductListProps) {
   const router = useRouter();
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   
-  // Hook para filtrado por tags
-  const { 
-    filteredProducts: tagFilteredProducts, 
-    isTagFiltering, 
-    fetchFilteredProducts,
-    tagPagination,
-    handleTagPageChange,
-    setTagPageSize
-  } = useProductTag(token);
-
   // Hook para filtrado normal
   const {
     products,
@@ -39,26 +29,75 @@ export default function ProductListPage({ token }: ProductListProps) {
     handlePageChange,
   } = useProductList(token);
 
-  // Sincronizar tamaño de página
-  useEffect(() => {
-    if (pagination.pageSize !== tagPagination.pageSize) {
-      setTagPageSize(pagination.pageSize);
-    }
-  }, [pagination.pageSize, tagPagination.pageSize, setTagPageSize]);
+  // Hook para filtrado por tags
+  const {
+    filteredProducts: tagFilteredProducts,
+    isTagFiltering,
+    fetchFilteredProducts,
+    tagPagination,
+    handleTagPageChange,
+    syncPageSize,
+    selectedTags,
+    getFilteredProductIds,
+    recalculatePagination
+  } = useProductTag(token, pagination.pageSize);
 
-  // Combinar los resultados de los filtros
+  // Estado para almacenar productos combinados
+  const [combinedProducts, setCombinedProducts] = useState<Product[]>([]);
+  
+  // Sincronizar tamaño de página cuando cambia en pagination principal
+  useEffect(() => {
+    syncPageSize(pagination.pageSize);
+  }, [pagination.pageSize, syncPageSize]);
+
+  // Función para combinar filtros y recalcular paginación
+  const combineFilters = useCallback(() => {
+    if (selectedTags.length === 0) {
+      return; 
+    }
+    
+    const tagProductIds = getFilteredProductIds();
+    
+    const filteredByBoth = products.filter(product => tagProductIds.has(product.id));
+    
+    // Recalcular paginación basada en la cantidad de productos filtrados
+    recalculatePagination(filteredByBoth.length);
+    
+    const startIndex = (tagPagination.currentPage - 1) * tagPagination.pageSize;
+    const endIndex = Math.min(startIndex + tagPagination.pageSize, filteredByBoth.length);
+    
+    // Establecer productos combinados para mostrar
+    setCombinedProducts(filteredByBoth.slice(startIndex, endIndex));
+  }, [
+    selectedTags, 
+    products, 
+    getFilteredProductIds, 
+    recalculatePagination, 
+    tagPagination.currentPage, 
+    tagPagination.pageSize
+  ]);
+
+  useEffect(() => {
+    if (selectedTags.length > 0) {
+      combineFilters();
+    }
+  }, [selectedTags, products, combineFilters]);
+
+  // Determina qué productos mostrar basados en filtros aplicados
   const displayedProducts = useMemo(() => {
     if (selectedTags.length > 0) {
-      // Si hay tags, intersectamos con los productos filtrados
-      const filteredIds = new Set(products.map(p => p.id));
-      return tagFilteredProducts.filter(product => filteredIds.has(product.id));
+      return combinedProducts;
     }
     return products;
-  }, [selectedTags, products, tagFilteredProducts]);
+  }, [selectedTags, products, combinedProducts]);
 
-  const handleTagsChange = (tags: string[]) => {
-    setSelectedTags(tags);
-    fetchFilteredProducts(tags);
+  // Maneja el cambio de tags seleccionados
+  const handleTagsChange = async (tags: string[]) => {
+    await fetchFilteredProducts(tags);
+    // Si no hay tags seleccionados, aseguramos que combinedProducts esté vacío
+    if (tags.length === 0) {
+      setCombinedProducts([]);
+    }
   };
 
   const preventInvalidKeys = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -69,11 +108,15 @@ export default function ProductListPage({ token }: ProductListProps) {
     router.push(`/dashboard/products/${productId}`);
   };
 
-  // Determinar qué paginación usar
   const isFilteringByTags = selectedTags.length > 0;
   const currentPagination = isFilteringByTags ? tagPagination : pagination;
-  const currentHandlePageChange = isFilteringByTags ? handleTagPageChange : handlePageChange;
-  const loading = isLoading || (isFilteringByTags && isTagFiltering);
+  const currentHandlePageChange = isFilteringByTags 
+    ? (page: number) => {
+        handleTagPageChange(page);
+        setTimeout(combineFilters, 0);
+      } 
+    : handlePageChange;
+  const loading = isLoading || isTagFiltering;
 
   return (
     <div className="max-w-screen-xl mx-auto p-4">
@@ -81,7 +124,12 @@ export default function ProductListPage({ token }: ProductListProps) {
         <ProductFilters
           filters={inputFilters}
           setFilters={setInputFilters}
-          onSearch={handleSearch}
+          onSearch={() => {
+            handleSearch();
+            if (selectedTags.length > 0) {
+              setTimeout(combineFilters, 100);
+            }
+          }}
           preventInvalidKeys={preventInvalidKeys}
           selectedTags={selectedTags}
           onTagsChange={handleTagsChange}
@@ -98,7 +146,7 @@ export default function ProductListPage({ token }: ProductListProps) {
           Agregar
         </Button>
       </div>
-      
+
       {loading ? (
         <ProductListSkeleton />
       ) : displayedProducts.length === 0 ? (
@@ -113,11 +161,15 @@ export default function ProductListPage({ token }: ProductListProps) {
           />
         ))
       )}
-      
+
       <GenericPagination
-        handlePreviousPage={() => currentHandlePageChange(currentPagination.currentPage - 1)}
+        handlePreviousPage={() =>
+          currentHandlePageChange(currentPagination.currentPage - 1)
+        }
         handlePageChange={currentHandlePageChange}
-        handleNextPage={() => currentHandlePageChange(currentPagination.currentPage + 1)}
+        handleNextPage={() =>
+          currentHandlePageChange(currentPagination.currentPage + 1)
+        }
         currentPage={currentPagination.currentPage}
         totalPages={currentPagination.totalPages}
       />

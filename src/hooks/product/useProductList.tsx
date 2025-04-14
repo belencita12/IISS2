@@ -111,9 +111,10 @@ export function useProductList(token: string) {
           page,
           size: data.size
         });
-      } catch (error) {
-        toast("error", "Error al obtener productos");
-        setProducts([]);
+      }  catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Error al obtener productos.";
+      toast("error", errorMessage);
+      setProducts([]);
       } finally {
         setIsLoading(false);
       }
