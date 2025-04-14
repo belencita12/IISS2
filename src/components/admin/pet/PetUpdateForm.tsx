@@ -27,6 +27,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+const MAX_FILE_SIZE = 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
 const petFormSchema = z.object({
   userId: z.number().min(1, "El correo del usuario no está comprobado"),
   petName: z.string().min(1, "El nombre es obligatorio"),
@@ -43,6 +46,15 @@ const petFormSchema = z.object({
       }
     )
     .transform((val) => parseFloat(String(val))),
+  imageFile: z
+    .instanceof(File)
+    .refine((file) => ALLOWED_IMAGE_TYPES.includes(file.type), {
+      message: "Solo se permiten imágenes en formato JPG, PNG o WEBP",
+    })
+    .refine((file) => file.size <= MAX_FILE_SIZE, {
+      message: "La imagen no debe superar 1MB",
+    })
+    .optional(),
 });
 
 type PetFormValues = z.infer<typeof petFormSchema>;
@@ -98,7 +110,9 @@ function formatDateToInput(date: string): string {
 export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
   type validationState = "NOTHING" | "LOADING" | "VALID" | "INVALID";
 
-  const { id, petId } = useParams();
+  const params = useParams();
+  const id = params?.id as string;
+  const petId = params?.petId as string;
 
   const router = useRouter();
   const [pet, setPet] = useState<PetData | null | undefined>(null);
@@ -110,6 +124,7 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [validatingState, setValidatingState] =
     useState<validationState>("NOTHING");
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const {
     register,
@@ -196,12 +211,33 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
     }
   };
 
-  // Efectúa una petición a la API para obtener los datos de la mascota cada que los valores de id y token cambien
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPreviewImage(null);
+    const file = event.target.files?.[0];
+    if (!file) {
+      setValue("imageFile", undefined);
+      return;
+    }
+    setValue("imageFile", file);
+    const reader = new FileReader();
+    reader.onload = (e) => setPreviewImage(e.target?.result as string);
+    reader.readAsDataURL(file);
+  };
+
   const onSubmit = async (data: PetFormValues) => {
+    console.log("Datos del formulario:", data);
+    
     if (!token) {
+      console.error("Token no disponible");
       toast("error", "Debes estar autenticado para editar una mascota.");
       return;
     }
+
+    if (validatingState !== "VALID") {
+      toast("error", "Por favor, valida el correo del usuario antes de continuar.");
+      return;
+    }
+
     const formData = new FormData();
     Object.entries({
       name: data.petName,
@@ -211,18 +247,27 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
       weight: data.weight.toString(),
       sex: data.gender,
       dateOfBirth: new Date(data.birthDate).toISOString(),
-    }).forEach(([key, value]) => formData.append(key, value));
+    }).forEach(([key, value]) => {
+      console.log(`Agregando ${key}: ${value}`);
+      formData.append(key, value);
+    });
+    
+    if (data.imageFile) {
+      console.log("Agregando imagen:", data.imageFile);
+      formData.append("profileImg", data.imageFile);
+    }
+    
     setIsSubmitting(true);
     try {
-      await updatePet(Number(petId), formData, token);
-
-      toast("success", "Datos actualizados con éxito!", {
-        duration: 1500,
-        onAutoClose: () => router.push(`/dashboard/clients/${id}`),
-        onDismiss: () => router.push(`/dashboard/clients/${id}`),
-      });
-    } catch {
-      toast("error", "Hubo un error al actualizar los datos de la mascota.");
+      console.log("Enviando datos al servidor...");
+      console.log("Token:", token);
+      const response = await updatePet(Number(petId), formData, token);
+      console.log("Respuesta del servidor:", response);
+      toast("success", "Mascota actualizada correctamente");
+      router.push(`/dashboard/clients/${id}`);
+    } catch (error) {
+      console.error("Error al actualizar la mascota:", error);
+      toast("error", "Error al actualizar la mascota");
     } finally {
       setIsSubmitting(false);
     }
@@ -243,14 +288,19 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
   // Obtiene los datos de la mascota y su dueño
   useEffect(() => {
     setPet(undefined);
-    if (!petId || !token) return;
+    if (!petId || !token) {
+      console.error("Faltan datos necesarios:", { petId, token });
+      return;
+    }
 
     const fetchPetAndClient = async () => {
       try {
+        console.log("Obteniendo datos de la mascota...");
         const petData = await getPetById(Number(petId), token);
 
-        if (petData && petData.userId && petData.userId.toString() === id) {
+        if (petData) {
           setPet(petData);
+          console.log("Datos de la mascota:", petData);
 
           setValue("petName", petData.name);
           setValue("birthDate", formatDateToInput(petData.dateOfBirth));
@@ -259,19 +309,22 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
           setValue("gender", petData.sex);
           setValue("weight", petData.weight);
 
-          const clientData = await getClientById(petData.userId, token);
-
-          if (clientData) {
-            setClient(clientData);
-
-            setSearchQuery(clientData.email);
-          } else {
-            toast("error", "No se encontró el dueño de la mascota");
+          if (petData.userId) {
+            const clientData = await getClientById(petData.userId, token);
+            if (clientData) {
+              setClient(clientData);
+              setSearchQuery(clientData.email);
+              setValue("userId", petData.userId);
+            } else {
+              console.error("No se pudo obtener los datos del cliente");
+              toast("error", "No se pudo obtener los datos del dueño de la mascota");
+            }
           }
         } else {
           setPet(null);
         }
       } catch (error) {
+        console.error("Error al obtener datos:", error);
         toast("error", "No se pudo obtener los datos de la mascota");
       }
     };
@@ -293,7 +346,15 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
           <div className="flex flex-col md:flex-row justify-center p-5 gap-6">
             <div className="flex flex-col justify-center items-center p-3">
               <div className="w-[250px] h-[250px] rounded-full overflow-hidden border-[3px] border-black flex justify-center items-center">
-                {pet.profileImg ? (
+                {previewImage ? (
+                  <Image
+                    src={previewImage}
+                    alt={pet.name}
+                    width={100}
+                    height={100}
+                    className="object-cover object-center w-full h-full"
+                  />
+                ) : pet.profileImg ? (
                   <Image
                     src={pet.profileImg.originalUrl}
                     alt={pet.name}
@@ -305,6 +366,22 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
                   <div className="w-full h-full bg-gray-300 mx-auto flex items-center justify-center">
                     <span className="text-gray-500">Sin imagen</span>
                   </div>
+                )}
+              </div>
+              <div className="flex flex-col items-center mt-4">
+                <Label className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-md text-sm font-medium text-center cursor-pointer">
+                  <Input
+                    type="file"
+                    accept="image/jpeg, image/png, image/webp"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                  {previewImage ? "Cambiar imagen" : "Cambiar imagen de la mascota"}
+                </Label>
+                {errors.imageFile && (
+                  <p className="text-red-500 text-sm mt-2">
+                    {errors.imageFile.message}
+                  </p>
                 )}
               </div>
               <div className="flex-col p-2 text-black">
@@ -489,7 +566,10 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
                     Cancelar
                   </Button>
 
-                  <Button type="submit" disabled={isSubmitting}>
+                  <Button 
+                    type="submit" 
+                    disabled={isSubmitting}
+                  >
                     {isSubmitting ? "Guardando..." : "Guardar"}
                   </Button>
                 </div>
