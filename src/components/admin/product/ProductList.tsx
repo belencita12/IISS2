@@ -89,11 +89,12 @@ export default function ProductListPage({ token }: ProductListProps) {
   }, [selectedTags, products, combineFilters]);
 
   const displayedProducts = useMemo(() => {
+    // Si se filtra por tags, usa el listado proveniente del hook de tags
     if (selectedTags.length > 0) {
-      return combinedProducts;
+      return tagFilteredProducts;
     }
     return products;
-  }, [selectedTags, products, combinedProducts]);
+  }, [selectedTags, tagFilteredProducts, products]);
 
   // Maneja el cambio de tags seleccionados
   const handleTagsChange = async (tags: string[]) => {
