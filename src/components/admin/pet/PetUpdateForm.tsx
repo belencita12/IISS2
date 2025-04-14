@@ -31,7 +31,6 @@ const MAX_FILE_SIZE = 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 const petFormSchema = z.object({
-  userId: z.number().min(1, "El correo del usuario no está comprobado"),
   petName: z.string().min(1, "El nombre es obligatorio"),
   birthDate: z.string().min(1, "La fecha de nacimiento es obligatoria"),
   breed: z.string().min(1, "La raza es obligatoria"),
@@ -108,22 +107,17 @@ function formatDateToInput(date: string): string {
 }
 
 export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
-  type validationState = "NOTHING" | "LOADING" | "VALID" | "INVALID";
-
   const params = useParams();
   const id = params?.id as string;
   const petId = params?.petId as string;
 
   const router = useRouter();
   const [pet, setPet] = useState<PetData | null | undefined>(null);
-  const [client, setClient] = useState<ClientData | null>(null);
   const [species, setSpecies] = useState<Species[]>([]);
   const [races, setRaces] = useState<Race[]>([]);
 
   const [emailQuery, setSearchQuery] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [validatingState, setValidatingState] =
-    useState<validationState>("NOTHING");
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const {
@@ -135,7 +129,6 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
   } = useForm<PetFormValues>({
     resolver: zodResolver(petFormSchema),
     defaultValues: {
-      userId: 0,
       petName: "",
       birthDate: "",
       breed: "",
@@ -143,6 +136,7 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
       gender: "",
     },
   });
+  console.log(errors)
 
   // Obtiene las especies
   useEffect(() => {
@@ -170,47 +164,6 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
     }
   };
 
-  // Obtiene el usuario a partir del correo
-  const handleUserValidation = async (userEmail: string) => {
-    setValidatingState("LOADING");
-
-    if (!userEmail || !userEmail.includes("@") || !token) {
-      setValidatingState("INVALID");
-      return;
-    }
-
-    try {
-      const userData = await fetchUsers(1, `${userEmail}`, token);
-
-      if (userData.total === 0) {
-        setValidatingState("INVALID");
-        return;
-      }
-
-      setValue("userId", userData.data[0].id);
-      setValidatingState("VALID");
-    } catch {
-      toast("error", "Error al obtener el usuario.");
-      setValidatingState("INVALID");
-    }
-  };
-
-  // Renderizado condicional basado en el estado de validación
-  const renderValidationIcon = () => {
-    switch (validatingState) {
-      case "LOADING":
-        return (
-          <LoaderCircleIcon className="lucide lucide-loader-circle animate-spin" />
-        );
-      case "VALID":
-        return <Check className="lucide lucide-check text-green-500" />;
-      case "INVALID":
-        return <X className="lucide lucide-x text-red-500" />;
-      default:
-        return null;
-    }
-  };
-
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPreviewImage(null);
     const file = event.target.files?.[0];
@@ -233,15 +186,9 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
       return;
     }
 
-    if (validatingState !== "VALID") {
-      toast("error", "Por favor, valida el correo del usuario antes de continuar.");
-      return;
-    }
-
     const formData = new FormData();
     Object.entries({
       name: data.petName,
-      userId: data.userId.toString(),
       speciesId: data.animalType,
       raceId: data.breed,
       weight: data.weight.toString(),
@@ -309,17 +256,7 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
           setValue("gender", petData.sex);
           setValue("weight", petData.weight);
 
-          if (petData.userId) {
-            const clientData = await getClientById(petData.userId, token);
-            if (clientData) {
-              setClient(clientData);
-              setSearchQuery(clientData.email);
-              setValue("userId", petData.userId);
-            } else {
-              console.error("No se pudo obtener los datos del cliente");
-              toast("error", "No se pudo obtener los datos del dueño de la mascota");
-            }
-          }
+          console.log(petData)
         } else {
           setPet(null);
         }
@@ -334,6 +271,7 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
 
   return (
     <div className="flex-col">
+      <h1 className="text-2xl font-bold my-3 text-center">Editar mascota del cliente</h1>
       {pet === undefined ? (
         <p className="text-center text-gray-600 pt-10">Cargando mascota...</p>
       ) : pet === null ? (
@@ -398,46 +336,6 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
                 onSubmit={handleSubmit(onSubmit)}
                 className="flex-col space-y-4"
               >
-                <div>
-                  {client ? (
-                    <>
-                      <Label className="">Correo del usuario</Label>
-                      <div className="flex flex-col justify-between items-start gap-1">
-                        <div className="flex flex-col sm:flex-row justify-start items-start gap-4 w-full">
-                          <div className="flex-grow w-full">
-                            <ValidatedInput
-                              type="email"
-                              id="searchUser"
-                              placeholder="Ej: ejemplo@gmail.com"
-                              value={emailQuery}
-                              onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                          </div>
-                          <div className="flex justify-start items-center gap-2">
-                            <Button
-                              variant={"secondary"}
-                              type="button"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                handleUserValidation(emailQuery);
-                              }}
-                            >
-                              Comprobar usuario
-                            </Button>
-                            {renderValidationIcon()}
-                          </div>
-                        </div>
-                        {errors.userId && (
-                          <p className="text-red-500 mt-1">
-                            {errors.userId.message}
-                          </p>
-                        )}
-                      </div>
-                    </>
-                  ) : (
-                    <p className="text-gray-600">Obteniendo usuario...</p>
-                  )}
-                </div>
                 <div>
                   <Label className="">Nombre</Label>
                   <Input
