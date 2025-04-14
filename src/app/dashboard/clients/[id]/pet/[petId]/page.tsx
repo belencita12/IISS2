@@ -46,7 +46,7 @@ export default async function Page(
             </section>
         </div>
     } catch (error) {
-        console.error('Error al cargar la mascota:', error);
+        //console.error('Error al cargar la mascota:', error);
         return notFound();
     }
 }
