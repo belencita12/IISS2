@@ -49,7 +49,6 @@ export default function ProductListPage({ token }: ProductListProps) {
     syncPageSize(pagination.pageSize);
   }, [pagination.pageSize, syncPageSize]);
 
-// En ProductList.tsx
 const combineFilters = useCallback(() => {
   if (selectedTags.length === 0) {
     return;
@@ -57,7 +56,7 @@ const combineFilters = useCallback(() => {
 
   const tagProductIds = getFilteredProductIds();
 
-  // Filtrar productos que coincidan con tags Y con otros filtros (incluyendo categoría)
+  // Filtrar productos que coincidan con tags Y con otros filtros
   const filteredByBoth = products.filter((product) => 
     tagProductIds.has(product.id) && 
     (inputFilters.category ? product.category === inputFilters.category : true)
@@ -76,7 +75,7 @@ const combineFilters = useCallback(() => {
 }, [
   selectedTags,
   products,
-  inputFilters.category, // Añadir esta dependencia
+  inputFilters.category, 
   getFilteredProductIds,
   recalculatePagination,
   tagPagination.currentPage,
@@ -89,13 +88,13 @@ useEffect(() => {
   } else {
     setCombinedProducts([]);
   }
-}, [selectedTags, products, inputFilters.category, combineFilters]); // Añadir category como dependencia
+}, [selectedTags, products, inputFilters.category, combineFilters]); 
 
   const displayedProducts = useMemo(() => {
     if (selectedTags.length > 0) {
       return combinedProducts;
     }
-    return products; // Los otros filtros ya se aplican via API
+    return products; 
   }, [selectedTags, combinedProducts, products]);
 
   // Maneja el cambio de tags seleccionados
