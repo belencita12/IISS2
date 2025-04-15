@@ -92,7 +92,7 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
 
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold mb-4">Depósitos</h2>
-        <Button className="border border-gray-300 hover:bg-gray-100" onClick={handleAddDeposit}>
+        <Button className="border border-gray-300 hover:bg-gray-800" onClick={handleAddDeposit}>
           Registrar Deposito
         </Button>
       </div>
