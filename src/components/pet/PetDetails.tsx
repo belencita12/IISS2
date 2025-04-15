@@ -9,6 +9,7 @@ import PetVaccinationTable from "../pet/PetVaccinationTable";
 import { PetData } from "@/lib/pets/IPet";
 import { getPetById } from "@/lib/pets/getPetById";
 import { updatePet } from "@/lib/pets/updatePet";
+import { notFound } from "next/navigation";
 
 interface EditablePet {
   name: string;
@@ -213,8 +214,8 @@ export default function PetDetails({ token }: Props) {
         <p className="text-center text-gray-600">Cargando mascota...</p>
       ) : pet === null ? (
         <>
-          <p className="text-center mt-4 p-10">Mascota no registrada.</p>
-          <p className="text-center">Error 404</p>
+         {/*  <p className="text-center mt-4 p-10">Mascota no registrada.</p>
+          <p className="text-center">Error 404</p> */}
         </>
       ) : (
         <>

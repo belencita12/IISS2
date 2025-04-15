@@ -19,6 +19,7 @@ import { getRacesBySpecies, getSpecies } from "@/lib/pets/getRacesAndSpecies";
 import { updatePet } from "@/lib/pets/updatePet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { notFound } from "next/navigation";
 import {
   Select,
   SelectContent,
@@ -112,7 +113,7 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
   const petId = params?.petId as string;
 
   const router = useRouter();
-  const [pet, setPet] = useState<PetData | null | undefined>(null);
+  const [pet, setPet] = useState<PetData | null | undefined>(undefined);
   const [species, setSpecies] = useState<Species[]>([]);
   const [races, setRaces] = useState<Race[]>([]);
 
@@ -231,6 +232,12 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
       });
     }
   }, [watch("animalType")]);
+
+  useEffect(()=>{
+    if(pet === null){
+      throw notFound()
+    }
+  },[pet])
 
   // Obtiene los datos de la mascota y su dueño
   useEffect(() => {
