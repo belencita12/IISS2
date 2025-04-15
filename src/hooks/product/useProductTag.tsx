@@ -23,7 +23,7 @@ export const useProductTag = (token: string, externalPageSize: number = 5) => {
   const [allTagProducts, setAllTagProducts] = useState<Product[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   // Aplicamos debounce a los tags seleccionados
-  const debouncedTags = useDebounce(selectedTags, 500);
+  const debouncedTags = useDebounce(selectedTags, 1000);
 
   useEffect(() => {
     if (externalPageSize !== tagPagination.pageSize) {

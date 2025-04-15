@@ -4,7 +4,7 @@ import React from "react";
 import { Card } from "@/components/ui/card";
 
 const ProductListSkeleton: React.FC = () => {
-  const skeletonItems = new Array(5).fill(null); // muestra 5 elementos cargando
+  const skeletonItems = new Array(16).fill(null); // muestra 16 elementos cargando
 
   return (
     <>

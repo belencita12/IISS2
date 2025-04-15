@@ -34,7 +34,7 @@ export function useProductList(token: string) {
 
   const [inputFilters, setInputFilters] = useState<FiltersType>(initialFilters);
   
-  const debouncedFilters = useDebounce(inputFilters, 500);
+  const debouncedFilters = useDebounce(inputFilters, 600);
   
   // Usamos useQuery para gestionar la búsqueda y paginación
   const { query, setQuery, toQueryString } = useQuery<QueryParams>({

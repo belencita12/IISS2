@@ -49,52 +49,54 @@ export default function ProductListPage({ token }: ProductListProps) {
     syncPageSize(pagination.pageSize);
   }, [pagination.pageSize, syncPageSize]);
 
-  const combineFilters = useCallback(() => {
-    if (selectedTags.length === 0) {
-      return;
-    }
+// En ProductList.tsx
+const combineFilters = useCallback(() => {
+  if (selectedTags.length === 0) {
+    return;
+  }
 
-    const tagProductIds = getFilteredProductIds();
+  const tagProductIds = getFilteredProductIds();
 
-    const filteredByBoth = products.filter((product) =>
-      tagProductIds.has(product.id)
-    );
+  // Filtrar productos que coincidan con tags Y con otros filtros (incluyendo categoría)
+  const filteredByBoth = products.filter((product) => 
+    tagProductIds.has(product.id) && 
+    (inputFilters.category ? product.category === inputFilters.category : true)
+  );
 
-    // Recalcular paginación basada en la cantidad de productos filtrados
-    recalculatePagination(filteredByBoth.length);
+  // Recalcular paginación
+  recalculatePagination(filteredByBoth.length);
 
-    const startIndex = (tagPagination.currentPage - 1) * tagPagination.pageSize;
-    const endIndex = Math.min(
-      startIndex + tagPagination.pageSize,
-      filteredByBoth.length
-    );
+  const startIndex = (tagPagination.currentPage - 1) * tagPagination.pageSize;
+  const endIndex = Math.min(
+    startIndex + tagPagination.pageSize,
+    filteredByBoth.length
+  );
 
-    // Establecer productos combinados para mostrar
-    setCombinedProducts(filteredByBoth.slice(startIndex, endIndex));
-  }, [
-    selectedTags,
-    products,
-    getFilteredProductIds,
-    recalculatePagination,
-    tagPagination.currentPage,
-    tagPagination.pageSize,
-  ]);
+  setCombinedProducts(filteredByBoth.slice(startIndex, endIndex));
+}, [
+  selectedTags,
+  products,
+  inputFilters.category, // Añadir esta dependencia
+  getFilteredProductIds,
+  recalculatePagination,
+  tagPagination.currentPage,
+  tagPagination.pageSize,
+]);
 
-  useEffect(() => {
-    if (selectedTags.length > 0) {
-      combineFilters();
-    } else {
-      setCombinedProducts([]);
-    }
-  }, [selectedTags, products, combineFilters]);
+useEffect(() => {
+  if (selectedTags.length > 0) {
+    combineFilters();
+  } else {
+    setCombinedProducts([]);
+  }
+}, [selectedTags, products, inputFilters.category, combineFilters]); // Añadir category como dependencia
 
   const displayedProducts = useMemo(() => {
-    // Si se filtra por tags, usa el listado proveniente del hook de tags
     if (selectedTags.length > 0) {
-      return tagFilteredProducts;
+      return combinedProducts;
     }
-    return products;
-  }, [selectedTags, tagFilteredProducts, products]);
+    return products; // Los otros filtros ya se aplican via API
+  }, [selectedTags, combinedProducts, products]);
 
   // Maneja el cambio de tags seleccionados
   const handleTagsChange = async (tags: string[]) => {
