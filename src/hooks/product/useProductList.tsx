@@ -8,7 +8,7 @@ import { toast } from "@/lib/toast";
 import { useQuery } from "@/hooks/useQuery";
 
 interface FiltersType {
-  code: string;
+  searchTerm: string;
   category: string;
   minPrice: string;
   maxPrice: string;
@@ -17,14 +17,21 @@ interface FiltersType {
 }
 
 // Extendemos para incluir parámetros de paginación
-interface QueryParams extends FiltersType {
+interface QueryParams {
+  code?: string;
+  name?: string;
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  minCost?: number;
+  maxCost?: number;
   page: number;
   size: number;
 }
 
 export function useProductList(token: string) {
   const initialFilters = useMemo(() => ({
-    code: "",
+    searchTerm: "",
     category: "",
     minPrice: "",
     maxPrice: "",
@@ -38,7 +45,6 @@ export function useProductList(token: string) {
   
   // Usamos useQuery para gestionar la búsqueda y paginación
   const { query, setQuery, toQueryString } = useQuery<QueryParams>({
-    ...initialFilters,
     page: 1,
     size: 16
   });
@@ -72,11 +78,26 @@ export function useProductList(token: string) {
 
       setIsLoading(true);
       try {
+        // Determinamos si el término de búsqueda es un código o un nombre
+        const searchParams: {
+          code?: string;
+          name?: string;
+        } = {};
+        
+        if (filterParams.searchTerm) {
+          const trimmedSearch = filterParams.searchTerm.trim();
+          if (trimmedSearch.toLowerCase().startsWith("prod-")) {
+            searchParams.code = trimmedSearch;
+          } else {
+            searchParams.name = trimmedSearch;
+          }
+        }
+        
         const preparedParams = {
-          ...filterParams,
+          ...searchParams,
           page,
           size: pagination.pageSize,
-          code: filterParams.code ? filterParams.code.trim().toLowerCase() : undefined,
+          category: filterParams.category || undefined,
           minCost: filterParams.minCost !== "" ? parseFloat(filterParams.minCost) : undefined,
           maxCost: filterParams.maxCost !== "" ? parseFloat(filterParams.maxCost) : undefined,
           minPrice: filterParams.minPrice !== "" ? parseFloat(filterParams.minPrice) : undefined,
@@ -107,14 +128,14 @@ export function useProductList(token: string) {
         
         // Actualizamos el query para mantener sincronizado el estado
         setQuery({
-          ...filterParams,
+          ...preparedParams,
           page,
           size: data.size
         });
-      }  catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Error al obtener productos.";
-      toast("error", errorMessage);
-      setProducts([]);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Error al obtener productos.";
+        toast("error", errorMessage);
+        setProducts([]);
       } finally {
         setIsLoading(false);
       }

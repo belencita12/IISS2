@@ -1,4 +1,4 @@
-"use client";
+"use client"; 
 
 import React from "react";
 import SearchBar from "@/components/global/SearchBar";
@@ -9,7 +9,7 @@ import { useProductFilters } from "@/hooks/product/useProductFilter";
 
 interface ProductFiltersProps {
   filters: {
-    code: string;
+    searchTerm: string;
     category: string;
     minPrice: string;
     maxPrice: string;
@@ -18,7 +18,7 @@ interface ProductFiltersProps {
   };
   setFilters: React.Dispatch<
     React.SetStateAction<{
-      code: string;
+      searchTerm: string;
       category: string;
       minPrice: string;
       maxPrice: string;
@@ -54,11 +54,11 @@ export default function ProductFilters({
         <SearchBar
           onSearch={(query) => {
             setSearchInput(query);
-            setFilters((prev) => ({ ...prev, code: query }));
+            setFilters((prev) => ({ ...prev, searchTerm: query }));
           }}
           defaultQuery={searchInput}
           debounceDelay={400}
-          placeholder="Buscar por código del producto"
+          placeholder="Buscar por código o nombre del producto"
         />
       </div>
 

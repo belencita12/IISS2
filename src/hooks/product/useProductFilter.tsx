@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 interface Filters {
-  code: string;
+  searchTerm: string;
   category: string;
   minPrice: string;
   maxPrice: string;
@@ -14,25 +14,25 @@ export const useProductFilters = (
   onSearch: () => void,
   setFilters: React.Dispatch<React.SetStateAction<Filters>>
 ) => {
-  const [searchInput, setSearchInput] = useState(initialFilters.code);
-  const [localCodeValue, setLocalCodeValue] = useState(initialFilters.code);
+  const [searchInput, setSearchInput] = useState(initialFilters.searchTerm);
+  const [localSearchValue, setLocalSearchValue] = useState(initialFilters.searchTerm);
 
   // Sincroniza el estado interno con el filtro global
   useEffect(() => {
-    setSearchInput(initialFilters.code);
-    setLocalCodeValue(initialFilters.code);
-  }, [initialFilters.code]);
+    setSearchInput(initialFilters.searchTerm);
+    setLocalSearchValue(initialFilters.searchTerm);
+  }, [initialFilters.searchTerm]);
 
   const clearFilter = (filterName: keyof Filters) => {
-    if (filterName === "code") {
-      setLocalCodeValue("");
+    if (filterName === "searchTerm") {
+      setLocalSearchValue("");
       setSearchInput("");
     }
     setFilters((prev) => ({
       ...prev,
       [filterName]: "",
     }));
-    if (filterName === "code") {
+    if (filterName === "searchTerm") {
       onSearch();
     }
   };
@@ -40,7 +40,7 @@ export const useProductFilters = (
   const handleSearch = () => {
     setFilters((prev) => ({
       ...prev,
-      code: localCodeValue,
+      searchTerm: localSearchValue,
     }));
     onSearch();
   };
@@ -48,8 +48,8 @@ export const useProductFilters = (
   return {
     searchInput,
     setSearchInput,
-    localCodeValue,
-    setLocalCodeValue,
+    localSearchValue,
+    setLocalSearchValue,
     clearFilter,
     handleSearch,
   };
