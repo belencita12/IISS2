@@ -136,7 +136,7 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
       gender: "",
     },
   });
-  console.log(errors)
+  //console.log(errors)
 
   // Obtiene las especies
   useEffect(() => {
@@ -178,10 +178,10 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
   };
 
   const onSubmit = async (data: PetFormValues) => {
-    console.log("Datos del formulario:", data);
+    //console.log("Datos del formulario:", data);
     
     if (!token) {
-      console.error("Token no disponible");
+     // console.error("Token no disponible");
       toast("error", "Debes estar autenticado para editar una mascota.");
       return;
     }
@@ -195,25 +195,25 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
       sex: data.gender,
       dateOfBirth: new Date(data.birthDate).toISOString(),
     }).forEach(([key, value]) => {
-      console.log(`Agregando ${key}: ${value}`);
+      //console.log(`Agregando ${key}: ${value}`);
       formData.append(key, value);
     });
     
     if (data.imageFile) {
-      console.log("Agregando imagen:", data.imageFile);
+      //console.log("Agregando imagen:", data.imageFile);
       formData.append("profileImg", data.imageFile);
     }
     
     setIsSubmitting(true);
     try {
-      console.log("Enviando datos al servidor...");
-      console.log("Token:", token);
+      //console.log("Enviando datos al servidor...");
+      //console.log("Token:", token);
       const response = await updatePet(Number(petId), formData, token);
-      console.log("Respuesta del servidor:", response);
+      //console.log("Respuesta del servidor:", response);
       toast("success", "Mascota actualizada correctamente");
       router.push(`/dashboard/clients/${id}`);
     } catch (error) {
-      console.error("Error al actualizar la mascota:", error);
+      //console.error("Error al actualizar la mascota:", error);
       toast("error", "Error al actualizar la mascota");
     } finally {
       setIsSubmitting(false);
@@ -236,18 +236,19 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
   useEffect(() => {
     setPet(undefined);
     if (!petId || !token) {
-      console.error("Faltan datos necesarios:", { petId, token });
+      //console.error("Faltan datos necesarios:", { petId, token });
+      toast("error", "Faltan datos");
       return;
     }
 
     const fetchPetAndClient = async () => {
       try {
-        console.log("Obteniendo datos de la mascota...");
+        //console.log("Obteniendo datos de la mascota...");
         const petData = await getPetById(Number(petId), token);
 
         if (petData) {
           setPet(petData);
-          console.log("Datos de la mascota:", petData);
+          //console.log("Datos de la mascota:", petData);
 
           setValue("petName", petData.name);
           setValue("birthDate", formatDateToInput(petData.dateOfBirth));
@@ -256,12 +257,12 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
           setValue("gender", petData.sex);
           setValue("weight", petData.weight);
 
-          console.log(petData)
+         // console.log(petData)
         } else {
           setPet(null);
         }
       } catch (error) {
-        console.error("Error al obtener datos:", error);
+        //console.error("Error al obtener datos:", error);
         toast("error", "No se pudo obtener los datos de la mascota");
       }
     };
