@@ -20,7 +20,8 @@ export default function PaginatedPetsTable({ token,id }: { token: string ,id:num
     router.push(`/dashboard/clients/${id}/pet/${pet.id}/edit`);
     }
     const onDelete = (pet: PetData) => {
-    console.log("Delete pet", pet);
+    //console.log("Delete pet", pet);
+    toast("warning", "Borrar pet.");
     }
   const columns: Column<PetData>[] = [
     {
