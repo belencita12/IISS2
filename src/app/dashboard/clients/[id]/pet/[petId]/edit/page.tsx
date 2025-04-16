@@ -7,7 +7,7 @@ export default async function PetUpdatePage() {
   const session = await getServerSession(authOptions);
   if (session) {
     const token = session?.user.token;
-    console.log(token);
+    //console.log(token);
 
     return (
       <div>

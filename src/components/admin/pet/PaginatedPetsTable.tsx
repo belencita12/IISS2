@@ -27,7 +27,7 @@ export default function PaginatedPetsTable({ token,id }: { token: string ,id:num
       header: "",
       accessor: (pet) => (
         <Image
-          src={pet.profileImg?.previewUrl || "/image (4).png"}
+          src={pet.profileImg?.previewUrl || "/imagen-mascota/default.jpg"}
           alt={pet.name}
           width={30}
           height={30}

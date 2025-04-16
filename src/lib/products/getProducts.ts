@@ -11,14 +11,21 @@ export const getProducts = async (
   });
   const url = `${PRODUCT_API}?${queryParams.toString()}`;
 
-  const response = await fetch(url, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  try {
+    const response = await fetch(url, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-  if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      throw new Error(errorResponse.message || "Ocurrió un error. Intenta nuevamente.");
+    }
 
-  return await response.json();
+    return await response.json();
+  } catch (error) {
+    throw new Error(error instanceof Error ? error.message : "Ocurrió un error. Intenta nuevamente.");
+  }
 };

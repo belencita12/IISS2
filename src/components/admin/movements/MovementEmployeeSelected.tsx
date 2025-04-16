@@ -7,13 +7,17 @@ import GenericTable, { Column, TableAction } from "@/components/global/GenericTa
 type MovementEmployeeSelectedProps = {
   employee: EmployeeData | null;
   onRemove: () => void;
+  isSubmitting ?: boolean;
 };
 
 export default function MovementEmployeeSelected({
   employee,
   onRemove,
+  isSubmitting = false,
 }: MovementEmployeeSelectedProps) {
   if (!employee) return null;
+
+console.log(isSubmitting);
 
   const columns: Column<EmployeeData>[] = [
     {
@@ -29,7 +33,7 @@ export default function MovementEmployeeSelected({
   const actions: TableAction<EmployeeData>[] = [
     {
       label: "Quitar encargado",
-      icon: <Trash className="w-5 h-5" />,
+      icon: <Trash className={isSubmitting ? "cursor-not-allowed disabled>opacity-50" : "w-5 h-5"} />,
       onClick: () => onRemove(),
     },
   ];

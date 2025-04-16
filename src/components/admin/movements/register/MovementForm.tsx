@@ -95,7 +95,7 @@ export default function MovementForm({ token }: { token: string }) {
         onSubmit={handleSubmit(onSubmit)}
         className="w-full  bg-white p-8  space-y-8"
       >
-
+         <fieldset disabled={isSubmitting} className="space-y-8">
         <h2 className="text-3xl font-bold mb-4 text-start">Registrar Movimiento</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -192,9 +192,9 @@ export default function MovementForm({ token }: { token: string }) {
           )}
           {errors.details && <p className="text-red-500 text-sm mt-2">{errors.details.message}</p>}
         </div>
-
+        </fieldset>
         <div className="flex justify-end gap-4">
-          <Button variant="outline" type="button" onClick={() => router.push("/dashboard/movement")}>Cancelar</Button>
+          <Button variant="outline" type="button" onClick={() => router.push("/dashboard/movement")} disabled={isSubmitting} >Cancelar</Button>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? "Registrando..." : "Registrar Movimiento"}
           </Button>
