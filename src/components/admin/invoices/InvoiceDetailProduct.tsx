@@ -7,11 +7,10 @@ interface Props {
   totalItems: number;
   totalAmount: number;
   totalPayed: number;
-  totalVat:number;
+  totalVat: number;
 }
 
-export default function InvoiceDetailProduct({ details, totalItems, totalAmount, totalPayed,  totalVat }: Props) {
-
+export default function InvoiceDetailProduct({ details, totalItems, totalAmount, totalPayed, totalVat }: Props) {
   const formatNumber = (value: number) =>
     new Intl.NumberFormat("es-PY", {
       minimumFractionDigits: 0,
@@ -36,7 +35,7 @@ export default function InvoiceDetailProduct({ details, totalItems, totalAmount,
     },
     {
       header: "Sub. Total",
-      accessor: (item) => formatNumber(item.partialAmount),
+      accessor: (item) => formatNumber(item.quantity * item.unitCost),
       className: "text-right min-w-[120px]",
     },
   ];
@@ -57,13 +56,11 @@ export default function InvoiceDetailProduct({ details, totalItems, totalAmount,
         className="table-auto w-full"
       />
 
-<div className="flex justify-end flex-col items-end space-y-1 text-sm pr-4">
-  <p><strong>IVA:</strong> {formatNumber(totalVat)}</p>
-  <p><strong>Total:</strong> {formatNumber(totalAmount)}</p>
-  <p><strong>Pagado:</strong> {formatNumber(totalPayed)}</p>
-</div>
-
-
+      <div className="flex justify-end flex-col items-end space-y-1 text-sm pr-4">
+        <p><strong>IVA:</strong> {formatNumber(totalVat)}</p>
+        <p><strong>Total:</strong> {formatNumber(totalAmount)}</p>
+        <p><strong>Pagado:</strong> {formatNumber(totalPayed)}</p>
+      </div>
     </div>
   );
 }
