@@ -94,8 +94,12 @@ export default function ClientList({ token }: ClientListProps) {
             setIsDeleteModalOpen(false);
             setClientToDelete(null);
             loadUsers(data.pagination.currentPage);
-        } catch (error: any) {
-            toast("error", error.message);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                toast("error", error.message);
+            } else {
+                toast("error", "Ocurrió un error al eliminar el cliente");
+            }
         }
     };
 
