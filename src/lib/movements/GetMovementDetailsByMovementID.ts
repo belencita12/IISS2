@@ -18,6 +18,5 @@ export const getMovementDetailsByMovementId = async (
   }
 
   const response = await res.json();
-  console.log("DATA MOVEMENT DETAILS BY ID:", response.data);
   return response.data ?? [];
 };

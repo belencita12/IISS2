@@ -1,11 +1,10 @@
-// src/api/getMovementByID.ts
 import { MOVEMENTS_API } from "../urls";
-import { MovementWithDetails } from "./IMovements"; // ⬅️ nuevo tipo
+import { MovementData } from "./IMovements";
 
 export const getMovementByID = async (
   id: number,
   token: string
-): Promise<MovementWithDetails> => {
+): Promise<MovementData> => {
   const res = await fetch(`${MOVEMENTS_API}/${id}`, {
     method: "GET",
     headers: {
@@ -18,7 +17,6 @@ export const getMovementByID = async (
     throw new Error(`Error al obtener el movimiento con ID ${id}`);
   }
 
-  const data: MovementWithDetails = await res.json();
-  console.log("DATA MOVEMENT BY ID:", data);
+  const data: MovementData = await res.json();
   return data;
 };

@@ -47,8 +47,14 @@ export default function MovementListPage({ token }: Props) {
       ) : (
         <div className="flex flex-col gap-4 w-full">
           {movements.map((movement) => (
-            <MovementCard key={movement.id} movement={movement} token={token} />
-          ))}
+            <div
+            key={movement.id}
+            onClick={() => router.push(`/dashboard/movement/${movement.id}`)}
+            className="cursor-pointer"
+          >
+         <MovementCard movement={movement} token={token} />
+        </div>
+      ))}
         </div>
       )}
       {data && data.totalPages > 1 && (
