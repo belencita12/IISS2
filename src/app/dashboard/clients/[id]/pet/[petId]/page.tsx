@@ -8,11 +8,10 @@ import { notFound } from "next/navigation";
 import { getClientById } from "@/lib/client/getClientById";
 
 export default async function Page(
-    { params }: { params: Promise<{ id: string; petId: string }> }
+    { params }: { params:{ id: string; petId: string } }
 ) {
-    const resolvedParams = await params;
-    const petId = Number(resolvedParams.petId);
-    const clientId = Number(resolvedParams.id);
+    const petId = Number(params.petId);
+    const clientId = Number(params.id);
     const session = await getServerSession(authOptions);
     const token = session?.user?.token || "";
     
