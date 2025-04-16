@@ -6,7 +6,7 @@ import { getClientById } from "@/lib/client/getClientById";
 import { notFound } from "next/navigation";
 
 export default async function PetUpdatePage(
-  { params }: { params: Promise<{ id: string }> } // Asegúrate que la ruta incluya [id]
+  { params }: { params:{ id: string } } // Asegúrate que la ruta incluya [id]
 ) {
  
   const clientId = Number(params.id);
