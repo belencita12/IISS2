@@ -39,7 +39,7 @@ export default function InvoiceDetail({ token }: Props) {
   return (
     <div className="w-full px-0">
       {invoice && <InvoiceDetailCard invoice={invoice} />}
-      <h3 className="text-xl font-semibold text-black mb-3 mt-3">Detalles</h3>
+      <h3 className="text-xl font-semibold text-black mb-3 mt-3">Detalle</h3>
       <div className="w-full">
         <InvoiceDetailTable details={invoiceDetails} />
       </div>
