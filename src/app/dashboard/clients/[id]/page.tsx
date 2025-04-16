@@ -14,8 +14,12 @@ export default async function ClientDetails(
     const session = await getServerSession(authOptions);
     const token = session?.user?.token || "";
     const id = Number(params.id);
+    if (isNaN(id)) return notFound();
     const client = await getClientById(id, token) as IUserProfile;
-    if(!client) return notFound();
+    if (!client) {
+        //console.error(`Cliente con id ${id} no encontrado`);
+        return notFound();
+      }
     
     return (
         <>
