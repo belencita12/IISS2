@@ -3,15 +3,10 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Check, LoaderCircleIcon, X } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { PetData, Race, Species } from "@/lib/pets/IPet";
 import { getPetById } from "@/lib/pets/getPetById";
 import { toast } from "@/lib/toast";
-import { ValidatedInput } from "@/components/global/ValidatedInput";
-import { getClientById } from "@/lib/client/getClientById";
-import { ClientData } from "@/lib/admin/client/IClient";
-import { fetchUsers } from "@/lib/client/getUsers";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -116,7 +111,7 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
   const [species, setSpecies] = useState<Species[]>([]);
   const [races, setRaces] = useState<Race[]>([]);
 
-  const [emailQuery, setSearchQuery] = useState<string>("");
+  const [isCancelling, setIsCancelling] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
@@ -456,17 +451,21 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
                 <hr />
                 <div className="flex gap-4">
                   <Button
+                    type="button"
                     variant={"secondary"}
-                    disabled={isSubmitting}
+                    disabled={isCancelling || isSubmitting}
                     className="p-1 pl-3 pr-3"
-                    onClick={() => router.push(`/dashboard/clients/${id}`)}
+                    onClick={() => {
+                      setIsCancelling(true)
+                      router.push(`/dashboard/clients/${id}`)
+                    }}
                   >
                     Cancelar
                   </Button>
 
                   <Button 
                     type="submit" 
-                    disabled={isSubmitting}
+                    disabled={isCancelling || isSubmitting}
                   >
                     {isSubmitting ? "Guardando..." : "Guardar"}
                   </Button>
