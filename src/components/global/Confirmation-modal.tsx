@@ -1,5 +1,7 @@
-import React from "react";
+"use client";
+
 import { Modal } from "./Modal";
+import React, { useState } from "react";
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -60,6 +62,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   };
 
   const colors = variantColors[variant];
+  const [isProcessing, setIsProcessing] = useState(false);
 
   return (
     <Modal
@@ -85,21 +88,30 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         {/* Botones */}
         <div className="flex justify-end space-x-2">
           <button
-            disabled={isLoading}
-            onClick={onClose}
-            className="px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+            disabled={isProcessing || isLoading}
+            onClick={() => {
+              setIsProcessing(true);
+              onClose();
+            }}
+            className="px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100 transition disabled:opacity-75"
           >
             {cancelText}
           </button>
+
           <button
-            disabled={isLoading}
+            disabled={isProcessing || isLoading}
             onClick={async () => {
-              await onConfirm();
-              onClose();
+              try {
+                setIsProcessing(true);
+                await onConfirm();
+                onClose();
+              } finally {
+                setIsProcessing(false);
+              }
             }}
             className={`px-4 py-2 rounded text-white ${colors.bg} ${colors.hover} disabled:opacity-75 transition`}
           >
-            {isLoading ? "Cargando..." : confirmText}
+            {isLoading || isProcessing ? "Cargando..." : confirmText}
           </button>
         </div>
       </div>

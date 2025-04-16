@@ -8,10 +8,18 @@ export async function getPetById(id: number, token: string) {
                 "Authorization": `Bearer ${token}`
             }
         });
-        if(res.status === 404) return null;
+        
+        if (res.status === 404) return null;
+        
         const data = await res.json();
+        
+        // Verificar si el objeto está vacío o si faltan datos esenciales
+        if (!data || !data.id || !data.name) {
+            return null;
+        }
+        
         return data as PetData;
-        } catch (error) {
+    } catch (error) {
         console.error(error);
         return null;        
     }

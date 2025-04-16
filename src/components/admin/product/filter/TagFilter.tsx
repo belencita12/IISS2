@@ -1,5 +1,4 @@
 "use client";
-
 import { Check, ChevronsUpDown, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -13,12 +12,12 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
 import { useGetTags } from "@/hooks/tags/useGetTags";
 import { useState, useEffect } from "react";
+import SearchBar from "@/components/global/SearchBar";
 
 interface TagFilterProps {
   title?: string;
@@ -86,13 +85,17 @@ export function TagFilter({
         </PopoverTrigger>
         <PopoverContent className="w-[180px] p-0">
           <Command>
-            <div className="flex items-center border-b px-3">
-              <CommandInput
-                placeholder="Buscar"
-                className="border-0 focus:ring-0"
-                onValueChange={handleSearchChange}
-                value={searchQuery}
-              />
+            {/* SearchBar con la X oculta */}
+            <div className="flex items-center border-b px-2 pt-2">
+              <div className="[&_.absolute]:hidden w-full">
+                <SearchBar
+                  onSearch={handleSearchChange}
+                  placeholder="Buscar"
+                  debounceDelay={400}
+                  defaultQuery={searchQuery}
+                  
+                />
+              </div>
             </div>
             {isLoading ? (
               <div className="p-3 text-center">Cargando...</div>
