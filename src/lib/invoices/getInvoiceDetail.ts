@@ -8,6 +8,7 @@ export async function getInvoiceDetail(
   try {
     const url = new URL(`${INVOICE_DETAIL_API}`);
     url.searchParams.append("page", "1");
+    url.searchParams.append("size", "50");
     url.searchParams.append("invoiceNumber", invoiceNumber);
 
     const response = await fetch(url.toString(), {
