@@ -7,7 +7,6 @@ import TagTable from "./TagTable";
 import { toast } from "@/lib/toast";
 import TagForm from "./TagForm";
 import { Tag } from "@/lib/tags/types";
-import { useDelTag } from "@/hooks/tags/useDelTag";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import { useTagForm } from "@/hooks/tags/useTagForm";
 import { usePaginatedFetch } from "@/hooks/api/usePaginatedFetch";
