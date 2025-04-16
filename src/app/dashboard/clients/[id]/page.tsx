@@ -11,10 +11,12 @@ import Link from "next/link";
 export default async function ClientDetails(
     { params }: { params: { id: string } }
 ) {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
     const token = session?.user?.token || "";
-    const id = Number(params.id);
-    if (isNaN(id)) return notFound();
+    const clientId = Number(id);
+    if (isNaN(clientId)) return notFound();
+    
     const client = await getClientById(id, token) as IUserProfile;
     if (!client) {
         //console.error(`Cliente con id ${id} no encontrado`);
