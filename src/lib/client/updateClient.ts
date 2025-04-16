@@ -1,6 +1,5 @@
 import { CLIENT_API } from "../urls";
 import { FormClient } from "./IUserProfile";
-import { toast } from "@/lib/toast";
 
 export async function updateClient(
     clientId: string,

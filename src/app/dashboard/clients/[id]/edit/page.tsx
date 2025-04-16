@@ -3,13 +3,14 @@ import { redirect } from "next/navigation";
 import authOptions from "@/lib/auth/options";
 import EditClientForm from "@/components/admin/client/EditClientForm";
 
-interface PageProps {
+type Props = {
     params: {
         id: string;
     };
-}
+    searchParams: { [key: string]: string | string[] | undefined };
+};
 
-export default async function EditClientPage({ params }: PageProps) {
+export default async function EditClientPage({ params }: Props) {
     const session = await getServerSession(authOptions);
 
     if (!session) {
