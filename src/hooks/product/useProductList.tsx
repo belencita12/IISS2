@@ -34,13 +34,13 @@ export function useProductList(token: string) {
 
   const [inputFilters, setInputFilters] = useState<FiltersType>(initialFilters);
   
-  const debouncedFilters = useDebounce(inputFilters, 500);
+  const debouncedFilters = useDebounce(inputFilters, 600);
   
   // Usamos useQuery para gestionar la búsqueda y paginación
   const { query, setQuery, toQueryString } = useQuery<QueryParams>({
     ...initialFilters,
     page: 1,
-    size: 5
+    size: 16
   });
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -50,7 +50,7 @@ export function useProductList(token: string) {
     currentPage: 1,
     totalPages: 1,
     totalItems: 0,
-    pageSize: 5,
+    pageSize: 16,
   });
 
   const loadProductStock = useCallback(
@@ -111,9 +111,10 @@ export function useProductList(token: string) {
           page,
           size: data.size
         });
-      } catch (error) {
-        toast("error", "Error al obtener productos");
-        setProducts([]);
+      }  catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Error al obtener productos.";
+      toast("error", errorMessage);
+      setProducts([]);
       } finally {
         setIsLoading(false);
       }
