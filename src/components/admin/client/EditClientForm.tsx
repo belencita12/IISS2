@@ -90,7 +90,7 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
       const response = await updateClient(clientId, clientData, token);
       
       if ('error' in response) {
-        toast("error", response.error || "No se pudo actualizar el cliente");
+        toast("error", response.error || "No se pudo guardar los cambios del cliente");
       } else {
         toast("success", "Cliente actualizado con éxito"); 
         router.push("/dashboard/clients"); 
@@ -141,7 +141,7 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
             Cancelar
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Actualizando..." : "Actualizar cliente"}
+            {isSubmitting ? "Guardando..." : "Guardar cambios"}
           </Button>
         </div>
       </form>

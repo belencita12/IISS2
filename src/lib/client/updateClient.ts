@@ -19,13 +19,13 @@ export async function updateClient(
         const data = await response.json();
 
         if (!response.ok) {
-            toast("error", data.message || "Error al actualizar el cliente");
+           // toast("error", data.message || "Error al actualizar el cliente");
             return { error: data.message || "Error al actualizar el cliente" };
         }
 
         return data;
     } catch (error) {
-        toast("error", "Error al actualizar el cliente");
+       // toast("error", "Error al actualizar el cliente");
         return { error: "Error al actualizar el cliente" };
     }
 } 
