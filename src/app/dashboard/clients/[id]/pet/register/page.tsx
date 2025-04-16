@@ -6,10 +6,10 @@ import { redirect } from "next/navigation";
 export default async function PetRegisterPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }) {
   const session = await getServerSession(authOptions);
-  const { id } = await params;
+  const { id } = params;
   if (session) {
     const token = session?.user.token;
     return (
