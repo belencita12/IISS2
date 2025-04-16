@@ -1,13 +1,14 @@
 import FormInput from "@/components/global/FormInput";
 import { Modal } from "@/components/global/Modal";
 import { Button } from "@/components/ui/button";
-import { editTag, registerTag } from "@/lib/tags/service";
 import { Tag } from "@/lib/tags/types";
 import { toast } from "@/lib/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import {useFetch} from "@/hooks/api/useFetch";
+import { TAG_API } from "@/lib/urls";
 
 type TagFormProps = {
   init?: Pick<Tag, "id" | "name">;
@@ -31,7 +32,7 @@ const TagForm = ({
   type TagForm = z.infer<typeof tagSchema>;
 
   const {
-    formState: { errors, isSubmitting },
+    formState: { errors },
     register,
     handleSubmit,
     reset,
@@ -44,22 +45,32 @@ const TagForm = ({
     reset(init || { name: "" });
   }, [init, isOpen, reset]);
 
+  // Hook personalizado para crear/editar etiquetas
+  const {
+    post: createTag,
+    patch: updateTag,
+    loading,
+  } = useFetch<Tag, { name: string }>(
+    init ? `${TAG_API}/${init.id}` : `${TAG_API}`,
+    token,
+    {
+      method: init ? "PATCH" : "POST",
+    }
+  );
+
   if (!isOpen) return null;
 
   const onSubmit = async (data: TagForm) => {
-    try {
-      let resultTag: Tag;
-      if (init) {
-        resultTag = await editTag(token, init.id, data.name);
-        toast("success", "Etiqueta editada con éxito");
-      } else {
-        resultTag = await registerTag(token, data.name);
-        toast("success", "Etiqueta creada con éxito");
-      }
-      if (afterSubmit) afterSubmit(resultTag);
+    const response = init
+      ? await updateTag(data)
+      : await createTag(data);
+
+    if (response.ok && response.data) {
+      toast("success", init ? "Etiqueta editada con éxito" : "Etiqueta creada con éxito");
+      afterSubmit?.(response.data);
       reset();
       onClose();
-    } catch (error) {
+    } else {
       toast("error", "Error al guardar la etiqueta");
     }
   };
@@ -67,7 +78,7 @@ const TagForm = ({
   return (
     <Modal
       title={init ? "Editar Etiqueta" : "Crear Etiqueta"}
-      isOpen={isOpen || isSubmitting}
+      isOpen={isOpen || loading}
       onClose={onClose}
       size="sm"
     >
@@ -80,15 +91,15 @@ const TagForm = ({
         />
         <div className="flex justify-between items-center gap-2 pt-2">
           <Button
-            disabled={isSubmitting}
+            disabled={loading}
             type="button"
             variant="outline"
             onClick={onClose}
           >
             Cancelar
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Cargando..." : init ? "Actualizar" : "Crear"}
+          <Button type="submit" disabled={loading}>
+            {loading ? "Cargando..." : init ? "Actualizar" : "Crear"}
           </Button>
         </div>
       </form>
