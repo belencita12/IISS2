@@ -9,12 +9,11 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 
 export default async function ClientDetails(
-    { params }: { params: Promise<{ id: string }> }
+    { params }: { params: { id: string } }
 ) {
     const session = await getServerSession(authOptions);
     const token = session?.user?.token || "";
-    const resolvedParams = await params; 
-    const id = Number(resolvedParams.id);
+    const id = Number(params.id);
     const client = await getClientById(id, token) as IUserProfile;
     if(!client) return notFound();
     
