@@ -1,21 +1,29 @@
 import PetVaccinationTable from "@/components/pet/PetVaccinationTable";
 import authOptions from "@/lib/auth/options";
 import { getPetById } from "@/lib/pets/getPetById";
-import { PetData } from "@/lib/pets/IPet";
 import { calcularEdad } from "@/lib/utils";
 import { getServerSession } from "next-auth";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { getClientById } from "@/lib/client/getClientById";
 
 export default async function Page(
-    { params }: { params: Promise<{ petId: string }> }
+    { params }: { params: Promise<{ id: string; petId: string }> }
 ) {
     const resolvedParams = await params;
     const petId = Number(resolvedParams.petId);
+    const clientId = Number(resolvedParams.id);
     const session = await getServerSession(authOptions);
     const token = session?.user?.token || "";
     
     try {
+        // Primero verificamos si el cliente existe
+        const client = await getClientById(clientId, token);
+        if (!client) {
+            return notFound();
+        }
+
+        // Luego verificamos si la mascota existe
         const pet = await getPetById(petId, token);
         if (!pet) {
             return notFound();
@@ -46,7 +54,6 @@ export default async function Page(
             </section>
         </div>
     } catch (error) {
-        //console.error('Error al cargar la mascota:', error);
         return notFound();
     }
 }
