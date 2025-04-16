@@ -1,7 +1,6 @@
 import PetVaccinationTable from "@/components/pet/PetVaccinationTable";
 import authOptions from "@/lib/auth/options";
 import { getPetById } from "@/lib/pets/getPetById";
-import { PetData } from "@/lib/pets/IPet";
 import { calcularEdad } from "@/lib/utils";
 import { getServerSession } from "next-auth";
 import Image from "next/image";
