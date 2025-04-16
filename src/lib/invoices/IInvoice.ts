@@ -10,7 +10,7 @@ export interface Invoice {
   total: number;
   totalPayed: number;
   totalVat: number;
-  type: "CREDIT" | "DEBIT";
+  type: "CREDIT" | "CASH";
 }
 
 export interface InvoiceDetail {
@@ -31,18 +31,4 @@ export interface InvoiceDetailResponse {
   next: boolean;
   currentPage: number;
   totalPages: number;
-}
-
-export interface InvoiceDetailQueryParams {
-  page?: number;
-  size?: number;
-  from?: string;
-  to?: string;
-  includeDeleted?: boolean;
-  invoiceNumber?: string;
-  fromPartialTotal?: number;
-  toPartialTotal?: number;
-  fromIssueDate?: string;
-  toIssueDate?: string;
-  invoiceId?: number;
 }

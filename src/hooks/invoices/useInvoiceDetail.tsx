@@ -16,14 +16,42 @@ export function useInvoiceDetail(invoiceId: string, token: string) {
       setError("");
       try {
         if (!invoiceId) throw new Error("ID de factura inválido");
+
+        // Obtiene la factura
         const invoiceData = await getInvoiceById(invoiceId, token);
         setInvoice(invoiceData);
 
-        const detailsResponse = await getInvoiceDetail(invoiceData.invoiceNumber, token);
-        setInvoiceDetails(detailsResponse.data);
+        // Obtiene los detalles filtrados por invoiceNumber
+        const detailsResponse = await getInvoiceDetail(
+          invoiceData.invoiceNumber,
+          token
+        );
+        const fetchedDetails = detailsResponse.data;
+
+        // Lógica para agrupar detalles por producto
+        // Si un mismo producto se repite en la factura, se suman sus cantidades y montos.
+        const groupedDetails = Object.values(
+          fetchedDetails.reduce(
+            (acc: Record<string, InvoiceDetail>, detail) => {
+              const key = detail.product.id.toString();
+              if (!acc[key]) {
+                acc[key] = { ...detail };
+              } else {
+                acc[key].quantity += detail.quantity;
+                acc[key].partialAmount += detail.partialAmount;
+                acc[key].partialAmountVAT += detail.partialAmountVAT;
+              }
+              return acc;
+            },
+            {} as Record<string, InvoiceDetail>
+          )
+        );
+
+        setInvoiceDetails(groupedDetails);
         setTotalItems(detailsResponse.total);
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "Error desconocido";
+        const errorMessage =
+          err instanceof Error ? err.message : "Error desconocido";
         setError(errorMessage);
       } finally {
         setLoading(false);

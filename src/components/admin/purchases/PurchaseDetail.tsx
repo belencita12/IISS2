@@ -23,20 +23,6 @@ const PurchaseDetail: React.FC<PurchaseDetailProps> = ({ token, initialPage = 1 
   const { data: purchaseDetails, totalPages, loading, error } = usePurchaseDetail(id as string, token, page);
 
   useEffect(() => {
-    if (!id) return;
-    const fetchPurchaseInfo = async () => {
-      try {
-        const purchaseData = await getPurchaseById(id as string, token);
-        setPurchaseInfo(purchaseData);
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "No se pudo cargar la información de la compra";
-        toast("error", errorMessage);
-      }
-    };
-    fetchPurchaseInfo();
-  }, [id, token]);
-
-  useEffect(() => {
     if (!loading && !toastShown && (!purchaseDetails || purchaseDetails.length === 0)) {
       toast("warning", "No existen detalles para esta compra.");
       setToastShown(true);
