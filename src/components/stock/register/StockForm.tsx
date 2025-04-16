@@ -59,6 +59,7 @@ export const StockForm = ({ token, isOpen, onClose, onRegisterSuccess, initialDa
         toast("success", "Depósito registrado con éxito ✅");
       }
       onClose();
+      onRegisterSuccess();
     } catch (error: unknown) {
       if (error instanceof Error) {
         toast("error", error.message);
