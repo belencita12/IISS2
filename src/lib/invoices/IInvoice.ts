@@ -1,7 +1,4 @@
-// /lib/invoices/IInvoiceDetail.ts
-
 import { Product } from "@/lib/products/IProducts";
-// /lib/invoices/IInvoice.ts
 
 export interface Invoice {
   id: number;
@@ -16,7 +13,6 @@ export interface Invoice {
   type: "CREDIT" | "DEBIT";
 }
 
-
 export interface InvoiceDetail {
   id: number;
   invoiceId: number;
@@ -27,9 +23,6 @@ export interface InvoiceDetail {
   unitCost: number;
 }
 
-/**
- * Si necesitas manejar paginación y filtros, puedes definir la respuesta así:
- */
 export interface InvoiceDetailResponse {
   data: InvoiceDetail[];
   total: number;
@@ -40,9 +33,6 @@ export interface InvoiceDetailResponse {
   totalPages: number;
 }
 
-/**
- * Y también los parámetros de query si fueran requeridos:
- */
 export interface InvoiceDetailQueryParams {
   page?: number;
   size?: number;
@@ -54,5 +44,5 @@ export interface InvoiceDetailQueryParams {
   toPartialTotal?: number;
   fromIssueDate?: string;
   toIssueDate?: string;
-  invoiceId?: number; 
+  invoiceId?: number;
 }

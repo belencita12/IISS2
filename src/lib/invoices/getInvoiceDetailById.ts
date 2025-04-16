@@ -2,11 +2,6 @@ import { INVOICE_DETAIL_API } from "@/lib/urls";
 import {
   InvoiceDetail,
 } from "./IInvoice";
-
-/**
- * Obtiene el detalle de una factura en particular,
- * usando la ruta GET /invoice-detail/{id}
- */
 export async function getInvoiceDetailsById(
   invoiceId: string,
   token: string
@@ -23,5 +18,5 @@ export async function getInvoiceDetailsById(
   }
 
   const data = await response.json();
-  return Array.isArray(data) ? data : [data]; // Por si devuelve objeto o array
+  return Array.isArray(data) ? data : [data];
 }
