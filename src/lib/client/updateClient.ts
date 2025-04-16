@@ -1,3 +1,4 @@
+import { CLIENT_API } from "../urls";
 import { FormClient } from "./IUserProfile";
 import { toast } from "@/lib/toast";
 
@@ -7,8 +8,8 @@ export async function updateClient(
     token: string
 ) {
     try {
-        const response = await fetch(`/api/clients/${clientId}`, {
-            method: "PUT",
+        const response = await fetch(`${CLIENT_API}/${clientId}`, {
+            method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
