@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Phone, Building2 } from "lucide-react";
+import React from "react";
+import { Phone, Building2, Loader2 } from "lucide-react";
 import { Provider } from "@/lib/provider/IProvider";
-import { getProviderById } from "@/lib/provider/getProviderById";
+import { PROVIDER_API } from "@/lib/urls";
+import { useFetch } from "@/hooks/api"; // Importamos nuestro nuevo hook
 
 interface ProviderDetailProps {
   token: string;
@@ -9,32 +10,21 @@ interface ProviderDetailProps {
 }
 
 export const ProviderDetail: React.FC<ProviderDetailProps> = ({ token, providerId }) => {
-  const [provider, setProvider] = useState<Provider | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const fetchProviderDetails = async () => {
-      if (providerId) {
-        setIsLoading(true);
-        try {
-          const fetchedProvider = await getProviderById(providerId, token);
-          setProvider(fetchedProvider);
-        } catch (error) {
-          console.error("Error fetching provider details:", error);
-        } finally {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    fetchProviderDetails();
-  }, [providerId, token]);
+  // Utilizamos nuestro hook para obtener los datos del proveedor
+  const { data: provider, loading: isLoading, error } = useFetch<Provider>(
+    `${PROVIDER_API}/${providerId}`,
+    token,
+    { immediate: true } // Realizar la petición inmediatamente
+  );
 
   return (
     <div className="space-y-4">
       <div className="text-center">
         {isLoading ? (
-          <h2 className="text-sm text-gray-600 mt-4">Cargando detalles del proveedor...</h2>
+          <div className="flex items-center justify-center gap-2 mt-4">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <h2 className="text-sm text-gray-600">Cargando detalles del proveedor...</h2>
+          </div>
         ) : (
           <h2 className="text-xl font-bold mt-4">
             {provider?.businessName || "Detalles del Proveedor"}
@@ -44,7 +34,13 @@ export const ProviderDetail: React.FC<ProviderDetailProps> = ({ token, providerI
 
       <div className="border-t border-gray-300 mt-1 w-full"></div>
 
-      {!isLoading && provider ? (
+      {error && (
+        <div className="text-center text-red-500 mt-4">
+          Error al cargar los detalles del proveedor: {error.message}
+        </div>
+      )}
+
+      {!isLoading && !error && provider ? (
         <div className="space-y-4">
           <div className="pl-2">
             <p className="text-sm text-gray-600">Descripción:</p>
@@ -72,7 +68,11 @@ export const ProviderDetail: React.FC<ProviderDetailProps> = ({ token, providerI
           </div>
         </div>
       ) : (
-        !isLoading && <div className="text-center text-red-500 mt-4">No se pudieron cargar los detalles del proveedor</div>
+        !isLoading && !error && (
+          <div className="text-center text-amber-500 mt-4">
+            No se encontró información del proveedor
+          </div>
+        )
       )}
     </div>
   );
