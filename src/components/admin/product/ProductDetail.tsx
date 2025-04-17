@@ -11,6 +11,8 @@ import { StockDetailsData, StockData } from "@/lib/stock/IStock";
 import ProductInfo from "@/components/admin/product/ProductInfo";
 import StockList from "@/components/admin/product/ProductStockList";
 import { toast } from "@/lib/toast";
+import { deleteProduct } from "@/lib/products/deleteProduct";
+import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 
 interface ProductDetailProps {
   token: string;
@@ -23,6 +25,7 @@ export default function ProductDetail({ token }: ProductDetailProps) {
   const [stockDetails, setStockDetails] = useState<StockDetailsData[]>([]);
   const [stocks, setStocks] = useState<StockData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     if (!id || id === "create") {
@@ -35,7 +38,7 @@ export default function ProductDetail({ token }: ProductDetailProps) {
         const [productData, stockResponse, stocksResponse] = await Promise.all([
           getProductById(id as string, token),
           getStockDetails(id as string, token),
-          getStocks({ page: 1, size: 100 }, token)
+          getStocks({ page: 1, size: 100 }, token),
         ]);
         setProduct(productData);
         setStockDetails(stockResponse.data);
@@ -50,9 +53,21 @@ export default function ProductDetail({ token }: ProductDetailProps) {
 
     fetchData();
   }, [id, token]);
+  const handleConfirmDelete = async () => {
+    try {
+      await deleteProduct(id as string, token);
+      toast("success", "Producto eliminado correctamente");
+      router.push("/dashboard/products");
+    } catch (error) {
+      toast("error", "Ocurrió un error al eliminar el producto");
+    } finally {
+      setIsDeleteModalOpen(false);
+    }
+  };
 
   if (isLoading) return <div className="text-center mt-8">Cargando...</div>;
-  if (!product) return <div className="text-center mt-8">Producto no encontrado</div>;
+  if (!product)
+    return <div className="text-center mt-8">Producto no encontrado</div>;
 
   return (
     <div className="max-w-4xl mx-auto p-4">
@@ -75,25 +90,28 @@ export default function ProductDetail({ token }: ProductDetailProps) {
 
         <div className="w-full md:w-2/3 md:pl-6 self-start mt-3">
           <h1 className="text-2xl font-bold mb-4">{product.name}</h1>
-          <ProductInfo 
-            product={product} 
+          <ProductInfo
+            product={product}
             stockDetails={stockDetails}
             isStockLoading={isLoading}
           />
           <div className="flex gap-4 mt-6 justify-center">
             <Button
-              variant="default"
-              onClick={() => router.push(`/dashboard/products`)}
-              className="bg-black text-white hover:bg-gray-800 px-6 py-2"
+              variant="outline"
+              onClick={() => setIsDeleteModalOpen(true)}
+              className="px-6"
             >
               Eliminar
             </Button>
+
             <Button
-              variant="default"
-              onClick={() => router.push(`/dashboard/products/update/${product.id}`)}
-              className="bg-black text-white hover:bg-gray-800 px-6 py-2"
+              variant="outline"
+              onClick={() =>
+                router.push(`/dashboard/products/update/${product.id}`)
+              }
+              className="px-6"
             >
-              Actualizar
+              Editar
             </Button>
           </div>
         </div>
@@ -109,6 +127,16 @@ export default function ProductDetail({ token }: ProductDetailProps) {
           isLoading={isLoading}
         />
       </div>
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        title="¿Estás seguro de eliminar este producto?"
+        message={`Se eliminará "${product.name}". Esta acción no se puede deshacer.`}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="danger"
+      />
     </div>
   );
 }
