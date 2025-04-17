@@ -1,4 +1,4 @@
-"use client"; 
+"use client";
 
 import React from "react";
 import SearchBar from "@/components/global/SearchBar";
@@ -62,7 +62,7 @@ export default function ProductFilters({
         />
       </div>
 
-      <div className="flex flex-col sm:flex-row items-center gap-20 mb-4 relative w-full">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between flex-wrap gap-4 sm:gap-6 mb-4 w-full">
         <CategoryFilter
           category={filters.category}
           onCategoryChange={(category) =>
@@ -78,38 +78,35 @@ export default function ProductFilters({
           token={token}
         />
 
-        <div className="flex items-center gap-5 ml-auto">
-          <NumericFilter
-            label="Precio"
-            minValue={filters.minPrice}
-            maxValue={filters.maxPrice}
-            onMinChange={(minPrice) =>
-              setFilters((prev) => ({ ...prev, minPrice }))
-            }
-            onMaxChange={(maxPrice) =>
-              setFilters((prev) => ({ ...prev, maxPrice }))
-            }
-            onClearMin={() => clearFilter("minPrice")}
-            onClearMax={() => clearFilter("maxPrice")}
-            preventInvalidKeys={preventInvalidKeys}
-          />
-        </div>
-        <div className="sm:ml-auto">
-          <NumericFilter
-            label="Costo"
-            minValue={filters.minCost}
-            maxValue={filters.maxCost}
-            onMinChange={(minCost) =>
-              setFilters((prev) => ({ ...prev, minCost }))
-            }
-            onMaxChange={(maxCost) =>
-              setFilters((prev) => ({ ...prev, maxCost }))
-            }
-            onClearMin={() => clearFilter("minCost")}
-            onClearMax={() => clearFilter("maxCost")}
-            preventInvalidKeys={preventInvalidKeys}
-          />
-        </div>
+        <NumericFilter
+          label="Precio"
+          minValue={filters.minPrice}
+          maxValue={filters.maxPrice}
+          onMinChange={(minPrice) =>
+            setFilters((prev) => ({ ...prev, minPrice }))
+          }
+          onMaxChange={(maxPrice) =>
+            setFilters((prev) => ({ ...prev, maxPrice }))
+          }
+          onClearMin={() => clearFilter("minPrice")}
+          onClearMax={() => clearFilter("maxPrice")}
+          preventInvalidKeys={preventInvalidKeys}
+        />
+
+        <NumericFilter
+          label="Costo"
+          minValue={filters.minCost}
+          maxValue={filters.maxCost}
+          onMinChange={(minCost) =>
+            setFilters((prev) => ({ ...prev, minCost }))
+          }
+          onMaxChange={(maxCost) =>
+            setFilters((prev) => ({ ...prev, maxCost }))
+          }
+          onClearMin={() => clearFilter("minCost")}
+          onClearMax={() => clearFilter("maxCost")}
+          preventInvalidKeys={preventInvalidKeys}
+        />
       </div>
     </div>
   );

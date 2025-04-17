@@ -27,7 +27,7 @@ const linksUser = [
   { name: "Depositos", href: "/dashboard/stock", icon: StoreIcon },
   { name: "Movimientos", href: "/dashboard/movement", icon: BoxIcon },
   { name: "Compras", href: "/dashboard/purchases", icon: CircleDollarSignIcon },
-  { name: "Ventas", href: "/dashboard/invoices", icon: HandCoinsIcon },
+  { name: "Crear Venta", href: "/dashboard/ventas", icon: HandCoinsIcon },
   { name: "Empleados", href: "/dashboard/employee", icon: BookUserIcon },
   { name: "Facturas", href: "/dashboard/facturas", icon: FileIcon },
   {
@@ -45,7 +45,7 @@ export default function NavLinks() {
     <>
       {linksUser.map((link) => {
         const LinkIcon = link.icon;
-        const isActive = pathname === link.href; // Verifica si la ruta actual coincide
+        const isActive = pathname === link.href; 
 
         return (
           <Link
