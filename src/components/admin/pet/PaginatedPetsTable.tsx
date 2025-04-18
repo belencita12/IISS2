@@ -46,9 +46,13 @@ export default function PaginatedPetsTable({ token,id }: { token: string ,id:num
       
       if (success) {
         toast("success", "Mascota eliminada correctamente");
+        setIsDeleteModalOpen(false);
+        setSelectedPet(null);
         // Recargar la lista de mascotas
+        setIsLoading(true);
         const data = await getPetsByUserIdFull(id, token, pagination.currentPage);
         setPets(data.data);
+        setIsLoading(false);
         setPagination({
           currentPage: data.currentPage,
           totalPages: data.totalPages,
@@ -58,9 +62,6 @@ export default function PaginatedPetsTable({ token,id }: { token: string ,id:num
       } else {
         toast("error", "Error al eliminar la mascota");
       }
-      
-      setIsDeleteModalOpen(false);
-      setSelectedPet(null);
     };
 
     const columns: Column<PetData>[] = [

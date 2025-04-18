@@ -3,14 +3,8 @@ import { redirect } from "next/navigation";
 import authOptions from "@/lib/auth/options";
 import EditClientForm from "@/components/admin/client/EditClientForm";
 
-type Props = {
-    params: {
-        id: string;
-    };
-    searchParams: { [key: string]: string | string[] | undefined };
-};
 
-export default async function EditClientPage({ params }: Props) {
+export default async function EditClientPage({ params }: { params: Promise<{ id: string }> }) {
     const session = await getServerSession(authOptions);
 
     if (!session) {
@@ -18,7 +12,8 @@ export default async function EditClientPage({ params }: Props) {
     }
 
     const token = session.user.token;
-    const clientId = params.id;
+    const resolvedParams = await params; 
+    const clientId = resolvedParams.id;
 
     return <EditClientForm token={token} clientId={clientId} />;
 } 

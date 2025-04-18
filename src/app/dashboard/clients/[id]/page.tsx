@@ -9,7 +9,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 
 export default async function ClientDetails(
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
     const session = await getServerSession(authOptions);
@@ -17,7 +17,7 @@ export default async function ClientDetails(
     const clientId = Number(id);
     if (isNaN(clientId)) return notFound();
     
-    const client = await getClientById(id, token) as IUserProfile;
+    const client = await getClientById(clientId, token) as IUserProfile;
     if (!client) {
         //console.error(`Cliente con id ${id} no encontrado`);
         return notFound();
@@ -33,7 +33,7 @@ export default async function ClientDetails(
                         <Button variant={"outline"} className="border-black border-solid">Agregar</Button>
                     </Link>
                 </div>
-                    <PaginatedPetsTable token={token} id={id}/>
+                    <PaginatedPetsTable token={token} id={clientId}/>
             </section>
         </>
     );

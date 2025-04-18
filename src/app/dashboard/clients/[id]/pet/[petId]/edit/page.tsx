@@ -6,10 +6,10 @@ import { getClientById } from "@/lib/client/getClientById";
 import { notFound } from "next/navigation";
 
 export default async function PetUpdatePage(
-  { params }: { params:{ id: string } } // Asegúrate que la ruta incluya [id]
+  { params }: { params: Promise<{ id: string }> } // Asegúrate que la ruta incluya [id]
 ) {
- 
-  const clientId = Number(params.id);
+  const resolvedParams = await params;
+  const clientId = Number(resolvedParams.id);
   
   const session = await getServerSession(authOptions);
   if (!session) {
