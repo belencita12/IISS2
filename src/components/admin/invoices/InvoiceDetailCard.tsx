@@ -16,7 +16,9 @@ export default function InvoiceDetailCard({ invoice }: Props) {
         <p className="col-start-2 row-start-1 text-right text-gray-500 text-m mt-2">
           {formatDate(invoice.issueDate)}
         </p>
-        <p className="col-start-1 row-start-2 font-semibold">Timbrado: {invoice.stamped}</p>
+        <p className="col-start-1 row-start-2 font-semibold">
+          Timbrado: {invoice.stamped}
+        </p>
         <p className="col-start-1 row-start-3">Cliente: {invoice.clientName}</p>
         <p className="col-start-2 row-start-3 text-right">
           <span className="bg-gray-200 px-3 py-1 rounded inline-block">
