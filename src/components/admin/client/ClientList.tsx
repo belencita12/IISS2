@@ -160,8 +160,8 @@ export default function ClientList({ token }: ClientListProps) {
                 isOpen={isDeleteModalOpen}
                 onClose={() => setIsDeleteModalOpen(false)}
                 onConfirm={handleConfirmDelete}
-                title="¿Estás seguro de eliminar este cliente?"
-                message={`Se eliminará a ${clientToDelete?.fullName}. Esta acción no se puede deshacer.`}
+                title="Eliminar Cliente"
+                message={`¿Seguro que quieres eliminar a ${clientToDelete?.fullName}?`}
                 confirmText="Eliminar"
                 cancelText="Cancelar"
                 variant="danger"
