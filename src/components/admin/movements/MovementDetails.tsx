@@ -73,7 +73,7 @@ export const MovementDetails = ({ id, token }: Props) => {
         {details.map((detail, idx) => (
           <Card key={idx} className="flex p-4 items-start gap-4 shadow-sm border">
             <Image
-              src={detail.product.image?.originalUrl || "/default-avatar.png"}
+              src={detail.product.image?.originalUrl || "/producto-sin-imagen.png"}
               alt={detail.product.name ?? "Producto sin nombre"}
               width={80}
               height={80}
