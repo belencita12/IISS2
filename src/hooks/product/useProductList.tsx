@@ -79,6 +79,7 @@ export function useProductList(token: string) {
       if (!token) return;
       setIsLoading(true);
 
+      // Obtenemos el término de búsqueda y preparamos parámetros de búsqueda por código si empieza con "prod-"
       const term = filterParams.searchTerm.trim();
       const searchParams: { code?: string } = {};
       if (term.toLowerCase().startsWith("prod-")) {
@@ -115,15 +116,18 @@ export function useProductList(token: string) {
         let totalItems = data.total;
         let totalPages = data.totalPages;
 
+        // BLOQUE DE FILTRADO LOCAL POR NOMBRE: Si existe término de búsqueda y no buscamos por código, aplico filtrado local sobre el array devuelto.
         if (term && !preparedParams.code) {
-          const norm = normalizeText(term);
-          filteredProducts = filteredProducts.filter((p) =>
+          const norm = normalizeText(term); // Normalizamos texto de búsqueda para evitar diferencias por acentos o mayúsculas
+          filteredProducts = filteredProducts.filter(p => // Filtramos productos cuyo nombre normalizado incluya el término
             normalizeText(p.name).includes(norm)
           );
 
           totalItems = filteredProducts.length;
           totalPages =
-            totalItems > 0 ? Math.ceil(totalItems / pagination.pageSize) : 1;
+            totalItems > 0
+              ? Math.ceil(totalItems / pagination.pageSize)
+              : 1;
 
           filteredProducts = filteredProducts.slice(
             (page - 1) * pagination.pageSize,
@@ -140,12 +144,11 @@ export function useProductList(token: string) {
         setProducts(filteredProducts);
 
         const stockEntries = await Promise.all(
-          filteredProducts.map(
-            async (product) =>
-              [product.id, await loadProductStock(product.id)] as [
-                string,
-                number
-              ]
+          filteredProducts.map(async (product) =>
+            [product.id, await loadProductStock(product.id)] as [
+              string,
+              number
+            ]
           )
         );
         setStockMap(Object.fromEntries(stockEntries));
