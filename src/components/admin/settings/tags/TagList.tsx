@@ -2,15 +2,16 @@
 
 import SearchBar from "@/components/global/SearchBar";
 import { Button } from "@/components/ui/button";
-import { useGetTags } from "@/hooks/tags/useGetTags";
 import React, { useState } from "react";
 import TagTable from "./TagTable";
 import { toast } from "@/lib/toast";
 import TagForm from "./TagForm";
 import { Tag } from "@/lib/tags/types";
-import { useDelTag } from "@/hooks/tags/useDelTag";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import { useTagForm } from "@/hooks/tags/useTagForm";
+import { usePaginatedFetch } from "@/hooks/api/usePaginatedFetch";
+import { TAG_API } from "@/lib/urls";
+import { useFetch } from "@/hooks/api";
 
 type TagListProps = {
   token: string;
@@ -20,20 +21,34 @@ const TagList = ({ token }: TagListProps) => {
   const [isDelOpen, setIsDelOpen] = useState(false);
   const { selectedTag, isFormOpen, setSelectedTag, onCreate, onEdit, onClose } =
     useTagForm();
-  const { data, isLoading, error, query, setQuery, setData, onPageChange } =
-    useGetTags({
-      token,
-    });
-  const {
-    delTag,
-    error: delError,
-    isLoading: isDelLoading,
-  } = useDelTag({ token });
 
-  if (error) toast("error", error);
+  const {
+    data,
+    loading: isLoading,
+    error,
+    pagination = { currentPage: 1, totalPages: 1, totalItems: 0, pageSize: 10 },
+    setPage,
+    refresh,
+    search,
+  } = usePaginatedFetch<Tag>(TAG_API, token, {
+    initialPage: 1,
+    size: 10,
+    autoFetch: true,
+  });
+
+  const { delete: deleteTag, loading: isDelLoading } = useFetch<void, null>(
+    "",
+    token
+  );
+
+  if (error) toast("error", error.message || "Error al cargar las etiquetas");
 
   const handleSearch = (query: string) => {
-    setQuery({ page: 1, name: query.length > 0 ? query : undefined });
+    if (query.length > 0) {
+      search({ name: query });
+    } else {
+      refresh();
+    }
   };
 
   // Delete logic
@@ -46,42 +61,27 @@ const TagList = ({ token }: TagListProps) => {
 
   const handleDelete = async () => {
     if (!selectedTag) return;
-    await delTag(selectedTag.id);
-    if (delError) toast("error", delError);
-    else {
-      setData((prev) => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          data: prev.data.filter((tag) => tag.id !== selectedTag.id),
-        };
-      });
-      toast("success", "Etiqueta eliminada con éxito");
+
+    const { ok, error } = await deleteTag(null, `${TAG_API}/${selectedTag.id}`);
+
+    if (!ok) {
+      return toast("error", error?.message || "Error al eliminar la etiqueta");
     }
+
+    toast("success", "Etiqueta eliminada con éxito");
+    refresh();
+    onCloseDelModal();
   };
 
-  // Create / Update logic
-  const handleSubmit = (tag: Tag) => {
-    const isEdit = selectedTag && selectedTag.id === tag.id;
-    setData((prev) => {
-      if (!prev) return null;
-      if (isEdit)
-        return {
-          ...prev,
-          data: prev.data.map((t) => (t.id === tag.id ? tag : t)),
-        };
-      return { ...prev, data: [tag, ...prev.data] };
-    });
+  const handleSubmit = () => {
+    refresh();
   };
 
   return (
     <>
       <div className="p-4 mx-auto">
         <div className="flex items-center gap-4 mb-4">
-          <SearchBar 
-            onSearch={handleSearch} 
-            placeholder="Buscar tag..." 
-          />
+          <SearchBar onSearch={handleSearch} placeholder="Buscar tag..." />
         </div>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-3xl font-bold">Tags</h2>
@@ -91,17 +91,17 @@ const TagList = ({ token }: TagListProps) => {
         </div>
         <TagTable
           emptyMessage="No se encontraron tags"
-          onPageChange={onPageChange}
+          onPageChange={setPage}
           handleEdit={onEdit}
           handleDel={onOpenDelModal}
           token={token}
           isLoading={isLoading}
-          data={data?.data || []}
+          data={data || []}
           pagination={{
-            currentPage: query.page,
-            totalPages: data?.totalPages || 1,
-            totalItems: data?.total || 0,
-            pageSize: data?.size || 10,
+            currentPage: pagination?.currentPage || 1,
+            totalPages: pagination?.totalPages || 1,
+            totalItems: pagination?.totalItems || 0,
+            pageSize: pagination?.pageSize || 10,
           }}
         />
       </div>
