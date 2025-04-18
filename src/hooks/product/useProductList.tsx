@@ -6,7 +6,7 @@ import { Product, ProductResponse } from "@/lib/products/IProducts";
 import useDebounce from "@/hooks/useDebounce";
 import { toast } from "@/lib/toast";
 import { useQuery } from "@/hooks/useQuery";
-import { normalizeText } from "@/lib/products/utils/normalizeText";
+import { normalizeText } from "@/lib/utils";
 
 interface FiltersType {
   searchTerm: string;
