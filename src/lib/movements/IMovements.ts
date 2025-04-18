@@ -6,6 +6,7 @@ import { BaseQueryParams } from "../types";
     originStockId?: number;
     destinationStockId?: number;
     managerId?: number;
+    productName?: string;
   }
 
   export interface MovementData {
