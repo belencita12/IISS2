@@ -125,7 +125,6 @@ export function useProductList(token: string) {
           totalPages =
             totalItems > 0 ? Math.ceil(totalItems / pagination.pageSize) : 1;
 
-          // Paginación local solo cuando hay filtro por nombre
           filteredProducts = filteredProducts.slice(
             (page - 1) * pagination.pageSize,
             page * pagination.pageSize
@@ -140,7 +139,6 @@ export function useProductList(token: string) {
         });
         setProducts(filteredProducts);
 
-        // Cargar stock solo para los mostrados
         const stockEntries = await Promise.all(
           filteredProducts.map(
             async (product) =>
@@ -152,7 +150,6 @@ export function useProductList(token: string) {
         );
         setStockMap(Object.fromEntries(stockEntries));
 
-        // Sincronizar URL
         setQuery({ ...preparedParams, page, size: data.size });
       } catch (error) {
         const message =
@@ -178,8 +175,11 @@ export function useProductList(token: string) {
   }, [token]);
 
   const handleSearch = () => loadProducts(1, inputFilters);
+
   const handlePageChange = (page: number) => {
     if (page < 1 || page > pagination.totalPages) return;
+    // Actualizamos currentPage de inmediato
+    setPagination((prev) => ({ ...prev, currentPage: page }));
     loadProducts(page, inputFilters);
   };
 
