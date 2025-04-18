@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
@@ -11,7 +12,8 @@ import { StockDetailsData, StockData } from "@/lib/stock/IStock";
 import ProductInfo from "@/components/admin/product/ProductInfo";
 import StockList from "@/components/admin/product/ProductStockList";
 import { toast } from "@/lib/toast";
-import { deleteProduct } from "@/lib/products/deleteProduct";
+import { useFetch } from "@/hooks/api/useFetch";
+import { PRODUCT_API } from "@/lib/urls";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 
 interface ProductDetailProps {
@@ -26,6 +28,13 @@ export default function ProductDetail({ token }: ProductDetailProps) {
   const [stocks, setStocks] = useState<StockData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  // Hook useFetch para DELETE
+  const { delete: deleteReq, loading: isDelLoading } = useFetch<void, null>(
+    PRODUCT_API,
+    token,
+    { method: 'DELETE' }
+  );
 
   useEffect(() => {
     if (!id || id === "create") {
@@ -53,16 +62,22 @@ export default function ProductDetail({ token }: ProductDetailProps) {
 
     fetchData();
   }, [id, token]);
+
   const handleConfirmDelete = async () => {
-    try {
-      await deleteProduct(id as string, token);
+    if (!id) return;
+
+    const { ok, error } = await deleteReq(
+      null,
+      `${PRODUCT_API}/${id}`
+    );
+
+    if (!ok) {
+      toast("error", error?.message || "Error al eliminar el producto");
+    } else {
       toast("success", "Producto eliminado correctamente");
       router.push("/dashboard/products");
-    } catch (error) {
-      toast("error", "Ocurrió un error al eliminar el producto");
-    } finally {
-      setIsDeleteModalOpen(false);
     }
+    setIsDeleteModalOpen(false);
   };
 
   if (isLoading) return <div className="text-center mt-8">Cargando...</div>;
@@ -127,8 +142,10 @@ export default function ProductDetail({ token }: ProductDetailProps) {
           isLoading={isLoading}
         />
       </div>
+
       <ConfirmationModal
         isOpen={isDeleteModalOpen}
+        isLoading={isDelLoading}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
         title="¿Estás seguro de eliminar este producto?"
