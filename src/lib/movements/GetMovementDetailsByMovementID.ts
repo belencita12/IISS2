@@ -1,12 +1,15 @@
-// src/api/getMovementDetails.ts
 import MovementDetails from "@/lib/movements/IMovementDetails";
 import { MOVEMENT_DETAILS_API } from "../urls";
+import { PaginationResponse } from "@/lib/types";
 
 export const getMovementDetailsByMovementId = async (
   movementId: number,
-  token: string
-): Promise<MovementDetails[]> => {
-  const res = await fetch(`${MOVEMENT_DETAILS_API}?movementId=${movementId}&page=1`, {
+  token: string,
+  queryString = ""
+): Promise<PaginationResponse<MovementDetails>> => {
+  const url = `${MOVEMENT_DETAILS_API}?movementId=${movementId}${queryString ? `&${queryString}` : ""}`;
+
+  const res = await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -17,6 +20,5 @@ export const getMovementDetailsByMovementId = async (
     throw new Error(`Error al obtener los detalles del movimiento ${movementId}`);
   }
 
-  const response = await res.json();
-  return response.data ?? [];
+  return res.json(); 
 };
