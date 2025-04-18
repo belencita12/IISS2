@@ -178,7 +178,6 @@ export function useProductList(token: string) {
 
   const handlePageChange = (page: number) => {
     if (page < 1 || page > pagination.totalPages) return;
-    // Actualizamos currentPage de inmediato
     setPagination((prev) => ({ ...prev, currentPage: page }));
     loadProducts(page, inputFilters);
   };
