@@ -2,6 +2,7 @@
 
 import { PurchaseData } from "@/lib/purchase/IPurchase";
 import { useRouter } from "next/navigation";
+import { formatDate } from "@/lib/utils";
 
 interface PurchaseCardProps {
   purchase: PurchaseData;
@@ -29,7 +30,7 @@ const PurchaseCard = ({ purchase }: PurchaseCardProps) => {
       </div>
 
       <div className="flex flex-col justify-between items-end h-full">
-        <p className="text-black text-lg font-bold">{purchase.date}</p>
+        <p className="text-black text-lg font-bold">{purchase.date? formatDate(purchase.date):""}</p>
       </div>
     </div>
   );
