@@ -1,5 +1,6 @@
 import React from "react";
 import { Invoice } from "@/lib/invoices/IInvoice";
+import { formatDate } from "@/lib/utils";
 
 interface Props {
   invoice: Invoice;
@@ -13,7 +14,7 @@ export default function InvoiceDetailCard({ invoice }: Props) {
           Factura Nº {invoice.invoiceNumber}
         </p>
         <p className="col-start-2 row-start-1 text-right text-gray-500 text-m mt-2">
-          {invoice.issueDate.slice(0, 10)}
+          {formatDate(invoice.issueDate)}
         </p>
         <p className="col-start-1 row-start-2 font-semibold">Timbrado: {invoice.stamped}</p>
         <p className="col-start-1 row-start-3">Cliente: {invoice.clientName}</p>
