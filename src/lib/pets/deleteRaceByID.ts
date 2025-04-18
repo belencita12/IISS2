@@ -1,5 +1,4 @@
 import { RACE_API } from "../urls";
-import { Race } from "./IPet";
 
 export const deleteRaceByID = async (token: string, id: number): Promise<boolean> => {
     try {
