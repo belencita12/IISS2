@@ -3,6 +3,7 @@
 import { useMovementDetails } from "@/hooks/movements/useMovementDetails";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@radix-ui/react-select";
+import { formatDate } from "@/lib/utils";
 import Image from "next/image";
 
 interface Props {
@@ -36,12 +37,8 @@ export const MovementDetails = ({ id, token }: Props) => {
         <h1 className="text-2xl font-bold text-gray-800">
           Movimiento de {getMovementTypeLabel(movement.type)}
         </h1>
-        <p className="text-base text-gray-500">
-          {new Date(movement.dateMovement).toLocaleString("es-ES", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "2-digit",
-          })}
+        <p className="text-base md:text-lg font-semibold text-black">
+          {formatDate(movement.dateMovement)}
         </p>
       </div>
 
