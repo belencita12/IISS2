@@ -47,14 +47,23 @@ export const MovementDetails = ({ id, token }: Props) => {
 
       <Card className="p-6 mb-6 shadow-sm space-y-4">
         <InfoRow label="Encargado" value={movement.manager?.fullName} />
-        <InfoRow label="Depósito Origen" value={movement.originStock?.name || "Sin origen"} />
-        <InfoRow label="Depósito Destino" value={movement.destinationStock?.name || "Sin destino"} />
-        <div className="flex flex-col">
-          <p className="text-sm text-gray-500 mb-1">Descripción</p>
-          <p className="bg-gray-200 rounded-md px-3 py-2 text-sm text-gray-800 w-full break-words">
-            {movement.description || "Sin descripción"}
-          </p>
-        </div>
+
+        {movement.originStock?.name && (
+          <InfoRow label="Depósito Origen" value={movement.originStock.name} />
+        )}
+
+        {movement.destinationStock?.name && (
+          <InfoRow label="Depósito Destino" value={movement.destinationStock.name} />
+        )}
+
+        {movement.description && (
+          <div className="flex flex-col">
+            <p className="text-sm text-gray-500 mb-1">Descripción</p>
+            <p className="bg-gray-200 rounded-md px-3 py-2 text-sm text-gray-800 w-full break-words">
+              {movement.description}
+            </p>
+          </div>
+        )}
       </Card>
 
       <h2 className="text-xl font-semibold mb-2 text-gray-700">Productos</h2>
