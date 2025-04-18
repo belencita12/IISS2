@@ -3,6 +3,7 @@
 import { useState,useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { fetchUsers } from "@/lib/client/getUsers";
+import { deleteClient } from "@/lib/client/deleteClient";
 import SearchBar from "@/components/global/SearchBar";
 import { Eye, Pencil, Trash } from "lucide-react";
 import { toast } from "@/lib/toast";
@@ -14,6 +15,7 @@ import GenericTable, {
 import ClientTableSkeleton from "./skeleton/ClientTableSkeleton";
 import { useRouter } from "next/navigation";
 import { IUserProfile } from "@/lib/client/IUserProfile";
+import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 
 interface ClientListProps {
     token: string;
@@ -30,6 +32,8 @@ export default function ClientList({ token }: ClientListProps) {
     });
     const [loading, setLoading] = useState(false);
     const [filteredData, setFilteredData] = useState<IUserProfile[]>([]);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [clientToDelete, setClientToDelete] = useState<IUserProfile | null>(null);
 
     const loadUsers = useCallback(
         async (page: number = 1, query: string = "") => {
@@ -59,6 +63,7 @@ export default function ClientList({ token }: ClientListProps) {
         },
         [token]
     );
+
     useEffect(() => {
         if (token) loadUsers(data.pagination.currentPage);
     }, [token, data.pagination.currentPage, loadUsers]);
@@ -69,11 +74,34 @@ export default function ClientList({ token }: ClientListProps) {
         },
         [data.pagination.currentPage, loadUsers]
     );
+
     const handlePageChange = (page: number) =>
         setData((prev) => ({
             ...prev,
             pagination: { ...prev.pagination, currentPage: page },
         }));
+
+    const handleDeleteClick = (user: IUserProfile) => {
+        setClientToDelete(user);
+        setIsDeleteModalOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!clientToDelete) return;
+        try {
+            await deleteClient(token, clientToDelete.id);
+            toast("success", "Cliente eliminado correctamente");
+            setIsDeleteModalOpen(false);
+            setClientToDelete(null);
+            loadUsers(data.pagination.currentPage);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                toast("error", error.message);
+            } else {
+                toast("error", "Ocurrió un error al eliminar el cliente");
+            }
+        }
+    };
 
     const columns: Column<IUserProfile>[] = [
         { header: "Nombre", accessor: "fullName" },
@@ -96,7 +124,7 @@ export default function ClientList({ token }: ClientListProps) {
         },
         {
             icon: <Trash className="w-4 h-4" />,
-            onClick: (user) => console.log("Eliminar:", user),
+            onClick: handleDeleteClick,
             label: "Eliminar",
         },
     ];
@@ -127,6 +155,16 @@ export default function ClientList({ token }: ClientListProps) {
                 isLoading={loading}
                 skeleton={<ClientTableSkeleton />}
                 emptyMessage="No se encontraron clientes"
+            />
+            <ConfirmationModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={handleConfirmDelete}
+                title="Eliminar Cliente"
+                message={`¿Seguro que quieres eliminar a ${clientToDelete?.fullName}?`}
+                confirmText="Eliminar"
+                cancelText="Cancelar"
+                variant="danger"
             />
         </div>
     );
