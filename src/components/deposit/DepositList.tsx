@@ -65,14 +65,8 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
     
   }, [currentPage, token, showDeposits]);
 
-  const handleSearch = () => {
-    if (token) {
-      setCurrentPage(1);
-      showDeposits(currentPage, token, searchTerm);
-    }
-  }
-
   const handleAddDeposit = () => {
+    setSelectedDeposit(null);
     setIsModalOpen(true); 
   };
 
@@ -125,7 +119,7 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
                     return;
                   }
 
-                  toast("success", "Depósito eliminado correctamente ✅");
+                  toast("success", "Depósito eliminado correctamente");
                   showDeposits(currentPage, token, searchTerm);
                 } catch (error) {
                   console.error("Error al eliminar el deposito", error);

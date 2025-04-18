@@ -36,7 +36,7 @@ export const useGetTags = ({ init, token, debounceDelay = 500 }: UseGetTags) => 
       }
     };
     fetchTags();
-  }, [debouncedQuery, token]);
+  }, [debouncedQuery, token, toQueryString]);
 
   const onPageChange = (page: number) => {
     setQuery((prev) => ({ ...prev, page }));

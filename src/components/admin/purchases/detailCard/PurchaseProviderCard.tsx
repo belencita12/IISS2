@@ -1,5 +1,6 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
+import { formatDate } from "@/lib/utils";
 
 /**
  * Componente para mostrar la información del proveedor y un resumen de la compra.
@@ -30,7 +31,7 @@ const PurchaseProviderCard: React.FC<PurchaseProviderCardProps> = ({
             Costo IVA Total: {ivaTotal?.toLocaleString() || 0} Gs.
           </p>
         </div>
-        <span className="text-base font-bold text-black">{date}</span>
+        <span className="text-base font-bold text-black">{date? formatDate(date):""}</span>
       </div>
     </Card>
   );
