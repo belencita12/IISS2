@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import { useMovementList } from "@/hooks/movements/useMovementList";
 import MovementFilters from "./MovementFilters";
 import GenericPagination from "@/components/global/GenericPagination";
+import { useEffect } from "react";
+import { toast } from "@/lib/toast";
+
 
 interface Props {
   token: string;
@@ -15,6 +18,12 @@ export default function MovementListPage({ token }: Props) {
   const router = useRouter();
   const { data, query, setQuery, handleSearch, isLoading, error } =
     useMovementList({ token });
+  
+  useEffect(() => {
+    if (error) {
+      toast("error", error);
+    }
+  }, [error]);
 
   const movements = data?.data || [];
 
@@ -37,8 +46,6 @@ export default function MovementListPage({ token }: Props) {
           Registrar Movimiento
         </Button>
       </div>
-
-      {error && <p className="text-center text-red-500">{error}</p>}
 
       {isLoading ? (
         <p className="text-center">Cargando movimientos...</p>

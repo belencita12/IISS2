@@ -2,6 +2,7 @@
 
 import { Card } from "@/components/global/Card";
 import { MovementData } from "@/lib/movements/IMovements";
+import { formatDate } from "@/lib/utils";
 
 interface Props {
   movement: MovementData;
@@ -44,7 +45,7 @@ export default function MovementCard({ movement }: Props) {
         {/* Columna 2 */}
         <div className="flex flex-col items-end text-right md:w-1/2">
           <span className="text-base md:text-lg font-semibold text-black">
-            {movement.dateMovement}
+            {formatDate(movement.dateMovement)}
           </span>
           <p className="mt-1 text-sm text-gray-700">{movement.description}</p>
         </div>
