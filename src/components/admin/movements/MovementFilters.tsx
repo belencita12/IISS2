@@ -41,11 +41,20 @@ export default function MovementFilters({ token, filters, setFilters }: Props) {
   return (
     <div className="mb-6 space-y-4">
       <div className="flex flex-col md:flex-row items-center gap-4">
-        <div className="w-full">
+        <div className="w-full md:w-1/2">
           <SearchBar
             placeholder="Ingrese el RUC del encargado"
             defaultQuery={filters.managerRuc ?? ""}
             onSearch={(value) => handleChange("managerRuc", value)}
+            debounceDelay={300}
+          />
+        </div>
+
+        <div className="w-full md:w-1/2">
+          <SearchBar
+            placeholder="Buscar por nombre de producto"
+            defaultQuery={filters.productName ?? ""}
+            onSearch={(value) => handleChange("productName", value)}
             debounceDelay={300}
           />
         </div>
