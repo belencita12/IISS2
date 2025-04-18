@@ -11,7 +11,7 @@ import { registerStock } from "@/lib/stock/registerStock";
 import { useRouter } from "next/navigation";
 import { setStock } from "@/lib/stock/setStock";
 import { StockData } from "@/lib/stock/IStock";
-import {Modal} from "@/components/global/Modal"
+import {Modal} from "@/components/global/Modal";
 
 const stockFormSchema = z.object({
   name: z.string().min(1, "El nombre del stock es obligatorio"),
@@ -36,6 +36,7 @@ export const StockForm = ({ token, isOpen, onClose, onRegisterSuccess, initialDa
     register,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<StockFormValues>({
     resolver: zodResolver(stockFormSchema),
@@ -43,8 +44,15 @@ export const StockForm = ({ token, isOpen, onClose, onRegisterSuccess, initialDa
 
   useEffect(() => {
     if (initialData) {
-      setValue("name", initialData.name);
-      setValue("address", initialData.address);
+      reset({
+        name: initialData.name,
+        address: initialData.address,
+      })
+    } else {
+      reset({
+        name: "",
+        address: "",
+      })
     }
   }, [initialData, setValue]);
 
@@ -53,10 +61,10 @@ export const StockForm = ({ token, isOpen, onClose, onRegisterSuccess, initialDa
     try {
       if(initialData?.id) {
         await setStock({id:initialData.id, ...data}, token);
-        toast("success", "Depósito actualizado con éxito ✅");
+        toast("success", "Depósito actualizado con éxito");
       } else {
         await registerStock({ name: data.name, address:data.address}, token);
-        toast("success", "Depósito registrado con éxito ✅");
+        toast("success", "Depósito registrado con éxito");
       }
       onClose();
       onRegisterSuccess();
