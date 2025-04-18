@@ -11,6 +11,7 @@ import { getPetById } from "@/lib/pets/getPetById";
 import { updatePet } from "@/lib/pets/updatePet";
 //import { notFound } from "next/navigation";
 import { toast } from "@/lib/toast";
+import { formatDate } from "@/lib/utils";
 
 interface EditablePet {
   name: string;
@@ -216,7 +217,7 @@ export default function PetDetails({ token }: Props) {
         <p className="text-center text-gray-600">Cargando mascota...</p>
       ) : pet === null ? (
         <>
-         {/*  <p className="text-center mt-4 p-10">Mascota no registrada.</p>
+          {/*  <p className="text-center mt-4 p-10">Mascota no registrada.</p>
           <p className="text-center">Error 404</p> */}
         </>
       ) : (
@@ -271,7 +272,7 @@ export default function PetDetails({ token }: Props) {
                   ) : (
                     <p className="text-xl">
                       {name === "dateOfBirth"
-                        ? convertirFecha(pet.dateOfBirth)
+                        ? formatDate(pet.dateOfBirth)
                         : name === "race"
                         ? pet.race?.name
                         : name === "species"
@@ -312,7 +313,7 @@ export default function PetDetails({ token }: Props) {
                     <li key={visita.id} className="mb-2 border border-gray-400 p-2 rounded">
                       <div className="flex justify-between">
                         <p className="text-base">{visita.descripcion}</p>
-                        <p className="text-sm text-gray-600">{convertirFecha(visita.fecha)}</p>
+                        <p className="text-sm text-gray-600">{formatDate(visita.fecha)}</p>
                       </div>
                       <p className="text-base text-left">{formatNumber(visita.costo)} Gs</p>
                     </li>
@@ -340,7 +341,7 @@ export default function PetDetails({ token }: Props) {
                       <AlertCircle className="w-5 h-5" />
                       <div className="ml-3">
                         <p className="text-base">{visita.descripcion}</p>
-                        <p className="text-sm text-gray-600">{convertirFecha(visita.fecha)}</p>
+                        <p className="text-sm text-gray-600">{formatDate(visita.fecha)}</p>
                         <Button>Añadir Recordatorio</Button>
                       </div>
                     </li>
