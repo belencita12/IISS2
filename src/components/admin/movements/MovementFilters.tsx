@@ -13,6 +13,7 @@ import SearchBar from "@/components/global/SearchBar";
 import { useEffect, useState } from "react";
 import { getStocks } from "@/lib/stock/getStock";
 import { StockData } from "@/lib/stock/IStock";
+import {toast} from "@/lib/toast"
 
 interface Props {
   token: string;
@@ -34,7 +35,10 @@ export default function MovementFilters({ token, filters, setFilters }: Props) {
   useEffect(() => {
     getStocks({ page: 1 }, token)
       .then((res) => setStocks(res.data))
-      .catch((err) => console.error("Error al obtener depósitos", err));
+      .catch((err) => {
+        const message = err?.message || "No se pudieron obtener los depositos";
+        toast("error", message);
+      });
   }, [token]);
 
 
