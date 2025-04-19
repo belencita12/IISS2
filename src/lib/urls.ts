@@ -22,3 +22,5 @@ export const MOVEMENTS_API = `${BASE_API_URL}/movement`;
 export const MOVEMENT_DETAILS_API = `${BASE_API_URL}/movement-detail`;
 export const PURCHASE_API = `${BASE_API_URL}/purchase`;
 export const PURCHASE_DETAIL_API = `${BASE_API_URL}/purchase-detail`;
+export const INVOICE_API = `${BASE_API_URL}/invoice`;
+export const INVOICE_DETAIL_API = `${BASE_API_URL}/invoice-detail`;
