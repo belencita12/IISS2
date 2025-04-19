@@ -4,14 +4,13 @@ import { getServerSession } from "next-auth";
 import { notFound, redirect } from "next/navigation";
 import { getProductById } from "@/lib/products/getProductById";
 
-interface ProductDetailPageProps {
-  params: { id: string };
-}
-
 export default async function ProductDetailPage({
   params,
-}: ProductDetailPageProps) {
-  const { id } = params;
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const resolvedParams = await params;
+  const productId = resolvedParams.id;
 
   const session = await getServerSession(authOptions);
   if (!session) {
@@ -19,8 +18,8 @@ export default async function ProductDetailPage({
   }
   const token = session.user.token as string;
 
-  // Intentamos obtener el producto, si falla -> 404
-  const product = await getProductById(id, token).catch(() => null);
+  // Obtenemos producto, si no existe -> 404
+  const product = await getProductById(productId, token).catch(() => null);
   if (!product) {
     notFound();
   }

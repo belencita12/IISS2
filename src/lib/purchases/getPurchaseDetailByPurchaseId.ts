@@ -1,5 +1,5 @@
 import { PURCHASE_DETAIL_API } from "@/lib/urls";
-import { PurchaseDetailResponse } from "@/lib/purchase/IPurchaseDetail";
+import { PurchaseDetailResponse } from "@/lib/purchases/IPurchaseDetail";
 
 //detalles de la compra que tengan el mismo id de compra
 export const getPurchaseDetailByPurchaseId = async (

@@ -1,10 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { getPurchaseById } from "@/lib/purchase/getPurchaseDetailById";
+import { getPurchaseById } from "@/lib/purchases/getPurchaseDetailById";
 import PurchaseDetailCard from "@/components/admin/purchases/detailCard/PurchaseProductCard";
 import PurchaseProviderCard from "@/components/admin/purchases/detailCard/PurchaseProviderCard";
-import { PurchaseData } from "@/lib/purchase/IPurchase";
+import { PurchaseData } from "@/lib/purchases/IPurchase";
 import { toast } from "@/lib/toast";
 import GenericPagination from "@/components/global/GenericPagination";
 import { usePurchaseDetail } from "@/hooks/purchases/usePurchaseDetail";

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import GenericTable, { Column } from "@/components/global/GenericTable";
-import { ExtendedPurchaseDetail } from "@/lib/purchases/IPurchase";
+import { ExtendedPurchaseDetail } from "@/lib/purchases/IPurchaseRegister";
 import { Trash, Pencil } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";

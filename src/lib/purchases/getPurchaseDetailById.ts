@@ -1,5 +1,5 @@
 import { PURCHASE_API } from "@/lib/urls";
-import { PurchaseData } from "@/lib/purchase/IPurchase";
+import { PurchaseData } from "@/lib/purchases/IPurchase";
 
 export const getPurchaseById = async (
   purchaseId: string,

@@ -2,7 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { GetPurchaseQueryParams } from "@/lib/purchase/IPurchase";
+import { GetPurchaseQueryParams } from "@/lib/purchases/IPurchase";
 import useDebounce from "@/hooks/useDebounce";
 import { useEffect, useState } from "react";
 
