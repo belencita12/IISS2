@@ -25,25 +25,25 @@ export default function InvoiceDetailCard({ invoice }: Props) {
             RUC: {invoice.ruc}
           </span>
         </p>
-        <p className="col-start-1 row-start-4">Método de pago</p>
+        <p className="col-start-1 row-start-4">Monto Total</p>
         <p className="col-start-2 row-start-4 text-right">
+          <span className="bg-gray-200 px-3 py-1 rounded inline-block">
+            {new Intl.NumberFormat("es-PY").format(invoice.total)} Gs.
+          </span>
+        </p>
+        <p className="col-start-1 row-start-5">IVA</p>
+        <p className="col-start-2 row-start-5 text-right">
+          <span className="bg-gray-200 px-3 py-1 rounded inline-block">
+            {new Intl.NumberFormat("es-PY").format(invoice.totalVat)} Gs.
+          </span>
+        </p>
+        <p className="col-start-1 row-start-6">Método de pago</p>
+        <p className="col-start-2 row-start-6 text-right">
           {invoice.type === "CREDIT"
             ? "Crédito"
             : invoice.type === "CASH"
             ? "Efectivo"
             : "Desconocido"}
-        </p>
-        <p className="col-start-1 row-start-5">Monto Total</p>
-        <p className="col-start-2 row-start-5 text-right">
-          <span className="bg-gray-200 px-3 py-1 rounded inline-block">
-            {new Intl.NumberFormat("es-PY").format(invoice.total)} Gs.
-          </span>
-        </p>
-        <p className="col-start-1 row-start-6">IVA</p>
-        <p className="col-start-2 row-start-6 text-right">
-          <span className="bg-gray-200 px-3 py-1 rounded inline-block">
-            {new Intl.NumberFormat("es-PY").format(invoice.totalVat)} Gs.
-          </span>
         </p>
       </div>
     </div>
