@@ -10,7 +10,9 @@ interface NumericFilterProps {
   onMaxChange: (value: string) => void;
   onClearMin: () => void;
   onClearMax: () => void;
+  preventInvalidKeys?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
+
 
 export const NumericFilter: React.FC<NumericFilterProps> = ({
   label,

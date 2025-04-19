@@ -8,7 +8,7 @@ type InputProps = {
   placeholder: string;
   value?: string | number;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onkeydown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   error?: string;
   disabled?: boolean;
 };
@@ -21,7 +21,7 @@ export default function NumericInput({
   placeholder,
   value,
   onChange,
-  onkeydown,
+  onKeyDown,
   error,
   disabled,
 }: InputProps) {
@@ -94,7 +94,7 @@ export default function NumericInput({
         onKeyDown={
           type === "formattedNumber" || type === "number"
             ? handleKeyDown
-            : onkeydown
+            : onKeyDown
         }
         className={`${inputBaseClasses} ${className} ${
           error ? "border-red-500" : ""
