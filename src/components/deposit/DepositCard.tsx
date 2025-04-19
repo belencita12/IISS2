@@ -59,7 +59,7 @@ const DepositCard: React.FC<DepositCardProps> = ({
             title="Eliminar depósito"
             onClick={() => setIsConfirmOpen(true)}
           >
-            <Trash className="w-5 h-5 text-red-600" />
+            <Trash className="w-5 h-5 text-black" />
           </Button>
         </div>
       </div>

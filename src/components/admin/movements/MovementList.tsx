@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import { useMovementList } from "@/hooks/movements/useMovementList";
 import MovementFilters from "./MovementFilters";
 import GenericPagination from "@/components/global/GenericPagination";
+import { useEffect } from "react";
+import { toast } from "@/lib/toast";
+
 
 interface Props {
   token: string;
@@ -15,6 +18,12 @@ export default function MovementListPage({ token }: Props) {
   const router = useRouter();
   const { data, query, setQuery, handleSearch, isLoading, error } =
     useMovementList({ token });
+  
+  useEffect(() => {
+    if (error) {
+      toast("error", error);
+    }
+  }, [error]);
 
   const movements = data?.data || [];
 
@@ -38,8 +47,6 @@ export default function MovementListPage({ token }: Props) {
         </Button>
       </div>
 
-      {error && <p className="text-center text-red-500">{error}</p>}
-
       {isLoading ? (
         <p className="text-center">Cargando movimientos...</p>
       ) : movements.length === 0 ? (
@@ -47,8 +54,14 @@ export default function MovementListPage({ token }: Props) {
       ) : (
         <div className="flex flex-col gap-4 w-full">
           {movements.map((movement) => (
-            <MovementCard key={movement.id} movement={movement} token={token} />
-          ))}
+            <div
+            key={movement.id}
+            onClick={() => router.push(`/dashboard/movement/${movement.id}`)}
+            className="cursor-pointer"
+          >
+         <MovementCard movement={movement} token={token} />
+        </div>
+      ))}
         </div>
       )}
       {data && data.totalPages > 1 && (

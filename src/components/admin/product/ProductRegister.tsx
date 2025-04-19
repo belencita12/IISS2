@@ -6,7 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/input"; // sigue usándose para texto y archivo
+import NumericInput from "@/components/global/NumericInput"; // 👈 tu componente personalizado
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import { registerProduct } from "@/lib/products/registerProduct";
@@ -40,9 +41,7 @@ interface ProductRegisterFormProps {
   token?: string;
 }
 
-export default function ProductRegisterForm({
-  token,
-}: ProductRegisterFormProps) {
+export default function ProductRegisterForm({ token }: ProductRegisterFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -51,6 +50,7 @@ export default function ProductRegisterForm({
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<ProductFormValues>({
     resolver: zodResolver(productFormSchema),
@@ -98,6 +98,7 @@ export default function ProductRegisterForm({
       iva: data.iva,
       price: data.price,
     }).forEach(([key, value]) => formData.append(key, value.toString()));
+
     if (data.imageFile) formData.append("productImg", data.imageFile);
     setIsSubmitting(true);
 
@@ -105,9 +106,7 @@ export default function ProductRegisterForm({
       await registerProduct(formData, token);
       toast("success", "Producto registrado con éxito", {
         duration: 2000,
-        onAutoClose: () => {
-          router.push("/dashboard/products");
-        },
+        onAutoClose: () => router.push("/dashboard/products"),
         onDismiss: () => router.push("/dashboard/products"),
       });
     } catch {
@@ -116,14 +115,13 @@ export default function ProductRegisterForm({
       setIsSubmitting(false);
     }
   };
+
   return (
     <div className="max-w-5xl mx-auto p-8">
       <h1 className="text-3xl font-bold mb-6">Registrar Producto</h1>
       <div className="md:w-2/3 w-80">
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-6"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {/* Nombre */}
           <div>
             <Label>Nombre</Label>
             <Input
@@ -134,66 +132,75 @@ export default function ProductRegisterForm({
               <p className="text-red-500">{errors.productName.message}</p>
             )}
           </div>
+
+          {/* Costo */}
           <div>
             <Label>Costo</Label>
-            <Input
-              id="birthDate"
-              type="number"
+            <NumericInput
+              id="cost"
+              type="formattedNumber"
               placeholder="Ingrese el costo"
-              step={0.1}
-              min="0"
-              onKeyDown={(e) => {
-                if (e.key === "-" || e.key === "e") e.preventDefault();
-              }}
-              {...register("cost", { valueAsNumber: true })}
+              value={watch("cost") ?? ""}
+              onChange={(e) =>
+                setValue("cost", Number(e.target.value), {
+                  shouldValidate: true,
+                })
+              }
+              className={errors.cost ? "border-red-500" : ""}
+              error={errors.cost?.message}
             />
-            {errors.cost && (
-              <p className="text-red-500">{errors.cost.message}</p>
-            )}
-          </div>
-          <div>
-            <Label>Precio</Label>
-            <Input
-              id="price"
-              type="number"
-              step={0.1}
-              min="0"
-              onKeyDown={(e) => {
-                if (e.key === "-" || e.key === "e") e.preventDefault();
-              }}
-              placeholder="Ingrese el precio"
-              {...register("price", { valueAsNumber: true })}
-            />
-            {errors.price && (
-              <p className="text-red-500">{errors.price.message}</p>
-            )}
           </div>
 
+          {/* Precio */}
+          <div>
+            <Label>Precio</Label>
+            <NumericInput
+              id="price"
+              type="formattedNumber"
+              placeholder="Ingrese el precio"
+              value={watch("price") ?? ""}
+              onChange={(e) =>
+                setValue("price", Number(e.target.value), {
+                  shouldValidate: true,
+                })
+              }
+              className={errors.price ? "border-red-500" : ""}
+              error={errors.price?.message}
+            />
+          </div>
+
+          {/* IVA */}
           <div>
             <Label>IVA</Label>
-            <Input
+            <NumericInput
               id="iva"
-              type="number"
-              min="0"
-              onKeyDown={(e) => {
-                if (e.key === "-" || e.key === "e") e.preventDefault();
-              }}
+              type="formattedNumber"
               placeholder="Ingrese el IVA"
-              {...register("iva", { valueAsNumber: true })}
+              value={watch("iva") ?? ""}
+              onChange={(e) =>
+                setValue("iva", Number(e.target.value), {
+                  shouldValidate: true,
+                })
+              }
+              className={errors.iva ? "border-red-500" : ""}
+              error={errors.iva?.message}
             />
-            {errors.iva && <p className="text-red-500">{errors.iva.message}</p>}
           </div>
+
+          {/* Etiquetas */}
           <div>
             <Label>Etiquetas</Label>
             <TagFilter
-              token={token || ''}
+              token={token || ""}
               selectedTags={tags}
               onChange={handleTagsChange}
             />
-            {errors.tags && 
+            {errors.tags && (
               <p className="text-red-500">{errors.tags.message}</p>
-            }
+            )}
           </div>
+
+          {/* Imagen */}
           <div className="w-full flex flex-col items-start relative">
             <Label className="pb-2">Imagen</Label>
             <Label className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-md text-sm font-medium text-center cursor-pointer">
@@ -223,6 +230,8 @@ export default function ProductRegisterForm({
               </p>
             )}
           </div>
+
+          {/* Botones */}
           <div className="flex justify-start gap-4 mt-8">
             <Button
               type="button"

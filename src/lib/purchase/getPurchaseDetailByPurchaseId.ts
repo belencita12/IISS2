@@ -21,7 +21,7 @@ export const getPurchaseDetailByPurchaseId = async (
     if (!response.ok) {
       const errorText = await response.text();
       if (errorText.toLowerCase().includes("no encontrado")) {
-        throw new Error("La compra no existe");
+        throw new Error("La compra no tiene detalles");
       }
       throw new Error("Ocurrió un error. Intenta nuevamente.");
     }
