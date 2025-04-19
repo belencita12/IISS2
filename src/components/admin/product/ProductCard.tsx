@@ -4,6 +4,8 @@ import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Product } from "@/lib/products/IProducts";
 import { Badge } from "@/components/ui/badge";
+import { getCategoryLabel } from "@/lib/products/utils/categoryLabel";
+
 
 interface ProductCardProps {
   product: Product;
@@ -60,7 +62,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, stock, onClick }) =>
             <div className="flex flex-col">
               <p className="text-sm">{product.code}</p>
               <p className="text-sm mt-2">La Mascota S.A.</p>
-              <p className="text-sm mt-2">{product.category}</p>
+              <p className="text-sm mt-2">{getCategoryLabel(product.category)}</p>
               <p className="text-sm mt-2">{product.price.toLocaleString()} Gs</p>
             </div>
             <div className="flex flex-col">

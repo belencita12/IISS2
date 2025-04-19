@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { getPurchases } from "@/lib/purchase/getPurchases";
+import { getPurchases } from "@/lib/purchases/getPurchases";
 import { GetPurchaseQueryParams, PurchaseData } from "@/lib/purchases/IPurchase";
 import { PaginationResponse } from "@/lib/types";
 import { useQuery } from "../useQuery";
