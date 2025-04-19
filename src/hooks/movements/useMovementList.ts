@@ -19,12 +19,12 @@ export const useMovementList = ({ token, init }: UseMovementListProps) => {
     setLoading(true);
     try {
       const queryStr = toQueryString();
-      //console.log("🔍 Query final:", queryStr); 
       const result = await getMovements(token, queryStr);
       setData(result);
     } catch (err) {
-      console.error(err);
-      setError("Error al obtener movimientos");
+      if (err instanceof Error) {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
