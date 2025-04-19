@@ -29,7 +29,7 @@ const linksUser = [
   { name: "Compras", href: "/dashboard/purchases", icon: CircleDollarSignIcon },
   { name: "Crear Venta", href: "/dashboard/ventas", icon: HandCoinsIcon },
   { name: "Empleados", href: "/dashboard/employee", icon: BookUserIcon },
-  { name: "Facturas", href: "/dashboard/facturas", icon: FileIcon },
+  { name: "Facturas", href: "/dashboard/invoices", icon: FileIcon },
   {
     name: "Configuración",
     href: "/dashboard/settings",
@@ -45,7 +45,7 @@ export default function NavLinks() {
     <>
       {linksUser.map((link) => {
         const LinkIcon = link.icon;
-        const isActive = pathname === link.href; 
+        const isActive = pathname === link.href;
 
         return (
           <Link
