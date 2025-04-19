@@ -87,4 +87,25 @@ describe('<ConfirmationModal />', () => {
     // Asegurarse que el icono tenga el color correcto de warning (bg-yellow-100)
     cy.get('div.bg-yellow-100').should('exist')
   })
+
+ it('desactiva el botón de Confirmar y muestra "Cargando..." mientras onConfirm está en progreso', () => {
+  const asyncConfirm = (): Promise<void> => {
+    return new Promise((resolve) => setTimeout(resolve, 2000));
+  }
+  cy.mount(
+    <ConfirmationModal
+      isOpen={true}
+      onClose={onClose}
+      onConfirm={asyncConfirm}
+    />
+  );
+  cy.contains('Confirmar').click()
+  cy.contains('Cargando...')
+    .should('exist')
+    .should('be.disabled');
+  cy.contains('Cancelar').should('be.disabled')
+  cy.wait(2100);
+  cy.get('@onClose').should('have.been.calledOnce')
+})
+
 })
