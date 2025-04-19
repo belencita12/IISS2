@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { getPurchaseById } from "@/lib/purchases/getPurchaseDetailById";
 import PurchaseDetailCard from "@/components/admin/purchases/detailCard/PurchaseProductCard";
 import PurchaseProviderCard from "@/components/admin/purchases/detailCard/PurchaseProviderCard";
 import { PurchaseData } from "@/lib/purchases/IPurchase";
@@ -11,30 +10,16 @@ import { usePurchaseDetail } from "@/hooks/purchases/usePurchaseDetail";
 
 interface PurchaseDetailProps {
   token: string;
+  purchaseInfo: PurchaseData;
   initialPage?: number;
 }
 
-const PurchaseDetail: React.FC<PurchaseDetailProps> = ({ token, initialPage = 1 }) => {
+const PurchaseDetail: React.FC<PurchaseDetailProps> = ({ token, purchaseInfo, initialPage = 1 }) => {
   const { id } = useParams();
-  const [purchaseInfo, setPurchaseInfo] = useState<PurchaseData | null>(null);
   const [page, setPage] = useState<number>(initialPage);
   const [toastShown, setToastShown] = useState<boolean>(false);
   
   const { data: purchaseDetails, totalPages, loading, error } = usePurchaseDetail(id as string, token, page);
-
-  useEffect(() => {
-    if (!id) return;
-    const fetchPurchaseInfo = async () => {
-      try {
-        const purchaseData = await getPurchaseById(id as string, token);
-        setPurchaseInfo(purchaseData);
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "No se pudo cargar la información de la compra";
-        toast("error", errorMessage);
-      }
-    };
-    fetchPurchaseInfo();
-  }, [id, token]);
 
   useEffect(() => {
     if (!loading && !toastShown && (!purchaseDetails || purchaseDetails.length === 0)) {

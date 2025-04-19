@@ -1,5 +1,6 @@
-import React from 'react';
-import { X } from 'lucide-react';
+import React from "react";
+import { X } from "lucide-react";
+import NumericInput from "@/components/global/NumericInput"; // Ajustá la ruta según dónde esté tu componente
 
 interface NumericFilterProps {
   label: string;
@@ -9,8 +10,9 @@ interface NumericFilterProps {
   onMaxChange: (value: string) => void;
   onClearMin: () => void;
   onClearMax: () => void;
-  preventInvalidKeys: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  preventInvalidKeys?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
+
 
 export const NumericFilter: React.FC<NumericFilterProps> = ({
   label,
@@ -20,21 +22,19 @@ export const NumericFilter: React.FC<NumericFilterProps> = ({
   onMaxChange,
   onClearMin,
   onClearMax,
-  preventInvalidKeys,
 }) => {
   return (
     <div className="flex flex-col sm:flex-row items-center gap-2 mt-4 sm:mt-0">
       <span className="text-sm">{label}</span>
+
       <div className="relative">
-        <input
-          type="number"
-          min="0"
-          step="100"
+        <NumericInput
+          id="min"
+          type="formattedNumber"
           placeholder="Desde"
           value={minValue}
           onChange={(e) => onMinChange(e.target.value)}
-          onKeyDown={preventInvalidKeys}
-          className="border p-1 rounded w-28"
+          className="w-28 p-1"
         />
         {minValue && (
           <button
@@ -45,17 +45,17 @@ export const NumericFilter: React.FC<NumericFilterProps> = ({
           </button>
         )}
       </div>
+
       <span className="text-sm">-</span>
+
       <div className="relative">
-        <input
-          type="number"
-          min="0"
-          step="100"
+        <NumericInput
+          id="max"
+          type="formattedNumber"
           placeholder="Hasta"
           value={maxValue}
           onChange={(e) => onMaxChange(e.target.value)}
-          onKeyDown={preventInvalidKeys}
-          className="border p-1 rounded w-28"
+          className="w-28 p-1"
         />
         {maxValue && (
           <button

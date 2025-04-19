@@ -3,15 +3,10 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-//import { Check, LoaderCircleIcon, X } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { PetData, Race, Species } from "@/lib/pets/IPet";
 import { getPetById } from "@/lib/pets/getPetById";
 import { toast } from "@/lib/toast";
-//import { ValidatedInput } from "@/components/global/ValidatedInput";
-//import { getClientById } from "@/lib/client/getClientById";
-//import { ClientData } from "@/lib/admin/client/IClient";
-//import { fetchUsers } from "@/lib/client/getUsers";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -117,7 +112,7 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
   const [species, setSpecies] = useState<Species[]>([]);
   const [races, setRaces] = useState<Race[]>([]);
 
-  const [emailQuery, setSearchQuery] = useState<string>("");
+  const [isCancelling, setIsCancelling] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
@@ -137,7 +132,6 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
       gender: "",
     },
   });
-  //console.log(errors)
 
   // Obtiene las especies
   useEffect(() => {
@@ -179,10 +173,8 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
   };
 
   const onSubmit = async (data: PetFormValues) => {
-    //console.log("Datos del formulario:", data);
     
     if (!token) {
-     // console.error("Token no disponible");
       toast("error", "Debes estar autenticado para editar una mascota.");
       return;
     }
@@ -196,25 +188,19 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
       sex: data.gender,
       dateOfBirth: new Date(data.birthDate).toISOString(),
     }).forEach(([key, value]) => {
-      //console.log(`Agregando ${key}: ${value}`);
       formData.append(key, value);
     });
     
     if (data.imageFile) {
-      //console.log("Agregando imagen:", data.imageFile);
       formData.append("profileImg", data.imageFile);
     }
     
     setIsSubmitting(true);
     try {
-      //console.log("Enviando datos al servidor...");
-      //console.log("Token:", token);
       const response = await updatePet(Number(petId), formData, token);
-      //console.log("Respuesta del servidor:", response);
       toast("success", "Mascota actualizada correctamente");
       router.push(`/dashboard/clients/${id}`);
     } catch (error) {
-      //console.error("Error al actualizar la mascota:", error);
       toast("error", "Error al actualizar la mascota");
     } finally {
       setIsSubmitting(false);
@@ -243,19 +229,16 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
   useEffect(() => {
     setPet(undefined);
     if (!petId || !token) {
-      //console.error("Faltan datos necesarios:", { petId, token });
       toast("error", "Faltan datos");
       return;
     }
 
     const fetchPetAndClient = async () => {
       try {
-        //console.log("Obteniendo datos de la mascota...");
         const petData = await getPetById(Number(petId), token);
 
         if (petData) {
           setPet(petData);
-          //console.log("Datos de la mascota:", petData);
 
           setValue("petName", petData.name);
           setValue("birthDate", formatDateToInput(petData.dateOfBirth));
@@ -264,12 +247,10 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
           setValue("gender", petData.sex);
           setValue("weight", petData.weight);
 
-         // console.log(petData)
         } else {
           setPet(null);
         }
       } catch (error) {
-        //console.error("Error al obtener datos:", error);
         toast("error", "No se pudo obtener los datos de la mascota");
       }
     };
@@ -464,17 +445,21 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
                 <hr />
                 <div className="flex gap-4">
                   <Button
+                    type="button"
                     variant={"secondary"}
-                    disabled={isSubmitting}
+                    disabled={isCancelling || isSubmitting}
                     className="p-1 pl-3 pr-3"
-                    onClick={() => router.push(`/dashboard/clients/${id}`)}
+                    onClick={() => {
+                      setIsCancelling(true)
+                      router.push(`/dashboard/clients/${id}`)
+                    }}
                   >
                     Cancelar
                   </Button>
 
                   <Button 
                     type="submit" 
-                    disabled={isSubmitting}
+                    disabled={isCancelling || isSubmitting}
                   >
                     {isSubmitting ? "Guardando..." : "Guardar"}
                   </Button>

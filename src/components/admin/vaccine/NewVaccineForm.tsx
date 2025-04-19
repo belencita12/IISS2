@@ -11,6 +11,7 @@ import { toast } from "@/lib/toast";
 import { getManufacturers } from "@/lib/vaccine-manufacturer/getVaccineManufacturerById";
 import { getSpecies } from "@/lib/pets/getRacesAndSpecies";
 import { Plus } from "lucide-react";
+import NumericInput from "@/components/global/NumericInput";
 
 // Interfaces
 interface Manufacturer {
@@ -26,8 +27,12 @@ interface Species {
 // Definición del esquema de validación con Zod
 const vaccineSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
-  manufacturerId: z.number({required_error: "Seleccione un fabricante"}).min(1, "Seleccione un fabricante"),
-  speciesId: z.number({required_error: "Seleccione una especie"}).min(1, "Seleccione una especie"),
+  manufacturerId: z
+    .number({ required_error: "Seleccione un fabricante" })
+    .min(1, "Seleccione un fabricante"),
+  speciesId: z
+    .number({ required_error: "Seleccione una especie" })
+    .min(1, "Seleccione una especie"),
   cost: z
     .number({ message: "Complete con valores numéricos adecuados" })
     .min(1, "El costo debe ser mayor a 0"),
@@ -42,7 +47,12 @@ const vaccineSchema = z.object({
     .optional()
     .refine((file) => {
       if (!file) return true;
-      return file instanceof File && ["image/jpeg", "image/png", "image/gif", "image/webp"].includes(file.type);
+      return (
+        file instanceof File &&
+        ["image/jpeg", "image/png", "image/gif", "image/webp"].includes(
+          file.type
+        )
+      );
     }, "El archivo debe ser una imagen válida (JPG, PNG, GIF, WEBP)")
     .refine((file) => {
       if (!file) return true;
@@ -74,13 +84,18 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
   // Estados para fabricantes, especies y búsqueda
   const [manufacturers, setManufacturers] = useState<Manufacturer[]>([]);
   const [species, setSpecies] = useState<Species[]>([]);
-  const [manufacturerSearch, setManufacturerSearch] = useState(initialData ? initialData.manufacturer.name : "");
-  const [speciesSearch, setSpeciesSearch] = useState(initialData ? initialData.species.name : "");
-  const [isManufacturerListVisible, setIsManufacturerListVisible] = useState(false);
-  const [isSpeciesListVisible, setIsSpeciesListVisible] = useState(false);
-  const [selectedManufacturerId, setSelectedManufacturerId] = useState<number | null>(
-    initialData ? initialData.manufacturer.id : null
+  const [manufacturerSearch, setManufacturerSearch] = useState(
+    initialData ? initialData.manufacturer.name : ""
   );
+  const [speciesSearch, setSpeciesSearch] = useState(
+    initialData ? initialData.species.name : ""
+  );
+  const [isManufacturerListVisible, setIsManufacturerListVisible] =
+    useState(false);
+  const [isSpeciesListVisible, setIsSpeciesListVisible] = useState(false);
+  const [selectedManufacturerId, setSelectedManufacturerId] = useState<
+    number | null
+  >(initialData ? initialData.manufacturer.id : null);
   const [selectedSpeciesId, setSelectedSpeciesId] = useState<number | null>(
     initialData ? initialData.species.id : null
   );
@@ -91,6 +106,7 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
     register,
     handleSubmit,
     setValue,
+    watch, // 
     formState: { errors },
   } = useForm<VaccineFormData>({
     resolver: zodResolver(vaccineSchema),
@@ -103,13 +119,16 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
       price: initialData?.price,
     },
   });
+  
 
   useEffect(() => {
     if (token) {
       // Cargar fabricantes
       getManufacturers(token)
-        .then(({data}) => {
-          const sorted = data.sort((a: Manufacturer, b: Manufacturer) => a.name.localeCompare(b.name));
+        .then(({ data }) => {
+          const sorted = data.sort((a: Manufacturer, b: Manufacturer) =>
+            a.name.localeCompare(b.name)
+          );
           setManufacturers(sorted);
         })
         .catch((error) => {
@@ -119,7 +138,9 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
       // Cargar especies
       getSpecies(token)
         .then((data) => {
-          const sorted = data.sort((a: Species, b: Species) => a.name.localeCompare(b.name));
+          const sorted = data.sort((a: Species, b: Species) =>
+            a.name.localeCompare(b.name)
+          );
           setSpecies(sorted);
         })
         .catch((error) => {
@@ -128,13 +149,6 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
         });
     }
   }, [token]);
-
-  const preventNegativeInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "-") {
-      e.preventDefault();
-      toast("error", "No se permiten valores negativos");
-    }
-  };
 
   const filteredManufacturers = manufacturers.filter((manu) =>
     manu.name.toLowerCase().includes(manufacturerSearch.toLowerCase())
@@ -145,63 +159,83 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
 
   // Función para enviar el formulario
   const onSubmit = async (data: VaccineFormData) => {
-  if (isSubmitting) return;
-  setIsSubmitting(true);
+    if (isSubmitting) return;
+    setIsSubmitting(true);
 
-  // Validación de selección
-  const isManufacturerValid = manufacturers.some((m) => m.id === selectedManufacturerId);
-  const isSpeciesValid = species.some((s) => s.id === selectedSpeciesId);
+    // Validación de selección
+    const isManufacturerValid = manufacturers.some(
+      (m) => m.id === selectedManufacturerId
+    );
+    const isSpeciesValid = species.some((s) => s.id === selectedSpeciesId);
 
-  if (!isManufacturerValid || !isSpeciesValid) {
-    toast("error", "Debe seleccionar un fabricante y una especie válidos de la lista.");
-    setIsSubmitting(false);
-    return;
-  }
-
-  try {
-    const formData = new FormData();
-    formData.append("name", data.name);
-    formData.append("manufacturerId", selectedManufacturerId?.toString() || "0");
-    formData.append("speciesId", selectedSpeciesId?.toString() || "0");
-    formData.append("cost", data.cost.toString());
-    formData.append("iva", data.iva.toString());
-    formData.append("price", data.price.toString());
-
-    if (data.productImg instanceof File) {
-      formData.append("productImg", data.productImg);
+    if (!isManufacturerValid || !isSpeciesValid) {
+      toast(
+        "error",
+        "Debe seleccionar un fabricante y una especie válidos de la lista."
+      );
+      setIsSubmitting(false);
+      return;
     }
 
-    // Si es edición, llamamos a PUT; si es creación, a POST
-    const url = isEdit
-      ? `${process.env.NEXT_PUBLIC_BASE_URL}/vaccine/${initialData?.id}`
-      : `${process.env.NEXT_PUBLIC_BASE_URL}/vaccine`;
-    const method = isEdit ? "PUT" : "POST";
+    try {
+      const formData = new FormData();
+      formData.append("name", data.name);
+      formData.append(
+        "manufacturerId",
+        selectedManufacturerId?.toString() || "0"
+      );
+      formData.append("speciesId", selectedSpeciesId?.toString() || "0");
+      formData.append("cost", data.cost.toString());
+      formData.append("iva", data.iva.toString());
+      formData.append("price", data.price.toString());
 
-    const response = await fetch(url, {
-      method,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
+      if (data.productImg instanceof File) {
+        formData.append("productImg", data.productImg);
+      }
 
-    if (!response.ok) {
-      throw new Error(isEdit ? "Error al actualizar la vacuna" : "Error al crear la vacuna");
+      // Si es edición, llamamos a PUT; si es creación, a POST
+      const url = isEdit
+        ? `${process.env.NEXT_PUBLIC_BASE_URL}/vaccine/${initialData?.id}`
+        : `${process.env.NEXT_PUBLIC_BASE_URL}/vaccine`;
+      const method = isEdit ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          isEdit ? "Error al actualizar la vacuna" : "Error al crear la vacuna"
+        );
+      }
+
+      toast(
+        "success",
+        isEdit
+          ? "Vacuna actualizada exitosamente"
+          : "Vacuna creada exitosamente"
+      );
+      router.push("/dashboard/vaccine");
+    } catch (error) {
+      console.error(error);
+      toast(
+        "error",
+        isEdit ? "Error al actualizar la vacuna" : "Error al crear la vacuna"
+      );
+    } finally {
+      setIsSubmitting(false);
     }
-
-    toast("success", isEdit ? "Vacuna actualizada exitosamente" : "Vacuna creada exitosamente");
-    router.push("/dashboard/vaccine");
-  } catch (error) {
-    console.error(error);
-    toast("error", isEdit ? "Error al actualizar la vacuna" : "Error al crear la vacuna");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+  };
 
   const validateManufacturerSelection = () => {
     setTimeout(() => setIsManufacturerListVisible(false), 200);
-    const found = manufacturers.find((m) => m.name.toLowerCase() === manufacturerSearch.toLowerCase());
+    const found = manufacturers.find(
+      (m) => m.name.toLowerCase() === manufacturerSearch.toLowerCase()
+    );
     if (!found) {
       setManufacturerSearch("");
       setSelectedManufacturerId(null);
@@ -214,7 +248,9 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
 
   const validateSpeciesSelection = () => {
     setTimeout(() => setIsSpeciesListVisible(false), 200);
-    const found = species.find((s) => s.name.toLowerCase() === speciesSearch.toLowerCase());
+    const found = species.find(
+      (s) => s.name.toLowerCase() === speciesSearch.toLowerCase()
+    );
     if (!found) {
       setSpeciesSearch("");
       setSelectedSpeciesId(null);
@@ -234,8 +270,14 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
         {/* Nombre */}
         <div>
           <label className="block text-sm font-medium mb-2">Nombre</label>
-          <Input {...register("name")} placeholder="Ingrese un nombre" className="mb-2"/>
-          {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+          <Input
+            {...register("name")}
+            placeholder="Ingrese un nombre"
+            className="mb-2"
+          />
+          {errors.name && (
+            <p className="text-red-500 text-sm">{errors.name.message}</p>
+          )}
         </div>
 
         {/* Fabricante */}
@@ -278,9 +320,13 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
                   </div>
                 ))}
               </div>
-            )}            
-          </div>          
-          {errors.manufacturerId && <p className="text-red-500 text-sm">{errors.manufacturerId.message}</p>}
+            )}
+          </div>
+          {errors.manufacturerId && (
+            <p className="text-red-500 text-sm">
+              {errors.manufacturerId.message}
+            </p>
+          )}
         </div>
 
         {/* Especie */}
@@ -314,52 +360,67 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
                 ))}
               </div>
             )}
-          </div>          
-          {errors.speciesId && <p className="text-red-500 text-sm">{errors.speciesId.message}</p>}
+          </div>
+          {errors.speciesId && (
+            <p className="text-red-500 text-sm">{errors.speciesId.message}</p>
+          )}
         </div>
 
         {/* Costo */}
         <div>
           <label className="block text-sm font-medium mb-2">Costo</label>
-          <Input
-            type="number"
-            {...register("cost", { valueAsNumber: true })}
-            onKeyDown={preventNegativeInput}
+          <NumericInput
+            id="cost"
+            type="formattedNumber"
             placeholder="Ingrese el costo"
+            value={watch("cost") ?? ""}
+            onChange={(e) =>
+              setValue("cost", Number(e.target.value), { shouldValidate: true })
+            }
             className="mb-2"
+            error={errors.cost?.message}
           />
-          {errors.cost && <p className="text-red-500 text-sm">{errors.cost.message}</p>}
         </div>
 
         {/* IVA */}
         <div>
           <label className="block text-sm font-medium mb-2">IVA</label>
-          <Input
-            type="number"
-            {...register("iva", { valueAsNumber: true })}
-            onKeyDown={preventNegativeInput}
+          <NumericInput
+            id="iva"
+            type="formattedNumber"
             placeholder="Ingrese el IVA"
+            value={watch("iva") ?? ""}
+            onChange={(e) =>
+              setValue("iva", Number(e.target.value), { shouldValidate: true })
+            }
             className="mb-2"
+            error={errors.iva?.message}
           />
-          {errors.iva && <p className="text-red-500 text-sm">{errors.iva.message}</p>}
         </div>
 
         {/* Precio */}
         <div>
           <label className="block text-sm font-medium mb-2">Precio</label>
-          <Input
-            type="number"
-            {...register("price", { valueAsNumber: true })}
-            onKeyDown={preventNegativeInput}
+          <NumericInput
+            id="price"
+            type="formattedNumber"
             placeholder="Ingrese el precio"
+            value={watch("price") ?? ""}
+            onChange={(e) =>
+              setValue("price", Number(e.target.value), {
+                shouldValidate: true,
+              })
+            }
             className="mb-2"
+            error={errors.price?.message}
           />
-          {errors.price && <p className="text-red-500 text-sm">{errors.price.message}</p>}
         </div>
 
         {/* Imagen */}
         <div>
-          <label className="block text-sm font-medium mb-2">Imagen del producto (opcional)</label>
+          <label className="block text-sm font-medium mb-2">
+            Imagen del producto (opcional)
+          </label>
           <Input
             type="file"
             className="mb-2"
@@ -370,7 +431,9 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
             }}
           />
           {errors.productImg?.message && (
-            <p className="text-red-500 text-sm">{String(errors.productImg.message)}</p>
+            <p className="text-red-500 text-sm">
+              {String(errors.productImg.message)}
+            </p>
           )}
         </div>
 

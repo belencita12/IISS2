@@ -13,6 +13,7 @@ import SearchBar from "@/components/global/SearchBar";
 import { useEffect, useState } from "react";
 import { getStocks } from "@/lib/stock/getStock";
 import { StockData } from "@/lib/stock/IStock";
+import {toast} from "@/lib/toast"
 
 interface Props {
   token: string;
@@ -34,18 +35,30 @@ export default function MovementFilters({ token, filters, setFilters }: Props) {
   useEffect(() => {
     getStocks({ page: 1 }, token)
       .then((res) => setStocks(res.data))
-      .catch((err) => console.error("Error al obtener depósitos", err));
+      .catch((err) => {
+        const message = err?.message || "No se pudieron obtener los depositos";
+        toast("error", message);
+      });
   }, [token]);
 
 
   return (
     <div className="mb-6 space-y-4">
       <div className="flex flex-col md:flex-row items-center gap-4">
-        <div className="w-full">
+        <div className="w-full md:w-1/2">
           <SearchBar
             placeholder="Ingrese el RUC del encargado"
             defaultQuery={filters.managerRuc ?? ""}
             onSearch={(value) => handleChange("managerRuc", value)}
+            debounceDelay={300}
+          />
+        </div>
+
+        <div className="w-full md:w-1/2">
+          <SearchBar
+            placeholder="Buscar por nombre de producto"
+            defaultQuery={filters.productName ?? ""}
+            onSearch={(value) => handleChange("productName", value)}
             debounceDelay={300}
           />
         </div>
