@@ -148,8 +148,8 @@ export default function ProductDetail({ token }: ProductDetailProps) {
         isLoading={isDelLoading}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
-        title="¿Estás seguro de eliminar este producto?"
-        message={`Se eliminará "${product.name}". Esta acción no se puede deshacer.`}
+        title="Eliminar"
+        message={`¿Seguro que quieres eliminar el producto ${product.name}?`}
         confirmText="Eliminar"
         cancelText="Cancelar"
         variant="danger"
