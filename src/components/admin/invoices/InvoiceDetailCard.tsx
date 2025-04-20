@@ -37,12 +37,12 @@ export default function InvoiceDetailCard({ invoice }: Props) {
             {new Intl.NumberFormat("es-PY").format(invoice.totalVat)} Gs.
           </span>
         </p>
-        <p className="col-start-1 row-start-6">Método de pago</p>
+        <p className="col-start-1 row-start-6">Condición de venta</p>
         <p className="col-start-2 row-start-6 text-right">
           {invoice.type === "CREDIT"
             ? "Crédito"
             : invoice.type === "CASH"
-            ? "Efectivo"
+            ? "Contado"
             : "Desconocido"}
         </p>
       </div>
