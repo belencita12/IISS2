@@ -223,12 +223,12 @@ const ProductCatalog = ({ token }: { token: string | null }) => {
                                     className="bg-gray-200 text-sm px-3 py-1 rounded-full flex items-center gap-1"
                                 >
                                     {tag}
-                                    <button
+                                    <Button
                                         onClick={() => handleRemoveTag(tag)}
                                         className="text-gray-600 hover:text-gray-800"
                                     >
                                         <X className="w-4 h-4" />
-                                    </button>
+                                    </Button>
                                 </span>
                             ))}
                         </div>
