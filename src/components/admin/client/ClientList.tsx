@@ -119,7 +119,7 @@ export default function ClientList({ token }: ClientListProps) {
         },
         {
             icon: <Pencil className="w-4 h-4" />,
-            onClick: (user) => console.log("Editar:", user),
+            onClick: (user) => router.push(`/dashboard/clients/${user.id}/edit`),
             label: "Editar",
         },
         {

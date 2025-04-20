@@ -90,7 +90,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           <button
             disabled={isProcessing || isLoading}
             onClick={() => {
-              setIsProcessing(true);
+              setIsProcessing(false);
               onClose();
             }}
             className="px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100 transition disabled:opacity-75"
@@ -111,7 +111,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             }}
             className={`px-4 py-2 rounded text-white ${colors.bg} ${colors.hover} disabled:opacity-75 transition`}
           >
-            {isLoading || isProcessing ? "Cargando..." : confirmText}
+            {isLoading || isProcessing ? "Procesando..." : confirmText}
           </button>
         </div>
       </div>

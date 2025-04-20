@@ -6,6 +6,7 @@ import { BaseQueryParams } from "../types";
     originStockId?: number;
     destinationStockId?: number;
     managerId?: number;
+    productName?: string;
   }
 
   export interface MovementData {
@@ -28,7 +29,7 @@ import { BaseQueryParams } from "../types";
     description?: string;
     originStockId?: number;
     destinationStockId?: number;
-    managerId: number;
+    managerId?: number;
     details: MovementDetail[];
   }
   
@@ -41,7 +42,29 @@ import { BaseQueryParams } from "../types";
     code?: string;
     name?: string;
   };
+
+  export interface MovementDetailResponse {
+    product: {
+      id: number;
+      name: string;
+      code: string;
+      cost: number;
+      price: number;
+      iva: number;
+      category: string;
+      image?: {
+        id: number;
+        previewUrl: string;
+        originalUrl: string;
+      };
+    };
+    quantity: number;
+  }
   
   export type ExtendedMovement = Omit<Movement, "details"> & {
     details: ExtendedMovementDetail[];
   };
+
+  export interface MovementWithDetails extends MovementData {
+    details: MovementDetailResponse[];
+  }
