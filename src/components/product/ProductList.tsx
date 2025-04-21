@@ -44,7 +44,7 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState({
-    code: "",
+    searchTerm: "",
     category: "",
     minPrice: "",
     maxPrice: "",
@@ -55,16 +55,25 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
 
   useEffect(() => {
     const filtered = products.filter((product) => {
-      const codeMatch = filters.code === "" || product.code.toLowerCase().includes(filters.code.toLowerCase());
+      const searchTerm = filters.searchTerm.toLowerCase();
+      const searchMatch =
+        searchTerm === "" ||
+        product.name.toLowerCase().includes(searchTerm) ||
+        product.code.toLowerCase().includes(searchTerm);
+
       const categoryMatch = filters.category === "" || product.category === filters.category;
+
       const minPrice = filters.minPrice ? Number(filters.minPrice) : null;
       const maxPrice = filters.maxPrice ? Number(filters.maxPrice) : null;
-      const priceMatch = (minPrice === null || product.price >= minPrice) && (maxPrice === null || product.price <= maxPrice);
+      const priceMatch = (minPrice === null || product.price >= minPrice) &&
+                         (maxPrice === null || product.price <= maxPrice);
+
       const minCost = filters.minCost ? Number(filters.minCost) : null;
       const maxCost = filters.maxCost ? Number(filters.maxCost) : null;
-      const costMatch = (minCost === null || product.cost >= minCost) && (maxCost === null || product.cost <= maxCost);
-  
-      return codeMatch && categoryMatch && priceMatch && costMatch;
+      const costMatch = (minCost === null || product.cost >= minCost) &&
+                        (maxCost === null || product.cost <= maxCost);
+
+      return searchMatch && categoryMatch && priceMatch && costMatch;
     });
     setFilteredProducts(filtered);
   }, [filters, products]);
