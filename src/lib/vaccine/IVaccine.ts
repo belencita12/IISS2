@@ -21,14 +21,33 @@ export interface ProductData {
 export interface Vaccine {
   id: number;
   name: string;
-  manufacturer: Manufacturer;
-  species: Species;
-  product?: ProductData;
-  image?: VaccineImage;
-  // Campos convertidos para facilidad de uso en frontend
-  cost: number;
-  iva: number;
-  price: number;
+  species: {
+    id: number;
+    name: string;
+  };
+  manufacturer: {
+    id: number;
+    name: string;
+  };
+  product: {
+    id: number;
+    name: string;
+    code: string;
+    cost: number;
+    iva: number;
+    category: string;
+    price: number;
+    quantity: number;
+    tags: string[];
+    image?: {
+      id: number;
+      previewUrl: string;
+      originalUrl: string;
+    };
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: unknown; 
+  };
 }
 
 export interface IVaccine {

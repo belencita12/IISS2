@@ -15,7 +15,7 @@ export async function getVaccineById(token: string, id: number) {
     }
   
     const data = await response.json();
-    console.log("Respuesta de la API (getVaccineById):", data); 
+    //console.log("Respuesta de la API (getVaccineById):", data); 
     return data;
   }
   
