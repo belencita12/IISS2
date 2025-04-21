@@ -22,10 +22,26 @@ interface Vaccine {
   image?: { originalUrl: string };
 }
 
+type DecimalLike = {
+  d: number[]; // dígitos
+  e: number;   // exponente
+  s: number;   // signo
+};
+
+
 export const VaccineDetail = ({ id, token }: Props) => {
   const [vaccine, setVaccine] = useState<Vaccine | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+
+  function parseDecimal(val: unknown): number {
+    if (typeof val === "object" && val !== null && "d" in val) {
+      const decimal = val as DecimalLike;
+      return decimal.d?.[0] ?? 0;
+    }
+    return Number(val);
+  }
+  
 
   useEffect(() => {
     const fetchVaccine = async () => {
@@ -41,7 +57,16 @@ export const VaccineDetail = ({ id, token }: Props) => {
 
         if (!res.ok) throw new Error("Error al cargar la vacuna");
         const data = await res.json();
-        setVaccine(data);
+      
+        console.log("VACUNA RAW:", data);
+
+        setVaccine({
+          ...data,
+          cost: parseDecimal(data.product?.cost),
+          iva: parseDecimal(data.product?.iva),
+          price: parseDecimal(data.product?.price),
+        });
+        
       } catch (error) {
         toast("error", "No se pudo cargar la información de la vacuna");
         console.error(error);
@@ -58,10 +83,10 @@ export const VaccineDetail = ({ id, token }: Props) => {
     return <p className="text-center mt-10">No se encontró la vacuna.</p>;
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
+    <div className="flex flex-col justify-between mt-5 p-4 mx-2">
       <div className="flex flex-col md:flex-row gap-6 items-start">
         {/* Imagen o inicial */}
-        <div className="w-full md:w-1/3 flex justify-center">
+        <div className="w-full md:w-1/4 flex justify-center">
           {vaccine.image?.originalUrl ? (
             <Image
               src={vaccine.image.originalUrl}
@@ -76,9 +101,9 @@ export const VaccineDetail = ({ id, token }: Props) => {
             </div>
           )}
         </div>
-
+  
         {/* Detalles */}
-        <div className="w-full md:w-2/3 space-y-4">
+        <div className="w-full md:w-3/4 space-y-4 mr-4">
           <h1 className="text-2xl font-bold">{vaccine.name}</h1>
           <Detail label="Fabricante" value={vaccine.manufacturer.name} />
           <Detail label="Especie" value={vaccine.species.name} />
@@ -94,7 +119,7 @@ export const VaccineDetail = ({ id, token }: Props) => {
             label="IVA"
             value={
               typeof vaccine.iva === "number"
-                ? `Gs. ${vaccine.iva.toLocaleString("es-PY")}`
+                ? `${vaccine.iva.toLocaleString("es-PY")} %`
                 : "N/A"
             }
           />
@@ -106,26 +131,24 @@ export const VaccineDetail = ({ id, token }: Props) => {
                 : "N/A"
             }
           />
-
-          <div className="flex gap-4 mt-6">
-            <Button
-              variant="outline"
-              onClick={() => router.push("/dashboard/vaccine")}
-            >
-              Volver
-            </Button>
-            <Button
-              onClick={() =>
-                router.push(`/dashboard/vaccine/edit/${vaccine.id}`)
-              }
-            >
-              Editar
-            </Button>
-          </div>
         </div>
+      </div>
+  
+      {/* Botones en la parte inferior */}
+      <div className="flex gap-4 mt-6 justify-end">
+        <Button
+          variant="outline"
+          onClick={() => router.push("/dashboard/vaccine")}
+        >
+          Volver
+        </Button>
+        <Button onClick={() => router.push(`/dashboard/vaccine/edit/${vaccine.id}`)}>
+          Editar
+        </Button>
       </div>
     </div>
   );
+  
 };
 
 const Detail = ({ label, value }: { label: string; value: string }) => (
