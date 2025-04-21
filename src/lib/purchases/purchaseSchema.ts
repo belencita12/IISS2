@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Purchase } from "./IPurchase";
+import { Purchase } from "./IPurchaseRegister";
 
 export const purchaseSchema: z.ZodType<Purchase> = z.object({
   providerId: z

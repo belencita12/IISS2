@@ -1,5 +1,5 @@
 import React from "react";
-import { PurchaseDetail } from "@/lib/purchase/IPurchaseDetail";
+import { PurchaseDetail } from "@/lib/purchases/IPurchaseDetail";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";

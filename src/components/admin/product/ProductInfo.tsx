@@ -2,6 +2,7 @@ import React from "react";
 import { Product } from "@/lib/products/IProducts";
 import { StockDetailsData } from "@/lib/stock/IStock";
 import { Badge } from "@/components/ui/badge"
+import { getCategoryLabel } from "@/lib/products/utils/categoryLabel";
 
 interface ProductInfoProps {
   product: Product;
@@ -31,7 +32,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
             ? "Cargando..." 
             : totalStock.toString()
         },
-        { label: "Categoría", value: product.category },
+        { label: "Categoría", value: getCategoryLabel(product.category) },
       ].map(({ label, value }) => (
         <div key={label} className="flex">
           <span className="text-gray-600 w-24">{label}:</span>

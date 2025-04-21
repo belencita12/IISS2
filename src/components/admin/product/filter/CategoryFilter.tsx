@@ -3,6 +3,7 @@ import { ChevronsUpDown, X } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Command, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
+import { getCategoryLabel } from "@/lib/products/utils/categoryLabel";
 
 interface CategoryFilterProps {
   category: string;
@@ -17,11 +18,6 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
 
-  const categoryMap = {
-    none: "Ninguno",
-    PRODUCT: "Producto",
-    VACCINE: "Vacuna",
-  };
 
   return (
     <div className="relative w-full max-w-[180px]">
@@ -34,7 +30,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
             className="w-full p-2 text-sm rounded flex items-center justify-between"
           >
             <span className="truncate">
-              {categoryMap[category as keyof typeof categoryMap] || "Categoria"}
+            {category ? getCategoryLabel(category) : "Categoría"}
             </span>
             <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
           </Button>

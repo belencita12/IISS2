@@ -2,8 +2,8 @@ import PurchaseDetail from "@/components/admin/purchases/PurchaseDetail";
 import authOptions from "@/lib/auth/options";
 import { getServerSession } from "next-auth";
 import { notFound, redirect } from "next/navigation";
-import { getPurchaseById } from "@/lib/purchase/getPurchaseDetailById";
-import { getPurchaseDetailByPurchaseId } from "@/lib/purchase/getPurchaseDetailByPurchaseId";
+import { getPurchaseById } from "@/lib/purchases/getPurchaseDetailById";
+import { getPurchaseDetailByPurchaseId } from "@/lib/purchases/getPurchaseDetailByPurchaseId";
 
 export default async function PurchaseDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
