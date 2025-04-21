@@ -49,46 +49,46 @@ export default function ProductListPage({ token }: ProductListProps) {
     syncPageSize(pagination.pageSize);
   }, [pagination.pageSize, syncPageSize]);
 
-const combineFilters = useCallback(() => {
-  if (selectedTags.length === 0) {
-    return;
-  }
+  const combineFilters = useCallback(() => {
+    if (selectedTags.length === 0) {
+      return;
+    }
 
-  const tagProductIds = getFilteredProductIds();
+    const tagProductIds = getFilteredProductIds();
 
-  // Filtrar productos que coincidan con tags Y con otros filtros
-  const filteredByBoth = products.filter((product) => 
-    tagProductIds.has(product.id) && 
-    (inputFilters.category ? product.category === inputFilters.category : true)
-  );
+    // Filtrar productos que coincidan con tags Y con otros filtros
+    const filteredByBoth = products.filter((product) => 
+      tagProductIds.has(product.id) && 
+      (inputFilters.category ? product.category === inputFilters.category : true)
+    );
 
-  // Recalcular paginación
-  recalculatePagination(filteredByBoth.length);
+    // Recalcular paginación
+    recalculatePagination(filteredByBoth.length);
 
-  const startIndex = (tagPagination.currentPage - 1) * tagPagination.pageSize;
-  const endIndex = Math.min(
-    startIndex + tagPagination.pageSize,
-    filteredByBoth.length
-  );
+    const startIndex = (tagPagination.currentPage - 1) * tagPagination.pageSize;
+    const endIndex = Math.min(
+      startIndex + tagPagination.pageSize,
+      filteredByBoth.length
+    );
 
-  setCombinedProducts(filteredByBoth.slice(startIndex, endIndex));
-}, [
-  selectedTags,
-  products,
-  inputFilters.category, 
-  getFilteredProductIds,
-  recalculatePagination,
-  tagPagination.currentPage,
-  tagPagination.pageSize,
-]);
+    setCombinedProducts(filteredByBoth.slice(startIndex, endIndex));
+  }, [
+    selectedTags,
+    products,
+    inputFilters.category, 
+    getFilteredProductIds,
+    recalculatePagination,
+    tagPagination.currentPage,
+    tagPagination.pageSize,
+  ]);
 
-useEffect(() => {
-  if (selectedTags.length > 0) {
-    combineFilters();
-  } else {
-    setCombinedProducts([]);
-  }
-}, [selectedTags, products, inputFilters.category, combineFilters]); 
+  useEffect(() => {
+    if (selectedTags.length > 0) {
+      combineFilters();
+    } else {
+      setCombinedProducts([]);
+    }
+  }, [selectedTags, products, inputFilters.category, combineFilters]); 
 
   const displayedProducts = useMemo(() => {
     if (selectedTags.length > 0) {

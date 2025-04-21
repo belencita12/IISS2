@@ -6,9 +6,10 @@ import { Product, ProductResponse } from "@/lib/products/IProducts";
 import useDebounce from "@/hooks/useDebounce";
 import { toast } from "@/lib/toast";
 import { useQuery } from "@/hooks/useQuery";
+import { normalizeText } from "@/lib/utils";
 
 interface FiltersType {
-  code: string;
+  searchTerm: string;
   category: string;
   minPrice: string;
   maxPrice: string;
@@ -16,31 +17,35 @@ interface FiltersType {
   maxCost: string;
 }
 
-// Extendemos para incluir parámetros de paginación
-interface QueryParams extends FiltersType {
+interface QueryParams {
+  code?: string;
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  minCost?: number;
+  maxCost?: number;
   page: number;
   size: number;
 }
 
 export function useProductList(token: string) {
-  const initialFilters = useMemo(() => ({
-    code: "",
-    category: "",
-    minPrice: "",
-    maxPrice: "",
-    minCost: "",
-    maxCost: "",
-  }), []);
+  const initialFilters = useMemo<FiltersType>(
+    () => ({
+      searchTerm: "",
+      category: "",
+      minPrice: "",
+      maxPrice: "",
+      minCost: "",
+      maxCost: "",
+    }),
+    []
+  );
 
   const [inputFilters, setInputFilters] = useState<FiltersType>(initialFilters);
-  
   const debouncedFilters = useDebounce(inputFilters, 600);
-  
-  // Usamos useQuery para gestionar la búsqueda y paginación
   const { query, setQuery, toQueryString } = useQuery<QueryParams>({
-    ...initialFilters,
     page: 1,
-    size: 16
+    size: 16,
   });
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -57,90 +62,126 @@ export function useProductList(token: string) {
     async (productId: string) => {
       try {
         const stockData = await getStockDetails(productId, token);
-        return stockData.data.reduce((total, detail) => total + detail.amount, 0);
+        return stockData.data.reduce(
+          (total, detail) => total + detail.amount,
+          0
+        );
       } catch (error) {
         toast("error", `Error al cargar el stock del producto ${productId}`);
         return 0;
-      }      
+      }
     },
     [token]
   );
 
   const loadProducts = useCallback(
-    async (page: number, filterParams = initialFilters) => {
+    async (page: number, filterParams: FiltersType = initialFilters) => {
       if (!token) return;
-
       setIsLoading(true);
-      try {
-        const preparedParams = {
-          ...filterParams,
-          page,
-          size: pagination.pageSize,
-          code: filterParams.code ? filterParams.code.trim().toLowerCase() : undefined,
-          minCost: filterParams.minCost !== "" ? parseFloat(filterParams.minCost) : undefined,
-          maxCost: filterParams.maxCost !== "" ? parseFloat(filterParams.maxCost) : undefined,
-          minPrice: filterParams.minPrice !== "" ? parseFloat(filterParams.minPrice) : undefined,
-          maxPrice: filterParams.maxPrice !== "" ? parseFloat(filterParams.maxPrice) : undefined,
-        };
 
+      // Obtenemos el término de búsqueda y preparamos parámetros de búsqueda por código si empieza con "prod-"
+      const term = filterParams.searchTerm.trim();
+      const searchParams: { code?: string } = {};
+      if (term.toLowerCase().startsWith("prod-")) {
+        searchParams.code = term;
+      }
+
+      const preparedParams: QueryParams = {
+        ...searchParams,
+        page,
+        size: pagination.pageSize,
+        category: filterParams.category || undefined,
+        minCost:
+          filterParams.minCost !== ""
+            ? parseFloat(filterParams.minCost)
+            : undefined,
+        maxCost:
+          filterParams.maxCost !== ""
+            ? parseFloat(filterParams.maxCost)
+            : undefined,
+        minPrice:
+          filterParams.minPrice !== ""
+            ? parseFloat(filterParams.minPrice)
+            : undefined,
+        maxPrice:
+          filterParams.maxPrice !== ""
+            ? parseFloat(filterParams.maxPrice)
+            : undefined,
+      };
+
+      try {
         const data: ProductResponse = await getProducts(preparedParams, token);
 
-        const stockPromises = data.data.map(async (product) => ({
-          id: product.id,
-          stock: await loadProductStock(product.id)
-        }));
+        let filteredProducts = data.data;
+        let totalItems = data.total;
+        let totalPages = data.totalPages;
 
-        const stockResults = await Promise.all(stockPromises);
-        
-        const newStockMap: Record<string, number> = Object.fromEntries(
-          stockResults.map(result => [result.id, result.stock])
-        );
-        
-        setStockMap(newStockMap);
-        setProducts(data.data);
+        // BLOQUE DE FILTRADO LOCAL POR NOMBRE: Si existe término de búsqueda y no buscamos por código, aplico filtrado local sobre el array devuelto.
+        if (term && !preparedParams.code) {
+          const norm = normalizeText(term); // Normalizamos texto de búsqueda para evitar diferencias por acentos o mayúsculas
+          filteredProducts = filteredProducts.filter(p => // Filtramos productos cuyo nombre normalizado incluya el término
+            normalizeText(p.name).includes(norm)
+          );
+
+          totalItems = filteredProducts.length;
+          totalPages =
+            totalItems > 0
+              ? Math.ceil(totalItems / pagination.pageSize)
+              : 1;
+
+          filteredProducts = filteredProducts.slice(
+            (page - 1) * pagination.pageSize,
+            page * pagination.pageSize
+          );
+        }
+
         setPagination({
           currentPage: page,
-          totalPages: data.totalPages,
-          totalItems: data.total,
+          totalPages,
+          totalItems,
           pageSize: data.size,
         });
-        
-        // Actualizamos el query para mantener sincronizado el estado
-        setQuery({
-          ...filterParams,
-          page,
-          size: data.size
-        });
-      }  catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Error al obtener productos.";
-      toast("error", errorMessage);
-      setProducts([]);
+        setProducts(filteredProducts);
+
+        const stockEntries = await Promise.all(
+          filteredProducts.map(async (product) =>
+            [product.id, await loadProductStock(product.id)] as [
+              string,
+              number
+            ]
+          )
+        );
+        setStockMap(Object.fromEntries(stockEntries));
+
+        setQuery({ ...preparedParams, page, size: data.size });
+      } catch (error) {
+        const message =
+          error instanceof Error
+            ? error.message
+            : "Error al obtener productos.";
+        toast("error", message);
+        setProducts([]);
+        setPagination((prev) => ({ ...prev, totalItems: 0, totalPages: 1 }));
       } finally {
         setIsLoading(false);
       }
     },
-    [token, pagination.pageSize, loadProductStock, initialFilters, setQuery]
+    [token, pagination.pageSize, loadProductStock, setQuery, initialFilters]
   );
 
   useEffect(() => {
-    if (token) {
-      loadProducts(1, debouncedFilters);
-    }
+    loadProducts(1, debouncedFilters);
   }, [debouncedFilters, token, loadProducts]);
 
   useEffect(() => {
-    if (token) {
-      loadProducts(1);
-    }
+    loadProducts(1, initialFilters);
   }, [token]);
 
-  const handleSearch = () => {
-    loadProducts(1, inputFilters);
-  };
+  const handleSearch = () => loadProducts(1, inputFilters);
 
   const handlePageChange = (page: number) => {
     if (page < 1 || page > pagination.totalPages) return;
-    setPagination(prev => ({ ...prev, currentPage: page }));
+    setPagination((prev) => ({ ...prev, currentPage: page }));
     loadProducts(page, inputFilters);
   };
 
@@ -153,6 +194,6 @@ export function useProductList(token: string) {
     setInputFilters,
     handleSearch,
     handlePageChange,
-    queryString: toQueryString 
+    queryString: toQueryString,
   };
 }

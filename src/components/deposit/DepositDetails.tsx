@@ -22,7 +22,7 @@ interface ProductWithAmount extends Product {
 }
 
 interface ProductFilterState {
-  code: string;
+  searchTerm: string;
   category: string;
   minPrice: string;
   maxPrice: string;
@@ -41,7 +41,7 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
   const [totalPages, setTotalPages] = useState(1);
 
   const [filters, setFilters] = useState({
-    code: "",
+    searchTerm: "", 
     category: "",
     minPrice: "",
     maxPrice: "",
@@ -80,22 +80,39 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
 
   const applyFilters = useCallback(() => {
     const result = products.filter((product) => {
-      const codeMatch = filters.code === "" || product.code?.toLowerCase().includes(filters.code.toLowerCase());
-      const categoryMatch = filters.category === "" || product.category === filters.category;
-
+      const searchTermMatch =
+        filters.searchTerm === "" ||
+        product.name.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
+        product.code.toLowerCase().includes(filters.searchTerm.toLowerCase());
+  
+      const categoryMatch =
+        filters.category === "" || product.category === filters.category;
+  
       const price = Number(product.price ?? 0);
       const cost = Number(product.cost ?? 0);
-
-      const minPriceMatch = filters.minPrice === "" || price >= Number(filters.minPrice);
-      const maxPriceMatch = filters.maxPrice === "" || price <= Number(filters.maxPrice);
-      const minCostMatch = filters.minCost === "" || cost >= Number(filters.minCost);
-      const maxCostMatch = filters.maxCost === "" || cost <= Number(filters.maxCost);
-
-      return (codeMatch && categoryMatch && minPriceMatch && maxPriceMatch && minCostMatch && maxCostMatch);
+  
+      const minPriceMatch =
+        filters.minPrice === "" || price >= Number(filters.minPrice);
+      const maxPriceMatch =
+        filters.maxPrice === "" || price <= Number(filters.maxPrice);
+      const minCostMatch =
+        filters.minCost === "" || cost >= Number(filters.minCost);
+      const maxCostMatch =
+        filters.maxCost === "" || cost <= Number(filters.maxCost);
+  
+      return (
+        searchTermMatch &&
+        categoryMatch &&
+        minPriceMatch &&
+        maxPriceMatch &&
+        minCostMatch &&
+        maxCostMatch
+      );
     });
-      setFilteredProducts(result);
-      setCurrentPage(1);
-    }, [filters, products]);
+  
+    setFilteredProducts(result);
+    setCurrentPage(1);
+  }, [filters, products]);  
 
   useEffect(() => {
     fetchStockProducts();
