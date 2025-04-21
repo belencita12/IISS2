@@ -23,9 +23,9 @@ export const VaccineDetail = ({ id, token }: Props) => {
       <div className="flex flex-col md:flex-row gap-6 items-start">
         {/* Imagen o inicial */}
         <div className="w-full md:w-1/4 flex justify-center">
-          {vaccine.image?.originalUrl ? (
+          {vaccine.product.image?.originalUrl? (
             <Image
-              src={vaccine.image.originalUrl}
+              src={vaccine.product.image.originalUrl}
               alt={vaccine.name}
               width={260}
               height={260}
@@ -45,15 +45,15 @@ export const VaccineDetail = ({ id, token }: Props) => {
           <Detail label="Especie" value={vaccine.species.name} />
           <Detail
             label="Costo"
-            value={`Gs. ${vaccine.cost.toLocaleString("es-PY")}`}
+            value={`Gs. ${vaccine.product.cost.toLocaleString("es-PY")}`}
           />
           <Detail
             label="IVA"
-            value={`${vaccine.iva.toLocaleString("es-PY")} %`}
+            value={`${(vaccine.product.iva ).toLocaleString("es-PY")} %`}
           />
           <Detail
             label="Precio"
-            value={`Gs. ${vaccine.price.toLocaleString("es-PY")}`}
+            value={`Gs. ${vaccine.product.price.toLocaleString("es-PY")}`}
           />
         </div>
       </div>

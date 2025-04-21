@@ -1,17 +1,6 @@
-// src/hooks/vaccine/useVaccineDetail.ts
-
 import { useEffect, useState, useCallback } from "react";
 import { Vaccine as IVaccine } from "@/lib/vaccine/IVaccine";
 import { toast } from "@/lib/toast";
-
-// Utilidad para parsear posibles valores decimales anidados en objetos
-function parseDecimal(val: unknown): number {
-  if (typeof val === "object" && val !== null && "d" in val) {
-    const decimal = val as { d: number[] };
-    return decimal.d?.[0] ?? 0;
-  }
-  return Number(val);
-}
 
 export const useVaccineDetail = (id: number, token: string) => {
   const [vaccine, setVaccine] = useState<IVaccine | null>(null);
@@ -28,16 +17,9 @@ export const useVaccineDetail = (id: number, token: string) => {
       });
 
       if (!res.ok) throw new Error("Error al obtener la vacuna");
-      const data = await res.json();
 
-      const parsedVaccine: IVaccine = {
-        ...data,
-        cost: parseDecimal(data.cost),
-        iva: parseDecimal(data.iva),
-        price: parseDecimal(data.price),
-      };
-
-      setVaccine(parsedVaccine);
+      const data: IVaccine = await res.json(); 
+      setVaccine(data);
     } catch (err) {
       console.error(err);
       setError("No se pudo obtener la información de la vacuna");
