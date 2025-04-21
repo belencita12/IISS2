@@ -13,10 +13,8 @@ interface Props {
 export default function InvoiceDetail({ token }: Props) {
   const params = useParams<{ id: string }>();
   const invoiceId = params?.id;
-  const { invoice, invoiceDetails, loading, error } = useInvoiceDetail(
-    invoiceId,
-    token
-  );
+  const { invoice, invoiceDetails, paymentMethod, loading, error } =
+    useInvoiceDetail(invoiceId, token);
 
   useEffect(() => {
     if (error) {
@@ -27,7 +25,6 @@ export default function InvoiceDetail({ token }: Props) {
   if (loading)
     return <p className="text-center">Cargando detalles de la factura...</p>;
 
-  // Verificamos si existen detalles.
   if (!invoiceDetails || invoiceDetails.length === 0) {
     return (
       <div className="p-4 text-center">
@@ -38,7 +35,9 @@ export default function InvoiceDetail({ token }: Props) {
 
   return (
     <div className="w-full px-0">
-      {invoice && <InvoiceDetailCard invoice={invoice} />}
+      {invoice && (
+        <InvoiceDetailCard invoice={invoice} paymentMethod={paymentMethod} />
+      )}
       <h3 className="text-xl font-semibold text-black mb-3 mt-3">Detalle</h3>
       <div className="w-full">
         <InvoiceDetailTable details={invoiceDetails} />
