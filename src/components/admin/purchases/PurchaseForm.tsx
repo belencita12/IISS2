@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Controller } from "react-hook-form";
-import { Purchase } from "@/lib/purchases/IPurchase";
+import { Purchase } from "@/lib/purchases/IPurchaseRegister";
 import { Product } from "@/lib/products/IProducts";
 import { usePurchase } from "@/hooks/purchases/usePurchase";
 import { useInitialData } from "@/hooks/purchases/useProviderStock";
