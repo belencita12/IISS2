@@ -26,7 +26,6 @@ export default function VaccineList({ token }: VaccineListProps) {
     handleSearch,
     handlePageChange,
     loadVaccines,
-    lastSearch,
   } = useVaccineList(token);
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
