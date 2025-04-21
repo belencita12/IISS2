@@ -1,85 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/lib/toast";
+import { useVaccineDetail } from "@/hooks/vaccine/useVaccineDetail";
 
 interface Props {
   id: number;
   token: string;
 }
 
-interface Vaccine {
-  id: number;
-  name: string;
-  cost: number;
-  iva: number;
-  price: number;
-  manufacturer: { id: number; name: string };
-  species: { id: number; name: string };
-  image?: { originalUrl: string };
-}
-
-type DecimalLike = {
-  d: number[]; // dígitos
-  e: number;   // exponente
-  s: number;   // signo
-};
-
-
 export const VaccineDetail = ({ id, token }: Props) => {
-  const [vaccine, setVaccine] = useState<Vaccine | null>(null);
-  const [loading, setLoading] = useState(true);
   const router = useRouter();
-
-  function parseDecimal(val: unknown): number {
-    if (typeof val === "object" && val !== null && "d" in val) {
-      const decimal = val as DecimalLike;
-      return decimal.d?.[0] ?? 0;
-    }
-    return Number(val);
-  }
-  
-
-  useEffect(() => {
-    const fetchVaccine = async () => {
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/vaccine/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!res.ok) throw new Error("Error al cargar la vacuna");
-        const data = await res.json();
-      
-        console.log("VACUNA RAW:", data);
-
-        setVaccine({
-          ...data,
-          cost: parseDecimal(data.product?.cost),
-          iva: parseDecimal(data.product?.iva),
-          price: parseDecimal(data.product?.price),
-        });
-        
-      } catch (error) {
-        toast("error", "No se pudo cargar la información de la vacuna");
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchVaccine();
-  }, [id, token]);
+  const { vaccine, loading, error } = useVaccineDetail(id, token);
 
   if (loading) return <p className="text-center mt-10">Cargando...</p>;
-  if (!vaccine)
+  if (error || !vaccine)
     return <p className="text-center mt-10">No se encontró la vacuna.</p>;
 
   return (
@@ -101,7 +37,7 @@ export const VaccineDetail = ({ id, token }: Props) => {
             </div>
           )}
         </div>
-  
+
         {/* Detalles */}
         <div className="w-full md:w-3/4 space-y-4 mr-4">
           <h1 className="text-2xl font-bold">{vaccine.name}</h1>
@@ -109,37 +45,22 @@ export const VaccineDetail = ({ id, token }: Props) => {
           <Detail label="Especie" value={vaccine.species.name} />
           <Detail
             label="Costo"
-            value={
-              typeof vaccine.cost === "number"
-                ? `Gs. ${vaccine.cost.toLocaleString("es-PY")}`
-                : "N/A"
-            }
+            value={`Gs. ${vaccine.cost.toLocaleString("es-PY")}`}
           />
           <Detail
             label="IVA"
-            value={
-              typeof vaccine.iva === "number"
-                ? `${vaccine.iva.toLocaleString("es-PY")} %`
-                : "N/A"
-            }
+            value={`${vaccine.iva.toLocaleString("es-PY")} %`}
           />
           <Detail
             label="Precio"
-            value={
-              typeof vaccine.price === "number"
-                ? `Gs. ${vaccine.price}`
-                : "N/A"
-            }
+            value={`Gs. ${vaccine.price.toLocaleString("es-PY")}`}
           />
         </div>
       </div>
-  
-      {/* Botones en la parte inferior */}
+
+      {/* Botones */}
       <div className="flex gap-4 mt-6 justify-end">
-        <Button
-          variant="outline"
-          onClick={() => router.push("/dashboard/vaccine")}
-        >
+        <Button variant="outline" onClick={() => router.push("/dashboard/vaccine")}>
           Volver
         </Button>
         <Button onClick={() => router.push(`/dashboard/vaccine/edit/${vaccine.id}`)}>
@@ -148,7 +69,6 @@ export const VaccineDetail = ({ id, token }: Props) => {
       </div>
     </div>
   );
-  
 };
 
 const Detail = ({ label, value }: { label: string; value: string }) => (

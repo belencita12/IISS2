@@ -1,26 +1,18 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Eye, Pencil, Trash } from "lucide-react";
-import { toast } from "@/lib/toast";
+import { useRouter } from "next/navigation";
+import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import GenericTable, {
   Column,
   TableAction,
-  PaginationInfo,
 } from "@/components/global/GenericTable";
 import VaccineTableSkeleton from "./skeleton/VaccineTableSkeleton";
-import { useRouter } from "next/navigation";
-import { getVaccines } from "@/lib/vaccine/getVaccines";
 import SearchBar from "@/components/global/SearchBar";
-import { ConfirmationModal } from "@/components/global/Confirmation-modal";
-
-interface Vaccine {
-  id: number;
-  name: string;
-  manufacturer: { id: number; name: string };
-  species: { id: number; name: string };
-}
+import { useVaccineList } from "@/hooks/vaccine/useVaccineList";
+import { IVaccine } from "@/lib/vaccine/IVaccine";
 
 interface VaccineListProps {
   token: string | null;
@@ -28,20 +20,25 @@ interface VaccineListProps {
 
 export default function VaccineList({ token }: VaccineListProps) {
   const router = useRouter();
-  const [data, setData] = useState<{
-    vaccines: Vaccine[];
-    pagination: PaginationInfo;
-  }>({
-    vaccines: [],
-    pagination: { currentPage: 1, totalPages: 1, totalItems: 0, pageSize: 4 },
-  });
-  const [loading, setLoading] = useState(false);
+  const {
+    data,
+    loading,
+    handleSearch,
+    handlePageChange,
+    loadVaccines,
+    lastSearch,
+  } = useVaccineList(token);
+
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [vaccineToDelete, setVaccineToDelete] = useState<Vaccine | null>(null);
+  const [vaccineToDelete, setVaccineToDelete] = useState<IVaccine | null>(null);
+
+  useEffect(() => {
+    if (token) loadVaccines(data.pagination.currentPage);
+  }, [token, data.pagination.currentPage, loadVaccines]);
 
   const handleConfirmDelete = async () => {
     if (!vaccineToDelete) return;
-  
+
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/vaccine/${vaccineToDelete.id}`,
@@ -50,117 +47,28 @@ export default function VaccineList({ token }: VaccineListProps) {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-  
+
       if (!res.ok) throw new Error("Error al eliminar la vacuna");
-  
-      toast("success", "Vacuna eliminada exitosamente");
-  
+
       const currentPage = data.pagination.currentPage;
       const isLastItemOnPage = data.vaccines.length === 1;
       const newPage = isLastItemOnPage && currentPage > 1 ? currentPage - 1 : currentPage;
-  
       await loadVaccines(newPage);
     } catch (error) {
       console.error("Error al eliminar vacuna:", error);
-      toast("error", "Error al eliminar vacuna");
     } finally {
       setIsDeleteModalOpen(false);
       setVaccineToDelete(null);
     }
   };
-  
-  
-  
-  const loadVaccines = useCallback(
-    async (page: number = 1, filters = {}) => {
-      if (!token) return;
-      setLoading(true);
-  
-      try {
-        const results = await getVaccines(token, page, filters);
-  
-        if (!Array.isArray(results.data)) {
-          throw new Error("La respuesta de la API no es un array");
-        }
-  
-        setData({
-          vaccines: results.data,
-          pagination: {
-            currentPage: results.currentPage || 1,
-            totalPages: results.totalPages || 1,
-            totalItems: results.total || 0,
-            pageSize: results.size || 4,
-          },
-        });
-  
-      } catch (error) {
-        toast("error", "Error al cargar vacunas");
-        console.error("Error cargando vacunas:", error);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [token, data.pagination.pageSize]
-  );
-  
 
-  useEffect(() => {
-    if (token) {
-      loadVaccines(data.pagination.currentPage);
-    }
-  }, [token, data.pagination.currentPage, loadVaccines]);
-
-
-  const [lastSearch, setLastSearch] = useState("");
-
-  const handleSearch = useCallback(async (query: string) => {
-    if (!token) return;
-  
-    setLoading(true);
-    setLastSearch(query);
-  
-    try {
-      const result = await getVaccines(token, 1, {
-        name: query,
-      });
-  
-      setData({
-        vaccines: result.data,
-        pagination: {
-          currentPage: result.currentPage || 1,
-          totalPages: result.totalPages || 1,
-          totalItems: result.total || 0,
-          pageSize: result.size || 4,
-        },
-      });
-  
-    } catch (error) {
-      toast("error", "Error al buscar vacunas");
-      console.error("Error en búsqueda:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [token, data.pagination.pageSize]);
-  
-
-
-  const handlePageChange = (page: number) => {
-    loadVaccines(page, { name: lastSearch });
-    
-  };
-  
-  const sortedVaccines = [...data.vaccines].sort((a, b) =>
-    a.name.localeCompare(b.name)
-  );
-  
-
-  const columns: Column<Vaccine>[] = [
+  const columns: Column<IVaccine>[] = [
     { header: "Nombre", accessor: "name" },
     { header: "Fabricante", accessor: (vaccine) => vaccine.manufacturer.name },
     { header: "Especie", accessor: (vaccine) => vaccine.species.name },
   ];
 
-  const actions: TableAction<Vaccine>[] = [
+  const actions: TableAction<IVaccine>[] = [
     {
       icon: <Eye className="w-4 h-4" />,
       onClick: (vaccine) => router.push(`/dashboard/vaccine/${vaccine.id}`),
@@ -208,7 +116,7 @@ export default function VaccineList({ token }: VaccineListProps) {
         </div>
       </div>
       <GenericTable
-        data={sortedVaccines} 
+        data={data.vaccines}
         columns={columns}
         actions={actions}
         pagination={data.pagination}
