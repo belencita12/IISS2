@@ -4,6 +4,7 @@ import { INVOICE_API } from "@/lib/urls";
 import { Invoice } from "@/lib/invoices/IInvoice";
 import { useEffect } from "react";
 import GenericTable, { Column } from "@/components/global/GenericTable";
+import InvoiceTableSkeleton from "./skeleton/InvoiceTableSkeleton";
 
 interface InvoiceListProps {
   token: string;
@@ -33,10 +34,10 @@ const InvoiceList = ({ token }: InvoiceListProps) => {
     { header: "Fecha", accessor: "issueDate" },
     { header: "Tipo", accessor: (i) => (i.type === "CASH" ? "Contado" : "Crédito") },
     { header: "Total", accessor: (i) => `${i.total.toLocaleString()} Gs.` },
-    { header: "Pagado", accessor: (i) => `${i.totalPayed.toLocaleString()} Gs.` },
+   
   ];
   
-  if (loading) return <p>Cargando...</p>;
+  if (loading) return <InvoiceTableSkeleton />;
   if (error) return <p>Error: {error.message}</p>;
 
   return (
