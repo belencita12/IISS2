@@ -1,12 +1,12 @@
 import React from "react";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import { Button } from "../ui/button";
 import Link from "next/link";
 
 interface ICardProps {
     title: string;
     description: string;
-    image?: string;
+    image: string | StaticImageData;
     alt?: string;
     ctaText?: string;
     ctaLink?: string;
