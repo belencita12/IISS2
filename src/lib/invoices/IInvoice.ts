@@ -32,21 +32,3 @@ export interface InvoiceDetailResponse {
   currentPage: number;
   totalPages: number;
 }
-
-// Interfaz para métodos de pago asociados a una factura
-export interface InvoicePaymentMethod {
-  id: number;
-  method: string; // <= aquí
-  invoiceId: number;
-}
-
-// Respuesta de la API de métodos de pago
-export interface InvoicePaymentMethodResponse {
-  data: InvoicePaymentMethod[];
-  total: number;
-  size: number;
-  prev: boolean;
-  next: boolean;
-  currentPage: number;
-  totalPages: number;
-}
