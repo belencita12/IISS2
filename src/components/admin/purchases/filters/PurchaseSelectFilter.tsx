@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { GetPurchaseQueryParams } from "@/lib/purchase/IPurchase";
+import { GetPurchaseQueryParams } from "@/lib/purchases/IPurchase";
 import { StockData } from "@/lib/stock/IStock";
 import { getStocks } from "@/lib/stock/getStock";
 import { Provider } from "@/lib/provider/IProvider";

@@ -1,15 +1,13 @@
-import { PURCHASE_DETAIL_API } from "@/lib/urls";
-import { PurchaseDetailResponse } from "@/lib/purchase/IPurchaseDetail";
+import { PURCHASE_API } from "@/lib/urls";
+import { PurchaseData } from "@/lib/purchases/IPurchase";
 
-//detalles de la compra que tengan el mismo id de compra
-export const getPurchaseDetailByPurchaseId = async (
+export const getPurchaseById = async (
   purchaseId: string,
-  page: number = 1,  
   token: string
-): Promise<PurchaseDetailResponse> => {
+): Promise<PurchaseData> => {
   try {
     const response = await fetch(
-      `${PURCHASE_DETAIL_API}?purchaseId=${purchaseId}&page=${page}`,
+      `${PURCHASE_API}/${purchaseId}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -26,7 +24,7 @@ export const getPurchaseDetailByPurchaseId = async (
       throw new Error("Ocurrió un error. Intenta nuevamente.");
     }
 
-    return await response.json() as PurchaseDetailResponse; 
+    return await response.json() as PurchaseData;
   } catch (error) {
     throw new Error(error instanceof Error ? error.message : "Ocurrió un error. Intenta nuevamente.");
   }

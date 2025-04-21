@@ -1,6 +1,6 @@
 "use client";
 
-import { PurchaseData } from "@/lib/purchase/IPurchase";
+import { PurchaseData } from "@/lib/purchases/IPurchase";
 import { useRouter } from "next/navigation";
 import { formatDate } from "@/lib/utils";
 

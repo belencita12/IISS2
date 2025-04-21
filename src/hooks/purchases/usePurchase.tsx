@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { purchaseSchema } from "@/lib/purchases/purchaseSchema";
 import { registerPurchase } from "@/lib/purchases/registerPurchase";
-import { ExtendedPurchase } from "@/lib/purchases/IPurchase";
+import { ExtendedPurchase } from "@/lib/purchases/IPurchaseRegister";
 import { Product } from "@/lib/products/IProducts";
 import { toast } from "@/lib/toast";
 import { useRouter } from "next/navigation";

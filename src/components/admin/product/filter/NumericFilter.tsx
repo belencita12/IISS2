@@ -27,14 +27,14 @@ export const NumericFilter: React.FC<NumericFilterProps> = ({
     <div className="flex flex-col sm:flex-row items-center gap-2 mt-4 sm:mt-0">
       <span className="text-sm">{label}</span>
 
-      <div className="relative">
+      <div className="relative w-28">
         <NumericInput
           id="min"
           type="formattedNumber"
           placeholder="Desde"
           value={minValue}
           onChange={(e) => onMinChange(e.target.value)}
-          className="w-28 p-1"
+          className="p-1"
         />
         {minValue && (
           <button
@@ -48,14 +48,14 @@ export const NumericFilter: React.FC<NumericFilterProps> = ({
 
       <span className="text-sm">-</span>
 
-      <div className="relative">
+      <div className="relative w-28">
         <NumericInput
           id="max"
           type="formattedNumber"
           placeholder="Hasta"
           value={maxValue}
           onChange={(e) => onMaxChange(e.target.value)}
-          className="w-28 p-1"
+          className="p-1"
         />
         {maxValue && (
           <button

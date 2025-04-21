@@ -1,4 +1,4 @@
-import { Purchase } from "@/lib/purchases/IPurchase";
+import { Purchase } from "@/lib/purchases/IPurchaseRegister";
 import { PURCHASE_API } from "../urls";
 
 export const registerPurchase = async (
