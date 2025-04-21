@@ -1,4 +1,5 @@
 import { Product } from "@/lib/products/IProducts";
+import { BaseQueryParams } from "../types";
 
 export interface Invoice {
   id: number;
@@ -31,4 +32,14 @@ export interface InvoiceDetailResponse {
   next: boolean;
   currentPage: number;
   totalPages: number;
+}
+
+export interface GetInvoiceQueryParams extends BaseQueryParams {
+  ruc?: string;
+  stockId?: number;
+  formTotal?: number;
+  toTotal?: number;
+  type?: "CREDIT" | "CASH";
+  fromIssueDate?: string;
+  toIssueDate?: string;
 }
