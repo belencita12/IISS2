@@ -8,7 +8,11 @@ export default async function InvoiceListPage() {
 
   if (session) {
     const token = session.user.token;
-    return <InvoiceList token={token} />;
+    return (
+        <div className="mx-auto">
+            <InvoiceList token={token} />
+        </div>
+    );
   }
 
   redirect("/login");
