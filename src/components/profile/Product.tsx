@@ -32,7 +32,7 @@ export const VeterinaryProducts = () => {
                 <h2 className="text-3xl font-bold">Productos Veterinarios</h2>
                 <p className="text-gray-600 mt-2">Explora los productos disponibles</p>
                 <Button asChild className="mt-2">
-                    <Link href="/">Ver más</Link>
+                    <Link href="/user-profile/product">Ver más</Link>
                 </Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
