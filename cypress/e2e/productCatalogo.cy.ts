@@ -13,20 +13,22 @@ describe("Catalogo y detalle de productos de catalogo", () => {
         cy.visit("/user-profile");
         cy.contains("Ver más", { timeout: 10000 }).click();
         cy.url({ timeout: 10000 }).should("include", "/user-profile/product");
-
         cy.get("div.animate-pulse", { timeout: 15000 }).should("not.exist");
     });
 
-    it("Filtra productos por nombre y navega al detalle", () => {
+    it("Filtra productos por nombre", () => {
+        // Buscar producto por nombre
         cy.get("input[placeholder='Buscar...']", { timeout: 20000 })
             .should("be.visible")
             .clear()
-            .type("perro", { delay: 1000 });
+            .type("perro", { delay: 3000 });
 
-        cy.wait(3000); // esperar debounce
-
-        cy.contains("Ver detalles").click();
-        cy.get("h1").should("contain.text", "perro");
-        cy.wait(3000);
+        cy.get("div.animate-pulse", { timeout: 25000 }).should("not.exist");
+        cy.contains("perro", { matchCase: false }).should("be.visible");
+        cy.contains("Ver detalles").first().should("be.visible").click();
+        cy.url().should("include", "/user-profile/product/");
+        cy.get("h1", { timeout: 15000 })
+            .should("be.visible")
+            .and("contain.text", "perro", { matchCase: false });
     });
 });
