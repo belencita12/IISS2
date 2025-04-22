@@ -1,6 +1,8 @@
+// hooks/vaccine/useVaccineDetail.ts
 import { useEffect, useState, useCallback } from "react";
 import { Vaccine as IVaccine } from "@/lib/vaccine/IVaccine";
 import { toast } from "@/lib/toast";
+import { getVaccineById } from "@/lib/vaccine/getVaccineById";
 
 export const useVaccineDetail = (id: number, token: string) => {
   const [vaccine, setVaccine] = useState<IVaccine | null>(null);
@@ -10,21 +12,15 @@ export const useVaccineDetail = (id: number, token: string) => {
   const fetchVaccine = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/vaccine/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) throw new Error("Error al obtener la vacuna");
-
-      const data: IVaccine = await res.json(); 
+      const data = await getVaccineById(token, id);
       setVaccine(data);
     } catch (err) {
-      console.error(err);
-      setError("No se pudo obtener la información de la vacuna");
-      toast("error", "No se pudo obtener la información de la vacuna");
-    } finally {
+      const message =
+        err instanceof Error ? err.message : "Error al obtener la vacuna";
+      toast("error", message);
+      setError(message);
+    }
+    finally {
       setLoading(false);
     }
   }, [id, token]);

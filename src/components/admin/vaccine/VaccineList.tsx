@@ -13,6 +13,8 @@ import VaccineTableSkeleton from "./skeleton/VaccineTableSkeleton";
 import SearchBar from "@/components/global/SearchBar";
 import { useVaccineList } from "@/hooks/vaccine/useVaccineList";
 import { IVaccine } from "@/lib/vaccine/IVaccine";
+import { deleteVaccineById } from "@/lib/vaccine/deleteVaccineById";
+import { toast } from "@/lib/toast";
 
 interface VaccineListProps {
   token: string | null;
@@ -36,25 +38,19 @@ export default function VaccineList({ token }: VaccineListProps) {
   }, [token, data.pagination.currentPage, loadVaccines]);
 
   const handleConfirmDelete = async () => {
-    if (!vaccineToDelete) return;
+    if (!vaccineToDelete || !token) return;
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/vaccine/${vaccineToDelete.id}`,
-        {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      if (!res.ok) throw new Error("Error al eliminar la vacuna");
+      await deleteVaccineById(vaccineToDelete.id, token);
+      toast("success", "Vacuna eliminada con éxito");
 
       const currentPage = data.pagination.currentPage;
       const isLastItemOnPage = data.vaccines.length === 1;
       const newPage = isLastItemOnPage && currentPage > 1 ? currentPage - 1 : currentPage;
       await loadVaccines(newPage);
     } catch (error) {
-      console.error("Error al eliminar vacuna:", error);
+      const message = error instanceof Error ? error.message : "Error al eliminar vacuna";
+      toast("error", message);
     } finally {
       setIsDeleteModalOpen(false);
       setVaccineToDelete(null);
