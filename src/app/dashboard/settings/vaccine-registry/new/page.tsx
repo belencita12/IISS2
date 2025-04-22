@@ -4,11 +4,10 @@ import { redirect } from "next/navigation";
 import VaccineRegistryForm from "@/components/admin/vaccine-registry/VaccineRegistryForm";
 import { getVaccines } from "@/lib/vaccine/getVaccines";
 import { Vaccine } from "@/lib/vaccine-registry/IVaccineRegistry";
-import { notFound } from "next/navigation";
 
 interface Props {
   params: {
-    petId: string;
+    petId?: string; // ← ahora opcional
   };
 }
 
@@ -20,18 +19,18 @@ export default async function NewVaccineRegistryPage({ params }: Props) {
     redirect("/login");
   }
 
-  const petId = Number(params.petId);
-  if (isNaN(petId)) {
-    notFound(); // o mostrar error de validación
-  }
+  const petId = params.petId ? Number(params.petId) : undefined;
 
   let vaccineOptions: Vaccine[] = [];
 
   try {
-    vaccineOptions = await getVaccines(token); // función que obtiene las vacunas desde la API
+    const response = await getVaccines(token);
+    vaccineOptions = Array.isArray(response) ? response : [];
   } catch (err) {
     console.error("Error al obtener vacunas:", err);
+    vaccineOptions = []; // fallback para evitar el .map() error
   }
+  
 
   return (
     <div>
