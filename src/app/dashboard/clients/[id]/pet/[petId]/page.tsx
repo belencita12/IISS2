@@ -59,7 +59,7 @@ export default async function Page({
       <section className="flex-col flex-wrap items-center gap-4 px-16 mx-auto md:gap-16 md:px-24">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Control de Vacunas</h2>
-          <AddToHistoryButton clientId={clientId} petId={petId} />
+          <AddToHistoryButton petId={petId} clientId = {clientId}/>
         </div>
         <PetVaccinationTable token={token} petId={petId} />
       </section>
