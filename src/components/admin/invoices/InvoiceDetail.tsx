@@ -14,7 +14,7 @@ export default function InvoiceDetail({ token }: Props) {
   const params = useParams<{ id: string }>();
   const invoiceId = params?.id;
   const { invoice, invoiceDetails, loading, error } = useInvoiceDetail(
-    invoiceId,
+    invoiceId, 
     token
   );
 
@@ -24,17 +24,7 @@ export default function InvoiceDetail({ token }: Props) {
     }
   }, [error]);
 
-  if (loading)
-    return <p className="text-center">Cargando detalles de la factura...</p>;
-
-  // Verificamos si existen detalles.
-  if (!invoiceDetails || invoiceDetails.length === 0) {
-    return (
-      <div className="p-4 text-center">
-        <p>No se encontraron detalles para la factura.</p>
-      </div>
-    );
-  }
+  if (loading) return <p className="text-center">Cargando detalles de la factura...</p>;
 
   return (
     <div className="w-full px-0">
