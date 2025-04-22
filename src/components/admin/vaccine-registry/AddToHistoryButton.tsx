@@ -4,15 +4,15 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 interface Props {
-  clientId: number;
   petId: number;
+  clientId: number;
 }
 
-export default function AddToHistoryButton({ clientId, petId }: Props) {
+export default function AddToHistoryButton({ petId, clientId }: Props) {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push(`/dashboard/clients/${clientId}/pet/${petId}/vaccine-registry/vaccine-new`);
+    router.push(`/dashboard/settings/vaccine-registry/new?petId=${petId}&clientId=${clientId}`);
   };
 
   return (
