@@ -1,4 +1,5 @@
 "use client";
+
 import { usePaginatedFetch } from "@/hooks/api/usePaginatedFetch";
 import { INVOICE_API } from "@/lib/urls";
 import { Invoice } from "@/lib/invoices/IInvoice";
@@ -8,6 +9,7 @@ import { Eye } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { formatDate } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+//import SearchBar from "@/components/global/SearchBar";
 
 interface InvoiceTableProps {
   token: string;
@@ -20,6 +22,7 @@ const InvoiceTable = ({ token }: InvoiceTableProps) => {
     error,
     pagination,
     setPage,
+  
   } = usePaginatedFetch<Invoice>(INVOICE_API, token, {
     autoFetch: true,
     initialPage: 1,
@@ -52,6 +55,8 @@ const InvoiceTable = ({ token }: InvoiceTableProps) => {
       label: "Ver detalles",
     },
   ];
+
+
 
   if (loading) return <InvoiceTableSkeleton />;
   if (error) return <p>Error: {error.message}</p>;
