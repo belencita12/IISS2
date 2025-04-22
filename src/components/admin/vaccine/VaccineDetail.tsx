@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useVaccineDetail } from "@/hooks/vaccine/useVaccineDetail";
@@ -16,7 +16,7 @@ export const VaccineDetail = ({ id, token }: Props) => {
 
   if (loading) return <p className="text-center mt-10">Cargando...</p>;
   if (error || !vaccine)
-    return <p className="text-center mt-10">No se encontró la vacuna.</p>;
+    return notFound();
 
   return (
     <div className="flex flex-col justify-between mt-5 p-4 mx-2">
