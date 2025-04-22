@@ -26,10 +26,9 @@ import React from "react";
       icon: <Eye className="w-4 h-4" />,
       onClick: (invoice) => {
         if (!invoice.id || isNaN(Number(invoice.id))) {
-          toast("error", "ID de la factura inválido");
+          toast("error", "No se pueden obtener los detalles de la factura");
           return;
         }
-        toast("info", "Cargando detalles de la factura...");
         router.push(`/dashboard/invoices/${invoice.id}`);
       },
       label: "Ver detalle",
