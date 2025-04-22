@@ -7,11 +7,10 @@ import { Badge } from "@/components/ui/badge";
 
 interface ProductCardProps {
   product: Product;
-  stock: number;
   onClick: (id: string) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, stock, onClick }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
   return (
     <Card
       className="overflow-hidden mb-4 cursor-pointer hover:shadow-md transition-shadow"
@@ -69,7 +68,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, stock, onClick }) =>
             </div>
             <div className="flex flex-col">
               <p className="text-sm">{product.cost?.toLocaleString()} Gs</p>
-              <p className="text-sm mt-2">{stock}</p>
+              <p className="text-sm mt-2">{product.quantity}</p>
             </div>
           </div>
         </div>
