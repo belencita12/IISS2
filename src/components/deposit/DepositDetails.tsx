@@ -167,7 +167,6 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
           <ProductCard
             key={product.id}
             product={product}
-            stock={product.amount}
             onClick={handleCardClick}
           />
         ))

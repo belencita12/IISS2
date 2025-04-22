@@ -49,7 +49,6 @@ export function useProductList(token: string) {
   });
 
   const [products, setProducts] = useState<Product[]>([]);
-  const [stockMap, setStockMap] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [pagination, setPagination] = useState({
     currentPage: 1,
@@ -57,22 +56,6 @@ export function useProductList(token: string) {
     totalItems: 0,
     pageSize: 16,
   });
-
-  const loadProductStock = useCallback(
-    async (productId: string) => {
-      try {
-        const stockData = await getStockDetails(productId, token);
-        return stockData.data.reduce(
-          (total, detail) => total + detail.amount,
-          0
-        );
-      } catch (error) {
-        toast("error", `Error al cargar el stock del producto ${productId}`);
-        return 0;
-      }
-    },
-    [token]
-  );
 
   const loadProducts = useCallback(
     async (page: number, filterParams: FiltersType = initialFilters) => {
@@ -143,15 +126,7 @@ export function useProductList(token: string) {
         });
         setProducts(filteredProducts);
 
-        const stockEntries = await Promise.all(
-          filteredProducts.map(async (product) =>
-            [product.id, await loadProductStock(product.id)] as [
-              string,
-              number
-            ]
-          )
-        );
-        setStockMap(Object.fromEntries(stockEntries));
+
 
         setQuery({ ...preparedParams, page, size: data.size });
       } catch (error) {
@@ -166,7 +141,7 @@ export function useProductList(token: string) {
         setIsLoading(false);
       }
     },
-    [token, pagination.pageSize, loadProductStock, setQuery, initialFilters]
+    [token, pagination.pageSize, setQuery, initialFilters]
   );
 
   useEffect(() => {
@@ -187,7 +162,6 @@ export function useProductList(token: string) {
 
   return {
     products,
-    stockMap,
     isLoading,
     pagination,
     inputFilters,
