@@ -19,6 +19,7 @@ export default function InvoiceNumericFilter({ filters, setFilters }: Props) {
   const debouncedMax = useDebounce(max, 500);
 
   useEffect(() => {
+    // Si el valor es vacío, lo consideramos undefined
     const totalMin = debouncedMin !== "" ? Number(debouncedMin) : undefined;
     const totalMax = debouncedMax !== "" ? Number(debouncedMax) : undefined;
 
@@ -40,7 +41,7 @@ export default function InvoiceNumericFilter({ filters, setFilters }: Props) {
           type="formattedNumber"
           value={min}
           placeholder="Ejemplo: 100.000"
-          onChange={(e) => setMin(e.target.value)}
+          onChange={(e) => setMin(e.target.value)} // Mantenemos el valor vacío si el campo se borra
           className="w-full border px-3 py-2 rounded"
         />
       </div>
@@ -52,7 +53,7 @@ export default function InvoiceNumericFilter({ filters, setFilters }: Props) {
           type="formattedNumber"
           value={max}
           placeholder="Ejemplo: 1.000.000"
-          onChange={(e) => setMax(e.target.value)}
+          onChange={(e) => setMax(e.target.value)} // Mantenemos el valor vacío si el campo se borra
           className="w-full border px-3 py-2 rounded"
         />
       </div>
