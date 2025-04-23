@@ -15,7 +15,12 @@ import useDebounce from "@/hooks/useDebounce";
 
 export const vaccineRegistrySchema = z.object({
   vaccineId: z.number().min(1, "La vacuna es obligatoria"),
-  dose: z.number().min(1, "La dosis es obligatoria"),
+  dose: z.coerce
+    .number()
+    .positive("La dosis debe ser un número mayor a 0")
+    .refine((val) => !isNaN(val) && val > 0, {
+      message: "Debe ser un número válido mayor a 0",
+    }),
   applicationDate: z.string().min(1, "La fecha de aplicación es obligatoria"),
   expectedDate: z.string().min(1, "La fecha esperada es obligatoria"),
   petId: z.number().optional(),
