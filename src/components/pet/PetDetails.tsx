@@ -355,7 +355,7 @@ export default function PetDetails({ token }: Props) {
               </div>
             </div>
             <h2 className="text-2xl font-bold mb-3">Control de Vacunas</h2>
-            <PetVaccinationTable token={token} petId={Number(pet.id)} />
+            <PetVaccinationTable Id={Number(id)} token={token} petId={Number(pet.id)} />
           </div>
         </>
       )}

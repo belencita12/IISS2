@@ -3,8 +3,7 @@ import authOptions from "@/lib/auth/options";
 import { notFound } from "next/navigation";
 import VaccineRegistryForm from "@/components/admin/vaccine-registry/VaccineRegistryForm";
 import { getVaccineRegistryById } from "@/lib/vaccine-registry/getVaccineRegistryById";
-import { getVaccines } from "@/lib/vaccine/getVaccines";
-import { Vaccine, VaccineRecord } from "@/lib/vaccine-registry/IVaccineRegistry";
+import { VaccineRecord } from "@/lib/vaccine-registry/IVaccineRegistry";
 
 export default async function Page({
   params,
@@ -35,21 +34,19 @@ export default async function Page({
   }
 
   // Obtener vacunas disponibles
-  let vaccineOptions: Vaccine[] = [];
+  /*let vaccineOptions: Vaccine[] = [];
 
   try {
     vaccineOptions = await getVaccines(token);
   } catch (error) {
     console.error("Error al obtener vacunas:", error);
-  }
+  }*/
 
   return (
     <div>
       <VaccineRegistryForm
         token={token}
         petId={petIdNumber}
-        initialData={registry}
-        vaccineOptions={vaccineOptions}
       />
     </div>
   );
