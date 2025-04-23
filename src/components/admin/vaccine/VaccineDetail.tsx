@@ -55,6 +55,10 @@ export const VaccineDetail = ({ id, token }: Props) => {
             label="Precio"
             value={`Gs. ${vaccine.product.price.toLocaleString("es-PY")}`}
           />
+          <Detail
+            label="Cantidad"
+            value={`${vaccine.product.quantity} Uds.`}
+          />
         </div>
       </div>
 

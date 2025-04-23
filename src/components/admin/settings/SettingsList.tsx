@@ -33,6 +33,12 @@ const settingsOptions = [
     icon: "🏷️",
     link: "/dashboard/settings/tags",
   },
+  {
+    name: "Historial de Vacunación",
+    description: "Gestionar y revisar los registros de vacunación de las mascotas.",
+    icon: "💉",
+    link: "/dashboard/settings/vaccine-registry/new",
+  },
 ];
 
 export function SettingsList() {

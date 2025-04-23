@@ -12,6 +12,7 @@ export interface Product {
       originalUrl: string;
     };
     cost?: number;
+    quantity: number;
   }
 
   export interface ProductWithExtraData extends Product {
