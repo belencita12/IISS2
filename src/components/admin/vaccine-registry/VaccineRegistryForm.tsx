@@ -14,6 +14,7 @@ import {
 import SearchableSelect from "@/components/global/SearchableSelect";
 import FormInput from "@/components/global/FormInput";
 import { blockExtraKeysNumber } from "@/lib/utils";
+import { Modal } from "@/components/global/Modal";
 
 interface Props {
   token: string;
@@ -31,11 +32,14 @@ export default function VaccineRegistryForm({
 }: Props) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showNightWarning, setShowNightWarning] = useState(false);
+  const [pendingSubmit, setPendingSubmit] =
+    useState<VaccineRegistryFormValues | null>(null);
+  const [isConfirming, setIsConfirming] = useState(false);
 
   const {
     form,
     clientSearch,
-    setClientSearch,
     clients,
     isLoadingClients,
     onClientSelect,
@@ -50,7 +54,10 @@ export default function VaccineRegistryForm({
     setHasSelectedVaccine,
     petSearch,
     setPetSearch,
-    clearSelectedClient,
+    handleClientInputChange,
+    handlePetInputChange,
+    handleVaccineInputChange,
+    setHasSelectedPet,
   } = useVaccineRegistryCreateForm(token, selectedClientId);
 
   const {
@@ -71,7 +78,23 @@ export default function VaccineRegistryForm({
     }
   }, [selectedClientId, petId, setValue, setSelectedPetId]);
 
-  const onSubmit = async (data: VaccineRegistryFormValues) => {
+  const isNightHour = (dateStr?: string): boolean => {
+    if (!dateStr) return false;
+    const hour = new Date(dateStr).getHours();
+    return hour < 6 || hour >= 19;
+  };
+
+  const handleConfirmNightTime = async () => {
+    if (pendingSubmit) {
+      setIsConfirming(true);
+      await submitData(pendingSubmit);
+      setPendingSubmit(null);
+      setShowNightWarning(false);
+      setIsConfirming(false);
+    }
+  };
+
+  const submitData = async (data: VaccineRegistryFormValues) => {
     setIsSubmitting(true);
     try {
       const payload = {
@@ -99,6 +122,15 @@ export default function VaccineRegistryForm({
     }
   };
 
+  const onSubmit = async (data: VaccineRegistryFormValues) => {
+    if (isNightHour(data.expectedDate) || isNightHour(data.applicationDate)) {
+      setPendingSubmit(data);
+      setShowNightWarning(true);
+    } else {
+      await submitData(data);
+    }
+  };
+
   const clientSelected = !!(selectedClientId || getValues("clientId"));
 
   return (
@@ -116,22 +148,14 @@ export default function VaccineRegistryForm({
               label: `${c.fullName} - ${c.ruc}`,
             }))}
             isLoading={isLoadingClients}
-            onChangeSearch={(val) => {
-              setClientSearch(val);
-              if (val.trim() === "") {
-                if (val.trim() === "") {
-                  clearSelectedClient();
-                }
-              }
-            }}
-            
+            onChangeSearch={handleClientInputChange}
             onSelect={(option) => {
               const fullClient = clients.find((c) => c.id === option.id);
               if (fullClient) onClientSelect(fullClient);
             }}
             disabled={!!selectedClientId}
+            noOptionsMessage="No se encontraron clientes que coincidan con la búsqueda. Pruebe de otra forma..."
           />
-
           {errors.clientId && (
             <p className="text-red-500 text-sm">{errors.clientId.message}</p>
           )}
@@ -153,12 +177,14 @@ export default function VaccineRegistryForm({
                 options={petLabels}
                 isLoading={isLoadingPets}
                 disabled={!!petId}
-                onChangeSearch={setPetSearch}
+                onChangeSearch={handlePetInputChange}
                 onSelect={(pet) => {
                   setValue("petId", pet.id);
                   setSelectedPetId(pet.id);
                   setPetSearch(pet.label);
+                  setHasSelectedPet(true);
                 }}
+                noOptionsMessage="No se encontraron mascotas que coincidan con la búsqueda. Pruebe de otra forma..."
               />
               {errors.petId && (
                 <p className="text-red-500 text-sm">{errors.petId.message}</p>
@@ -175,16 +201,14 @@ export default function VaccineRegistryForm({
                   label: `${v.name} (${v.manufacturer.name})`,
                 }))}
                 isLoading={isLoadingVaccines}
-                onChangeSearch={(val) => {
-                  setVaccineSearch(val);
-                  setHasSelectedVaccine(false);
-                }}
+                onChangeSearch={handleVaccineInputChange}
                 onSelect={(vaccine) => {
                   setValue("vaccineId", vaccine.id);
                   setVaccineSearch(vaccine.label);
                   setHasSelectedVaccine(true);
                 }}
                 disabled={!selectedPetId}
+                noOptionsMessage="No se encontraron vacunas que coincidan con la búsqueda. Pruebe de otra forma..."
               />
               {errors.vaccineId && (
                 <p className="text-red-500 text-sm">
@@ -241,12 +265,40 @@ export default function VaccineRegistryForm({
                 Cancelar
               </Button>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Creando..." : "Crear"}
+                {isSubmitting ? "Registrando..." : "Registrar"}
               </Button>
             </div>
           </>
         )}
       </form>
+
+      <Modal
+        isOpen={showNightWarning}
+        onClose={() => !isConfirming && setShowNightWarning(false)}
+        title="Confirmar horario nocturno"
+        size="sm"
+      >
+        <p className="text-sm mb-4">
+          ¿Está seguro de que el horario ingresado es correcto?
+          <br />
+          <span className="text-xs text-gray-600">
+            Obs: Este horario se encuentra dentro del rango de urgencias
+            nocturnas.
+          </span>
+        </p>
+        <div className="flex justify-end gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setShowNightWarning(false)}
+            disabled={isConfirming}
+          >
+            Cancelar
+          </Button>
+          <Button onClick={handleConfirmNightTime} disabled={isConfirming}>
+            {isConfirming ? "Procesando..." : "Confirmar y continuar"}
+          </Button>
+        </div>
+      </Modal>
     </div>
   );
 }
