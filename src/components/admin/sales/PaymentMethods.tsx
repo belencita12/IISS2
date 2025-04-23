@@ -26,6 +26,7 @@ type Props = {
   ) => void;
   onSelectedMethodChange: (method: string) => void;
   selectedMethod: string;
+  thereIsProducts?: boolean;
 };
 
 export default function PaymentMethods({
@@ -33,6 +34,7 @@ export default function PaymentMethods({
   onPaymentMethodsChange,
   onSelectedMethodChange,
   selectedMethod,
+  thereIsProducts = false,
 }: Props) {
   const [methods, setMethods] = useState<PaymentMethod[]>([]);
   const [amount, setAmount] = useState<string>("");
@@ -75,10 +77,6 @@ export default function PaymentMethods({
     onPaymentMethodsChange(updated);
   };
 
-  if(loading) {
-    return <PaymentMethodsSkeleton />
-  }
-
   return (
     <Card>
       <CardHeader>
@@ -86,7 +84,11 @@ export default function PaymentMethods({
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex-col items-end gap-4">
-          <div className="flex-1 pb-4">
+          {
+            loading ? (
+              <PaymentMethodsSkeleton />
+            ) : (
+              <div className="flex-1 pb-4">
             {/* Usando RadioGroup con RadioGroupItem en lugar de select */}
             <RadioGroup value={selectedMethod} onValueChange={onSelectedMethodChange}>
               {methods.map((m) => (
@@ -99,6 +101,8 @@ export default function PaymentMethods({
               ))}
             </RadioGroup>
           </div>
+            )
+          }
 
           <div className="flex-1 flex items-end gap-4">
             <div>
@@ -109,9 +113,10 @@ export default function PaymentMethods({
               placeholder={amount}
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
+              disabled={!thereIsProducts}
             />
             </div>
-          <Button onClick={handleAdd}>Agregar</Button>
+          <Button onClick={handleAdd} disabled={!thereIsProducts}>Agregar</Button>
           </div>
         </div>
 
