@@ -18,12 +18,15 @@ export default function InvoiceNumericFilter({ filters, setFilters }: Props) {
   const debouncedMin = useDebounce(min, 500);
   const debouncedMax = useDebounce(max, 500);
 
+  const isMaxLessThanMin =
+    max !== "" && min !== "" && Number(max) < Number(min);
+
   useEffect(() => {
-    // Si el valor es vacío, lo consideramos undefined
     const totalMin = debouncedMin !== "" ? Number(debouncedMin) : undefined;
     const totalMax = debouncedMax !== "" ? Number(debouncedMax) : undefined;
 
-    if (filters.fromTotal !== totalMin || filters.toTotal !== totalMax) {
+    // Solo actualiza si el máximo no es menor al mínimo
+    if (!isMaxLessThanMin && (filters.fromTotal !== totalMin || filters.toTotal !== totalMax)) {
       setFilters({
         ...filters,
         fromTotal: totalMin,
@@ -41,7 +44,7 @@ export default function InvoiceNumericFilter({ filters, setFilters }: Props) {
           type="formattedNumber"
           value={min}
           placeholder="Ejemplo: 100.000"
-          onChange={(e) => setMin(e.target.value)} // Mantenemos el valor vacío si el campo se borra
+          onChange={(e) => setMin(e.target.value)} 
           className="w-full border px-3 py-2 rounded"
         />
       </div>
@@ -53,9 +56,12 @@ export default function InvoiceNumericFilter({ filters, setFilters }: Props) {
           type="formattedNumber"
           value={max}
           placeholder="Ejemplo: 1.000.000"
-          onChange={(e) => setMax(e.target.value)} // Mantenemos el valor vacío si el campo se borra
+          onChange={(e) => setMax(e.target.value)} 
           className="w-full border px-3 py-2 rounded"
         />
+        {isMaxLessThanMin && (
+          <p className="text-sm text-red-500">El total máximo no puede ser menor al mínimo.</p>
+        )}
       </div>
     </div>
   );
