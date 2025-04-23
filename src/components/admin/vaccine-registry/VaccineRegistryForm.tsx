@@ -50,7 +50,6 @@ export default function VaccineRegistryForm({
     setHasSelectedVaccine,
     petSearch,
     setPetSearch,
-    setHasSelectedClient,
     clearSelectedClient,
   } = useVaccineRegistryCreateForm(token, selectedClientId);
 
