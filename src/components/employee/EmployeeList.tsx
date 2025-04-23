@@ -121,8 +121,14 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
       label: "Ver detalles",
     },
     {
-      icon: <Pencil className="w-4 h-4" />, 
-      onClick: (employee) => console.log("Editar", employee), 
+      icon: <Pencil className="w-4 h-4" />,
+      onClick: (employee) => {
+        if (!employee.id || isNaN(Number(employee.id))) {
+          toast("error", "ID de empleado inválido");
+          return;
+        }
+        router.push(`/dashboard/employee/update/${employee.id}`);
+      },
       label: "Editar",
     },
     {
