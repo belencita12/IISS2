@@ -1,10 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Command, CommandEmpty, CommandItem, CommandList } from "@/components/ui/command"
 import { ProductWithExtraData as Product } from "@/lib/products/IProducts"
 
@@ -20,7 +16,6 @@ type ProductSearchProps = {
 
 export default function ProductSearch({ onSelectProduct, token,stockId }: ProductSearchProps) {
   const [searchTerm, setSearchTerm] = useState("")
-  const [isNewProductDialogOpen, setIsNewProductDialogOpen] = useState(false)
   const [isCommandOpen, setIsCommandOpen] = useState(false)
   const [products, setProducts] = useState<Product[]>([])
 
@@ -100,44 +95,6 @@ export default function ProductSearch({ onSelectProduct, token,stockId }: Produc
             </div>
           )}
         </div>
-
-        <Dialog open={isNewProductDialogOpen} onOpenChange={setIsNewProductDialogOpen}>
-          <DialogTrigger asChild>
-            <Button variant="outline" size="icon">
-              <Plus className="h-4 w-4" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Agregar Nuevo Producto</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <label htmlFor="product-name" className="text-sm font-medium">
-                  Nombre del Producto
-                </label>
-                <Input id="product-name" placeholder="Nombre del producto" />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label htmlFor="price" className="text-sm font-medium">
-                    Precio
-                  </label>
-                  <Input id="price" type="number" placeholder="0.00" />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="stock" className="text-sm font-medium">
-                  Stock
-                </label>
-                <Input id="stock" type="number" placeholder="0" />
-              </div>
-              <Button className="w-full" onClick={() => setIsNewProductDialogOpen(false)}>
-                Guardar Producto
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
       </div>
     </div>
   )
