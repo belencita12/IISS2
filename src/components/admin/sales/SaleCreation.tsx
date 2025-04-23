@@ -21,6 +21,7 @@ import { useFetch } from "@/hooks/api";
 import { INVOICE_API } from "@/lib/urls";
 import { InvoiceForm } from "@/lib/invoices/IInvoice";
 import InvoiceInfo from "./InvoiceInfo";
+import { useRouter } from "next/navigation";
 
 type Props = {
   token: string;
@@ -42,6 +43,7 @@ export default function SaleCreation({ token }: Props) {
     undefined
   );
   const [timbradoNumber, setTimbradoNumber] = useState("");
+  const router = useRouter();
 
   // Calcular el total de la factura
   const total = products.reduce((sum, product) => sum + product.total, 0);
@@ -141,14 +143,7 @@ export default function SaleCreation({ token }: Props) {
       const { error } = await post(saleData);
       if (!error && !loading) {
         toast("success", "Venta finalizada con éxito");
-        setProducts([]);
-        setSelectedCustomer(null);
-        setPaymentMethods([]);
-        setSelectedStock("");
-        setInvoiceNumber("");
-        setTimbradoNumber("");
-        setDepositError(undefined);
-        setSelectedMethod("");
+        router.push("/dashboard/invoices");
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -292,7 +287,7 @@ export default function SaleCreation({ token }: Props) {
                 }
                 onClick={handleFinalizeSale}
               >
-                Finalizar Venta
+                {loading ? "Finalizando..." : "Finalizar Venta"}
               </Button>
             </CardFooter>
           </Card>
