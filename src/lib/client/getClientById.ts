@@ -10,7 +10,6 @@ export const getClientById = async (clientId: number, token: string) => {
         });
 
         if (!response.ok) {
-           // console.error(`Error al obtener cliente: ${response.status}`);
             toast("error", "Error al obtener cliente.");
             return null;
         }
@@ -18,7 +17,6 @@ export const getClientById = async (clientId: number, token: string) => {
         const data = await response.json();
         return data as IUserProfile;
     } catch (error) {
-        //console.error("Error al obtener cliente:", error);
         toast("error", "Error al obtener cliente.");
         return null;
     }
