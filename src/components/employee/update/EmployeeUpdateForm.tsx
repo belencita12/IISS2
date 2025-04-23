@@ -117,8 +117,8 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
       reader.onload = (ev) => setPreviewImage(ev.target?.result as string);
       reader.readAsDataURL(file);
     } else {
-      setValue("profileImage", "" as any, { shouldValidate: true });
-      setPreviewImage(null);
+        setValue("profileImage", "" as unknown as File, { shouldValidate: true });
+        setPreviewImage(null);
     }
   };
 
@@ -142,7 +142,7 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
     }
 
     // DEBUG: Mostrar los datos enviados
-    for (let pair of formData.entries()) {
+    for (const pair of formData.entries()) {
       console.log(pair[0]+ ': ' + pair[1]);
     }
 
