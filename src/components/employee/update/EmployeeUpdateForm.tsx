@@ -64,6 +64,7 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeFormSchema),
@@ -113,7 +114,7 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
     setPreviewImage(null);
     const file = e.target.files?.[0];
     if (file) {
-      setValue("profileImage", file as Fi=le, { shouldValidate: true });
+      setValue("profileImage", file as File, { shouldValidate: true });
       const reader = new FileReader();
       reader.onload = (ev) => setPreviewImage(ev.target?.result as string);
       reader.readAsDataURL(file);
@@ -201,8 +202,9 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
               options={positionOptions}
               placeholder="Selecciona un puesto"
               error={errors.positionId?.message}
-              onChange={(value) => setValue("positionId", value)}
+              onChange={(value) => setValue("positionId", value, {shouldValidate: true})}
               register={register("positionId")}
+              defaultValue={watch("positionId")}
               disabled={positions.length === 0 || formSubmitting}
             />
           </div>
@@ -237,11 +239,13 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
               type="button"
               variant="outline"
               onClick={() => router.push("/dashboard/employee")}
+              disabled={formSubmitting}
             >
               Cancelar
             </Button>
-            <Button type="submit">
-              Actualizar empleado
+            <Button type="submit"
+              disabled={formSubmitting}>
+              {formSubmitting ? "Actualizando" : "Actualizar Empleado"}
             </Button>
           </div>
         </form>
