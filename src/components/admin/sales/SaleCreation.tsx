@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { ClientData } from "@/lib/admin/client/IClient";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ProductWithExtraData as Product } from "@/lib/products/IProducts";
 import {
   Card,
@@ -12,7 +11,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
 import CustomerSearch from "./CustomerSearch";
 import ProductList from "./ProductList";
 import ProductSearch from "./ProductSearch";
@@ -21,7 +19,7 @@ import { toast } from "@/lib/toast";
 import PaymentMethods from "./PaymentMethods";
 import { useFetch } from "@/hooks/api";
 import { INVOICE_API } from "@/lib/urls";
-import { Invoice, InvoiceForm } from "@/lib/invoices/IInvoice";
+import { InvoiceForm } from "@/lib/invoices/IInvoice";
 import InvoiceInfo from "./InvoiceInfo";
 
 type Props = {
@@ -48,7 +46,7 @@ export default function SaleCreation({ token }: Props) {
   // Calcular el total de la factura
   const total = products.reduce((sum, product) => sum + product.total, 0);
 
-  const { post, loading} = useFetch<InvoiceForm>(INVOICE_API, token);
+  const { post, loading } = useFetch<InvoiceForm>(INVOICE_API, token);
 
   // Función para agregar un producto a la lista
   const addProduct = (product: Product) => {
@@ -140,7 +138,7 @@ export default function SaleCreation({ token }: Props) {
     };
 
     try {
-      const { error}= await post(saleData);
+      const { error } = await post(saleData);
       if (!error && !loading) {
         toast("success", "Venta finalizada con éxito");
         setProducts([]);
@@ -178,12 +176,12 @@ export default function SaleCreation({ token }: Props) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Columna izquierda - Información del cliente y factura */}
         <div className="lg:col-span-1 space-y-6">
-        <InvoiceInfo
-        invoiceNumber={invoiceNumber}
-        timbradoNumber={timbradoNumber}
-        setInvoiceNumber={setInvoiceNumber}
-        setTimbradoNumber={setTimbradoNumber}
-      />
+          <InvoiceInfo
+            invoiceNumber={invoiceNumber}
+            timbradoNumber={timbradoNumber}
+            setInvoiceNumber={setInvoiceNumber}
+            setTimbradoNumber={setTimbradoNumber}
+          />
 
           <Card>
             <CardHeader>
