@@ -1,7 +1,5 @@
 import SaleCreation from "@/components/admin/sales/SaleCreation";
-import { Button } from "@/components/ui/button";
 import authOptions from "@/lib/auth/options";
-import { Printer } from "lucide-react";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
