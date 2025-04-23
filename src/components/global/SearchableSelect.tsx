@@ -15,6 +15,7 @@ interface Props {
   isLoading?: boolean;
   disabled?: boolean;
   onChangeSearch: (term: string) => void;
+  noOptionsMessage?: string;
   onSelect: (option: Option) => void;
 }
 
@@ -27,6 +28,7 @@ export default function SearchableSelect({
   disabled = false,
   onChangeSearch,
   onSelect,
+  noOptionsMessage, // <-- Agregado aquí
 }: Props) {
   const [isListVisible, setIsListVisible] = useState(false);
 
@@ -48,8 +50,10 @@ export default function SearchableSelect({
 
           {isListVisible && !disabled && (
             <div className="absolute z-50 w-full bg-white border rounded shadow max-h-48 overflow-y-auto">
-              {options.length === 0 ? (
-                <div className="p-2 text-gray-500">Escriba para buscar resultados</div>
+              {options.length === 0 && !isLoading ? (
+                <div className="p-2 text-gray-500">
+                  {noOptionsMessage || "Escriba para buscar resultados"}
+                </div>
               ) : (
                 options.map((opt) => (
                   <div
