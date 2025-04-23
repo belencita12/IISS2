@@ -24,3 +24,4 @@ export const PURCHASE_API = `${BASE_API_URL}/purchase`;
 export const PURCHASE_DETAIL_API = `${BASE_API_URL}/purchase-detail`;
 export const INVOICE_API = `${BASE_API_URL}/invoice`;
 export const INVOICE_DETAIL_API = `${BASE_API_URL}/invoice-detail`;
+export const PAYMENT_METHOD_API = `${BASE_API_URL}/payment-method`;
