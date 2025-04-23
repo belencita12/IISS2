@@ -58,6 +58,7 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
   const [employee, setEmployee] = useState<EmployeeData | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [positions, setPositions] = useState<Position[]>([]);
+  const [formSubmitting, setFormSubmitting] = useState(false);
 
   const {
     register,
@@ -130,6 +131,7 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
 
   // Enviar formulario
   const onSubmit = async (data: EmployeeFormValues) => {
+    setFormSubmitting(true);
     const formData = new FormData();
     formData.append("fullName", data.name);
     formData.append("email", data.email);
@@ -154,6 +156,8 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
       }
     } catch (e) {
       toast("error", "Error al actualizar el empleado");
+    } finally {
+      setFormSubmitting(false);
     }
   };
 
@@ -199,32 +203,32 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
               error={errors.positionId?.message}
               onChange={(value) => setValue("positionId", value)}
               register={register("positionId")}
-              disabled={positions.length === 0}
+              disabled={positions.length === 0 || formSubmitting}
             />
           </div>
           <div className="w-full">
             <Label>Nombre</Label>
-            <Input {...register("name")} placeholder="Nombre completo" />
+            <Input {...register("name")} placeholder="Nombre completo" disabled={formSubmitting}/>
             {errors.name && <p className="text-red-500">{errors.name.message}</p>}
           </div>
           <div className="w-full">
             <Label>Email</Label>
-            <Input {...register("email")} placeholder="Correo electrónico" />
+            <Input {...register("email")} placeholder="Correo electrónico" disabled={formSubmitting}/>
             {errors.email && <p className="text-red-500">{errors.email.message}</p>}
           </div>
           <div className="w-full">
             <Label>RUC</Label>
-            <Input {...register("ruc")} placeholder="Ej: 12345678-0" />
+            <Input {...register("ruc")} placeholder="Ej: 12345678-0" disabled={formSubmitting}/>
             {errors.ruc && <p className="text-red-500">{errors.ruc.message}</p>}
           </div>
           <div className="w-full">
             <Label>Dirección</Label>
-            <Input {...register("address")} placeholder="Dirección" />
+            <Input {...register("address")} placeholder="Dirección" disabled={formSubmitting}/>
             {errors.address && <p className="text-red-500">{errors.address.message}</p>}
           </div>
           <div className="w-full">
             <Label>Teléfono</Label>
-            <Input {...register("phoneNumber")} placeholder="Teléfono" />
+            <Input {...register("phoneNumber")} placeholder="Teléfono" disabled={formSubmitting}/>
             {errors.phoneNumber && <p className="text-red-500">{errors.phoneNumber.message}</p>}
           </div>
           {/* Botones */}
