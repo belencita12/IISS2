@@ -1,7 +1,7 @@
 import SaleCreation from "@/components/admin/sales/SaleCreation";
 import { Button } from "@/components/ui/button";
 import authOptions from "@/lib/auth/options";
-import { Printer, Save } from "lucide-react";
+import { Printer } from "lucide-react";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
@@ -19,10 +19,6 @@ export default async function MovementsPage() {
             <Button variant="outline">
               <Printer className="mr-2 h-4 w-4" />
               Imprimir
-            </Button>
-            <Button>
-              <Save className="mr-2 h-4 w-4" />
-              Guardar Venta
             </Button>
           </div>
         </div>

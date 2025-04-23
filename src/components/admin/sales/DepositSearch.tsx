@@ -5,7 +5,6 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
@@ -71,7 +70,7 @@ export default function DepositSearch({
 
   const handleSelectDeposit = (deposit: Stock) => {
     onSelectDeposit(deposit.id.toString());
-    setSelectedDeposit(deposit); // 💡 Guardamos el depósito seleccionado
+    setSelectedDeposit(deposit);
     setSearchQuery("");
     setIsCommandOpen(false);
   };
@@ -100,7 +99,7 @@ export default function DepositSearch({
                     <CommandEmpty>
                       {loading ? "Cargando..." : "No se encontraron depósitos."}
                     </CommandEmpty>
-                    <CommandGroup heading="Depósitos">
+                    <CommandGroup>
                       {deposits.map((deposit) => (
                         <CommandItem
                           key={deposit.id}

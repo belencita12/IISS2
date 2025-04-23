@@ -74,7 +74,7 @@ export default function ProductList({ products, onRemove, onUpdateQuantity }: Pr
                   </Button>
                 </div>
               </TableCell>
-              <TableCell className="text-right">{product.total}  Gs.</TableCell>
+              <TableCell className="text-right">{product.total.toLocaleString("ES-PY")}  Gs.</TableCell>
               <TableCell>
                 <Button
                   variant="ghost"

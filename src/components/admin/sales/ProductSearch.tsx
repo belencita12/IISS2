@@ -1,11 +1,11 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Search, Plus } from "lucide-react"
+import { Plus } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { Command, CommandEmpty, CommandItem, CommandList } from "@/components/ui/command"
 import { ProductWithExtraData as Product } from "@/lib/products/IProducts"
 
 import { useFetch } from "@/hooks/api/useFetch"
@@ -15,9 +15,10 @@ import SearchBar from "@/components/global/SearchBar"
 type ProductSearchProps = {
   onSelectProduct: (product: Product) => void
   token: string
+  stockId: string
 }
 
-export default function ProductSearch({ onSelectProduct, token }: ProductSearchProps) {
+export default function ProductSearch({ onSelectProduct, token,stockId }: ProductSearchProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [isNewProductDialogOpen, setIsNewProductDialogOpen] = useState(false)
   const [isCommandOpen, setIsCommandOpen] = useState(false)
@@ -28,15 +29,20 @@ export default function ProductSearch({ onSelectProduct, token }: ProductSearchP
 
   // Fetch products when search term changes (with debounce)
   useEffect(() => {
-    if(searchTerm){
-        get(undefined, `${PRODUCT_API}?name=${encodeURIComponent(searchTerm)}&page=1&size=20`);
+    if(searchTerm && stockId){
+        get(undefined, `${PRODUCT_API}?name=${encodeURIComponent(searchTerm)}&stockId=${stockId}&page=1&size=5`);
     }
-  }, [searchTerm]);
+  }, [searchTerm,stockId]);
 
   // Update products when data changes
   useEffect(() => {
     if (data?.data) {
-      setProducts(data.data)
+      const mappedProducts = data.data.map((product) => ({
+        ...product,
+        quantity: 1,
+        total: product.price,
+      }))
+      setProducts(mappedProducts)
     }
   }, [data])
 
@@ -68,23 +74,27 @@ export default function ProductSearch({ onSelectProduct, token }: ProductSearchP
             <div className="absolute top-full left-0 right-0 z-10 mt-1">
               <Command className="rounded-lg border shadow-md">
                 <CommandList>
-                  <CommandGroup heading="Productos">
-                    {products.map((product) => (
-                      <CommandItem
-                        key={product.id}
-                        onSelect={() => handleSelectProduct(product)}
-                        className="cursor-pointer"
-                      >
-                        <div className="flex justify-between w-full">
-                          <div>
-                            <p>{product.name}</p>
-                            {product.code && <p className="text-xs text-gray-500">Código: {product.code}</p>}
+                  {
+                    loading ? (
+                      <CommandEmpty>Cargando...</CommandEmpty>
+                    ) : error ? (
+                      <CommandEmpty>{error.message}</CommandEmpty>
+                    ) : products.length === 0 ? (
+                      <CommandEmpty>No se encontraron productos</CommandEmpty>
+                    ) : (
+                      products.map((product) => (
+                        <CommandItem key={product.id} onSelect={() => handleSelectProduct(product)}>
+                          <div className="flex items-center justify-between w-full">
+                            <div className="flex flex-col">
+                              <span className="text-sm font-medium">{product.name}</span>
+                              <span className="text-xs text-muted-foreground">{product.code}</span>
+                            </div>
+                            <span className="text-sm font-medium">{product.price.toLocaleString("ES-PY")} Gs.</span>
                           </div>
-                          <p className="font-medium">{product.price.toLocaleString("ES-PY")}  Gs.</p>
-                        </div>
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
+                        </CommandItem>
+                      ))
+                    )
+                  }
                 </CommandList>
               </Command>
             </div>
