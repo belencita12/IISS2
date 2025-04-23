@@ -20,7 +20,6 @@ export default function ProductListPage({ token }: ProductListProps) {
   // Hook para filtrado normal
   const {
     products,
-    stockMap,
     isLoading,
     pagination,
     inputFilters,
@@ -161,7 +160,6 @@ export default function ProductListPage({ token }: ProductListProps) {
           <ProductCard
             key={product.id}
             product={product}
-            stock={stockMap[product.id] || 0}
             onClick={handleCardClick}
           />
         ))
