@@ -4,9 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 
-// Validación de Zod para el número de factura en formato 001-001-00000001
-const invoiceNumberSchema = z.string().regex(/^\d{3}-\d{3}-\d{8}$/, {
-  message: "El número de factura debe tener el formato 001-001-00000001",
+// Validación de Zod para el número de factura en formato 123-123-1234567
+const invoiceNumberSchema = z.string().regex(/^\d{3}-\d{3}-\d{7}$/, {
+  message: "El número de factura debe tener el formato 123-123-1234567",
 });
 
 // Validación de Zod para el número de timbrado con 8 dígitos
@@ -83,7 +83,7 @@ export default function InvoiceInfo({
               id="invoice-number"
               value={invoiceNumber}
               onChange={handleInvoiceNumberChange} // Usamos el manejador de cambios
-              placeholder="001-001-00000001"
+              placeholder="123-123-1234567"
             />
             {invoiceError && <p className="text-red-500 text-sm mt-1">{invoiceError}</p>} {/* Error de factura */}
           </div>
