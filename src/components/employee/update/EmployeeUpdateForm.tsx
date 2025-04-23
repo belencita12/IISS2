@@ -112,7 +112,7 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
     setPreviewImage(null);
     const file = e.target.files?.[0];
     if (file) {
-      setValue("profileImage", file as File, { shouldValidate: true });
+      setValue("profileImage", file as Fi=le, { shouldValidate: true });
       const reader = new FileReader();
       reader.onload = (ev) => setPreviewImage(ev.target?.result as string);
       reader.readAsDataURL(file);
@@ -147,9 +147,11 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
     }
 
     try {
-      await updateEmployee(employeeId, formData);
-      toast("success", "Empleado actualizado correctamente");
-      router.push(`/dashboard/employee/${employeeId}`);
+      const response = await updateEmployee(employeeId, formData);
+      if(response.ok){
+        toast("success", "Empleado actualizado correctamente");
+        router.push(`/dashboard/employee/${employeeId}`);
+      }
     } catch (e) {
       toast("error", "Error al actualizar el empleado");
     }
