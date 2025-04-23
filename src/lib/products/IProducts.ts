@@ -13,6 +13,11 @@ export interface Product {
     };
     cost?: number;
   }
+
+  export interface ProductWithExtraData extends Product {
+    quantity: number;
+    total: number;
+  }
   
   export interface ProductQueryParams {
     page: number;
