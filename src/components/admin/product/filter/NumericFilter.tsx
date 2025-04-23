@@ -33,7 +33,6 @@ export const NumericFilter: React.FC<NumericFilterProps> = ({
     localMax !== "" &&
     parseFloat(localMax) < parseFloat(localMin);
 
-  // Actualiza estado local y propaga cambios al padre
   const handleMinChange = (value: string) => {
     setLocalMin(value);
     onMinChange(value);
