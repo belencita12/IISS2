@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { VaccineRecord, Vaccine } from "@/lib/vaccine-registry/IVaccineRegistry";
+import { Vaccine } from "@/lib/vaccine-registry/IVaccineRegistry";
 import { PetData } from "@/lib/pets/IPet";
 import { IUserProfile } from "@/lib/client/IUserProfile";
 
@@ -15,33 +15,25 @@ import useDebounce from "@/hooks/useDebounce";
 
 export const vaccineRegistrySchema = z.object({
   vaccineId: z.number().min(1, "La vacuna es obligatoria"),
-  dose: z.coerce
-    .number()
-    .positive("La dosis debe ser un número mayor a 0")
-    .refine((val) => !isNaN(val) && val > 0, {
-      message: "Debe ser un número válido mayor a 0",
-    }),
+  dose: z.coerce.number().positive("La dosis debe ser mayor a 0"),
   applicationDate: z.string().min(1, "La fecha de aplicación es obligatoria"),
   expectedDate: z.string().min(1, "La fecha esperada es obligatoria"),
   petId: z.number().optional(),
-  petSearch: z.string().optional(),
   clientId: z.number().optional(),
 });
 
 export type VaccineRegistryFormValues = z.infer<typeof vaccineRegistrySchema>;
 
-export const useVaccineRegistryForm = (
-  initialData?: VaccineRecord,
-  token?: string
+export const useVaccineRegistryCreateForm = (
+  token?: string,
+  selectedClientId?: number
 ) => {
   const form = useForm<VaccineRegistryFormValues>({
     resolver: zodResolver(vaccineRegistrySchema),
     defaultValues: {
-      petSearch: "",
-      vaccineId: initialData?.vaccineId || undefined,
-      dose: initialData?.dose || 1,
-      applicationDate: initialData?.applicationDate?.slice(0, 16) || "",
-      expectedDate: initialData?.expectedDate?.slice(0, 16) || "",
+      dose: 1,
+      applicationDate: "",
+      expectedDate: "",
     },
   });
 
@@ -52,8 +44,8 @@ export const useVaccineRegistryForm = (
 
   const [petLabels, setPetLabels] = useState<{ id: number; label: string; speciesId: number }[]>([]);
   const [isLoadingPets, setIsLoadingPets] = useState(false);
-  const [petSearch, setPetSearch] = useState("");
   const [selectedPetId, setSelectedPetId] = useState<number | null>(null);
+  const [petSearch, setPetSearch] = useState("");
 
   const [vaccineSearch, setVaccineSearch] = useState("");
   const [isLoadingVaccines, setIsLoadingVaccines] = useState(false);
@@ -63,18 +55,31 @@ export const useVaccineRegistryForm = (
   const debouncedClientSearch = useDebounce(clientSearch, 500);
   const debouncedVaccineSearch = useDebounce(vaccineSearch, 500);
 
-  const resetClient = () => {
-    setHasSelectedClient(false);
-    setClientSearch("");
+  const onClientSelect = useCallback(async (client: IUserProfile) => {
+    form.setValue("clientId", client.id);
+    setClientSearch(client.fullName);
+    setHasSelectedClient(true);
     setClients([]);
-    setPetLabels([]);
-    setSelectedPetId(null);
-    setVaccineOptions([]);
-  };
-  
-  useEffect(() => {
-    if (!token || hasSelectedClient) return;
+    setIsLoadingPets(true);
 
+    try {
+      const pets = await getPetsByUserId(client.id, token || "");
+      const labels = pets.map((pet: PetData) => ({
+        id: pet.id,
+        label: `${client.fullName} | ${pet.name}`,
+        speciesId: pet.species.id,
+      }));
+      setPetLabels(labels);
+    } catch {
+      toast("error", "No se pudieron cargar las mascotas");
+    } finally {
+      setIsLoadingPets(false);
+    }
+  }, [form, token]);
+
+  useEffect(() => {
+    if (!token || hasSelectedClient ) return;
+  
     const fetchClients = async () => {
       setIsLoadingClients(true);
       try {
@@ -86,9 +91,26 @@ export const useVaccineRegistryForm = (
         setIsLoadingClients(false);
       }
     };
-
+  
     fetchClients();
   }, [debouncedClientSearch, token, hasSelectedClient]);
+  
+
+  useEffect(() => {
+    if (!selectedClientId || !token || hasSelectedClient) return;
+
+    const autoSelect = async () => {
+      try {
+        const { data } = await fetchUsers(1, "", token);
+        const client = data.find((c: IUserProfile) => c.id === selectedClientId);
+        if (client) await onClientSelect(client);
+      } catch {
+        toast("error", "No se pudo cargar el cliente inicial");
+      }
+    };
+
+    autoSelect();
+  }, [selectedClientId, token, hasSelectedClient, onClientSelect]);
 
   useEffect(() => {
     if (!token || !selectedPetId || hasSelectedVaccine) return;
@@ -113,29 +135,14 @@ export const useVaccineRegistryForm = (
     fetchVaccines();
   }, [debouncedVaccineSearch, token, selectedPetId, petLabels, hasSelectedVaccine]);
 
-  const onClientSelect = async (client: IUserProfile) => {
-    form.setValue("clientId", client.id);
-    setClientSearch(client.fullName);
-    setHasSelectedClient(true);
+  const clearSelectedClient = () => {
+    form.setValue("clientId", undefined);
+    setClientSearch("");
     setClients([]);
-    setIsLoadingPets(true);
-
-    if (!token || !client) return;
-    try {
-      const pets = await getPetsByUserId(client.id, token);
-      const labels = pets.map((pet: PetData) => ({
-        id: pet.id,
-        label: `${client.fullName} | ${pet.name}`,
-        speciesId: pet.species.id,
-      }));
-      setPetLabels(labels);
-    } catch {
-      toast("error", "No se pudieron cargar las mascotas");
-    } finally {
-      setIsLoadingPets(false);
-    }
-  };
-  
+    setPetLabels([]);
+    setSelectedPetId(null);
+    setHasSelectedClient(false);
+  };  
 
   return {
     form,
@@ -152,9 +159,12 @@ export const useVaccineRegistryForm = (
     vaccineOptions,
     selectedPetId,
     setSelectedPetId,
-    hasSelectedClient,
+    setHasSelectedVaccine,
     petSearch,
     setPetSearch,
-    setHasSelectedVaccine,
-  };  
+    hasSelectedVaccine,
+    hasSelectedClient,
+    setHasSelectedClient,
+    clearSelectedClient,
+  };
 };
