@@ -64,7 +64,6 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
     handleSubmit,
     setValue,
     formState: { errors },
-    watch,
   } = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeFormSchema),
     defaultValues: {
@@ -93,7 +92,7 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
         setValue("ruc", data.ruc || "");
         setValue("positionId", data.position?.id?.toString() || "");
         setValue("phoneNumber", data.phoneNumber || "");
-        if (data.image?.previewUrl) setPreviewImage(data.image?.previewUrl || null);
+        if (data.image?.previewUrl) setPreviewImage(data.image?.originalUrl || null);
       })
       .catch(() => toast("error", "No se pudo cargar el empleado"))
       .finally(() => setIsLoading(false));
@@ -110,6 +109,7 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
 
   // Imagen de perfil
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPreviewImage(null);
     const file = e.target.files?.[0];
     if (file) {
       setValue("profileImage", file as File, { shouldValidate: true });
@@ -165,24 +165,23 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
 
   return (
     <div className="mx-auto p-4" style={{ maxWidth: "70vw" }}>
-      <h1 className="text-3xl font-bold mb-6 text-center">Actualizar Empleado</h1>
+      <h1 className="text-3xl font-bold mb-6">Actualizar Empleado</h1>
       {!ready ? (
-        <div>Cargando...</div>
+        <div className="text-center">Cargando...</div>
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 flex flex-col items-center w-full">
           {/* Imagen de perfil */}
-          <div className="w-full flex flex-col items-center">
+          <div className="flex flex-col items-center">
             {previewImage && (
               <Image
                 src={previewImage}
                 alt="Imagen de perfil"
-                width={100}
-                height={100}
+                width={200}
+                height={200}
                 className="rounded-full mb-2"
               />
             )}
-            <Label>Imagen de perfil</Label>
-            <Input type="file" accept="image/*" onChange={handleImageChange} className="w-full" />
+            <Input type="file" accept="image/*" onChange={handleImageChange} className=" hover:bg-gray-200 cursor-pointer"/>
             {errors.profileImage && (
               <p className="text-red-500">{errors.profileImage.message as string}</p>
             )}
@@ -227,16 +226,15 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
             {errors.phoneNumber && <p className="text-red-500">{errors.phoneNumber.message}</p>}
           </div>
           {/* Botones */}
-          <div className="w-full flex justify-between gap-2 mt-4">
+          <div className="w-full flex justify-start gap-2 mt-4">
             <Button
               type="button"
               variant="outline"
-              className="w-1/2"
               onClick={() => router.push("/dashboard/employee")}
             >
               Cancelar
             </Button>
-            <Button type="submit" className="w-1/2">
+            <Button type="submit">
               Actualizar empleado
             </Button>
           </div>
