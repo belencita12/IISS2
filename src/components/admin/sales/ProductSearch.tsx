@@ -1,10 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Command, CommandEmpty, CommandItem, CommandList } from "@/components/ui/command"
 import { ProductWithExtraData as Product } from "@/lib/products/IProducts"
 
@@ -20,7 +16,6 @@ type ProductSearchProps = {
 
 export default function ProductSearch({ onSelectProduct, token,stockId }: ProductSearchProps) {
   const [searchTerm, setSearchTerm] = useState("")
-  const [isNewProductDialogOpen, setIsNewProductDialogOpen] = useState(false)
   const [isCommandOpen, setIsCommandOpen] = useState(false)
   const [products, setProducts] = useState<Product[]>([])
 
