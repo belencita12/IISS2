@@ -1,27 +1,22 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
 import { createVaccineRegistry } from "@/lib/vaccine-registry/createVaccineRegistry";
-import { updateVaccineRegistry } from "@/lib/vaccine-registry/updateVaccineRegistry";
-
-import {
-  VaccineRecord,
-} from "@/lib/vaccine-registry/IVaccineRegistry";
 import {
   VaccineRegistryFormValues,
-  useVaccineRegistryForm,
+  useVaccineRegistryCreateForm,
 } from "@/hooks/vaccine-registry/useVaccineRegistryForm";
 import SearchableSelect from "@/components/global/SearchableSelect";
+import FormInput from "@/components/global/FormInput";
+import { blockExtraKeysNumber } from "@/lib/utils";
 
 interface Props {
   token: string;
-  initialData?: VaccineRecord;
   petId?: number;
   selectedPetLabel?: string;
   selectedClientId?: number;
@@ -30,13 +25,11 @@ interface Props {
 
 export default function VaccineRegistryForm({
   token,
-  initialData,
   petId,
   selectedPetLabel,
   selectedClientId,
 }: Props) {
   const router = useRouter();
-  const isEdit = !!initialData;
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -54,10 +47,12 @@ export default function VaccineRegistryForm({
     setVaccineSearch,
     vaccineOptions,
     isLoadingVaccines,
+    setHasSelectedVaccine,
     petSearch,
     setPetSearch,
-    setHasSelectedVaccine
-  } = useVaccineRegistryForm(initialData, token);
+    setHasSelectedClient,
+    clearSelectedClient,
+  } = useVaccineRegistryCreateForm(token, selectedClientId);
 
   const {
     register,
@@ -67,12 +62,25 @@ export default function VaccineRegistryForm({
     formState: { errors },
   } = form;
 
+  useEffect(() => {
+    if (selectedClientId) {
+      setValue("clientId", selectedClientId);
+    }
+    if (petId) {
+      setValue("petId", petId);
+      setSelectedPetId(petId);
+    }
+  }, [selectedClientId, petId, setValue, setSelectedPetId]);
+
   const onSubmit = async (data: VaccineRegistryFormValues) => {
     setIsSubmitting(true);
     try {
       const payload = {
-        ...data,
-        petId: petId ?? data.petId!,
+        vaccineId: data.vaccineId,
+        petId: data.petId!,
+        dose: data.dose,
+        applicationDate: new Date(data.applicationDate).toISOString(),
+        expectedDate: new Date(data.expectedDate).toISOString(),
       };
 
       if (!payload.petId) {
@@ -80,14 +88,8 @@ export default function VaccineRegistryForm({
         return;
       }
 
-      if (isEdit && initialData?.id) {
-        await updateVaccineRegistry(token, initialData.id, payload);
-        toast("success", "Registro actualizado con éxito");
-      } else {
-        await createVaccineRegistry(payload, token);
-        toast("success", "Registro creado con éxito");
-      }
-
+      await createVaccineRegistry(payload, token);
+      toast("success", "Registro creado con éxito");
       router.back();
     } catch (error) {
       const message =
@@ -102,14 +104,9 @@ export default function VaccineRegistryForm({
 
   return (
     <div className="p-4 max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6">
-        {isEdit
-          ? "Editar Registro de Vacunación"
-          : "Nuevo Registro de Vacunación"}
-      </h2>
+      <h2 className="text-2xl font-bold mb-6">Nuevo Registro de Vacunación</h2>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Cliente */}
         <div>
           <SearchableSelect
             label="Cliente"
@@ -120,7 +117,15 @@ export default function VaccineRegistryForm({
               label: `${c.fullName} - ${c.ruc}`,
             }))}
             isLoading={isLoadingClients}
-            onChangeSearch={setClientSearch}
+            onChangeSearch={(val) => {
+              setClientSearch(val);
+              if (val.trim() === "") {
+                if (val.trim() === "") {
+                  clearSelectedClient();
+                }
+              }
+            }}
+            
             onSelect={(option) => {
               const fullClient = clients.find((c) => c.id === option.id);
               if (fullClient) onClientSelect(fullClient);
@@ -133,13 +138,8 @@ export default function VaccineRegistryForm({
           )}
         </div>
 
-        {!clientSelected ? (
-          <p className="text-sm text-gray-500">
-            Seleccione un cliente para continuar
-          </p>
-        ) : (
+        {clientSelected && (
           <>
-            {/* Mascota */}
             <div>
               <SearchableSelect
                 label="Mascota"
@@ -166,7 +166,6 @@ export default function VaccineRegistryForm({
               )}
             </div>
 
-            {/* Vacuna */}
             <div>
               <SearchableSelect
                 label="Vacuna"
@@ -179,12 +178,12 @@ export default function VaccineRegistryForm({
                 isLoading={isLoadingVaccines}
                 onChangeSearch={(val) => {
                   setVaccineSearch(val);
-                  setHasSelectedVaccine(false); 
-                }}                
+                  setHasSelectedVaccine(false);
+                }}
                 onSelect={(vaccine) => {
                   setValue("vaccineId", vaccine.id);
                   setVaccineSearch(vaccine.label);
-                  setHasSelectedVaccine(true); 
+                  setHasSelectedVaccine(true);
                 }}
                 disabled={!selectedPetId}
               />
@@ -195,16 +194,20 @@ export default function VaccineRegistryForm({
               )}
             </div>
 
-            {/* Dosis */}
             <div>
-              <label className="block mb-1 text-sm font-medium">Dosis (ml.)</label>
-              <Input type="number" {...register("dose", { valueAsNumber: true })} />
-              {errors.dose && (
-                <p className="text-red-500 text-sm">{errors.dose.message}</p>
-              )}
+              <FormInput
+                id="dose"
+                type="number"
+                step="any"
+                min="0"
+                onKeyDown={blockExtraKeysNumber}
+                register={register("dose")}
+                error={errors.dose?.message}
+                label="Dosis (ml)"
+                name="dose"
+              />
             </div>
 
-            {/* Fechas */}
             <div>
               <label className="block mb-1 text-sm font-medium">
                 Fecha de aplicación
@@ -229,7 +232,6 @@ export default function VaccineRegistryForm({
               )}
             </div>
 
-            {/* Botones */}
             <div className="flex justify-end gap-2">
               <Button
                 type="button"
@@ -240,13 +242,7 @@ export default function VaccineRegistryForm({
                 Cancelar
               </Button>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting
-                  ? isEdit
-                    ? "Guardando..."
-                    : "Creando..."
-                  : isEdit
-                  ? "Guardar cambios"
-                  : "Crear"}
+                {isSubmitting ? "Creando..." : "Crear"}
               </Button>
             </div>
           </>
