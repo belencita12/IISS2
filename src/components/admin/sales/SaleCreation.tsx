@@ -22,6 +22,7 @@ import PaymentMethods from "./PaymentMethods";
 import { useFetch } from "@/hooks/api";
 import { INVOICE_API } from "@/lib/urls";
 import { Invoice, InvoiceForm } from "@/lib/invoices/IInvoice";
+import InvoiceInfo from "./InvoiceInfo";
 
 type Props = {
   token: string;
@@ -47,7 +48,7 @@ export default function SaleCreation({ token }: Props) {
   // Calcular el total de la factura
   const total = products.reduce((sum, product) => sum + product.total, 0);
 
-  const {post, loading, error } = useFetch<InvoiceForm>(INVOICE_API,token)
+  const { post, loading} = useFetch<InvoiceForm>(INVOICE_API, token);
 
   // Función para agregar un producto a la lista
   const addProduct = (product: Product) => {
@@ -108,17 +109,17 @@ export default function SaleCreation({ token }: Props) {
       toast("error", "Debe seleccionar un depósito");
       return;
     }
-  
+
     if (!selectedCustomer) {
       toast("error", "Debe seleccionar un cliente");
       return;
     }
-  
+
     if (products.length === 0) {
       toast("error", "Debe agregar al menos un producto");
       return;
     }
-  
+
     const saleData: InvoiceForm = {
       invoiceNumber,
       stamped: timbradoNumber,
@@ -134,29 +135,32 @@ export default function SaleCreation({ token }: Props) {
         amount: p.amount,
       })),
       totalPayed: totalPaid,
-      type:"CASH",
+      type: "CASH",
       services: [],
     };
-  
-    await post(saleData);
-    if(error) {
-      toast("error", error.message);
-      return;
+
+    try {
+      const { error}= await post(saleData);
+      if (!error && !loading) {
+        toast("success", "Venta finalizada con éxito");
+        setProducts([]);
+        setSelectedCustomer(null);
+        setPaymentMethods([]);
+        setSelectedStock("");
+        setInvoiceNumber("");
+        setTimbradoNumber("");
+        setDepositError(undefined);
+        setSelectedMethod("");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast("error", error.message);
+      }
     }
-    toast("success", "Venta finalizada con éxito");
-    setProducts([]);
-    setSelectedCustomer(null);
-    setPaymentMethods([]);
-    setSelectedStock("");
-    setInvoiceNumber("");
-    setTimbradoNumber("");
-    setDepositError(undefined);
-    setSelectedMethod("");
   };
-  
 
   return (
-    <div className="container mx-auto py-6 px-4">
+    <div className="container mx-auto py-2s">
       {/* Selección de depósito */}
       <div className="mb-6">
         <Card>
@@ -174,33 +178,12 @@ export default function SaleCreation({ token }: Props) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Columna izquierda - Información del cliente y factura */}
         <div className="lg:col-span-1 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Información de Factura</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="invoice-number">Número de Factura</Label>
-                  <Input
-                    id="invoice-number"
-                    value={invoiceNumber}
-                    onChange={(e) => setInvoiceNumber(e.target.value)}
-                    placeholder="INV-9709"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="timbrado-number">Número de Timbrado</Label>
-                  <Input
-                    id="timbrado-number"
-                    value={timbradoNumber}
-                    onChange={(e) => setTimbradoNumber(e.target.value)}
-                    placeholder="12345678"
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        <InvoiceInfo
+        invoiceNumber={invoiceNumber}
+        timbradoNumber={timbradoNumber}
+        setInvoiceNumber={setInvoiceNumber}
+        setTimbradoNumber={setTimbradoNumber}
+      />
 
           <Card>
             <CardHeader>
@@ -225,6 +208,7 @@ export default function SaleCreation({ token }: Props) {
 
           <PaymentMethods
             onPaymentMethodsChange={setPaymentMethods}
+            thereIsProducts={products.length > 0}
             selectedMethod={selectedMethod}
             onSelectedMethodChange={setSelectedMethod}
             token={token}
@@ -292,7 +276,12 @@ export default function SaleCreation({ token }: Props) {
               <Button
                 size="lg"
                 disabled={
-                  remainingBalance > 0 || !selectedStock || !timbradoNumber || loading
+                  remainingBalance > 0 ||
+                  !selectedStock ||
+                  !timbradoNumber ||
+                  !selectedCustomer ||
+                  products.length === 0 ||
+                  loading
                 }
                 title={
                   remainingBalance > 0
