@@ -23,7 +23,7 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
   if (!invoice) return notFound();
   
   // Obtener detalles de la factura
-  const detailResp = await getInvoiceDetail(invoice.invoiceNumber, token).catch(() => null);
+  const detailResp = await getInvoiceDetail(invoiceId.toString(), token).catch(() => null);
   if (!detailResp || !detailResp.data || detailResp.data.length === 0) return notFound();
   
   // Si pasó todas las validaciones, renderizar el componente

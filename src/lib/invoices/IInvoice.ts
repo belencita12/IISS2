@@ -43,3 +43,25 @@ export interface GetInvoiceQueryParams extends BaseQueryParams {
   fromIssueDate?: string;
   toIssueDate?: string;
 }
+
+export type InvoiceForm = {
+  clientId: number;
+  stockId: number;
+  invoiceNumber: string;
+  stamped: string;
+  issueDate: string;
+  totalPayed: number;
+  type: "CREDIT" | "CASH";
+  paymentMethods: {
+    methodId: number;
+    amount: number;
+  }[];
+  details: {
+    quantity: number;
+    productId: number;
+  }[];
+  services: {
+    quantity: number;
+    productId: number;
+  }[];
+};

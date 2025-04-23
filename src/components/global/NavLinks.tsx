@@ -27,7 +27,7 @@ const linksUser = [
   { name: "Depositos", href: "/dashboard/stock", icon: StoreIcon },
   { name: "Movimientos", href: "/dashboard/movement", icon: BoxIcon },
   { name: "Compras", href: "/dashboard/purchases", icon: CircleDollarSignIcon },
-  { name: "Crear Venta", href: "/dashboard/ventas", icon: HandCoinsIcon },
+  { name: "Crear Venta", href: "/dashboard/new-sale", icon: HandCoinsIcon },
   { name: "Empleados", href: "/dashboard/employee", icon: BookUserIcon },
   { name: "Facturas", href: "/dashboard/invoices", icon: FileIcon },
   {

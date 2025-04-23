@@ -140,7 +140,7 @@ export default function ProductListPage({ token }: ProductListProps) {
           token={token}
         />
       </div>
-      <div className="flex justify-between items-center mb-6">
+      <div className="mt-8 mb-6 flex justify-between items-center">
         <h1 className="text-2xl font-bold">Productos</h1>
         <Button
           variant="outline"
