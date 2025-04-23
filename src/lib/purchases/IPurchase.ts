@@ -1,20 +1,19 @@
-export interface Purchase {
-  providerId: number;
-  stockId: number;
-  date: string;
-  details: PurchaseDetail[];
-}
+import { Provider } from "../provider/IProvider";
+import { StockData } from "../stock/IStock";
+import { BaseQueryParams } from "../types";
 
-export interface PurchaseDetail {
-  productId: number;
-  quantity: number;
-}
+    export interface PurchaseData {
+        id?: number;
+        ivaTotal: number;
+        total: number;
+        date?: string;
+        provider: Provider;
+        stock: StockData;
+        }
 
-export type ExtendedPurchaseDetail = PurchaseDetail & {
-  code?: string;
-  name?: string;
-};
-
-export type ExtendedPurchase = Omit<Purchase, "details"> & {
-  details: ExtendedPurchaseDetail[];
-};
+    export interface GetPurchaseQueryParams extends BaseQueryParams {
+        providerId?: number;
+        stockId?: number;
+        totalMin?: number;
+        totalMax?: number;
+    }

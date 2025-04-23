@@ -42,25 +42,25 @@ export default function NumericInput({
     const raw = e.target.value;
     const cleaned = raw.replace(/[^\d,]/g, "");
     const parts = cleaned.split(",");
-
+  
     if (parts.length > 2) return;
-
+  
     const integerPart = parts[0].replace(/\./g, "");
     const decimalPart = parts[1] || "";
-
+  
     if (integerPart === "") {
       onChange?.({
         ...e,
-        target: { ...e.target, value: "0" },
+        target: { ...e.target, value: "" },  // Mantenemos el valor vacío
       });
       return;
     }
-
+  
     const cleanValue =
       decimalPart !== ""
         ? `${parseInt(integerPart)}.${decimalPart}`
         : `${parseInt(integerPart)}`;
-
+  
     onChange?.({
       ...e,
       target: { ...e.target, value: cleanValue },

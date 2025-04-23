@@ -2,31 +2,32 @@
 
 import NumericInput from "@/components/global/NumericInput"; 
 import { Label } from "@/components/ui/label";
-import { GetPurchaseQueryParams } from "@/lib/purchases/IPurchase";
+import { GetInvoiceQueryParams } from "@/lib/invoices/IInvoice";
 import useDebounce from "@/hooks/useDebounce";
 import { useEffect, useState } from "react";
 
 interface Props {
-  filters: GetPurchaseQueryParams;
-  setFilters: (val: GetPurchaseQueryParams) => void;
+  filters: GetInvoiceQueryParams;
+  setFilters: (val: GetInvoiceQueryParams) => void;
 }
 
-export default function PurchaseNumericFilter({ filters, setFilters }: Props) {
-  const [min, setMin] = useState(filters.totalMin?.toString() ?? "");
-  const [max, setMax] = useState(filters.totalMax?.toString() ?? "");
+export default function InvoiceNumericFilter({ filters, setFilters }: Props) {
+  const [min, setMin] = useState(filters.fromTotal?.toString() ?? "");
+  const [max, setMax] = useState(filters.toTotal?.toString() ?? "");
 
   const debouncedMin = useDebounce(min, 500);
   const debouncedMax = useDebounce(max, 500);
 
   useEffect(() => {
+    // Si el valor es vacío, lo consideramos undefined
     const totalMin = debouncedMin !== "" ? Number(debouncedMin) : undefined;
     const totalMax = debouncedMax !== "" ? Number(debouncedMax) : undefined;
 
-    if (filters.totalMin !== totalMin || filters.totalMax !== totalMax) {
+    if (filters.fromTotal !== totalMin || filters.toTotal !== totalMax) {
       setFilters({
         ...filters,
-        totalMin,
-        totalMax,
+        fromTotal: totalMin,
+        toTotal: totalMax,
       });
     }
   }, [debouncedMin, debouncedMax]);
@@ -40,7 +41,7 @@ export default function PurchaseNumericFilter({ filters, setFilters }: Props) {
           type="formattedNumber"
           value={min}
           placeholder="Ejemplo: 100.000"
-          onChange={(e) => setMin(e.target.value)}
+          onChange={(e) => setMin(e.target.value)} // Mantenemos el valor vacío si el campo se borra
           className="w-full border px-3 py-2 rounded"
         />
       </div>
@@ -52,7 +53,7 @@ export default function PurchaseNumericFilter({ filters, setFilters }: Props) {
           type="formattedNumber"
           value={max}
           placeholder="Ejemplo: 1.000.000"
-          onChange={(e) => setMax(e.target.value)}
+          onChange={(e) => setMax(e.target.value)} // Mantenemos el valor vacío si el campo se borra
           className="w-full border px-3 py-2 rounded"
         />
       </div>

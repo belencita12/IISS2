@@ -4,14 +4,14 @@ import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Product } from "@/lib/products/IProducts";
 import { Badge } from "@/components/ui/badge";
+import { getCategoryLabel } from "@/lib/products/utils/categoryLabel";
 
 interface ProductCardProps {
   product: Product;
-  stock: number;
   onClick: (id: string) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, stock, onClick }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
   return (
     <Card
       className="overflow-hidden mb-4 cursor-pointer hover:shadow-md transition-shadow"
@@ -33,34 +33,34 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, stock, onClick }) =>
             </div>
           )}
         </div>
-        <div className="flex-1">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
-            <div className="col-span-1 md:col-span-3">
-              <h3 className="text-lg font-semibold">{product.name}</h3>
+        <div className="flex-1 min-w-0">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 mb-4">
+            <div className="col-span-1 sm:col-span-2 md:col-span-3">
+              <h3 className="text-lg font-semibold break-words">{product.name}</h3>
             </div>
-            <div className="col-span-1 flex flex-wrap gap-1 items-center">
+            <div className="col-span-1 flex flex-wrap gap-1 items-start min-w-0">
               {product.tags?.map((tag, index) => (
                 <Badge
                   key={index}
                   variant="outline"
-                  className="px-2 py-1 text-sm text-gray-500 font-normal"
+                  className="px-2 py-1 text-sm text-gray-500 font-normal break-words"
                 >
                   #{tag}
                 </Badge>
               ))}
             </div>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             <div className="flex flex-col">
               <p className="text-sm text-gray-500">Código</p>
               <p className="text-sm text-gray-500 mt-2">Proveedor</p>
               <p className="text-sm text-gray-500 mt-2">Categoría</p>
               <p className="text-sm text-gray-500 mt-2">Precio Unitario</p>
             </div>
-            <div className="flex flex-col">
-              <p className="text-sm">{product.code}</p>
-              <p className="text-sm mt-2">La Mascota S.A.</p>
-              <p className="text-sm mt-2">{product.category}</p>
+            <div className="flex flex-col min-w-0">
+              <p className="text-sm break-words">{product.code}</p>
+              <p className="text-sm mt-2 break-words">La Mascota S.A.</p>
+              <p className="text-sm mt-2 break-words">{getCategoryLabel(product.category)}</p>
               <p className="text-sm mt-2">{product.price.toLocaleString()} Gs</p>
             </div>
             <div className="flex flex-col">
@@ -69,7 +69,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, stock, onClick }) =>
             </div>
             <div className="flex flex-col">
               <p className="text-sm">{product.cost?.toLocaleString()} Gs</p>
-              <p className="text-sm mt-2">{stock}</p>
+              <p className="text-sm mt-2">{product.quantity}</p>
             </div>
           </div>
         </div>

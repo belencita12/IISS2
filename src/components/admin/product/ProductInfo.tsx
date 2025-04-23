@@ -1,7 +1,9 @@
+"use client";
 import React from "react";
 import { Product } from "@/lib/products/IProducts";
 import { StockDetailsData } from "@/lib/stock/IStock";
-import { Badge } from "@/components/ui/badge"
+import { Badge } from "@/components/ui/badge";
+import { getCategoryLabel } from "@/lib/products/utils/categoryLabel";
 
 interface ProductInfoProps {
   product: Product;
@@ -9,16 +11,10 @@ interface ProductInfoProps {
   isStockLoading?: boolean;
 }
 
-const ProductInfo: React.FC<ProductInfoProps> = ({ 
-  product, 
-  stockDetails, 
-  isStockLoading = false 
+const ProductInfo: React.FC<ProductInfoProps> = ({
+  product,
+  isStockLoading = false,
 }) => {
-  // Calcular stock total
-  const totalStock = stockDetails 
-    ? stockDetails.reduce((acc, detail) => acc + detail.amount, 0)
-    : 0;
-
   return (
     <div className="space-y-2">
       {[
@@ -29,9 +25,9 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
           label: "Cantidad", 
           value: isStockLoading 
             ? "Cargando..." 
-            : totalStock.toString()
+            : product.quantity.toString(),
         },
-        { label: "Categoría", value: product.category },
+        { label: "Categoría", value: getCategoryLabel(product.category) },
       ].map(({ label, value }) => (
         <div key={label} className="flex">
           <span className="text-gray-600 w-24">{label}:</span>
