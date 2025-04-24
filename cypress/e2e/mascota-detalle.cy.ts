@@ -64,12 +64,12 @@ describe("Register Pet", () => {
 
     cy.wait("@getSpecies", TIMEOUT).then((int) => {
       const response = int.response;
-      if (response) {
-        expect(response.statusCode).to.eq(200);
-        cy.get("button[id=animalType]").click();
-        cy.get('div[role="listbox"] div').first().click();
-      }
-    });
+      expect(response?.statusCode).to.eq(200);
+      cy.get("button#animalType").click();
+      cy.get('div[role="listbox"] div')
+        .contains("Canino")
+        .click();
+    });    
 
     cy.wait("@getRaces", TIMEOUT).then((int) => {
       const response = int.response;

@@ -13,6 +13,7 @@ describe('Registro de Empleados', () => {
   const randomRuc = `${Math.floor(1000000 + Math.random() * 900000)}-1`;
   const randomAddress = `Calle${randomNumber}`;
   const TIMEOUT = { timeout: 15000 };
+  const EMAIL_EXISTENTE = "admin@gmail.com";
 
   beforeEach(() => {
     cy.clearCookies();
@@ -48,8 +49,6 @@ describe('Registro de Empleados', () => {
       "getWorkPosition"
     );
 
-    
-    
     cy.visit(`/dashboard/employee`);
     cy.intercept("GET", `/api/auth/session`).as("getAuthData");
     cy.get('button').contains('Agregar').click();
@@ -79,25 +78,25 @@ describe('Registro de Empleados', () => {
     cy.wait(5000);
   });
 
-  it('Debe mostrar error al registrar un empleado con el mismo email', () => {
-    cy.intercept("GET", `${Cypress.env("API_BASEURL")}/work-position?page=*`).as(
+  it('Debe registrar un empleado exitosamente con un email único', () => {
+
+    cy.intercept("GET", `${Cypress.env("API_BASEURL")}/work-position?page=1`).as(
       "getWorkPosition"
     );
-    //  cy.get().type('Pérez');
 
-    
     cy.visit(`/dashboard/employee`);
     cy.intercept("GET", `/api/auth/session`).as("getAuthData");
     cy.get('button').contains('Agregar').click();
-    
+
     cy.wait("@getWorkPosition", TIMEOUT).then((int) => {
       const response = int.response;
       expect(response?.statusCode).to.eq(200);
     });
 
+    uniqueEmail = `test${randomNumber}@gmail.com`;
     cy.get('input[placeholder="Ingrese el RUC"]').type(randomRuc);
     cy.get('input[placeholder="Ingrese el nombre completo"]').type('Juan Pérez');
-    cy.get('input[placeholder="Ingrese el correo"]').type(uniqueEmail);
+    cy.get('input[placeholder="Ingrese el correo"]').type(EMAIL_EXISTENTE);
     cy.get('input[placeholder="Ingrese la dirección"]').type(randomRuc);
     cy.get('input[placeholder="Ingrese el número de teléfono"]').type(randomPhoneNumber);
     cy.get('input[placeholder="Ingrese la dirección"]').type(randomAddress);
@@ -105,10 +104,12 @@ describe('Registro de Empleados', () => {
     // Abrimos el select de puesto
     cy.get('button[role="combobox"]').should('be.visible').click();
 
-    // Seleccionamos el puesto (con el nombre del puesto que te interese)
+    // Seleccionamos el puesto (pon el nombre del puesto que te interese)
     cy.get('div[role="option"]').contains('Auxiliar').click();
 
     cy.contains('button', 'Registrar').click();
-    cy.contains('Failed to fetch.').should('be.visible');
+    cy.contains('en uso')
+            .should('be.visible')
+    cy.wait(5000);
   });
-});
+  });

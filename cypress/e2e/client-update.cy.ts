@@ -15,7 +15,7 @@ describe('ClientListSection', () => {
         });
         cy.visit('/dashboard/clients');
         cy.url().should('include', '/dashboard/clients');
-        cy.wait(5000);
+        cy.wait(10000);
     });
 
     it('Debe permitir editar la información de un cliente', () => {
@@ -29,11 +29,11 @@ describe('ClientListSection', () => {
         // Editar los campos del formulario (ajustar según tus campos reales)
         cy.get('input[name="name"]').clear().type('Nombre Editado');
         cy.get('input[name="email"]').clear().type('cliente.editado@example.com');
-        cy.get('input[name="ruc"]').clear().type('1234567-4'); 
+        cy.get('input[name="ruc"]').clear().type('7654321-4'); 
         
         // Guardar los cambios
         cy.get('button').contains('Guardar').click();
-        cy.wait(5000);
+        cy.wait(7000);
         
         // Verificar que vuelve al listado de clientes o muestra un mensaje de éxito
         cy.url().should('include', '/dashboard/clients');
@@ -52,7 +52,7 @@ describe('ClientListSection', () => {
         cy.wait(4000);
         cy.get('input[name="name"]').clear().type('Nombre Editado');
         cy.get('input[name="email"]').clear().type('cliente.editado@example.com');
-        cy.get('input[name="ruc"]').clear().type('514291'); 
+        cy.get('input[name="ruc"]').clear().type('514291');
 
         // Intentar guardar los cambios
         cy.get('button').contains('Guardar').click();

@@ -76,11 +76,11 @@ describe("Página de Lista de Productos", () => {
     cy.contains("p", "Productos").click();
     cy.wait(3000);
     cy.get('input[placeholder="Buscar por código o nombre del producto"]').type(
-      "prod-1744674339966-2973"
+      "prod-1745357847928-913"
     );
     cy.wait(3000);
     cy.get('div[class*="bg-card"]').should("have.length", 1);
-    cy.contains("Comida para loro").should("exist");
+    cy.contains("Pelota para perro").should("exist");
     cy.get('input[placeholder="Buscar por código o nombre del producto"]').clear();
     cy.wait(3000);
   });
