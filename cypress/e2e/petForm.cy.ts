@@ -5,9 +5,9 @@ describe('Registrar Mascota con PetForm', () => {
   const BASE_URL = Cypress.env("API_BASEURL");
 
   const PET_MOCK = {
-    name: "Mili2",
+    name: "Mililo",
     birthDate: "2023-01-01",
-    weight: "123.5",
+    weight: "13.5",
     gender: "Macho",
   };
 
@@ -100,7 +100,7 @@ describe('Registrar Mascota con PetForm', () => {
     cy.wait("@registerPet").then((interception) => {
       expect(interception.response?.statusCode).to.eq(201);
   
-      const requestBody = interception.request.body;
+      //const requestBody = interception.request.body;
       // Verifica el requestBody si no es multipart/form-data
       // expect(requestBody.name).to.eq(petData.name);
     });

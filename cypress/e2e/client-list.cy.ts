@@ -31,18 +31,18 @@ describe('ClientListSection', () => {
 
 
     it('Debe buscar clientes correctamente filtrandolos por nombre', () => {
-        cy.get('.relative > .flex').type('Zully Toledo');
+        cy.get('.relative > .flex').type('Makiko Yamamoto');
         //cy.get('button').contains('Buscar').click();
         cy.wait(5000);
-        cy.get('table tbody tr').should('contain', 'Zully Toledo');
+        cy.get('table tbody tr').should('contain', 'Makiko Yamamoto');
     });
 
 
     it('Debe buscar clientes correctamente filtrando por correo', () => {
-        cy.get('.relative > .flex').type('julio.pereira@gmail.com');
+        cy.get('.relative > .flex').type('jose@gmail.com');
         //cy.get('button').contains('Buscar').click();
         cy.wait(5000);
-        cy.get('table tbody tr').should('contain', 'julio.pereira@gmail.com');
+        cy.get('table tbody tr').should('contain', 'jose@gmail.com');
     });
 
 
@@ -60,15 +60,15 @@ describe('ClientListSection', () => {
 
     it('Debe verificar la paginación', () => {
         cy.get(':nth-child(4) > .inline-flex').click();
-        cy.wait(2000); 
+        cy.wait(5000); 
         cy.get('table tbody tr').should('exist');
 
         cy.get(':nth-child(1) > .inline-flex').click();
-        cy.wait(2000);
+        cy.wait(5000);
         cy.get('table tbody tr').should('exist');
 
         cy.get('.flex > :nth-child(7)').click();
-        cy.wait(2000);
+        cy.wait(5000);
         cy.get('table tbody tr').should('exist');
       
 
