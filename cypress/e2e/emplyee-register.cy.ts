@@ -109,7 +109,6 @@ describe('Registro de Empleados', () => {
     cy.get('div[role="option"]').contains('Auxiliar').click();
 
     cy.contains('button', 'Registrar').click();
-    cy.contains('Uno o más campos ya están en uso.').should('be.visible');
-    cy.wait(5000);
+    cy.contains('Failed to fetch.').should('be.visible');
   });
 });

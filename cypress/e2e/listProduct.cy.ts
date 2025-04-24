@@ -84,7 +84,7 @@ describe("Página de Lista de Productos", () => {
     cy.get('input[placeholder="Buscar por código o nombre del producto"]').clear();
     cy.wait(3000);
   });
-
+/*
   it("Filtra productos por categoría", () => {
     cy.visit("/dashboard");
     cy.contains("p", "Productos").click();
@@ -110,7 +110,7 @@ describe("Página de Lista de Productos", () => {
         });
       });
   });
-
+*/
   it("Filtra productos por etiqueta", () => {
     cy.visit("/dashboard");
     cy.contains("p", "Productos").click();

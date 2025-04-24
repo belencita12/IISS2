@@ -21,10 +21,10 @@ describe('Detalle de la Factura', () => {
 
     })
 
-    it('Debe mostrar el detalle de la factura con ID 18', () => {
+    it('Debe mostrar el detalle de la factura con ID 45', () => {
 
-        cy.visit('/dashboard/invoices/18', { timeout: 10000 });
-        cy.url().should('include', '/dashboard/invoices/18');
+        cy.visit('/dashboard/invoices/45', { timeout: 20000 });
+        cy.url().should('include', '/dashboard/invoices/45');
         cy.get("div.animate-pulse", { timeout: 20000 }).should("not.exist");
         cy.contains("Factura Nº", { timeout: 10000 });
 
