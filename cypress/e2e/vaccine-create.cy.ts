@@ -45,10 +45,10 @@ describe('Crear Vacunas', () => {
         cy.get('input[placeholder="Ingrese el costo"]').type('1000');
         cy.get('input[placeholder="Ingrese el IVA"]').type('10');
         cy.get('input[placeholder="Ingrese el precio"]').type('1500');
-        cy.get('input[placeholder="Buscar especie..."]').type("Perro");
-        cy.get('div[class="p-2 hover:bg-gray-100 cursor-pointer"]:contains("Perro")').click();
-        cy.get('input[placeholder="Buscar fabricante..."]').type("FabricanteTest11677");
-        cy.get('div[class="p-2 hover:bg-gray-100 cursor-pointer"]:contains("FabricanteTest11677")').click();
+        cy.get('input[placeholder="Buscar especie..."]').type("Canino");
+        cy.get('div[class="p-2 hover:bg-gray-100 cursor-pointer"]:contains("Canino")').click();
+        cy.get('input[placeholder="Buscar fabricante..."]').type("Nico Pets THE ORIGIN LABS");
+        cy.get('div[class="p-2 hover:bg-gray-100 cursor-pointer"]:contains("Nico Pets THE ORIGIN LABS")').click();
         
         cy.get('button').contains('Agregar Vacuna').click();
         cy.contains('Vacuna creada exitosamente')
