@@ -38,11 +38,11 @@ export default function PurchaseSelectFilter({
       const [providers, setProviders] = useState<Provider[]>([]);
 
       useEffect(() => {
-        getStocks({ page: 1 }, token)
+        getStocks({ page: 1, size: 100 }, token)
           .then((res) => setStocks(res.data))
           .catch((err:unknown) => toast("error", err instanceof Error ? err.message : "Error inesperado"));
 
-          getProviders(token, { page: 1 })
+          getProviders(token, { page: 1, size: 100 })
           .then((res) => setProviders(res.data))
           .catch((err) => toast("error", err instanceof Error ? err.message : "Error inesperado"));
       
