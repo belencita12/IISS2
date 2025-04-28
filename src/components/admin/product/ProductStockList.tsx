@@ -1,6 +1,7 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { StockDetailsData, StockData } from "@/lib/stock/IStock";
+import { useRouter } from "next/navigation";
 
 interface StockListProps {
   stockDetails: StockDetailsData[];
@@ -8,11 +9,13 @@ interface StockListProps {
   isLoading: boolean;
 }
 
-const ProductStockList: React.FC<StockListProps> = ({ 
-  stockDetails, 
-  stocks, 
-  isLoading 
-}) => {
+const ProductStockList: React.FC<StockListProps> = ({ stockDetails, stocks, isLoading }) => {
+  const router = useRouter();
+
+  const handleCardClick = (stockId: number) => {
+    router.push(`/dashboard/stock/${stockId}`);
+  };
+
   if (isLoading) {
     return <div className="text-center py-4">Cargando...</div>;
   }
@@ -30,9 +33,10 @@ const ProductStockList: React.FC<StockListProps> = ({
       {stockDetails.map((detail, index) => {
         const matchedStock = stocks.find((s) => s.id === detail.stockId);
         return matchedStock ? (
-          <Card 
-            key={`${matchedStock.id}-${index}`} 
+          <Card
+            key={`${matchedStock.id}-${index}`}
             className="mb-3 cursor-pointer hover:shadow-md transition-shadow"
+            onClick={() => matchedStock.id !== undefined && handleCardClick(matchedStock.id)}
           >
             <div className="flex p-3 justify-between items-center">
               <div className="flex flex-col">
