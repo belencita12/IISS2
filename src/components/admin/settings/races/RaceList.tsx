@@ -162,11 +162,14 @@ export default function RaceList({ token }: RaceListProps) {
             />
 
                 <Modal isOpen={isRaceModalOpen} onClose={closeRaceModal} title={editingRace ? "Editar Raza" : "Agregar Raza"}>
-                    <RaceForm 
-                        token={token || ""} 
-                        isOpen={isRaceModalOpen} 
-                        onClose={() => closeRaceModal(true)} 
-                        initialData={editingRace} 
+                <RaceForm 
+                    token={token || ""} 
+                    isOpen={isRaceModalOpen} 
+                    onClose={() => setIsRaceModalOpen(false)} 
+                    onSuccess={() => {
+                        loadRaces(pagination.currentPage);
+                    }}
+                    initialData={editingRace}
                     />
                 </Modal>
 
