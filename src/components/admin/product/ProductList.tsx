@@ -56,9 +56,12 @@ export default function ProductListPage({ token }: ProductListProps) {
     const tagProductIds = getFilteredProductIds();
 
     // Filtrar productos que coincidan con tags Y con otros filtros
-    const filteredByBoth = products.filter((product) => 
-      tagProductIds.has(product.id) && 
-      (inputFilters.category ? product.category === inputFilters.category : true)
+    const filteredByBoth = products.filter(
+      (product) =>
+        tagProductIds.has(product.id) &&
+        (inputFilters.category
+          ? product.category === inputFilters.category
+          : true)
     );
 
     // Recalcular paginación
@@ -74,7 +77,7 @@ export default function ProductListPage({ token }: ProductListProps) {
   }, [
     selectedTags,
     products,
-    inputFilters.category, 
+    inputFilters.category,
     getFilteredProductIds,
     recalculatePagination,
     tagPagination.currentPage,
@@ -87,13 +90,13 @@ export default function ProductListPage({ token }: ProductListProps) {
     } else {
       setCombinedProducts([]);
     }
-  }, [selectedTags, products, inputFilters.category, combineFilters]); 
+  }, [selectedTags, products, inputFilters.category, combineFilters]);
 
   const displayedProducts = useMemo(() => {
     if (selectedTags.length > 0) {
       return combinedProducts;
     }
-    return products; 
+    return products;
   }, [selectedTags, combinedProducts, products]);
 
   // Maneja el cambio de tags seleccionados
@@ -156,13 +159,15 @@ export default function ProductListPage({ token }: ProductListProps) {
       ) : displayedProducts.length === 0 ? (
         <p className="text-center py-4">No hay productos disponibles</p>
       ) : (
-        displayedProducts.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            onClick={handleCardClick}
-          />
-        ))
+        <div className="flex flex-wrap justify-between gap-y-4">
+          {displayedProducts.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              onClick={handleCardClick}
+            />
+          ))}
+        </div>
       )}
 
       <GenericPagination
