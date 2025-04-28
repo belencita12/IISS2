@@ -165,7 +165,7 @@ export default function RaceList({ token }: RaceListProps) {
                     <RaceForm 
                         token={token || ""} 
                         isOpen={isRaceModalOpen} 
-                        onClose={() => closeRaceModal(true)} // Ahora pasa true solo si se necesita actualizar
+                        onClose={() => closeRaceModal(true)} 
                         initialData={editingRace} 
                     />
                 </Modal>

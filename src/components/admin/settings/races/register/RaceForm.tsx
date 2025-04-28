@@ -102,7 +102,6 @@ return (
         {errors.speciesId && <p className="text-red-500">{errors.speciesId.message}</p>}
       </div>
       <div className="flex justify-end gap-4">
-        <Button type="button" variant="outline" onClick={onClose}>Cancelar</Button>
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? (initialData ? "Actualizando..." : "Registrando...") : (initialData ? "Actualizar" : "Registrar")}
         </Button>
