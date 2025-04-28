@@ -36,6 +36,7 @@ export default function PurchaseSelectFilter({
 
       const [stocks, setStocks] = useState<StockData[]>([]);
       const [providers, setProviders] = useState<Provider[]>([]);
+      
 
       useEffect(() => {
         getStocks({ page: 1, size: 100 }, token)
