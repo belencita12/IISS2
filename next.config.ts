@@ -2,10 +2,6 @@ import type { NextConfig } from "next";
 
 const securityHeaders = [
   {
-    key: "Content-Security-Policy",
-    value: "default-src 'self'; connect-src 'self' https://iiss2-backend-production.up.railway.app https://iiss2-backend-0q2e.onrender.com https://asnavagyfjmrbewjgasb.supabase.co; img-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'self';",
-  },
-  {
     key: "Strict-Transport-Security",
     value: "max-age=63072000; includeSubDomains; preload",
   },
@@ -34,7 +30,6 @@ const securityHeaders = [
     value: "",
   },
 ];
-
 
 const nextConfig: NextConfig = {
   images: {
