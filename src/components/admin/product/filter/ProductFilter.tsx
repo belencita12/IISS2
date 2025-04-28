@@ -56,8 +56,8 @@ export default function ProductFilters({
   return (
     <div className="flex flex-col w-full">
       {/* Fila 1: SearchBar (50%) y Categoría (50%) */}
-      <div className="flex flex-col sm:flex-row w-full gap-2">
-        <div className="w-full sm:w-1/2">
+      <div className="flex flex-col sm:flex-row w-full gap-4">
+        <div className="w-full sm:w-[70%]">
           <SearchBar
             onSearch={(query) => {
               setSearchInput(query);
@@ -68,7 +68,7 @@ export default function ProductFilters({
             placeholder="Buscar por código o nombre del producto"
           />
         </div>
-        <div className="w-full sm:w-1/2">
+        <div className="w-full sm:w-[30%]">
           <CategoryFilter
             category={filters.category}
             onCategoryChange={(category) =>
@@ -79,45 +79,45 @@ export default function ProductFilters({
         </div>
       </div>
 
-      {/* Fila 2: Solo filtro de Precio */}
-      <div className="w-full mb-3">
-        <NumericFilter
-          label="Precio"
-          minValue={filters.minPrice}
-          maxValue={filters.maxPrice}
-          onMinChange={(minPrice) =>
-            setFilters((prev) => ({ ...prev, minPrice }))
-          }
-          onMaxChange={(maxPrice) =>
-            setFilters((prev) => ({ ...prev, maxPrice }))
-          }
-          onClearMin={() => clearFilter("minPrice")}
-          onClearMax={() => clearFilter("maxPrice")}
-          preventInvalidKeys={preventInvalidKeys}
-        />
-      </div>
-
-      {/* Fila 3: Solo filtro de Costo */}
-      <div className="w-full mb-5">
-        <NumericFilter
-          label="Costo"
-          minValue={filters.minCost}
-          maxValue={filters.maxCost}
-          onMinChange={(minCost) =>
-            setFilters((prev) => ({ ...prev, minCost }))
-          }
-          onMaxChange={(maxCost) =>
-            setFilters((prev) => ({ ...prev, maxCost }))
-          }
-          onClearMin={() => clearFilter("minCost")}
-          onClearMax={() => clearFilter("maxCost")}
-          preventInvalidKeys={preventInvalidKeys}
-        />
+      {/* Fila 2: Filtros de Precio y Costo en la misma fila */}
+      <div className="w-full flex flex-col sm:flex-row gap-4 mb-5">
+        <div className="w-full sm:w-1/2">
+          <NumericFilter
+            label="Precio"
+            minValue={filters.minPrice}
+            maxValue={filters.maxPrice}
+            onMinChange={(minPrice) =>
+              setFilters((prev) => ({ ...prev, minPrice }))
+            }
+            onMaxChange={(maxPrice) =>
+              setFilters((prev) => ({ ...prev, maxPrice }))
+            }
+            onClearMin={() => clearFilter("minPrice")}
+            onClearMax={() => clearFilter("maxPrice")}
+            preventInvalidKeys={preventInvalidKeys}
+          />
+        </div>
+        <div className="w-full sm:w-1/2">
+          <NumericFilter
+            label="Costo"
+            minValue={filters.minCost}
+            maxValue={filters.maxCost}
+            onMinChange={(minCost) =>
+              setFilters((prev) => ({ ...prev, minCost }))
+            }
+            onMaxChange={(maxCost) =>
+              setFilters((prev) => ({ ...prev, maxCost }))
+            }
+            onClearMin={() => clearFilter("minCost")}
+            onClearMax={() => clearFilter("maxCost")}
+            preventInvalidKeys={preventInvalidKeys}
+          />
+        </div>
       </div>
 
       {/* Fila 4: TagFilter (50%) y área para mostrar etiquetas seleccionadas (50%) */}
       <div className="flex flex-col sm:flex-row sm:gap-4 w-full">
-        <div className="w-full sm:w-1/2">
+        <div className="w-full sm:w-[24%]">
           <TagFilter
             title="Etiqueta"
             selectedTags={selectedTags}
@@ -125,15 +125,9 @@ export default function ProductFilters({
             token={token}
           />
         </div>
-        <div className="w-full sm:w-1/2">
+        <div className="w-full sm:w-[74%]">
           {selectedTags.length > 0 && (
-            <div className="mt-1">
-              {/* <div className="flex items-center gap-2 mb-2">
-                <Tag className="h-4 w-4 text-blue-500" />
-                 <span className="text-sm font-medium text-gray-700">
-                  Etiquetas seleccionadas:
-                </span>
-              </div>*/}
+            <div className="mt-2">
               <div className="flex flex-wrap gap-2">
                 {selectedTags.map((tag) => (
                   <div

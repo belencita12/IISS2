@@ -16,7 +16,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
 
   return (
     <div
-      className="flex w-full max-w-[500px] min-w-[280px] h-[250px] m-2 rounded-lg shadow-md
+      className="flex w-full max-w-[550px] min-w-[280px] h-[250px] m-2 rounded-lg shadow-md
                     hover:shadow-lg transition-shadow duration-300 overflow-hidden
                     bg-white text-gray-900"
     >
