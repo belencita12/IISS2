@@ -26,9 +26,11 @@ interface RaceFormProps {
   isOpen: boolean;
   onClose: () => void;
   initialData?: Race | null;
+  onSuccess?: () => void; 
+
 }
 
-export const RaceForm = ({ token, isOpen, onClose, initialData }: RaceFormProps) => {
+export const RaceForm = ({ token, isOpen, onClose, initialData, onSuccess }: RaceFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [species, setSpecies] = useState<{ id: number; name: string }[]>([]);
 
@@ -71,6 +73,8 @@ const onSubmit = async (data: RaceFormValues) => {
       await registerRace({ name: data.name, speciesId: data.speciesId }, token);
       toast("success", "Raza registrada con éxito");
     }
+    if (onSuccess) onSuccess();
+  
     onClose();
   } catch (error: unknown) {
     if (error instanceof Error) {
