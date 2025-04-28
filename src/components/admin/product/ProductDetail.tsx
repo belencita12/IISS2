@@ -75,7 +75,7 @@ export default function ProductDetail({ token }: ProductDetailProps) {
       toast("error", error?.message || "Error al eliminar el producto");
     } else {
       toast("success", "Producto eliminado correctamente");
-      router.push("/dashboard/products");
+      router.back();
     }
     setIsDeleteModalOpen(false);
   };
