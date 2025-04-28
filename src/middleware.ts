@@ -4,7 +4,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  const response = NextResponse.next();
 
   // 1. 🔒 Proteger rutas del dashboard
   if (pathname.startsWith("/dashboard")) {
@@ -34,6 +33,12 @@ export async function middleware(req: NextRequest) {
 
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set('x-nonce', nonce);
+
+  const response = NextResponse.next({
+    request: { headers: requestHeaders },
+  }
+  );
+
 
   response.headers.set('Content-Security-Policy', csp);
   response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
