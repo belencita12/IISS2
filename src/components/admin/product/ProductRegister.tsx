@@ -6,8 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input"; // sigue usándose para texto y archivo
-import NumericInput from "@/components/global/NumericInput"; // 👈 tu componente personalizado
+import { Input } from "@/components/ui/input";
+import NumericInput from "@/components/global/NumericInput"; 
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import { registerProduct } from "@/lib/products/registerProduct";
@@ -106,8 +106,8 @@ export default function ProductRegisterForm({ token }: ProductRegisterFormProps)
       await registerProduct(formData, token);
       toast("success", "Producto registrado con éxito", {
         duration: 2000,
-        onAutoClose: () => router.push("/dashboard/products"),
-        onDismiss: () => router.push("/dashboard/products"),
+        onAutoClose: () => router.back(),
+        onDismiss: () => router.back(),
       });
     } catch {
       toast("error", "Hubo un error al registrar el producto");
@@ -236,7 +236,7 @@ export default function ProductRegisterForm({ token }: ProductRegisterFormProps)
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.push("/dashboard/products")}
+              onClick={() => router.back()}
             >
               Cancelar
             </Button>
