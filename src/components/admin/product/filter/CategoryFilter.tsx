@@ -1,8 +1,17 @@
 import React, { useState } from "react";
-import { ChevronsUpDown, X } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ChevronDown, X } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { Command, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
+import {
+  Command,
+  CommandGroup,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import { getCategoryLabel } from "@/lib/products/utils/categoryLabel";
 
 interface CategoryFilterProps {
@@ -18,24 +27,28 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
 
-
   return (
-    <div className="relative w-full max-w-[180px]">
+    <div className="relative w-full">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full p-2 text-sm rounded flex items-center justify-between"
+            className="w-full h-full p-[9px] text-sm rounded flex items-center justify-between"
           >
             <span className="truncate">
-            {category ? getCategoryLabel(category) : "Categoría"}
+              {category ? getCategoryLabel(category) : "Categoría"}
             </span>
-            <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+            <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[180px] p-0">
+
+        <PopoverContent
+          align="start"
+          sideOffset={0}
+          className="p-0 w-[var(--radix-popover-trigger-width)]"
+        >
           <Command>
             <CommandGroup>
               <CommandList>
@@ -71,7 +84,6 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
           </Command>
         </PopoverContent>
       </Popover>
-
 
       {category !== "" && (
         <button

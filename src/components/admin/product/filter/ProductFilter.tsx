@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { Tag, X } from "lucide-react";
 import SearchBar from "@/components/global/SearchBar";
 import { CategoryFilter } from "./CategoryFilter";
 import { NumericFilter } from "./NumericFilter";
@@ -48,36 +49,38 @@ export default function ProductFilters({
     setFilters
   );
 
+  const handleRemoveTag = (tag: string) => {
+    onTagsChange(selectedTags.filter((t) => t !== tag));
+  };
+
   return (
     <div className="flex flex-col w-full">
-      <div className="flex flex-col w-full sm:flex-row gap-2">
-        <SearchBar
-          onSearch={(query) => {
-            setSearchInput(query);
-            setFilters((prev) => ({ ...prev, searchTerm: query }));
-          }}
-          defaultQuery={searchInput}
-          debounceDelay={400}
-          placeholder="Buscar por código o nombre del producto"
-        />
+      {/* Fila 1: SearchBar (50%) y Categoría (50%) */}
+      <div className="flex flex-col sm:flex-row w-full gap-2">
+        <div className="w-full sm:w-1/2">
+          <SearchBar
+            onSearch={(query) => {
+              setSearchInput(query);
+              setFilters((prev) => ({ ...prev, searchTerm: query }));
+            }}
+            defaultQuery={searchInput}
+            debounceDelay={400}
+            placeholder="Buscar por código o nombre del producto"
+          />
+        </div>
+        <div className="w-full sm:w-1/2">
+          <CategoryFilter
+            category={filters.category}
+            onCategoryChange={(category) =>
+              setFilters((prev) => ({ ...prev, category }))
+            }
+            onClearCategory={() => clearFilter("category")}
+          />
+        </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between flex-wrap gap-4 sm:gap-6 mb-4 w-full">
-        <CategoryFilter
-          category={filters.category}
-          onCategoryChange={(category) =>
-            setFilters((prev) => ({ ...prev, category }))
-          }
-          onClearCategory={() => clearFilter("category")}
-        />
-
-        <TagFilter
-          title="Etiqueta"
-          selectedTags={selectedTags}
-          onChange={onTagsChange}
-          token={token}
-        />
-
+      {/* Fila 2: Solo filtro de Precio */}
+      <div className="w-full mb-3">
         <NumericFilter
           label="Precio"
           minValue={filters.minPrice}
@@ -92,7 +95,10 @@ export default function ProductFilters({
           onClearMax={() => clearFilter("maxPrice")}
           preventInvalidKeys={preventInvalidKeys}
         />
+      </div>
 
+      {/* Fila 3: Solo filtro de Costo */}
+      <div className="w-full mb-5">
         <NumericFilter
           label="Costo"
           minValue={filters.minCost}
@@ -107,6 +113,47 @@ export default function ProductFilters({
           onClearMax={() => clearFilter("maxCost")}
           preventInvalidKeys={preventInvalidKeys}
         />
+      </div>
+
+      {/* Fila 4: TagFilter (50%) y área para mostrar etiquetas seleccionadas (50%) */}
+      <div className="flex flex-col sm:flex-row sm:gap-4 w-full">
+        <div className="w-full sm:w-1/2">
+          <TagFilter
+            title="Etiqueta"
+            selectedTags={selectedTags}
+            onChange={onTagsChange}
+            token={token}
+          />
+        </div>
+        <div className="w-full sm:w-1/2">
+          {selectedTags.length > 0 && (
+            <div className="mt-1">
+              {/* <div className="flex items-center gap-2 mb-2">
+                <Tag className="h-4 w-4 text-blue-500" />
+                 <span className="text-sm font-medium text-gray-700">
+                  Etiquetas seleccionadas:
+                </span>
+              </div>*/}
+              <div className="flex flex-wrap gap-2">
+                {selectedTags.map((tag) => (
+                  <div
+                    key={tag}
+                    className="bg-blue-50 border border-blue-100 text-black text-xs font-medium px-2.5 py-1 rounded-md flex items-center gap-1.5 transition-colors hover:bg-blue-100"
+                  >
+                    <span>{tag}</span>
+                    <button
+                      onClick={() => handleRemoveTag(tag)}
+                      className="inline-flex items-center justify-center rounded-full w-4 h-4 bg-gray text-black hover:bg-blue-300 transition-colors"
+                      aria-label={`Eliminar etiqueta ${tag}`}
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
