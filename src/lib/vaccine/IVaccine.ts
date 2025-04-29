@@ -50,6 +50,19 @@ export interface Vaccine {
   };
 }
 
+// src/lib/vaccine/types.ts
+export interface VaccineFormValues {
+  id: number;
+  name: string;
+  manufacturer: Manufacturer;
+  species: Species;
+  cost: number;
+  iva: number;
+  price: number;
+  productImgUrl?: string;
+}
+
+
 export interface IVaccine {
   id: number;
   name: string;

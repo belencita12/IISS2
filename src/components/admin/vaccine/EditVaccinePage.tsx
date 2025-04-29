@@ -2,28 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "@/lib/toast";
-import VaccineForm from "@/components/admin/vaccine/NewVaccineForm"; 
+import VaccineForm from "@/components/admin/vaccine/NewVaccineForm";
 import { getVaccineById } from "@/lib/vaccine/getVaccineById";
-
-interface Manufacturer {
-  id: number;
-  name: string;
-}
-
-interface Species {
-  id: number;
-  name: string;
-}
-
-interface Vaccine {
-  id: number;
-  name: string;
-  manufacturer: Manufacturer;
-  species: Species;
-  cost: number;
-  iva: number;   
-  price: number;
-}
+import { VaccineFormValues } from "@/lib/vaccine/IVaccine";
+import { Loader2 } from "lucide-react";
 
 interface EditVaccinePageProps {
   token: string;
@@ -31,7 +13,9 @@ interface EditVaccinePageProps {
 }
 
 export default function EditVaccinePage({ token, id }: EditVaccinePageProps) {
-  const [vaccineData, setVaccineData] = useState<Vaccine | null>(null);
+  const [vaccineData, setVaccineData] = useState<VaccineFormValues | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -39,17 +23,19 @@ export default function EditVaccinePage({ token, id }: EditVaccinePageProps) {
 
     getVaccineById(token, Number(id))
       .then((data) => {
-        console.log("Datos de la vacuna (API):", data);
-
- 
-        const adaptedData = {
-          ...data,
-          iva: data.IVA,  
+        const adaptedData: VaccineFormValues = {
+          id: data.id,
+          name: data.name,
+          manufacturer: data.manufacturer,
+          species: data.species,
+          cost: Number(data.product.cost),
+          iva: Number(data.product.iva),
+          price: Number(data.product.price),
+          productImgUrl: data.product?.image?.previewUrl || "",
         };
-
-
         setVaccineData(adaptedData);
       })
+
       .catch((error) => {
         console.error(error);
         toast("error", "Error al cargar los datos de la vacuna");
@@ -57,7 +43,13 @@ export default function EditVaccinePage({ token, id }: EditVaccinePageProps) {
       .finally(() => setLoading(false));
   }, [token, id]);
 
-  if (loading) return <p>Cargando datos...</p>;
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-60">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+      </div>
+    );
+  
   if (!vaccineData) return <p>No se encontró la vacuna</p>;
 
   return <VaccineForm token={token} initialData={vaccineData} />;
