@@ -2,10 +2,13 @@ import type { NextConfig } from "next";
 
 const securityHeaders = [
   {
+<<<<<<< HEAD
     key: "Content-Security-Policy",
     value: "default-src 'self'; connect-src 'self' https://iiss2-backend-production.up.railway.app; img-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'self';",
   },
   {
+=======
+>>>>>>> 53e67935b693105e560d53abea21e63afcb9d588
     key: "Strict-Transport-Security",
     value: "max-age=63072000; includeSubDomains; preload",
   },
@@ -34,7 +37,6 @@ const securityHeaders = [
     value: "",
   },
 ];
-
 
 const nextConfig: NextConfig = {
   images: {

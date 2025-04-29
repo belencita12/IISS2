@@ -4,25 +4,53 @@ import { NextRequest, NextResponse } from "next/server";
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Proteger todas las rutas bajo `/dashboard`
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-  if (!token) {
-    return NextResponse.redirect(new URL("/login", req.url));
-  }
-
-  // Verificar el rol del usuario para rutas específicas
+  // 1. 🔒 Proteger rutas del dashboard
   if (pathname.startsWith("/dashboard")) {
-    console.log("Checking role for", pathname);
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
+    if (!token) {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
+
     if (!token.roles.includes("ADMIN")) {
-      console.log("Unauthorized access to", pathname);
       return NextResponse.redirect(new URL("/dashboard/unauthorized", req.url));
     }
   }
 
-  return NextResponse.next();
+  // 2. 🛡️ Aplicar CSP a TODAS las rutas
+  const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
+
+  const csp = `
+    default-src 'self';
+    connect-src 'self' https://iiss2-backend-production.up.railway.app https://asnavagyfjmrbewjgasb.supabase.co;
+    script-src 'self' 'nonce-${nonce}';
+    style-src 'self' 'unsafe-inline';
+    img-src 'self';
+    object-src 'none';
+    base-uri 'self';
+  `.replace(/\s{2,}/g, ' ').trim();
+
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set('x-nonce', nonce);
+
+  const response = NextResponse.next({
+    request: { headers: requestHeaders },
+  }
+  );
+
+
+  response.headers.set('Content-Security-Policy', csp);
+  response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('Referrer-Policy', 'no-referrer-when-downgrade');
+  response.headers.set('Permissions-Policy', 'geolocation=(), camera=(), microphone=()');
+  response.headers.set('x-nonce', nonce);
+
+  return response;
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
