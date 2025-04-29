@@ -15,7 +15,6 @@ import { toast } from "@/lib/toast";
 import { useFetch } from "@/hooks/api/useFetch";
 import { PRODUCT_API } from "@/lib/urls";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
-
 interface ProductDetailProps {
   token: string;
 }
@@ -29,7 +28,6 @@ export default function ProductDetail({ token }: ProductDetailProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  // Hook useFetch para DELETE
   const { delete: deleteReq, loading: isDelLoading } = useFetch<void, null>(
     PRODUCT_API,
     token,
@@ -42,35 +40,28 @@ export default function ProductDetail({ token }: ProductDetailProps) {
       return;
     }
 
-    const fetchData = async () => {
+    (async () => {
       try {
-        const [productData, stockResponse, stocksResponse] = await Promise.all([
+        const [productData, stockResp, stocksResp] = await Promise.all([
           getProductById(id as string, token),
           getStockDetails(id as string, token),
           getStocks({ page: 1, size: 100 }, token),
         ]);
         setProduct(productData);
-        setStockDetails(stockResponse.data);
-        setStocks(stocksResponse.data);
+        setStockDetails(stockResp.data);
+        setStocks(stocksResp.data);
       } catch (err) {
         toast("error", "No se pudo cargar la información del producto");
         console.error(err);
       } finally {
         setIsLoading(false);
       }
-    };
-
-    fetchData();
+    })();
   }, [id, token]);
 
   const handleConfirmDelete = async () => {
     if (!id) return;
-
-    const { ok, error } = await deleteReq(
-      null,
-      `${PRODUCT_API}/${id}`
-    );
-
+    const { ok, error } = await deleteReq(null, `${PRODUCT_API}/${id}`);
     if (!ok) {
       toast("error", error?.message || "Error al eliminar el producto");
     } else {
@@ -81,55 +72,31 @@ export default function ProductDetail({ token }: ProductDetailProps) {
   };
 
   if (isLoading) return <div className="text-center mt-8">Cargando...</div>;
-  if (!product)
-    return <div className="text-center mt-8">Producto no encontrado</div>;
+  if (!product) return <div className="text-center mt-8">Producto no encontrado</div>;
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <div className="flex flex-col md:flex-row justify-center items-start">
-        <div className="w-full md:w-1/3 flex justify-center mb-4 md:mb-0">
-          {product.image?.originalUrl ? (
-            <Image
-              src={product.image.originalUrl}
-              alt={product.name}
-              width={260}
-              height={260}
-              className="object-contain"
-            />
-          ) : (
-            <div className="w-64 h-64 bg-gray-200 flex items-center justify-center text-4xl font-bold">
-              {product.name.charAt(0).toUpperCase()}
-            </div>
-          )}
-        </div>
+    <>
+      <ProductInfo
+        product={product}
+        stockDetails={stockDetails}
+        isStockLoading={isLoading}
+      />
 
-        <div className="w-full md:w-2/3 md:pl-6 self-start mt-3">
-          <h1 className="text-2xl font-bold mb-4">{product.name}</h1>
-          <ProductInfo
-            product={product}
-            stockDetails={stockDetails}
-            isStockLoading={isLoading}
-          />
-          <div className="flex gap-4 mt-6 justify-center">
-            <Button
-              variant="outline"
-              onClick={() => setIsDeleteModalOpen(true)}
-              className="px-6"
-            >
-              Eliminar
-            </Button>
-
-            <Button
-              variant="outline"
-              onClick={() =>
-                router.push(`/dashboard/products/update/${product.id}`)
-              }
-              className="px-6"
-            >
-              Editar
-            </Button>
-          </div>
-        </div>
+      <div className="max-w-4xl mx-auto p-4 mt-6 flex gap-4 justify-center">
+        <Button
+          variant="outline"
+          onClick={() => setIsDeleteModalOpen(true)}
+          className="px-6"
+        >
+          Eliminar
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => router.push(`/dashboard/products/update/${product.id}`)}
+          className="px-6"
+        >
+          Editar
+        </Button>
       </div>
 
       <div className="mt-10 w-full">
@@ -154,6 +121,6 @@ export default function ProductDetail({ token }: ProductDetailProps) {
         cancelText="Cancelar"
         variant="danger"
       />
-    </div>
+    </>
   );
 }

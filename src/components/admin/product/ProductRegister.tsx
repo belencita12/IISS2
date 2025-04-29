@@ -19,6 +19,7 @@ const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 const productFormSchema = z.object({
   productName: z.string().min(1, "El nombre es obligatorio"),
+  description: z.string().optional(),
   cost: z.number({ message: "Complete con valores numéricos adecuados" }).min(1, "El costo debe ser mayor a 0"),
   price: z.number({ message: "Complete con valores numéricos adecuados" }).min(1, "El precio debe ser mayor a 0"),
   iva: z.number({ message: "Complete con valores numéricos adecuados" }).min(1, "El IVA debe ser mayor a 0"),
@@ -56,6 +57,7 @@ export default function ProductRegisterForm({ token }: ProductRegisterFormProps)
     resolver: zodResolver(productFormSchema),
     defaultValues: {
       productName: "",
+      description: "", 
       cost: undefined,
       price: undefined,
       iva: undefined,
@@ -100,6 +102,9 @@ export default function ProductRegisterForm({ token }: ProductRegisterFormProps)
     }).forEach(([key, value]) => formData.append(key, value.toString()));
 
     if (data.imageFile) formData.append("productImg", data.imageFile);
+    if (data.description) {
+      formData.append("description", data.description);
+    }    
     setIsSubmitting(true);
 
     try {
@@ -130,6 +135,17 @@ export default function ProductRegisterForm({ token }: ProductRegisterFormProps)
             />
             {errors.productName && (
               <p className="text-red-500">{errors.productName.message}</p>
+            )}
+          </div>
+
+          <div>
+            <Label>Descripción (opcional)</Label>
+            <Input
+              {...register("description")}
+              placeholder="Ingrese una descripción del producto"
+            />
+            {errors.description && (
+              <p className="text-red-500">{errors.description.message}</p>
             )}
           </div>
 
