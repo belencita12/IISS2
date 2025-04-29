@@ -1,6 +1,5 @@
 "use client";
-
-import { Check, ChevronDown, X } from "lucide-react";
+import { Check, ChevronsUpDown, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,7 +28,7 @@ interface TagFilterProps {
 }
 
 export function TagFilter({
-  title = "Tags",
+  title = "Etiqueta",
   selectedTags,
   onChange,
   className,
@@ -68,7 +67,7 @@ export function TagFilter({
   };
 
   return (
-    <div className={cn("w-full relative", className)}>
+    <div className={cn("w-full max-w-[180px] relative", className)}>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -76,23 +75,15 @@ export function TagFilter({
             role="combobox"
             aria-expanded={open}
             className={cn(
-              "w-full h-full p-[9px] text-sm rounded flex items-center justify-between",
+              "w-full p-2 text-sm rounded flex items-center justify-between",
               className
             )}
           >
             <span className="truncate">{title}</span>
-            <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
+            <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-
-        <PopoverContent
-          side="bottom"
-          align="start"
-          sideOffset={0}
-          avoidCollisions={false}
-          collisionPadding={0}
-          className="p-0 w-[var(--radix-popover-trigger-width)]"
-        >
+        <PopoverContent className="w-[180px] p-0">
           <Command>
             {/* SearchBar con la X oculta */}
             <div className="flex items-center border-b px-2 pt-2">
@@ -102,6 +93,7 @@ export function TagFilter({
                   placeholder="Buscar"
                   debounceDelay={400}
                   defaultQuery={searchQuery}
+                  
                 />
               </div>
             </div>

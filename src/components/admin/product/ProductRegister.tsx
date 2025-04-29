@@ -6,8 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input"; // sigue usándose para texto y archivo
-import NumericInput from "@/components/global/NumericInput"; // 👈 tu componente personalizado
+import { Input } from "@/components/ui/input";
+import NumericInput from "@/components/global/NumericInput"; 
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import { registerProduct } from "@/lib/products/registerProduct";
@@ -57,7 +57,7 @@ export default function ProductRegisterForm({ token }: ProductRegisterFormProps)
     resolver: zodResolver(productFormSchema),
     defaultValues: {
       productName: "",
-      description: "", 
+      description: "",
       cost: undefined,
       price: undefined,
       iva: undefined,
@@ -92,6 +92,9 @@ export default function ProductRegisterForm({ token }: ProductRegisterFormProps)
     }
 
     const formData = new FormData();
+    if (data.description) {
+      formData.append("description", data.description);
+    }
     Object.entries({
       name: data.productName,
       cost: data.cost,
@@ -102,17 +105,14 @@ export default function ProductRegisterForm({ token }: ProductRegisterFormProps)
     }).forEach(([key, value]) => formData.append(key, value.toString()));
 
     if (data.imageFile) formData.append("productImg", data.imageFile);
-    if (data.description) {
-      formData.append("description", data.description);
-    }    
     setIsSubmitting(true);
 
     try {
       await registerProduct(formData, token);
       toast("success", "Producto registrado con éxito", {
         duration: 2000,
-        onAutoClose: () => router.push("/dashboard/products"),
-        onDismiss: () => router.push("/dashboard/products"),
+        onAutoClose: () => router.back(),
+        onDismiss: () => router.back(),
       });
     } catch {
       toast("error", "Hubo un error al registrar el producto");
@@ -137,9 +137,8 @@ export default function ProductRegisterForm({ token }: ProductRegisterFormProps)
               <p className="text-red-500">{errors.productName.message}</p>
             )}
           </div>
-
           <div>
-            <Label>Descripción (opcional)</Label>
+            <Label>Descripción</Label>
             <Input
               {...register("description")}
               placeholder="Ingrese una descripción del producto"
@@ -148,7 +147,6 @@ export default function ProductRegisterForm({ token }: ProductRegisterFormProps)
               <p className="text-red-500">{errors.description.message}</p>
             )}
           </div>
-
           {/* Costo */}
           <div>
             <Label>Costo</Label>
@@ -252,7 +250,7 @@ export default function ProductRegisterForm({ token }: ProductRegisterFormProps)
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.push("/dashboard/products")}
+              onClick={() => router.back()}
             >
               Cancelar
             </Button>
