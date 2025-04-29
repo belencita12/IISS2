@@ -258,17 +258,16 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
                 {previewImage ? "Cambiar imagen" : "Subir imagen del producto"}
               </Label>
               {previewImage && (
-                <div className="mt-4">
+                <div className="w-1/2 mt-4">
                   <Image
                     src={previewImage}
+                    className="w-full h-auto rounded-md"
                     alt="Vista previa del producto"
-                    width={160} 
-                    height={160}
-                    className="rounded-md object-contain"
+                    width={200}
+                    height={200}
                     priority
                   />
-              </div>
-              
+                </div>
               )}
               {errors.imageFile && (
                 <p className="text-red-500 text-sm mt-2">
