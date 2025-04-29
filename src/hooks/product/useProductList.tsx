@@ -99,24 +99,31 @@ export function useProductList(token: string) {
         let totalItems = data.total;
         let totalPages = data.totalPages;
 
-        // BLOQUE DE FILTRADO LOCAL POR NOMBRE: Si existe término de búsqueda y no buscamos por código, aplico filtrado local sobre el array devuelto.
+        // FILTRADO LOCAL POR NOMBRE ACROSS ALL PAGES
         if (term && !preparedParams.code) {
-          const norm = normalizeText(term); // Normalizamos texto de búsqueda para evitar diferencias por acentos o mayúsculas
-          filteredProducts = filteredProducts.filter(p => // Filtramos productos cuyo nombre normalizado incluya el término
+          // Trae todos los productos sin paginar (asumiendo un límite alto)
+          const fullData: ProductResponse = await getProducts(
+            { ...preparedParams, page: 1, size: 10000 },
+            token
+          );
+
+          const norm = normalizeText(term);
+          const allMatching = fullData.data.filter(p =>
             normalizeText(p.name).includes(norm)
           );
 
-          totalItems = filteredProducts.length;
+          totalItems = allMatching.length;
           totalPages =
             totalItems > 0
               ? Math.ceil(totalItems / pagination.pageSize)
               : 1;
 
-          filteredProducts = filteredProducts.slice(
+          filteredProducts = allMatching.slice(
             (page - 1) * pagination.pageSize,
             page * pagination.pageSize
           );
         }
+
 
         setPagination({
           currentPage: page,
