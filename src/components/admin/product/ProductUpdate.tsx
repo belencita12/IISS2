@@ -280,8 +280,8 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
                     src={previewImage}
                     className="w-full h-auto rounded-md"
                     alt="Vista previa del producto"
-                    width={600}
-                    height={600}
+                    width={200}
+                    height={200}
                     priority
                   />
                 </div>
