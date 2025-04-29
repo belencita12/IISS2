@@ -19,6 +19,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
     <div className="space-y-2">
       {[
         { label: "Código", value: product.code },
+        { label: "Descripción", value: product.description },
         { label: "Precio", value: `${product.price?.toLocaleString()} Gs` },
         { label: "Costo", value: `${product.cost?.toLocaleString()} Gs` },
         { 

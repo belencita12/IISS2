@@ -63,6 +63,15 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
                 </CommandItem>
                 <CommandItem
                   onSelect={() => {
+                    onCategoryChange("SERVICE");
+                    setOpen(false);
+                  }}
+                  className="px-4 py-2"
+                >
+                  Servicio
+                </CommandItem>
+                <CommandItem
+                  onSelect={() => {
                     onCategoryChange("PRODUCT");
                     setOpen(false);
                   }}
