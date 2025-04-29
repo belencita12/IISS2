@@ -8,6 +8,7 @@ describe("Formulario de Edición de Empleados", () => {
     const RUC_EXISTENTE = "12345678-0";
     const EMAIL_EXISTENTE = "admin@gmail.com";
     const NEW_PHONE = `+595971${Math.floor(100000 + Math.random() * 900000)}`;
+    const NEW_EMAIL= "marcia@gmail.com";
 
     beforeEach(() => {
         cy.clearCookies();
@@ -64,10 +65,11 @@ describe("Formulario de Edición de Empleados", () => {
         cy.contains("uso").should("be.visible");
     });
 
-    it("Debe actualizar el teléfono correctamente", () => {
+    it("Debe actualizar correctamente", () => {
+        cy.get('input[placeholder="Correo electrónico"]').clear().type(NEW_EMAIL);
         cy.get('input[placeholder="Teléfono"]').clear().type(NEW_PHONE);
         cy.get("button").contains("Actualizar Empleado").click();
-        cy.wait(3000);
+        cy.wait(5000);
         cy.contains("Empleado actualizado correctamente", { timeout: 10000 }).should("be.visible");
     });
 });

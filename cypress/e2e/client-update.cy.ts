@@ -27,9 +27,9 @@ describe('ClientListSection', () => {
         cy.url().should('match', /\/dashboard\/clients\/\d+\/edit/);
         cy.wait(5000);
         // Editar los campos del formulario (ajustar según tus campos reales)
-        cy.get('input[name="name"]').clear().type('Nombre Editado');
-        cy.get('input[name="email"]').clear().type('cliente.editado@example.com');
-        cy.get('input[name="ruc"]').clear().type('7654321-4'); 
+        cy.get('input[name="name"]').clear().type('Editado');
+        cy.get('input[name="email"]').clear().type('cliente@example.com');
+        cy.get('input[name="ruc"]').clear().type('4562314-4'); 
         
         // Guardar los cambios
         cy.get('button').contains('Guardar').click();
@@ -40,8 +40,8 @@ describe('ClientListSection', () => {
         cy.contains('Cliente actualizado con éxito');
 
         // Verificar que los datos editados están en la tabla
-        cy.get('table').should('contain', 'Nombre Editado');
-        cy.get('table').should('contain', 'cliente.editado@example.com');
+        cy.get('table').should('contain', 'Editado');
+        cy.get('table').should('contain', 'cliente@example.com');
     });
 
     it('Debe mostrar error si el RUC tiene un formato inválido', () => {

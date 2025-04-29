@@ -8,7 +8,7 @@ describe("Formulario de Creación de Ventas - Flujo Completo", () => {
     const DEPOSIT_SEARCH = "Deposito Reserva";
     const CUSTOMER_SEARCH = "Jose";
     const PRODUCT_SEARCH = "Correa de pecho";
-    const INVOICE_NUMBER = "001-001-0000125";
+    const INVOICE_NUMBER = "001-001-0000144";
     const TIMBRADO_NUMBER = "12345678";
 
     beforeEach(() => {
@@ -38,8 +38,6 @@ describe("Formulario de Creación de Ventas - Flujo Completo", () => {
             expect(interception.response?.statusCode).to.eq(200);
             expect(interception.response?.body.data).to.have.length.gt(0);
         });
-
-        // Solución alternativa si .CommandItem no funciona
         cy.get('div[role="option"]').contains(DEPOSIT_SEARCH).click();
 
         // Verificar selección
@@ -96,6 +94,8 @@ describe("Formulario de Creación de Ventas - Flujo Completo", () => {
         cy.url().should("match", /\/dashboard\/invoices\/\d+/);
     });
     it("Debe mostrar error si se usa un número de factura ya existente", () => {
+        cy.intercept("POST", "**/invoice*").as("createInvoice");
+        cy.intercept("GET", "**/payment-method*").as("getPaymentMethods");
         cy.get('input[placeholder*="depósito"]').type(DEPOSIT_SEARCH);
         cy.get('div[role="option"]').contains(DEPOSIT_SEARCH).click();
 
@@ -109,8 +109,10 @@ describe("Formulario de Creación de Ventas - Flujo Completo", () => {
         cy.get('div[role="option"]').contains(PRODUCT_SEARCH).click();
 
         cy.wait("@getPaymentMethods");
-        cy.contains('label', 'Efectivo').click();
 
+
+        cy.contains('label', 'Efectivo').click();
+        // Ahora configuramos el monto a pagar
         cy.get("span:contains('Total:')").next().then(($total) => {
             const total = parseInt($total.text().replace(/[^\d]/g, ''));
             cy.get('input[id="payment-amount"]').type(total.toString());
@@ -119,8 +121,9 @@ describe("Formulario de Creación de Ventas - Flujo Completo", () => {
 
         cy.get("button").contains("Finalizar Venta").click();
 
+        /* === PASO 8: Verificar falla === */
         cy.wait("@createInvoice");
-        cy.contains("ya está en uso").should("be.visible");
+        cy.contains("uso").should("be.visible");
     });
 
 

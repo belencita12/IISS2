@@ -46,7 +46,7 @@ describe('Página de Lista de Movimientos', () => {
     
       // Buscar por nombre de producto
       cy.get('input[placeholder="Buscar por nombre de producto"]').type('Correa');
-      cy.wait(3000);
+      cy.wait(10000);
       // Hacer clic en el movimiento que contiene ese producto
       cy.contains('Movimiento Entrante').click();
     

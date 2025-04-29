@@ -87,7 +87,7 @@ describe('Registrar Mascota con PetForm', () => {
     cy.contains("button", "Macho").click();
 
     // Subir imagen de perfil
-    const imagePath = "images/perroG.png"; // imagen desde la carpeta cypress/fixtures/images
+    const imagePath = "images/gato1.png"; // imagen desde la carpeta cypress/fixtures/images
     cy.get('input[type="file"]').selectFile(`cypress/fixtures/${imagePath}`, {
       force: true,
     });
@@ -143,17 +143,21 @@ describe('Registrar Mascota con PetForm', () => {
     cy.log('Navegar a la página de agregar mascota sin imagen');
     cy.contains('button', 'Agregar Mascota').click();
 
-    cy.wait("@getSpecies", TIMEOUT);
-    cy.wait(3000);
+    cy.wait("@getSpecies", TIMEOUT).then((int) => {
+      const response = int.response;
+      expect(response?.statusCode).to.eq(200);
+    });
+    cy.wait(5000);
+
 
     cy.get("input[name='petName']").type(`${PET_MOCK.name} sinfoto`);
     cy.get("input[name='birthDate']").type(`2023-02-01`);
     cy.get("input[name='weight']").type(`14`);
 
     cy.get("button#animalType").click();
-    cy.get('div[role="listbox"] div').first().click();
-
-
+    cy.get('div[role="listbox"] div')
+      .contains("Canino")
+      .click();
     cy.wait("@getRaces", TIMEOUT).then((int) => {
       const response = int.response;
       expect(response?.statusCode).to.eq(200);
@@ -162,11 +166,6 @@ describe('Registrar Mascota con PetForm', () => {
       cy.get("button#breed").click();
       cy.get('div[role="listbox"] div').first().click();
     });
-
-    cy.get("button#animalType").click();
-    cy.get('div[role="listbox"] div')
-      .contains("Canino")
-      .click();
 
     cy.contains("button", "Macho").click();
 
@@ -189,15 +188,19 @@ describe('Registrar Mascota con PetForm', () => {
     cy.log('Navegar a la página de agregar mascota con imagen grande');
     cy.contains('button', 'Agregar Mascota').click();
 
-    cy.wait("@getSpecies", TIMEOUT);
-    cy.wait(3000);
+    cy.wait("@getSpecies", TIMEOUT).then((int) => {
+      const response = int.response;
+      expect(response?.statusCode).to.eq(200);
+    });
 
     cy.get("input[name='petName']").type(`${PET_MOCK.name} Grande1`);
     cy.get("input[name='birthDate']").type("2022-05-05");
     cy.get("input[name='weight']").type("15");
 
     cy.get("button#animalType").click();
-    cy.get('div[role="listbox"] div').first().click();
+    cy.get('div[role="listbox"] div')
+      .contains("Canino")
+      .click();
 
     cy.wait("@getRaces", TIMEOUT).then((int) => {
       const response = int.response;
@@ -214,7 +217,7 @@ describe('Registrar Mascota con PetForm', () => {
 
     cy.contains("button", "Hembra").click();
 
-    const largeImagePath = "images/gato1.png";
+    const largeImagePath = "images/perroG.png";
     cy.get('input[type="file"]').selectFile(`cypress/fixtures/${largeImagePath}`, {
       force: true,
     });
@@ -240,8 +243,12 @@ describe('Registrar Mascota con PetForm', () => {
     cy.log('Navegar a la página de agregar mascota con peso inválido');
     cy.contains('button', 'Agregar Mascota').click();
 
-    cy.wait("@getSpecies", TIMEOUT);
-    cy.wait(3000);
+    cy.wait("@getSpecies", TIMEOUT).then((int) => {
+      const response = int.response;
+      expect(response?.statusCode).to.eq(200);
+    });
+    cy.wait(5000);
+
 
     cy.get("input[name='petName']").type(`${PET_MOCK.name} PesoInválido2`);
     cy.get("input[name='birthDate']").type("2021-11-11");
