@@ -40,7 +40,7 @@ const settingsOptions = [
     link: "/dashboard/settings/vaccine-registry/new",
   },
   {
-    name: "Tipo de servicio",
+    name: "Tipos de servicio",
     description: "Administrar los diferentes tipos de servicios disponibles en la veterinaria.",
     icon: "🛁",
     link: "/dashboard/settings/service-types",
