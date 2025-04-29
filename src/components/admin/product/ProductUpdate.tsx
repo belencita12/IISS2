@@ -237,7 +237,6 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
               />
             </div>
             <div>
-              <Label>Etiquetas</Label>
               <TagFilter
                 token={token || ''}
                 selectedTags={tags}
