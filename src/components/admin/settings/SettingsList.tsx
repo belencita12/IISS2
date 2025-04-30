@@ -39,17 +39,36 @@ const settingsOptions = [
     icon: "💉",
     link: "/dashboard/settings/vaccine-registry/new",
   },
+  {
+    name: "Tipos de servicio",
+    description: "Administrar los diferentes tipos de servicios disponibles en la veterinaria.",
+    icon: "🛁",
+    link: "/dashboard/settings/service-types",
+  },
 ];
 
 export function SettingsList() {
   return (
-    <div className="flex flex-wrap gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {settingsOptions.map((option) => (
         <Link href={option.link} key={option.name}>
-          <div className="w-64 p-4 bg-white shadow-md rounded-lg hover:shadow-lg hover:bg-gray-100 transition duration-300 cursor-pointer">
-            <div className="text-2xl">{option.icon}</div>
-            <h2 className="text-lg font-semibold mt-2">{option.name}</h2>
-            <p className="text-sm text-gray-600 mt-1">{option.description}</p>
+          <div className="h-full bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden">
+            <div className="p-6">
+              <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-emerald-50 to-emerald-100 text-3xl">
+                {option.icon}
+              </div>
+              <h2 className="text-xl font-semibold text-center text-gray-800 mb-2">
+                {option.name}
+              </h2>
+              <p className="text-sm text-gray-600 text-center line-clamp-2">
+                {option.description}
+              </p>
+            </div>
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100">
+              <div className="text-sm text-emerald-600 text-center font-medium hover:text-emerald-700 transition-colors duration-200">
+                Configurar
+              </div>
+            </div>
           </div>
         </Link>
       ))}
