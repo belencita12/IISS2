@@ -7,10 +7,10 @@ import SearchBar from "@/components/global/SearchBar";
 import GenericTable, { Column } from "@/components/global/GenericTable";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import { toast } from "@/lib/toast";
-import { Pencil, Trash } from "lucide-react";
+import { Eye, Pencil, Trash } from "lucide-react";
 import { ServiceTypeTableSkeleton } from "./ServiceTypeTableSkeleton";
-import { ServiceTypeFormModal } from "./ServiceTypeFormModal";
 import { useServiceTypeList, ServiceType } from "@/hooks/service-types/useServiceTypeList";
+import { deleteServiceType } from "@/lib/service-types/service";
 
 interface ServiceTypeListProps {
   token: string;
@@ -19,7 +19,6 @@ interface ServiceTypeListProps {
 export default function ServiceTypeList({ token }: ServiceTypeListProps) {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedServiceType, setSelectedServiceType] = useState<ServiceType | null>(null);
 
   const {
@@ -36,42 +35,55 @@ export default function ServiceTypeList({ token }: ServiceTypeListProps) {
   };
 
   const columns: Column<ServiceType>[] = [
-    { header: "Nombre", accessor: "name" },
-    { header: "Descripción", accessor: "description" },
+    { 
+      header: "Nombre", 
+      accessor: "name",
+      className: "font-medium"
+    },
+    { 
+      header: "Descripción", 
+      accessor: "description",
+      className: "text-gray-600"
+    },
     { 
       header: "Duración", 
-      accessor: (service: ServiceType) => `${service.duration} min` 
+      accessor: (service: ServiceType) => `${service.duration} min`,
+      className: "text-gray-600"
     },
     { 
       header: "Precio", 
-      accessor: (service: ServiceType) => `$${service.price.toFixed(2)}` 
+      accessor: (service: ServiceType) => `$${service.price.toFixed(2)}`,
+      className: "font-medium"
     },
     { 
       header: "Tags", 
-      accessor: (service: ServiceType) => service.tags.join(", ") 
+      accessor: (service: ServiceType) => service.tags.join(", "),
+      className: "text-gray-600"
     },
   ];
+
+  const handleView = (serviceType: ServiceType) => {
+    router.push(`/dashboard/settings/service-types/${serviceType.id}`);
+  };
+
+  const handleEdit = (serviceType: ServiceType) => {
+    router.push(`/dashboard/settings/service-types/${serviceType.id}/edit`);
+  };
 
   const handleDelete = async () => {
     if (!selectedServiceType) return;
     
     try {
-      // TODO: Implementar la llamada a la API para eliminar el tipo de servicio
-      // await deleteServiceType(selectedServiceType.id, token);
+      await deleteServiceType(token, selectedServiceType.id);
       toast("success", "Tipo de servicio eliminado correctamente");
       onPageChange(pagination.currentPage);
     } catch (error) {
       console.error("Error al eliminar tipo de servicio:", error);
-      toast("error", "Error al eliminar el tipo de servicio");
+      toast("error", "Error al eliminar el tipo de servicio. Por favor, intente nuevamente.");
     } finally {
       setIsModalOpen(false);
       setSelectedServiceType(null);
     }
-  };
-
-  const handleEdit = (serviceType: ServiceType) => {
-    setSelectedServiceType(serviceType);
-    setIsFormOpen(true);
   };
 
   const handleDeleteClick = (serviceType: ServiceType) => {
@@ -81,27 +93,21 @@ export default function ServiceTypeList({ token }: ServiceTypeListProps) {
 
   const actions = [
     { 
+      icon: <Eye className="w-4 h-4" />, 
+      onClick: handleView, 
+      label: "Ver detalles" 
+    },
+    { 
       icon: <Pencil className="w-4 h-4" />, 
       onClick: handleEdit, 
-      label: "Editar" 
+      label: "Editar tipo de servicio" 
     },
     { 
       icon: <Trash className="w-4 h-4" />, 
       onClick: handleDeleteClick, 
-      label: "Eliminar" 
+      label: "Eliminar tipo de servicio" 
     },
   ];
-
-  const handleFormSuccess = () => {
-    setIsFormOpen(false);
-    setSelectedServiceType(null);
-    onPageChange(pagination.currentPage);
-  };
-
-  const handleFormClose = () => {
-    setIsFormOpen(false);
-    setSelectedServiceType(null);
-  };
 
   return (
     <div className="p-4 mx-auto">
@@ -117,10 +123,7 @@ export default function ServiceTypeList({ token }: ServiceTypeListProps) {
         <Button 
           variant="outline" 
           className="px-6" 
-          onClick={() => {
-            setSelectedServiceType(null);
-            setIsFormOpen(true);
-          }}
+          onClick={() => router.push("/dashboard/settings/service-types/register")}
         >
           Agregar
         </Button>
@@ -142,19 +145,11 @@ export default function ServiceTypeList({ token }: ServiceTypeListProps) {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleDelete}
-        title="Eliminar Tipo de Servicio"
-        message={`¿Seguro que quieres eliminar el tipo de servicio ${selectedServiceType?.name}?`}
+        title="¿Estás seguro de eliminar este tipo de servicio?"
+        message={`El tipo de servicio ${selectedServiceType?.name} será eliminado permanentemente.`}
         confirmText="Eliminar"
         cancelText="Cancelar"
         variant="danger"
-      />
-
-      <ServiceTypeFormModal
-        isOpen={isFormOpen}
-        onClose={handleFormClose}
-        token={token}
-        onSuccess={handleFormSuccess}
-        //defaultValues={selectedServiceType}
       />
     </div>
   );

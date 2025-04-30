@@ -4,17 +4,15 @@ import { getServerSession } from 'next-auth';
 import authOptions from '@/lib/auth/options';
 
 export default async function ServiceTypeRegisterPage() {
-
   const session = await getServerSession(authOptions);
-  const token = session?.user?.token || null;
   
-  if (!token) {
+  if (!session?.user?.token) {
     notFound();
   }
 
   return (
     <>
-    <ServiceTypeForm token={token} />
+      <ServiceTypeForm token={session.user.token} />
     </>
-  )
+  );
 } 
