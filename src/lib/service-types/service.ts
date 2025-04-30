@@ -8,6 +8,7 @@ export interface ServiceType {
   durationMin: number;
   iva: number;
   price: number;
+  cost: number;
   maxColabs?: number;
   isPublic?: boolean;
   tags?: string[];
@@ -27,6 +28,7 @@ const toServiceType = (data: FormData): ServiceType => {
     durationMin: data.get("durationMin") ? Number(data.get("durationMin")) : 0,
     iva: data.get("iva") ? Number(data.get("iva")) : 0,
     price: data.get("price") ? Number(data.get("price")) : 0,
+    cost: data.get("cost") ? Number(data.get("cost")) : 0,
     maxColabs: data.get("maxColabs") ? Number(data.get("maxColabs")) : 1,
     isPublic: data.get("isPublic") ? Boolean(data.get("isPublic")) : false,
     tags: data.get("tags") ? JSON.parse(String(data.get("tags"))) : [],
@@ -42,7 +44,7 @@ const toServiceType = (data: FormData): ServiceType => {
 
 export const getServiceTypes = async (token: string, page: number = 1, query: string = "") => {
   const response = await fetch(
-    `${SERVICE_TYPE_API}?page=${page}&query=${query}`,
+    `${SERVICE_TYPE_API}?page=${page}&search=${encodeURIComponent(query)}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -67,11 +69,16 @@ export const createServiceType = async (token: string, data: FormData) => {
   const response = await fetch(SERVICE_TYPE_API, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${token}`,
+      "Authorization": `Bearer ${token}`,
     },
-    body: JSON.stringify(toServiceType(data)),
+    body: data,
   });
-  if (!response.ok) throw new Error("Error al crear el tipo de servicio");
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Error al crear el tipo de servicio");
+  }
+
   return await response.json();
 };
 
