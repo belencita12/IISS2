@@ -1,21 +1,20 @@
-"use client";
-
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
-import authOptions from "@/lib/auth/options";
-import ServiceTypeForm from "@/components/admin/settings/service-types/ServiceTypeForm";
+import { notFound } from 'next/navigation';
+import ServiceTypeForm from '@/components/admin/settings/service-types/ServiceTypeForm';
+import { getServerSession } from 'next-auth';
+import authOptions from '@/lib/auth/options';
 
 export default async function ServiceTypeRegisterPage() {
-  const session = await getServerSession(authOptions);
-  const token = session?.user?.token;
 
+  const session = await getServerSession(authOptions);
+  const token = session?.user?.token || null;
+  
   if (!token) {
-    redirect("/login");
+    notFound();
   }
 
   return (
-    <div className="p-6">
-      <ServiceTypeForm token={token} />
-    </div>
-  );
+    <>
+    <ServiceTypeForm token={token} />
+    </>
+  )
 } 

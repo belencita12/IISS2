@@ -1,30 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import SearchBar from "@/components/global/SearchBar";
-import GenericTable from "@/components/global/GenericTable";
+import GenericTable, { Column } from "@/components/global/GenericTable";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
-import { ServiceTypeFormModal } from "./ServiceTypeFormModal";
 import { toast } from "@/lib/toast";
 import { Pencil, Trash } from "lucide-react";
 import { ServiceTypeTableSkeleton } from "./ServiceTypeTableSkeleton";
-
-interface ServiceType {
-  id: number;
-  slug: string;
-  name: string;
-  description: string;
-  durationMin: number;
-  price: number;
-  tags: string[];
-  img: {
-    id: number;
-    previewUrl: string;
-    originalUrl: string;
-  };
-}
+import { ServiceTypeFormModal } from "./ServiceTypeFormModal";
+import { useServiceTypeList, ServiceType } from "@/hooks/service-types/useServiceTypeList";
 
 interface ServiceTypeListProps {
   token: string;
@@ -32,45 +18,29 @@ interface ServiceTypeListProps {
 
 export default function ServiceTypeList({ token }: ServiceTypeListProps) {
   const router = useRouter();
-  const [serviceTypes, setServiceTypes] = useState<ServiceType[]>([]);
-  const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedServiceType, setSelectedServiceType] = useState<ServiceType | null>(null);
-  const [pagination, setPagination] = useState({
-    currentPage: 1,
-    totalPages: 1,
-    totalItems: 0,
-    pageSize: 10,
-  });
 
-  const loadServiceTypes = async (page: number = 1, searchQuery: string = "") => {
-    try {
-      setLoading(true);
-      // TODO: Implementar la llamada a la API para obtener los tipos de servicio
-      // const response = await fetchServiceTypes(token, page, searchQuery);
-      // setServiceTypes(response.data);
-      // setPagination(response.pagination);
-    } catch (error) {
-      toast("error", "Error al cargar los tipos de servicio");
-    } finally {
-      setLoading(false);
-    }
+  const {
+    serviceTypes,
+    isLoading,
+    error,
+    pagination,
+    onPageChange,
+    onSearch,
+  } = useServiceTypeList(token);
+
+  const handleSearch = (query: string) => {
+    onSearch(query);
   };
 
-  useEffect(() => {
-    if (token) loadServiceTypes(pagination.currentPage);
-  }, [token, pagination.currentPage]);
-
-  const handleSearch = (query: string) => loadServiceTypes(1, query);
-  const handlePageChange = (page: number) => setPagination(prev => ({ ...prev, currentPage: page }));
-
-  const columns = [
+  const columns: Column<ServiceType>[] = [
     { header: "Nombre", accessor: "name" },
     { header: "Descripción", accessor: "description" },
     { 
       header: "Duración", 
-      accessor: (service: ServiceType) => `${service.durationMin} min` 
+      accessor: (service: ServiceType) => `${service.duration} min` 
     },
     { 
       header: "Precio", 
@@ -82,30 +52,55 @@ export default function ServiceTypeList({ token }: ServiceTypeListProps) {
     },
   ];
 
-  const actions = [
-    { icon: <Pencil className="w-4 h-4" />, onClick: (serviceType: ServiceType) => {
-      setSelectedServiceType(serviceType);
-      setIsFormOpen(true);
-    }, label: "Editar" },
-    { icon: <Trash className="w-4 h-4" />, onClick: (serviceType: ServiceType) => {
-      setSelectedServiceType(serviceType);
-      setIsModalOpen(true);
-    }, label: "Eliminar" },
-  ];
-
   const handleDelete = async () => {
     if (!selectedServiceType) return;
+    
     try {
       // TODO: Implementar la llamada a la API para eliminar el tipo de servicio
       // await deleteServiceType(selectedServiceType.id, token);
       toast("success", "Tipo de servicio eliminado correctamente");
-      loadServiceTypes(pagination.currentPage);
+      onPageChange(pagination.currentPage);
     } catch (error) {
+      console.error("Error al eliminar tipo de servicio:", error);
       toast("error", "Error al eliminar el tipo de servicio");
     } finally {
       setIsModalOpen(false);
       setSelectedServiceType(null);
     }
+  };
+
+  const handleEdit = (serviceType: ServiceType) => {
+    setSelectedServiceType(serviceType);
+    setIsFormOpen(true);
+  };
+
+  const handleDeleteClick = (serviceType: ServiceType) => {
+    setSelectedServiceType(serviceType);
+    setIsModalOpen(true);
+  };
+
+  const actions = [
+    { 
+      icon: <Pencil className="w-4 h-4" />, 
+      onClick: handleEdit, 
+      label: "Editar" 
+    },
+    { 
+      icon: <Trash className="w-4 h-4" />, 
+      onClick: handleDeleteClick, 
+      label: "Eliminar" 
+    },
+  ];
+
+  const handleFormSuccess = () => {
+    setIsFormOpen(false);
+    setSelectedServiceType(null);
+    onPageChange(pagination.currentPage);
+  };
+
+  const handleFormClose = () => {
+    setIsFormOpen(false);
+    setSelectedServiceType(null);
   };
 
   return (
@@ -119,24 +114,29 @@ export default function ServiceTypeList({ token }: ServiceTypeListProps) {
 
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-3xl font-bold">Tipos de Servicio</h2>
-        <Button variant="outline" className="px-6" onClick={() => {
-          setSelectedServiceType(null);
-          setIsFormOpen(true);
-        }}>
+        <Button 
+          variant="outline" 
+          className="px-6" 
+          onClick={() => {
+            setSelectedServiceType(null);
+            setIsFormOpen(true);
+          }}
+        >
           Agregar
         </Button>
       </div>
 
-      {/* <GenericTable
+      <GenericTable
         data={serviceTypes}
         columns={columns}
         actions={actions}
         pagination={pagination}
-        onPageChange={handlePageChange}
-        isLoading={loading}
+        onPageChange={onPageChange}
+        isLoading={isLoading}
         skeleton={<ServiceTypeTableSkeleton />}
         emptyMessage="No se encontraron tipos de servicio"
-      /> */}
+        className="mt-4"
+      />
 
       <ConfirmationModal
         isOpen={isModalOpen}
@@ -151,10 +151,10 @@ export default function ServiceTypeList({ token }: ServiceTypeListProps) {
 
       <ServiceTypeFormModal
         isOpen={isFormOpen}
-        onClose={() => setIsFormOpen(false)}
+        onClose={handleFormClose}
         token={token}
-        onSuccess={() => loadServiceTypes(pagination.currentPage)}
-        defaultValues={selectedServiceType}
+        onSuccess={handleFormSuccess}
+        //defaultValues={selectedServiceType}
       />
     </div>
   );
