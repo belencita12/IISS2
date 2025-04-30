@@ -67,7 +67,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
       <div className="grid grid-cols-1 gap-4">
         {data?.length ? (
           data.map((appointment) => (
-            <AppointmentCard key={appointment.id} appointment={appointment} />
+            <AppointmentCard key={appointment.id} appointment={appointment} token={token} />
           ))
         ) : (
           <p>No se encontraron citas.</p>
