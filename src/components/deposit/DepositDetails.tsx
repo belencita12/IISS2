@@ -13,6 +13,7 @@ import { toast } from "@/lib/toast";
 import { getStockById } from "@/lib/stock/getStockById";
 import GenericPagination from "../global/GenericPagination";
 import { set } from "react-hook-form";
+import StockDetailsCard from "./StockDetailCard";
 
 interface DepositDetailsProps {
   token: string;
@@ -204,9 +205,10 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
         <p className="text-center py-4">No hay información del Depósito disponible</p>
       ) : (
         filteredProducts.map((product) => (
-          <ProductCard
+          <StockDetailCard
             key={product.id}
             product={product}
+            amount={product.amount}
             onClick={handleCardClick}
           />
         ))
