@@ -28,7 +28,7 @@ interface TagFilterProps {
 }
 
 export function TagFilter({
-  title = "Tags",
+  title = "Etiqueta",
   selectedTags,
   onChange,
   className,

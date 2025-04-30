@@ -14,6 +14,7 @@ import { updateProduct } from "@/lib/products/updateProduct";
 import { getProductById } from "@/lib/products/getProductById";
 import { Product } from "@/lib/products/IProducts";
 import { TagFilter } from "./filter/TagFilter";
+import NumericInput from "@/components/global/NumericInput"; 
 
 const MAX_FILE_SIZE = 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -57,6 +58,7 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<ProductFormValues>({
     resolver: zodResolver(productFormSchema),
@@ -188,54 +190,53 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
             </div>
             <div>
               <Label>Costo</Label>
-              <Input
-                type="number"
+              <NumericInput
+                id="cost"
+                type="formattedNumber"
                 placeholder="Ingrese el costo"
-                step={0.1}
-                min="0"
-                onKeyDown={(e) => {
-                  if (e.key === "-" || e.key === "e") e.preventDefault();
-                }}
-                {...register("cost", { valueAsNumber: true })}
+                value={watch("cost") ?? ""}
+                onChange={(e) =>
+                  setValue("cost", Number(e.target.value), {
+                    shouldValidate: true,
+                  })
+                }
+                className={errors.cost ? "border-red-500" : ""}
+                error={errors.cost?.message}
               />
-              {errors.cost && (
-                <p className="text-red-500">{errors.cost.message}</p>
-              )}
             </div>
             <div>
               <Label>Precio</Label>
-              <Input
-                type="number"
-                step={0.1}
-                min="0"
-                onKeyDown={(e) => {
-                  if (e.key === "-" || e.key === "e") e.preventDefault();
-                }}
+              <NumericInput
+                id="price"
+                type="formattedNumber"
                 placeholder="Ingrese el precio"
-                {...register("price", { valueAsNumber: true })}
+                value={watch("price") ?? ""}
+                onChange={(e) =>
+                  setValue("price", Number(e.target.value), {
+                    shouldValidate: true,
+                  })
+                }
+                className={errors.price ? "border-red-500" : ""}
+                error={errors.price?.message}
               />
-              {errors.price && (
-                <p className="text-red-500">{errors.price.message}</p>
-              )}
             </div>
-
             <div>
               <Label>IVA</Label>
-              <Input
-                type="number"
-                min="0"
-                onKeyDown={(e) => {
-                  if (e.key === "-" || e.key === "e") e.preventDefault();
-                }}
+              <NumericInput
+                id="iva"
+                type="formattedNumber"
                 placeholder="Ingrese el IVA"
-                {...register("iva", { valueAsNumber: true })}
+                value={watch("iva") ?? ""}
+                onChange={(e) =>
+                  setValue("iva", Number(e.target.value), {
+                    shouldValidate: true,
+                  })
+                }
+                className={errors.iva ? "border-red-500" : ""}
+                error={errors.iva?.message}
               />
-              {errors.iva && (
-                <p className="text-red-500">{errors.iva.message}</p>
-              )}
             </div>
             <div>
-              <Label>Etiquetas</Label>
               <TagFilter
                 token={token || ''}
                 selectedTags={tags}
@@ -262,8 +263,8 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
                     src={previewImage}
                     className="w-full h-auto rounded-md"
                     alt="Vista previa del producto"
-                    width={96}
-                    height={96}
+                    width={200}
+                    height={200}
                     priority
                   />
                 </div>
