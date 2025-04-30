@@ -63,12 +63,36 @@ export default function PaymentMethods({
     const parsedAmount = parseFloat(amount);
     if (!selectedMethod || isNaN(parsedAmount) || parsedAmount <= 0) return;
 
-    const updated = [
-      ...payments,
-      { method: selectedMethod, amount: parsedAmount },
-    ];
+    const existingIndex = payments.findIndex(
+      (p) => p.method === selectedMethod
+    );
+
+    let updated: { method: string; amount: number }[];
+
+    if (existingIndex !== -1) {
+      // Si ya existe, sumar el monto
+      updated = payments.map((p, idx) =>
+        idx === existingIndex ? { ...p, amount: p.amount + parsedAmount } : p
+      );
+    } else {
+      // Si no existe, agregarlo
+      updated = [...payments, { method: selectedMethod, amount: parsedAmount }];
+    }
+
     setPayments(updated);
     setAmount("");
+    onPaymentMethodsChange(updated);
+  };
+
+  const handleEditAmount = (index: number, value: string) => {
+    const parsed = parseFloat(value);
+    if (isNaN(parsed) || parsed < 0) return;
+
+    const updated = payments.map((p, idx) =>
+      idx === index ? { ...p, amount: parsed } : p
+    );
+
+    setPayments(updated);
     onPaymentMethodsChange(updated);
   };
 
@@ -139,7 +163,15 @@ export default function PaymentMethods({
                   {methods.find((m) => m.id.toString() === p.method)?.name ||
                     p.method}
                 </TableCell>
-                <TableCell>{p.amount.toLocaleString("ES-PY")} Gs.</TableCell>
+                <TableCell>
+                  <NumericInput
+                    id={`payment-amount-${idx}`}
+                    type="formattedNumber"
+                    placeholder={p.amount.toString()}
+                    value={p.amount.toString()}
+                    onChange={(e) => handleEditAmount(idx, e.target.value)}
+                  />
+                </TableCell>
                 <TableCell>
                   <Button variant="ghost" onClick={() => handleRemove(idx)}>
                     <Trash2 size={16} />

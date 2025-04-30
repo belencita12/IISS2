@@ -39,6 +39,8 @@ export default function SaleCreation({ token }: Props) {
   const [selectedMethod, setSelectedMethod] = useState<string>("");
   const [invoiceNumber, setInvoiceNumber] = useState("");
   const [selectedStock, setSelectedStock] = useState("");
+  const [saleCondition, setSaleCondition] = useState<"CASH" | "CREDIT">("CASH");
+
   const [depositError, setDepositError] = useState<string | undefined>(
     undefined
   );
@@ -95,7 +97,7 @@ export default function SaleCreation({ token }: Props) {
     (sum, payment) => sum + payment.amount,
     0
   );
-  const remainingBalance = Math.max(0, total - totalPaid);
+  const remainingBalance = total - totalPaid;
 
   // Handle warehouse selection with validation
   const handleSelectWarehouse = (depositId: string) => {
@@ -125,7 +127,7 @@ export default function SaleCreation({ token }: Props) {
       stamped: timbradoNumber,
       clientId: Number(selectedCustomer.id),
       stockId: Number(selectedStock),
-      issueDate: new Date().toISOString().split("T")[0],
+      issueDate: new Date().toLocaleDateString("en-CA"),
       details: products.map((p) => ({
         quantity: p.quantity,
         productId: Number(p.id),
@@ -134,8 +136,8 @@ export default function SaleCreation({ token }: Props) {
         methodId: Number(p.method),
         amount: p.amount,
       })),
-      totalPayed: totalPaid,
-      type: "CASH",
+      totalPayed: totalPaid || 1,
+      type: saleCondition,
       services: [],
     };
 
@@ -172,12 +174,13 @@ export default function SaleCreation({ token }: Props) {
         {/* Columna izquierda - Información del cliente y factura */}
         <div className="lg:col-span-1 space-y-6">
           <InvoiceInfo
+            saleCondition={saleCondition}
+            setSaleCondition={setSaleCondition}
             invoiceNumber={invoiceNumber}
             timbradoNumber={timbradoNumber}
             setInvoiceNumber={setInvoiceNumber}
             setTimbradoNumber={setTimbradoNumber}
           />
-
           <Card>
             <CardHeader>
               <CardTitle>Cliente</CardTitle>
@@ -198,14 +201,15 @@ export default function SaleCreation({ token }: Props) {
               )}
             </CardContent>
           </Card>
-
-          <PaymentMethods
-            onPaymentMethodsChange={setPaymentMethods}
-            thereIsProducts={products.length > 0}
-            selectedMethod={selectedMethod}
-            onSelectedMethodChange={setSelectedMethod}
-            token={token}
-          />
+          {saleCondition === "CASH" && (
+            <PaymentMethods
+              onPaymentMethodsChange={setPaymentMethods}
+              thereIsProducts={products.length > 0}
+              selectedMethod={selectedMethod}
+              onSelectedMethodChange={setSelectedMethod}
+              token={token}
+            />
+          )}
         </div>
 
         {/* Columna derecha - Productos y resumen */}
@@ -255,12 +259,23 @@ export default function SaleCreation({ token }: Props) {
                       <span>Total Pagado:</span>
                       <span>{totalPaid.toLocaleString("ES-PY")} Gs.</span>
                     </div>
-                    <div className="flex justify-between font-medium">
-                      <span>Saldo Pendiente:</span>
-                      <span>
-                        {remainingBalance.toLocaleString("ES-PY")} Gs.
-                      </span>
-                    </div>
+                    {remainingBalance > 0 && (
+                      <div className="flex justify-between text-red-500 font-medium">
+                        <span>
+                          Faltan {remainingBalance.toLocaleString("ES-PY")} Gs.
+                          para completar el pago.
+                        </span>
+                      </div>
+                    )}
+                    {remainingBalance < 0 && (
+                      <div className="flex justify-between text-red-500 font-medium">
+                        <span>
+                          El monto excede por{" "}
+                          {Math.abs(remainingBalance).toLocaleString("ES-PY")}{" "}
+                          Gs.
+                        </span>
+                      </div>
+                    )}
                   </>
                 )}
               </div>
@@ -269,7 +284,7 @@ export default function SaleCreation({ token }: Props) {
               <Button
                 size="lg"
                 disabled={
-                  remainingBalance > 0 ||
+                  (saleCondition === "CASH" && remainingBalance !== 0) ||
                   !selectedStock ||
                   !timbradoNumber ||
                   !selectedCustomer ||
@@ -277,7 +292,7 @@ export default function SaleCreation({ token }: Props) {
                   loading
                 }
                 title={
-                  remainingBalance > 0
+                  remainingBalance > 0 && saleCondition === "CASH"
                     ? "El pago total debe cubrir el monto completo de la venta"
                     : !selectedStock
                     ? "Debe seleccionar un depósito"
