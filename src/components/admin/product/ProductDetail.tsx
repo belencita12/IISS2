@@ -105,7 +105,6 @@ export default function ProductDetail({ token }: ProductDetailProps) {
 
           <ProductInfo
             product={product}
-            stockDetails={stockDetails}
             isStockLoading={isLoading}
           />
         </div>

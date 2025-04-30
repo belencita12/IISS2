@@ -15,6 +15,7 @@ import { getProductById } from "@/lib/products/getProductById";
 import { Product } from "@/lib/products/IProducts";
 import { TagFilter } from "./filter/TagFilter";
 import NumericInput from "@/components/global/NumericInput"; 
+import { X } from "lucide-react";
 
 const MAX_FILE_SIZE = 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -197,10 +198,11 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
             </div>
             <div>
               <Label>Descripción</Label>
-              <Input
-                {...register("description")}
-                placeholder="Ingrese una descripción del producto"
-              />
+              <textarea
+              {...register("description")}
+              placeholder="Ingrese una descripción del producto"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black placeholder:text-sm placeholder:text-gray-500"
+            />
               {errors.description && (
                 <p className="text-red-500">{errors.description.message}</p>
               )}
@@ -253,16 +255,41 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
                 error={errors.iva?.message}
               />
             </div>
-            <div>
-              <TagFilter
-                token={token || ''}
-                selectedTags={tags}
-                onChange={handleTagsChange}
-              />
-              {errors.tags && 
-                <p className="text-red-500">{errors.tags.message}</p>
-              }
-            </div>
+{/* Etiquetas */}
+<div>
+  <TagFilter
+    token={token || ""}
+    selectedTags={tags}
+    onChange={handleTagsChange}
+  />
+  {errors.tags && (
+    <p className="text-red-500 text-sm mt-1">{errors.tags.message}</p>
+  )}
+
+  {tags.length > 0 && (
+    <div className="mt-3">
+      <div className="flex flex-wrap gap-2">
+        {tags.map((tag) => (
+          <div
+            key={tag}
+            className="bg-blue-50 border border-blue-100 text-black text-xs font-medium px-2.5 py-1 rounded-md flex items-center gap-1.5 transition-colors hover:bg-blue-100"
+          >
+            <span>{tag}</span>
+            <button
+              type="button"
+              onClick={() => handleTagsChange(tags.filter((t) => t !== tag))}
+              className="inline-flex items-center justify-center rounded-full w-4 h-4 bg-gray text-black hover:bg-blue-300 transition-colors"
+              aria-label={`Eliminar etiqueta ${tag}`}
+            >
+              <X className="w-3 h-3" />
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+</div>
+
             <div className="w-full flex flex-col items-start relative">
               <Label className="pb-2">Imagen</Label>
               <Label className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-md text-sm font-medium text-center cursor-pointer">

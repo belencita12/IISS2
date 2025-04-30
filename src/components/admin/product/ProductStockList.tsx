@@ -42,7 +42,7 @@ export default function ProductStockList({ stockDetails, stocks, isLoading }: St
     {
       header: "Cantidad",
       accessor: (item) => `${item.amount} Unids.`,
-      className: "text-right min-w-[80px]",
+      className: "text-right",
     },
   ];
 
@@ -62,7 +62,7 @@ export default function ProductStockList({ stockDetails, stocks, isLoading }: St
       actionsTitle="Acciones"
       isLoading={isLoading}
       emptyMessage="No disponible en ninguna sucursal"
-      className="w-full"
+      className="w-full table-auto"
     />
   );
 }
