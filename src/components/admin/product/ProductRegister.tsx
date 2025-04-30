@@ -13,12 +13,14 @@ import Image from "next/image";
 import { registerProduct } from "@/lib/products/registerProduct";
 import { useRouter } from "next/navigation";
 import { TagFilter } from "./filter/TagFilter";
+import { X } from "lucide-react";
 
 const MAX_FILE_SIZE = 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 const productFormSchema = z.object({
   productName: z.string().min(1, "El nombre es obligatorio"),
+  description: z.string().optional(),
   cost: z.number({ message: "Complete con valores numéricos adecuados" }).min(1, "El costo debe ser mayor a 0"),
   price: z.number({ message: "Complete con valores numéricos adecuados" }).min(1, "El precio debe ser mayor a 0"),
   iva: z.number({ message: "Complete con valores numéricos adecuados" }).min(1, "El IVA debe ser mayor a 0"),
@@ -56,6 +58,7 @@ export default function ProductRegisterForm({ token }: ProductRegisterFormProps)
     resolver: zodResolver(productFormSchema),
     defaultValues: {
       productName: "",
+      description: "",
       cost: undefined,
       price: undefined,
       iva: undefined,
@@ -90,6 +93,9 @@ export default function ProductRegisterForm({ token }: ProductRegisterFormProps)
     }
 
     const formData = new FormData();
+    if (data.description) {
+      formData.append("description", data.description);
+    }
     Object.entries({
       name: data.productName,
       cost: data.cost,
@@ -132,6 +138,17 @@ export default function ProductRegisterForm({ token }: ProductRegisterFormProps)
               <p className="text-red-500">{errors.productName.message}</p>
             )}
           </div>
+          <div>
+  <Label>Descripción</Label>
+  <textarea
+    {...register("description")}
+    placeholder="Ingrese una descripción del producto"
+    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm placeholder:text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-black"
+  />
+  {errors.description && (
+    <p className="text-red-500">{errors.description.message}</p>
+  )}
+</div>
 
           {/* Costo */}
           <div>
@@ -188,17 +205,41 @@ export default function ProductRegisterForm({ token }: ProductRegisterFormProps)
           </div>
 
           {/* Etiquetas */}
-          <div>
-            <Label>Etiquetas</Label>
-            <TagFilter
-              token={token || ""}
-              selectedTags={tags}
-              onChange={handleTagsChange}
-            />
-            {errors.tags && (
-              <p className="text-red-500">{errors.tags.message}</p>
-            )}
+          {/* Etiquetas */}
+<div>
+  <TagFilter
+    token={token || ""}
+    selectedTags={tags}
+    onChange={handleTagsChange}
+  />
+  {errors.tags && (
+    <p className="text-red-500 text-sm mt-1">{errors.tags.message}</p>
+  )}
+
+  {tags.length > 0 && (
+    <div className="mt-3">
+      <div className="flex flex-wrap gap-2">
+        {tags.map((tag) => (
+          <div
+            key={tag}
+            className="bg-blue-50 border border-blue-100 text-black text-xs font-medium px-2.5 py-1 rounded-md flex items-center gap-1.5 transition-colors hover:bg-blue-100"
+          >
+            <span>{tag}</span>
+            <button
+              type="button"
+              onClick={() => handleTagsChange(tags.filter((t) => t !== tag))}
+              className="inline-flex items-center justify-center rounded-full w-4 h-4 bg-gray text-black hover:bg-blue-300 transition-colors"
+              aria-label={`Eliminar etiqueta ${tag}`}
+            >
+              <X className="w-3 h-3" />
+            </button>
           </div>
+        ))}
+      </div>
+    </div>
+  )}
+</div>
+
 
           {/* Imagen */}
           <div className="w-full flex flex-col items-start relative">
