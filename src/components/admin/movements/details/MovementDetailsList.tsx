@@ -2,10 +2,16 @@
 
 import { useMovementDetails } from "@/hooks/movements/useMovementDetails";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@radix-ui/react-select";
 import { formatDate } from "@/lib/utils";
 import { MovementDetailCard } from "./MovementDetailCard";
 import GenericPagination from "@/components/global/GenericPagination";
+import { ConfirmationModal } from "@/components/global/Confirmation-modal";
+import { useState } from "react";
+import { revertMovement } from "@/lib/movements/revertMovement";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface Props {
   id: number;
@@ -14,10 +20,27 @@ interface Props {
 
 export const MovementDetailsList = ({ id, token }: Props) => {
   const { movement, details, loading, error, pagination, setQuery } = useMovementDetails(id, token);
+  const [isRevertModalOpen, setIsRevertModalOpen] = useState(false);
+  const [isReverting, setIsReverting] = useState(false);
+  const router = useRouter();
 
   if (loading) return <p className="text-center mt-10">Cargando...</p>;
   if (error) return <p className="text-center text-red-500 mt-10">Error: {error}</p>;
   if (!movement) return <p className="text-center mt-10">No se encontró el movimiento.</p>;
+
+  const handleRevert = async () => {
+    try {
+      setIsReverting(true);
+      await revertMovement(id, token);
+      toast.success('Movimiento revertido exitosamente');
+      router.push("/dashboard/movement");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Error al revertir el movimiento');
+    } finally {
+      setIsReverting(false);
+      setIsRevertModalOpen(false);
+    }
+  };
 
   const getMovementTypeLabel = (type: string) => {
     switch (type) {
@@ -53,9 +76,23 @@ export const MovementDetailsList = ({ id, token }: Props) => {
             <p className="bg-gray-200 rounded-md px-3 py-2 text-sm text-gray-800 w-full break-words">
               {movement.description}
             </p>
+            {movement.type === "TRANSFER" && (
+              <div className="mt-4">
+                <Button
+                  variant="default"
+                  onClick={() => setIsRevertModalOpen(true)}
+                  disabled={isReverting}
+                  className="border-none"
+                >
+                  {isReverting ? "Revirtiendo..." : "Revertir"}
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </Card>
+
+
 
       <h2 className="text-xl font-semibold mb-2 text-gray-700">Productos</h2>
       <Separator className="mb-4" />
@@ -80,6 +117,18 @@ export const MovementDetailsList = ({ id, token }: Props) => {
         />
         </div>
       )}
+
+      <ConfirmationModal
+        isOpen={isRevertModalOpen}
+        onClose={() => setIsRevertModalOpen(false)}
+        onConfirm={handleRevert}
+        title="Revertir Movimiento"
+        message="¿Estás seguro que deseas revertir este movimiento? Esta acción creará un nuevo movimiento en sentido contrario."
+        confirmText="Sí, revertir"
+        cancelText="Cancelar"
+        variant="warning"
+        isLoading={isReverting}
+      />
     </div>
   );
 };
