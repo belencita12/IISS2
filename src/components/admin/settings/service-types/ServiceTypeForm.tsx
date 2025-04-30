@@ -51,7 +51,7 @@ export default function ServiceTypeForm({ token, defaultValues, id }: ServiceTyp
       durationMin: 30,
       iva: 0,
       price: 0,
-      maxColabs: undefined,
+      maxColabs: 0,
       isPublic: false,
       tags: [],
       img: undefined,
@@ -92,7 +92,7 @@ export default function ServiceTypeForm({ token, defaultValues, id }: ServiceTyp
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="flex flex-col md:flex-row gap-8">
+      <div className="flex flex-col pt-6 md:flex-row gap-8">
         <div className="flex flex-col items-center space-y-4 w-full md:w-1/3">
           <h1 className="text-2xl font-bold self-start">
             {id ? "Editar" : "Registro de"} Tipo de Servicio
@@ -107,7 +107,7 @@ export default function ServiceTypeForm({ token, defaultValues, id }: ServiceTyp
             <FormImgUploader
               prevClassName="rounded"
               onChange={handleImageChange}
-              previewUrl={defaultValues?.img?.originalUrl}
+              //previewUrl={defaultValues?.img?.originalUrl}
             />
           </div>
         </div>
@@ -181,7 +181,7 @@ export default function ServiceTypeForm({ token, defaultValues, id }: ServiceTyp
             <Label htmlFor="isPublic">Público</Label>
           </div>
 
-          <div className="flex justify-end gap-4">
+          <div className="flex justify-start gap-4">
             <Button
               type="button"
               variant="outline"
