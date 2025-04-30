@@ -1,15 +1,27 @@
-import { EmployeeData } from "../employee/IEmployee";
-import { PetData } from "../pets/IPet";
+
 import { BaseQueryParams } from "../types";
 
 export interface AppointmentData {
-    id?: number;
-    petId: PetData;
+    id: number;
     designatedDate: string;
-    designatedTime: string;
-    serviceId: number;
-    employeeId: EmployeeData;
-}
+    completedDate: string;
+    details: string;
+    service: string; 
+    pet: {
+      id: number;
+      name: string;
+      race: string;
+      owner: {
+        id: number;
+        name: string;
+      };
+    };
+    status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "CANCELED";
+    employees: {
+      id: number;
+      name: string;
+    }[];
+  }
 
 export interface AppointmentQueryParams extends BaseQueryParams {
     clientRuc?: string;
@@ -19,5 +31,22 @@ export interface AppointmentQueryParams extends BaseQueryParams {
     formDesignatedDate?: string;
     toDesignatedDate?: string;
     status?: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELED' ;
+}
 
+export interface ServiceType { 
+    id?: number;
+    slug: string;
+    name: string;
+    description: string;
+    durationMin: number;
+    iva: number;
+    price: number;
+    maxColabs?: number;
+    isPublic?: boolean;
+    tags?: string[];
+    image?: {
+        id: number;
+        previewUrl: string;
+        originalUrl: string;
+      } | null;
 }
