@@ -142,7 +142,7 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
     if (data.description) {
       formData.append("description", data.description);
     }
-    
+
     Object.entries({
       name: data.productName,
       cost: data.cost,

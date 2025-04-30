@@ -81,9 +81,10 @@ export default function ProductDetail({ token }: ProductDetailProps) {
     return <div className="text-center mt-8">Producto no encontrado</div>;
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-        <div className="md:col-span-5 flex justify-center items-start">
+    <div className="max-w-5xl mx-auto p-6">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        {/* Imagen a la izquierda, ocupa 4/12 */}
+        <div className="md:col-span-4 flex justify-start">
           <div className="relative w-[300px] h-[300px]">
             <Image
               src={product.image?.originalUrl || "/placeholder.svg"}
@@ -95,9 +96,10 @@ export default function ProductDetail({ token }: ProductDetailProps) {
           </div>
         </div>
 
-        <div className="md:col-span-7 flex flex-col space-y-4">
+        {/* Info del producto al lado, ocupa 8/12 */}
+        <div className="md:col-span-8 flex flex-col space-y-4 pl-6">
           <div>
-            <h1 className="text-2xl font-bold">{product.name}</h1>
+            <h1 className="text-3xl font-bold">{product.name}</h1>
             <p className="text-sm text-gray-500">{product.code}</p>
           </div>
 
@@ -109,7 +111,7 @@ export default function ProductDetail({ token }: ProductDetailProps) {
         </div>
       </div>
 
-      <div className="flex gap-4 mt-6 justify-center">
+      <div className="flex gap-4 justify-end mt-6">
         <Button
           variant="outline"
           onClick={() => setIsDeleteModalOpen(true)}
@@ -129,11 +131,11 @@ export default function ProductDetail({ token }: ProductDetailProps) {
         </Button>
       </div>
 
-      <hr className="my-6 border-t border-gray-200" />
+      <hr className="my-8 border-t border-gray-200" />
 
-      <div className="mt-4">
-        <h3 className="text-2xl font-semibold text-center mb-6">
-          Cantidad por Sucursales
+      <div className="mt-8">
+        <h3 className="text-2xl font-semibold text-center mb-4">
+          Cantidad por Depósitos
         </h3>
         <StockList
           stockDetails={stockDetails}

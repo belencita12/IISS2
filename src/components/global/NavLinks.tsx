@@ -45,7 +45,7 @@ export default function NavLinks() {
     <>
       {linksUser.map((link) => {
         const LinkIcon = link.icon;
-        const isActive = pathname === link.href;
+        const isActive = pathname.startsWith(link.href);
 
         return (
           <Link
