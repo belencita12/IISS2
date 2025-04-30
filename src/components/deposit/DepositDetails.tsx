@@ -205,7 +205,7 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
         <p className="text-center py-4">No hay información del Depósito disponible</p>
       ) : (
         filteredProducts.map((product) => (
-          <StockDetailCard
+          <StockDetailsCard
             key={product.id}
             product={product}
             amount={product.amount}
