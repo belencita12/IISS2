@@ -45,8 +45,8 @@ interface ProductUpdateFormProps {
 }
 
 export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
-  const { id } = useParams();
-
+  const params = useParams<{ id: string }>();
+  const id = params?.id || '';
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [product, setProduct] = useState<Product | null>(null);
@@ -80,7 +80,7 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
     if (!id || !token) return;
     const fetchProduct = async () => {
       try {
-        const productData = await getProductById(id as string, token);
+        const productData = await getProductById(id, token);
 
         setProduct(productData);
         setValue("productName", productData.name);
@@ -148,7 +148,7 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
     setIsSubmitting(true);
 
     try {
-      await updateProduct(id as string, formData, token);
+      await updateProduct(id, formData, token);
       toast("success", "Producto actualizado con éxito", {
         duration: 2000,
         onAutoClose: () => {
@@ -262,7 +262,7 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
                   <Image
                     src={previewImage}
                     className="w-full h-auto rounded-md"
-                    alt="Vista previa del producto"
+                    alt="Vista prevía del producto"
                     width={200}
                     height={200}
                     priority
