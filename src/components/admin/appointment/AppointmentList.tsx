@@ -9,6 +9,7 @@ import {
 import { APPOINTMENT_API } from "@/lib/urls";
 import { usePaginatedFetch } from "@/hooks/api/usePaginatedFetch";
 import SearchBar from "@/components/global/SearchBar";
+import AppointmentDateFilter from "./filters/AppointmentDateFilter";
 import AppointmentCard from "./AppointmentCard";
 import GenericPagination from "@/components/global/GenericPagination";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
@@ -47,6 +48,8 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
     autoFetch: true,
     extraParams: {
       clientRuc: filters.clientRuc,
+      formDesignatedDate: filters.fromDesignatedDate,
+      toDesignatedDate: filters.toDesignatedDate,
     },
   });
 
@@ -109,6 +112,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
           onSearch={handleSearch}
         />
       </div>
+      <AppointmentDateFilter filters={filters} setFilters={handleFilterChange} />
 
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-3xl font-bold">Citas</h2>

@@ -28,7 +28,7 @@ export interface AppointmentQueryParams extends BaseQueryParams {
     employeeRuc?: string;
     petId?: number;
     serviceId?: number;
-    formDesignatedDate?: string;
+    fromDesignatedDate?: string;
     toDesignatedDate?: string;
     status?: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELED' ;
 }
