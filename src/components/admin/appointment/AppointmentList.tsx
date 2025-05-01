@@ -106,13 +106,15 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
 
   return (
     <div className="p-4 mx-auto">
-      <div className="max-w-6xl mx-auto p-4 space-y-6">
+      <div className="max-w-8xl mx-auto p-4 space-y-6">
         <SearchBar
           placeholder="Buscar por RUC del cliente"
           onSearch={handleSearch}
         />
+        
+        <AppointmentDateFilter filters={filters} setFilters={handleFilterChange} />
       </div>
-      <AppointmentDateFilter filters={filters} setFilters={handleFilterChange} />
+      
 
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-3xl font-bold">Citas</h2>
