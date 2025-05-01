@@ -32,21 +32,3 @@ export interface AppointmentQueryParams extends BaseQueryParams {
     toDesignatedDate?: string;
     status?: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELED' ;
 }
-
-export interface ServiceType { 
-    id?: number;
-    slug: string;
-    name: string;
-    description: string;
-    durationMin: number;
-    iva: number;
-    price: number;
-    maxColabs?: number;
-    isPublic?: boolean;
-    tags?: string[];
-    image?: {
-        id: number;
-        previewUrl: string;
-        originalUrl: string;
-      } | null;
-}
