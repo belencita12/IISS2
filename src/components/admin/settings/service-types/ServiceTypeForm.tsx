@@ -7,14 +7,11 @@ import { toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
-import FormInput from "@/components/global/FormInput";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import FormImgUploader from "@/components/global/FormImgUploader";
-import { image } from "@/lib/schemas";
 import { createServiceType } from "@/lib/service-types/service";
 import { useEffect, useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
 const serviceTypeFormSchema = z.object({
@@ -79,8 +76,10 @@ export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
     },
   });
 
-  const price = watch("price");
-  const iva = watch("iva");
+  useEffect(() => {
+    console.log("Errors values:", errors);
+  }, [errors]);
+
   const tags = watch("tags") || [];
 
   const handleImageChange = (file?: File) => {
@@ -118,7 +117,6 @@ export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
       if (data.img) formData.append("img", data.img);
 
       await createServiceType(token, formData);
-      toast("success", "Tipo de servicio registrado con éxito");
       router.push("/dashboard/settings/service-types");
     } catch (error: any) {
       console.error("Error al crear el tipo de servicio:", error);
@@ -153,21 +151,28 @@ export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 flex-1">
-          <FormInput
-            label="Nombre"
-            name="name"
-            register={register("name")}
-            error={errors.name?.message}
-          />
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 flex-1" noValidate>
+          <div>
+            <Label>Nombre</Label>
+            <Input
+              {...register("name")}
+              placeholder="Ingrese el nombre del servicio"
+            />
+            {errors.name && (
+              <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+            )}
+          </div>
 
-          <FormInput
-            label="Slug"
-            name="slug"
-            register={register("slug")}
-            error={errors.slug?.message}
-            placeholder="servicio-veterinario"
-          />
+          <div>
+            <Label>Slug</Label>
+            <Input
+              {...register("slug")}
+              placeholder="servicio-veterinario"
+            />
+            {errors.slug && (
+              <p className="text-red-500 text-sm mt-1">{errors.slug.message}</p>
+            )}
+          </div>
 
           <div>
             <Label>Descripción</Label>
@@ -176,12 +181,12 @@ export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
               className="min-h-[100px]"
             />
             {errors.description && (
-              <p className="text-sm text-red-600 mt-1">{errors.description.message}</p>
+              <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
             )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
+            <div>
               <Label>Duración (minutos)</Label>
               <Input
                 type="number"
@@ -190,11 +195,11 @@ export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
                 min="5"
               />
               {errors.durationMin && (
-                <p className="text-sm text-red-600">{errors.durationMin.message}</p>
+                <p className="text-red-500 text-sm mt-1">{errors.durationMin.message}</p>
               )}
             </div>
 
-            <div className="space-y-2">
+            <div>
               <Label>Precio</Label>
               <Input
                 type="number"
@@ -202,11 +207,11 @@ export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
                 min="1"
               />
               {errors.price && (
-                <p className="text-sm text-red-600">{errors.price.message}</p>
+                <p className="text-red-500 text-sm mt-1">{errors.price.message}</p>
               )}
             </div>
 
-            <div className="space-y-2">
+            <div>
               <Label>IVA (%)</Label>
               <Input
                 type="number"
@@ -215,11 +220,11 @@ export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
                 max="100"
               />
               {errors.iva && (
-                <p className="text-sm text-red-600">{errors.iva.message}</p>
+                <p className="text-red-500 text-sm mt-1">{errors.iva.message}</p>
               )}
             </div>
 
-            <div className="space-y-2">
+            <div>
               <Label>Costo</Label>
               <Input
                 type="number"
@@ -227,11 +232,11 @@ export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
                 min="1"
               />
               {errors.cost && (
-                <p className="text-sm text-red-600">{errors.cost.message}</p>
+                <p className="text-red-500 text-sm mt-1">{errors.cost.message}</p>
               )}
             </div>
 
-            <div className="space-y-2">
+            <div>
               <Label>MaxColabs (opcional)</Label>
               <Input
                 type="number"
@@ -239,7 +244,7 @@ export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
                 min="0"
               />
               {errors.maxColabs && (
-                <p className="text-sm text-red-600">{errors.maxColabs.message}</p>
+                <p className="text-red-500 text-sm mt-1">{errors.maxColabs.message}</p>
               )}
             </div>
           </div>
