@@ -262,7 +262,7 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
                   <Image
                     src={previewImage}
                     className="w-full h-auto rounded-md"
-                    alt="Vista prevía del producto"
+                    alt="Vista previa del producto"
                     width={200}
                     height={200}
                     priority
