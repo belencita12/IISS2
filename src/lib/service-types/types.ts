@@ -3,8 +3,8 @@ export interface ServiceTypeFormData {
   name: string;
   description: string;
   durationMin: number;
-  iva: number;
-  price: number;
+  _iva: number;
+  _price: number;
   cost: number;
   maxColabs?: number;
   isPublic?: boolean;

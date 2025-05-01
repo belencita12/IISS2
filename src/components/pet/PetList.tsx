@@ -66,6 +66,7 @@ const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
   // Buscar mascotas al cargar la página
   useEffect(() => {
     fetchPets(1, "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Función para buscar mascotas por nombre desde la barra de búsqueda
@@ -79,6 +80,7 @@ const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
   // Buscar mascotas por nombre desde la paginación (cuando se clickee en los botones de paginación)
   useEffect(() => {
     fetchPets(currentPage, petName);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
   return (

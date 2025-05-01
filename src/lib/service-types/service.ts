@@ -19,7 +19,7 @@ export interface ServiceType {
   };
 }
 
-const toServiceType = (data: FormData): ServiceType => {
+/*const toServiceType = (data: FormData): ServiceType => {
   return {
     id: data.get("id") ? Number(data.get("id")) : 0,
     slug: data.get("slug") ? String(data.get("slug")) : "",
@@ -40,7 +40,7 @@ const toServiceType = (data: FormData): ServiceType => {
         }
       : undefined
   }
-}
+}*/
 
 export const getServiceTypes = async (token: string, page: number = 1, query: string = "") => {
   const response = await fetch(

@@ -8,7 +8,8 @@ export const serviceTypeSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
   description: z.string().min(1, "La descripción es obligatoria"),
   durationMin: z.number().min(1, "La duración es obligatoria"),
-  price: z.number().min(0, "El precio no puede ser negativo"),
+  _price: z.number().min(0, "El precio no puede ser negativo"),
+  _iva: z.number().min(0, "El IVA no puede ser negativo"),
   tags: z.array(z.string()).optional(),
 });
 
@@ -21,7 +22,8 @@ export const useServiceTypeCreate = (initialData?: Partial<ServiceTypeFormData>)
       name: initialData?.name ?? "",
       description: initialData?.description ?? "",
       durationMin: initialData?.durationMin ?? 30,
-      price: initialData?.price ?? 0,
+      _price: initialData?._price ?? 0,
+      _iva: initialData?._iva ?? 0,
       tags: initialData?.tags ?? [],
     },
   });

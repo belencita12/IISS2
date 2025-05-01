@@ -39,6 +39,7 @@ export const useProductTag = (token: string, externalPageSize: number = 5) => {
       
       updateVisibleProducts(tagPagination.currentPage);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [externalPageSize]);
 
   // Función para actualizar productos visibles en la página actual

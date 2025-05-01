@@ -1,7 +1,5 @@
 import { useState, useCallback } from "react";
-import { useQuery } from "../useQuery";
 import { usePaginatedFetch } from "../api/usePaginatedFetch";
-import { toast } from "@/lib/toast";
 import { SERVICE_TYPE_API } from "@/lib/urls";
 
 export interface ServiceType {

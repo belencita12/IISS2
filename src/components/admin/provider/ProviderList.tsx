@@ -56,8 +56,9 @@ export default function ProviderList({ token }: { token: string }) {
   useEffect(() => {
     fetchProviders({
       page: 1,
-    })
-  }, [])
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Buscar proveedores mediante query del search bar
   const handleSearch = (query: string) => {

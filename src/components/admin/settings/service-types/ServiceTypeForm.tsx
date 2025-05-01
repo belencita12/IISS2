@@ -3,14 +3,13 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { toast } from "@/lib/toast";
+import { toast as _toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import FormImgUploader from "@/components/global/FormImgUploader";
-import { createServiceType } from "@/lib/service-types/service";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { getAllTags } from "@/lib/tags/service";
@@ -26,10 +25,10 @@ const serviceTypeFormSchema = z.object({
     .refine((val) => val % 5 === 0, {
       message: "La duración debe ser múltiplo de 5"
     }),
-  iva: z.coerce.number()
+  _iva: z.coerce.number()
     .min(0, "El IVA no puede ser negativo")
     .max(100, "El IVA no puede ser mayor a 100"),
-  price: z.coerce.number()
+  _price: z.coerce.number()
     .min(1, "El precio es obligatorio y debe ser al menos 1")
     .refine((val) => val >= 1, {
       message: "El precio debe ser al menos 1"
@@ -51,15 +50,20 @@ type ServiceTypeFormValues = z.infer<typeof serviceTypeFormSchema>;
 
 interface ServiceTypeFormProps {
   token: string;
-  initialData?: ServiceTypeFormValues;
+  _initialData?: ServiceTypeFormValues;
   onSubmit: (data: ServiceTypeFormValues) => Promise<void>;
-  isSubmitting?: boolean;
+  _isSubmitting?: boolean;
 }
 
-export default function ServiceTypeForm({ token, initialData, onSubmit, isSubmitting = false }: ServiceTypeFormProps) {
-  const router = useRouter();
-  const [availableTags, setAvailableTags] = useState<Tag[]>([]);
-  const [isLoadingTags, setIsLoadingTags] = useState(true);
+export default function ServiceTypeForm({ 
+  token, 
+  _initialData, 
+  onSubmit,
+  _isSubmitting = false 
+}: ServiceTypeFormProps) {
+  const _router = useRouter();
+  const [_availableTags, setAvailableTags] = useState<Tag[]>([]);
+  const [_isLoadingTags, setIsLoadingTags] = useState(true);
   const [tags, setTags] = useState<string[]>([]);
 
   useEffect(() => {
@@ -85,13 +89,13 @@ export default function ServiceTypeForm({ token, initialData, onSubmit, isSubmit
     formState: { errors, isSubmitting: formIsSubmitting },
   } = useForm<ServiceTypeFormValues>({
     resolver: zodResolver(serviceTypeFormSchema),
-    defaultValues: {
+    defaultValues: _initialData || {
       name: "",
       slug: "",
       description: "",
       durationMin: 30,
-      iva: 5,
-      price: 0,
+      _iva: 5,
+      _price: 0,
       cost: 0,
       maxColabs: 1,
       isPublic: false,
@@ -100,8 +104,8 @@ export default function ServiceTypeForm({ token, initialData, onSubmit, isSubmit
     },
   });
 
-  const price = watch("price");
-  const iva = watch("iva");
+  const _price = watch("_price");
+  const _iva = watch("_iva");
 
   const handleImageChange = (file?: File) => {
     setValue("img", file);
@@ -195,11 +199,11 @@ export default function ServiceTypeForm({ token, initialData, onSubmit, isSubmit
               <Label>Precio</Label>
               <Input
                 type="number"
-                {...register("price")}
+                {...register("_price")}
                 min="1"
               />
-              {errors.price && (
-                <p className="text-red-500 text-sm mt-1">{errors.price.message}</p>
+              {errors._price && (
+                <p className="text-red-500 text-sm mt-1">{errors._price.message}</p>
               )}
             </div>
 
@@ -207,12 +211,12 @@ export default function ServiceTypeForm({ token, initialData, onSubmit, isSubmit
               <Label>IVA (%)</Label>
               <Input
                 type="number"
-                {...register("iva")}
+                {...register("_iva")}
                 min="1"
                 max="100"
               />
-              {errors.iva && (
-                <p className="text-red-500 text-sm mt-1">{errors.iva.message}</p>
+              {errors._iva && (
+                <p className="text-red-500 text-sm mt-1">{errors._iva.message}</p>
               )}
             </div>
 
@@ -284,7 +288,7 @@ export default function ServiceTypeForm({ token, initialData, onSubmit, isSubmit
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.push("/dashboard/settings/service-types")}
+              onClick={() => _router.push("/dashboard/settings/service-types")}
             >
               Cancelar
             </Button>

@@ -75,6 +75,11 @@ export default function DepositSearch({
     setIsCommandOpen(false);
   };
 
+  useEffect(() => {
+    get();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-4">

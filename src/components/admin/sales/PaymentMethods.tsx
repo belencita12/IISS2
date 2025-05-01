@@ -48,16 +48,22 @@ export default function PaymentMethods({
   const { data, get, loading } = useFetch<PaymentMethodResponse>("", token);
 
   useEffect(() => {
-    get(undefined, `${PAYMENT_METHOD_API}?page=1&size=5`);
+    get();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (data) {
+    if (data?.data) {
       setMethods(data.data);
-      if (data.data.length > 0)
-        onSelectedMethodChange(data.data[0].id.toString());
     }
   }, [data]);
+
+  useEffect(() => {
+    if (methods.length > 0) {
+      onSelectedMethodChange(methods[0].id.toString());
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [methods]);
 
   const handleAdd = () => {
     const parsedAmount = parseFloat(amount);

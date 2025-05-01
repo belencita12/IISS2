@@ -87,7 +87,7 @@ function calcularEdad(fechaNacimiento: string): string {
   return `${edad} Años`;
 }
 
-function convertirFecha(fecha: string): string {
+/*function convertirFecha(fecha: string): string {
   console.log(fecha);
   const meses: string[] = [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -100,14 +100,16 @@ function convertirFecha(fecha: string): string {
   const año = fechaObj.getUTCFullYear();
 
   return `${dia} de ${mes} ${año}`;
-}
+}*/
 
 function formatNumber(num: number) {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
 export default function PetDetails({ token }: Props) {
-  const { id } = useParams();
+  const params = useParams();
+  const id = typeof params?.id === 'string' ? params.id : '0';
+
 
   const [showAll, setShowAll] = useState(false);
   const [showAllProg, setShowAllProg] = useState(false);
@@ -150,16 +152,18 @@ export default function PetDetails({ token }: Props) {
   // Se utiliza getPetById para obtener los detalles de la mascota
   useEffect(() => {
     setPet(undefined);
-    getPetById(Number(id), token)
+    getPetById(parseInt(id, 10), token)
       .then((data) => {
         setPet(data);
       })
-      .catch((error) => {
-        //console.error("Error al obtener la mascota:", error);
+      .catch(() => {
         toast("error", "Error al obtener la mascota.");
         setPet(null);
       });
   }, [id, token]);
+
+  
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -209,7 +213,10 @@ export default function PetDetails({ token }: Props) {
       setIsSaving(false);
     }
   };
-  
+
+  if (!id) {
+    return <p className="text-center text-red-500">Error: No se encontró el ID de la mascota</p>;
+  }
 
   return (
     <div className="flex-col">

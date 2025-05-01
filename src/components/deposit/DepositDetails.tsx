@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/admin/product/ProductCard";
 import ProductFilters from "@/components/admin/product/filter/ProductFilter";
 import { getStockDetailsByStock } from "@/lib/stock/getStockDetailsByStock";
-import { getProductById } from "@/lib/products/getProductById";
-import { StockData, StockDetailsResponse, StockDetailsData} from "@/lib/stock/IStock";
+import { getProductById as _getProductById } from "@/lib/products/getProductById";
+import { StockData as _StockData } from "@/lib/stock/IStock";
+import { StockDetailsResponse as _StockDetailsResponse } from "@/lib/stock/IStock";
+import { StockDetailsData as _StockDetailsData } from "@/lib/stock/IStock";
 import { Product } from "@/lib/products/IProducts";
 import { toast } from "@/lib/toast";
 import GenericPagination from "../global/GenericPagination";
@@ -15,22 +17,21 @@ import GenericPagination from "../global/GenericPagination";
 interface DepositDetailsProps {
   token: string;
   stockId: string;
+  _ProductFilterState?: {
+    searchTerm: string;
+    category: string;
+    minPrice: string;
+    maxPrice: string;
+    minCost: string;
+    maxCost: string;
+  };
 }
 
 interface ProductWithAmount extends Product {
   amount: number;
 }
 
-interface ProductFilterState {
-  searchTerm: string;
-  category: string;
-  minPrice: string;
-  maxPrice: string;
-  minCost: string;
-  maxCost: string;
-}
-
-export default function DepositDetails({ token, stockId }: DepositDetailsProps) {
+export default function DepositDetails({ token, stockId, _ProductFilterState }: DepositDetailsProps) {
   const router = useRouter();
 
   const [products, setProducts] = useState<ProductWithAmount[]>([]);

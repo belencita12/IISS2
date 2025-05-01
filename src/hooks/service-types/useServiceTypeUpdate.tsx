@@ -1,20 +1,6 @@
 import { useState } from 'react';
 import { updateServiceType } from '@/lib/service-types/service';
-import { ServiceType } from '@/lib/service-types/types';
-
-interface ServiceTypeFormData {
-  slug: string;
-  name: string;
-  description: string;
-  durationMin: number;
-  iva: number;
-  price: number;
-  cost: number;
-  maxColabs?: number;
-  isPublic?: boolean;
-  tags?: string[];
-  img?: File;
-}
+import { ServiceTypeFormData } from '@/lib/service-types/types';
 
 export const useServiceTypeUpdate = (token: string) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -29,8 +15,8 @@ export const useServiceTypeUpdate = (token: string) => {
       formData.append("name", data.name);
       formData.append("description", data.description);
       formData.append("durationMin", data.durationMin.toString());
-      formData.append("iva", data.iva.toString());
-      formData.append("price", data.price.toString());
+      formData.append("iva", data._iva.toString());
+      formData.append("price", data._price.toString());
       formData.append("cost", data.cost.toString());
       
       // Campos opcionales

@@ -41,6 +41,11 @@ export default function ProductSearch({ onSelectProduct, token,stockId }: Produc
     }
   }, [data])
 
+  useEffect(() => {
+    get();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleSelectProduct = (product: Product) => {
     onSelectProduct(product)
     setSearchTerm("")

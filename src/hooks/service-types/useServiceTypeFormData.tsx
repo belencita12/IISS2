@@ -5,8 +5,8 @@ export interface useServiceTypeFormData {
   slug: string;
   description: string;
   durationMin: number;
-  iva: number;
-  price: number;
+  _iva: number;
+  _price: number;
   maxColabs?: number;
   isPublic?: boolean;
   tags?: string[];

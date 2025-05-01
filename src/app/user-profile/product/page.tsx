@@ -1,5 +1,4 @@
 import ProductCatalog from "@/components/product/ProductCatalog";
-import ProductList from "@/components/product/ProductList";
 import authOptions from "@/lib/auth/options";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";

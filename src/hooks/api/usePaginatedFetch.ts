@@ -128,7 +128,7 @@ export function usePaginatedFetch<T = unknown>(
     if (autoFetch && token) {
       fetchData(initialPage);
     }
-  }, [autoFetch, initialPage]);
+  }, [autoFetch, initialPage, token, fetchData]);
 
   return {
     ...state,

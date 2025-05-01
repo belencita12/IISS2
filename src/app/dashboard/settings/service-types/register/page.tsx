@@ -25,8 +25,8 @@ export default function ServiceTypeRegisterPage() {
       formData.append("name", data.name);
       formData.append("description", data.description);
       formData.append("durationMin", data.durationMin.toString());
-      formData.append("iva", data.iva.toString());
-      formData.append("price", data.price.toString());
+      formData.append("iva", data._iva.toString());
+      formData.append("price", data._price.toString());
       formData.append("cost", data.cost.toString());
       
       // Campos opcionales

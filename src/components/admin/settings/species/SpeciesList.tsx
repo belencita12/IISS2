@@ -19,18 +19,18 @@ interface SpeciesListProps {
 }
 
 export default function SpeciesList({ token }: SpeciesListProps) {
-    const router = useRouter();
+    const _router = useRouter();
     const [speciesList, setSpeciesList] = useState<Species[]>([]);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [selectedSpecies, setSelectedSpecies] = useState<Species | null>(null);
+    const [_searchQuery, setSearchQuery] = useState("");
     const [pagination, setPagination] = useState<PaginationInfo>({
         currentPage: 1, totalPages: 1, totalItems: 0, pageSize: 10,
     });
-    const [selectedSpecies, setSelectedSpecies] = useState<Species | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [speciesToEdit, setSpeciesToEdit] = useState<Species | null>(null);
-    const [searchQuery, setSearchQuery] = useState<string>("");
-
 
     const loadSpecies = useCallback(async (page = 1, query = "") => {
         if (!token) return;
@@ -57,11 +57,11 @@ export default function SpeciesList({ token }: SpeciesListProps) {
         } finally {
             setLoading(false);
         }
-    }, [token]);
+    }, [token, pagination.pageSize]);
 
     useEffect(() => {
         if (token) loadSpecies(pagination.currentPage);
-    }, [token, pagination.currentPage, loadSpecies]);
+    }, [token, loadSpecies, pagination.currentPage]);
 
     const confirmDelete = (species: Species) => {
         setSelectedSpecies(species);
@@ -87,9 +87,13 @@ export default function SpeciesList({ token }: SpeciesListProps) {
         setSearchQuery(query);
         loadSpecies(1, query);
     }
-    const handlePageChange = (page: number) => {
-        loadSpecies(page, searchQuery);
-    };
+
+    const handlePageChange = useCallback(
+        (newPage: number) => {
+            setPagination((prev) => ({ ...prev, currentPage: newPage }));
+        },
+        [setPagination]
+    );
 
     const columns: Column<Species>[] = [{ header: "Nombre", accessor: "name" }];
 

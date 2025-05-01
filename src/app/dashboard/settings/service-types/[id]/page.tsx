@@ -21,7 +21,7 @@ export default function ServiceTypeEditPage({ params, searchParams }: PageProps)
   const router = useRouter();
   const [id, setId] = useState<string>('');
   const [token, setToken] = useState<string>('');
-  const { serviceType, isLoading: isLoadingServiceType } = useServiceType(id);
+  const { serviceType, isLoading: isLoadingServiceType } = useServiceType(id, token);
   const { updateServiceType, isLoading: isLoadingUpdate } = useServiceTypeUpdate(token);
 
   useEffect(() => {
@@ -40,8 +40,8 @@ export default function ServiceTypeEditPage({ params, searchParams }: PageProps)
         name: data.name as string,
         description: data.description as string,
         durationMin: data.durationMin as number,
-        iva: data.iva as number,
-        price: data.price as number,
+        _iva: data._iva as number,
+        _price: data._price as number,
         cost: data.cost as number,
         maxColabs: data.maxColabs as number | undefined,
         isPublic: data.isPublic as boolean | undefined,
@@ -75,9 +75,9 @@ export default function ServiceTypeEditPage({ params, searchParams }: PageProps)
 
       <ServiceTypeForm
         token={token}
-        initialData={serviceType}
+        _initialData={serviceType}
         onSubmit={handleSubmit}
-        isSubmitting={isLoadingUpdate}
+        _isSubmitting={isLoadingUpdate}
       />
     </div>
   );

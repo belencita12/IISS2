@@ -5,7 +5,6 @@ import { GetInvoiceQueryParams } from "@/lib/invoices/IInvoice";
 import { useEffect, useState } from "react";
 import useDebounce from "@/hooks/useDebounce";
 import clsx from "clsx";
-import { Input } from "@/components/ui/input";
 
 interface Props {
   filters: GetInvoiceQueryParams;
@@ -53,6 +52,7 @@ export default function InvoiceDateFilter({ filters, setFilters }: Props) {
         toIssueDate: adjustEndDate(debouncedEndDate) || undefined,
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedStartDate, debouncedEndDate]);
 
   return (

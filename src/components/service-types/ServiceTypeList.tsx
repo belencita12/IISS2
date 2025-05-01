@@ -6,9 +6,10 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/lib/toast';
 
 const ServiceTypeList: React.FC = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [token, setToken] = useState('');
 
-  const { serviceTypes, isLoading, error, onPageChange, onSearch } = useServiceTypeList(token);
+  const { serviceTypes, onPageChange } = useServiceTypeList(token);
 
   const handleDelete = async (serviceType: ServiceType) => {
     try {
