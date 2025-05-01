@@ -20,7 +20,7 @@ import {
 
 const linksUser = [
   { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
-  { name: "Citas", href: "/dashboard/citas", icon: CalendarIcon },
+  { name: "Citas", href: "/dashboard/appointment", icon: CalendarIcon },
   { name: "Clientes", href: "/dashboard/clients", icon: UserIcon },
   { name: "Productos", href: "/dashboard/products", icon: BoneIcon },  
   { name: "Vacunas", href: "/dashboard/vaccine", icon: SyringeIcon },
