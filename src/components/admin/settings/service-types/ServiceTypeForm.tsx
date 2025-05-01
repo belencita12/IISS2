@@ -13,6 +13,9 @@ import FormImgUploader from "@/components/global/FormImgUploader";
 import { createServiceType } from "@/lib/service-types/service";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
+import { getAllTags } from "@/lib/tags/service";
+import { Tag } from "@/lib/tags/types";
+import { TagFilter } from "@/components/admin/product/filter/TagFilter";
 
 const serviceTypeFormSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
@@ -52,7 +55,25 @@ interface ServiceTypeFormProps {
 
 export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
   const router = useRouter();
-  const [tagInput, setTagInput] = useState("");
+  const [availableTags, setAvailableTags] = useState<Tag[]>([]);
+  const [isLoadingTags, setIsLoadingTags] = useState(true);
+  const [tags, setTags] = useState<string[]>([]);
+
+  useEffect(() => {
+    const loadTags = async () => {
+      try {
+        const response = await getAllTags(token);
+        setAvailableTags(response.data);
+      } catch (error) {
+        console.error("Error al cargar tags:", error);
+      } finally {
+        setIsLoadingTags(false);
+      }
+    };
+
+    loadTags();
+  }, [token]);
+
   const {
     register,
     handleSubmit,
@@ -76,32 +97,23 @@ export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
     },
   });
 
-  useEffect(() => {
-    console.log("Errors values:", errors);
-  }, [errors]);
-
-  const tags = watch("tags") || [];
+  const price = watch("price");
+  const iva = watch("iva");
 
   const handleImageChange = (file?: File) => {
     setValue("img", file);
   };
 
-  const handleAddTag = () => {
-    if (tagInput.trim() && !tags.includes(tagInput.trim())) {
-      setValue("tags", [...tags, tagInput.trim()]);
-      setTagInput("");
-    }
-  };
-
-  const handleRemoveTag = (tagToRemove: string) => {
-    setValue("tags", tags.filter(tag => tag !== tagToRemove));
+  const handleTagsChange = (selectedTags: string[]) => {
+    setTags(selectedTags);
+    setValue("tags", selectedTags);
   };
 
   const onSubmit = async (data: ServiceTypeFormValues) => {
     try {
       const formData = new FormData();
       
-      // Campos obligatorios
+      // Campos obligatorios (*)
       formData.append("slug", data.slug);
       formData.append("name", data.name);
       formData.append("description", data.description);
@@ -113,7 +125,12 @@ export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
       // Campos opcionales
       if (data.maxColabs) formData.append("maxColabs", data.maxColabs.toString());
       if (data.isPublic !== undefined) formData.append("isPublic", data.isPublic.toString());
-      if (data.tags && data.tags.length > 0) formData.append("tags", JSON.stringify(data.tags));
+      
+      // Enviar tags como array
+      if (data.tags && data.tags.length > 0) {
+        formData.append("tags", JSON.stringify(data.tags));
+      }
+      
       if (data.img) formData.append("img", data.img);
 
       await createServiceType(token, formData);
@@ -257,41 +274,35 @@ export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
             <Label htmlFor="isPublic">Público</Label>
           </div>
 
-          <div className="space-y-2">
+          <div>
             <Label>Tags</Label>
-            <div className="flex gap-2">
-              <Input
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                placeholder="Ingrese un tag y presione Enter"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleAddTag();
-                  }
-                }}
-              />
-              <Button type="button" onClick={handleAddTag}>
-                Agregar
-              </Button>
-            </div>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {tags.map((tag) => (
-                <div
-                  key={tag}
-                  className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded"
-                >
-                  <span>{tag}</span>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveTag(tag)}
-                    className="text-gray-500 hover:text-gray-700"
+            <TagFilter
+              token={token}
+              selectedTags={tags}
+              onChange={handleTagsChange}
+            />
+            {tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {tags.map((tag) => (
+                  <div
+                    key={tag}
+                    className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded"
                   >
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
+                    <span>{tag}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleTagsChange(tags.filter(t => t !== tag))}
+                      className="text-gray-500 hover:text-gray-700"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            {errors.tags && (
+              <p className="text-red-500 text-sm mt-1">{errors.tags.message}</p>
+            )}
           </div>
 
           <div className="flex justify-start gap-4">

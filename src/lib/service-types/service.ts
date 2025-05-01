@@ -70,6 +70,7 @@ export const createServiceType = async (token: string, data: FormData) => {
     method: "POST",
     headers: {
       "Authorization": `Bearer ${token}`,
+      "Accept": "application/json",
     },
     body: data,
   });
