@@ -1,18 +1,26 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import NumericInput from "@/components/global/NumericInput"; 
+import NumericInput from "@/components/global/NumericInput";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import { registerProduct } from "@/lib/products/registerProduct";
 import { useRouter } from "next/navigation";
 import { TagFilter } from "./filter/TagFilter";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
+import { useInitialData } from "@/hooks/purchases/useProviderStock";
 import { X } from "lucide-react";
 
 const MAX_FILE_SIZE = 1024 * 1024;
@@ -21,9 +29,18 @@ const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const productFormSchema = z.object({
   productName: z.string().min(1, "El nombre es obligatorio"),
   description: z.string().optional(),
-  cost: z.number({ message: "Complete con valores numéricos adecuados" }).min(1, "El costo debe ser mayor a 0"),
-  price: z.number({ message: "Complete con valores numéricos adecuados" }).min(1, "El precio debe ser mayor a 0"),
-  iva: z.number({ message: "Complete con valores numéricos adecuados" }).min(1, "El IVA debe ser mayor a 0"),
+  cost: z
+    .number({ message: "Complete con valores numéricos adecuados" })
+    .min(1, "El costo debe ser mayor a 0"),
+  price: z
+    .number({ message: "Complete con valores numéricos adecuados" })
+    .min(1, "El precio debe ser mayor a 0"),
+  iva: z
+    .number({ message: "Complete con valores numéricos adecuados" })
+    .min(1, "El IVA debe ser mayor a 0"),
+  providerId: z
+    .number({ invalid_type_error: "Selecciona un proveedor" })
+    .min(1, "Selecciona un proveedor"),
   tags: z.string().min(1, "Selecciona al menos una etiqueta"),
   category: z.string().min(1, "Selecciona una categoría"),
   imageFile: z
@@ -43,13 +60,17 @@ interface ProductRegisterFormProps {
   token?: string;
 }
 
-export default function ProductRegisterForm({ token }: ProductRegisterFormProps) {
+export default function ProductRegisterForm({
+  token,
+}: ProductRegisterFormProps) {
+  const { providers } = useInitialData(token || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [tags, setTags] = useState<string[]>([]);
   const {
     register,
+    control,
     handleSubmit,
     setValue,
     watch,
@@ -62,6 +83,7 @@ export default function ProductRegisterForm({ token }: ProductRegisterFormProps)
       cost: undefined,
       price: undefined,
       iva: undefined,
+      providerId: undefined,
       tags: "",
       category: "PRODUCT",
       imageFile: undefined,
@@ -96,6 +118,9 @@ export default function ProductRegisterForm({ token }: ProductRegisterFormProps)
     if (data.description) {
       formData.append("description", data.description);
     }
+
+    formData.append("providerId", data.providerId.toString());
+
     Object.entries({
       name: data.productName,
       cost: data.cost,
@@ -139,16 +164,16 @@ export default function ProductRegisterForm({ token }: ProductRegisterFormProps)
             )}
           </div>
           <div>
-  <Label>Descripción</Label>
-  <textarea
-    {...register("description")}
-    placeholder="Ingrese una descripción del producto"
-    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm placeholder:text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-black"
-  />
-  {errors.description && (
-    <p className="text-red-500">{errors.description.message}</p>
-  )}
-</div>
+            <Label>Descripción</Label>
+            <textarea
+              {...register("description")}
+              placeholder="Ingrese una descripción del producto"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm placeholder:text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-black"
+            />
+            {errors.description && (
+              <p className="text-red-500">{errors.description.message}</p>
+            )}
+          </div>
 
           {/* Costo */}
           <div>
@@ -204,42 +229,80 @@ export default function ProductRegisterForm({ token }: ProductRegisterFormProps)
             />
           </div>
 
-          {/* Etiquetas */}
-          {/* Etiquetas */}
-<div>
-  <TagFilter
-    token={token || ""}
-    selectedTags={tags}
-    onChange={handleTagsChange}
-  />
-  {errors.tags && (
-    <p className="text-red-500 text-sm mt-1">{errors.tags.message}</p>
-  )}
+          <div className="flex flex-col md:flex-row gap-4">
+            {/* Proveedor */}
+            <div className="w-full md:w-1/2">
+              <Controller
+                name="providerId"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    onValueChange={(val) => field.onChange(Number(val))}
+                    value={field.value?.toString() ?? ""}
+                  >
+                    <SelectTrigger
+                      className={`w-full ${
+                        errors.providerId ? "border-red-500" : ""
+                      }`}
+                    >
+                      <SelectValue placeholder="Proveedor" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {providers.map((p) => (
+                        <SelectItem key={p.id} value={String(p.id)}>
+                          {p.businessName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.providerId && (
+                <p className="text-red-500 text-sm">
+                  {errors.providerId.message}
+                </p>
+              )}
+            </div>
 
-  {tags.length > 0 && (
-    <div className="mt-3">
-      <div className="flex flex-wrap gap-2">
-        {tags.map((tag) => (
-          <div
-            key={tag}
-            className="bg-blue-50 border border-blue-100 text-black text-xs font-medium px-2.5 py-1 rounded-md flex items-center gap-1.5 transition-colors hover:bg-blue-100"
-          >
-            <span>{tag}</span>
-            <button
-              type="button"
-              onClick={() => handleTagsChange(tags.filter((t) => t !== tag))}
-              className="inline-flex items-center justify-center rounded-full w-4 h-4 bg-gray text-black hover:bg-blue-300 transition-colors"
-              aria-label={`Eliminar etiqueta ${tag}`}
-            >
-              <X className="w-3 h-3" />
-            </button>
+            {/* Etiquetas */}
+            <div className="w-full md:w-1/2">
+             <Label>Etiqueta/s</Label>
+              <TagFilter
+                token={token || ""}
+                selectedTags={tags}
+                onChange={handleTagsChange}
+              />
+              {errors.tags && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.tags.message}
+                </p>
+              )}
+              {tags.length > 0 && (
+                <div className="mt-3">
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map((tag) => (
+                      <div
+                        key={tag}
+                        className="bg-blue-50 border border-blue-100 text-black text-xs font-medium px-2.5 py-1 rounded-md flex items-center gap-1.5 transition-colors hover:bg-blue-100"
+                      >
+                        <span>{tag}</span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleTagsChange(tags.filter((t) => t !== tag))
+                          }
+                          className="inline-flex items-center justify-center rounded-full w-4 h-4 bg-gray text-black hover:bg-blue-300 transition-colors"
+                          aria-label={`Eliminar etiqueta ${tag}`}
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-        ))}
-      </div>
-    </div>
-  )}
-</div>
-
 
           {/* Imagen */}
           <div className="w-full flex flex-col items-start relative">
@@ -259,8 +322,8 @@ export default function ProductRegisterForm({ token }: ProductRegisterFormProps)
                   src={previewImage}
                   className="w-full h-auto rounded-md"
                   alt="Vista previa del producto"
-                  width={96}
-                  height={96}
+                  width={200}
+                  height={200}
                   priority
                 />
               </div>

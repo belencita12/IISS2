@@ -2,7 +2,10 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import GenericTable, { Column, TableAction } from "@/components/global/GenericTable";
+import GenericTable, {
+  Column,
+  TableAction,
+} from "@/components/global/GenericTable";
 import { StockDetailsData, StockData } from "@/lib/stock/IStock";
 import { Eye } from "lucide-react";
 
@@ -19,10 +22,13 @@ interface StockListProps {
   isLoading: boolean;
 }
 
-export default function ProductStockList({ stockDetails, stocks, isLoading }: StockListProps) {
+export default function ProductStockList({
+  stockDetails,
+  stocks,
+  isLoading,
+}: StockListProps) {
   const router = useRouter();
 
-  // Transform data for GenericTable
   const rows: Row[] = stockDetails
     .map((detail) => {
       const stock = stocks.find((s) => s.id === detail.stockId);

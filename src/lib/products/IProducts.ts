@@ -1,3 +1,4 @@
+import { Provider } from "../provider/IProvider";
 export interface Product {
   id: string;
   code: string;
@@ -6,6 +7,8 @@ export interface Product {
   category: string;
   price: number;
   iva?: number;
+  provider: Provider; 
+  providerId: number; 
   stock: number;
   tags?: string[],
   originalUrl?: string;

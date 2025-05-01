@@ -14,7 +14,17 @@ import { updateProduct } from "@/lib/products/updateProduct";
 import { getProductById } from "@/lib/products/getProductById";
 import { Product } from "@/lib/products/IProducts";
 import { TagFilter } from "./filter/TagFilter";
-import NumericInput from "@/components/global/NumericInput"; 
+import NumericInput from "@/components/global/NumericInput";
+import { Controller } from "react-hook-form";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
+import { useInitialData } from "@/hooks/purchases/useProviderStock";
+
 import { X } from "lucide-react";
 
 const MAX_FILE_SIZE = 1024 * 1024;
@@ -23,9 +33,18 @@ const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const productFormSchema = z.object({
   productName: z.string().min(1, "El nombre es obligatorio"),
   description: z.string().optional(),
-  cost: z.number({ message: "Complete con valores numéricos adecuados" }).min(1, "El costo debe ser mayor a 0"),
-  price: z.number({ message: "Complete con valores numéricos adecuados" }).min(1, "El precio debe ser mayor a 0"),
-  iva: z.number({ message: "Complete con valores numéricos adecuados" }).min(1, "El IVA debe ser mayor a 0"),
+  cost: z
+    .number({ message: "Complete con valores numéricos adecuados" })
+    .min(1, "El costo debe ser mayor a 0"),
+  price: z
+    .number({ message: "Complete con valores numéricos adecuados" })
+    .min(1, "El precio debe ser mayor a 0"),
+  iva: z
+    .number({ message: "Complete con valores numéricos adecuados" })
+    .min(1, "El IVA debe ser mayor a 0"),
+  providerId: z
+    .number({ invalid_type_error: "Selecciona un proveedor" })
+    .min(1, "Selecciona un proveedor"),
   tags: z.string().min(1, "Selecciona al menos una etiqueta"),
   category: z.string().min(1, "Selecciona una categoría"),
   imageFile: z
@@ -48,7 +67,7 @@ interface ProductUpdateFormProps {
 
 export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
   const { id } = useParams();
-
+  const { providers } = useInitialData(token || "");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [product, setProduct] = useState<Product | null>(null);
@@ -58,6 +77,7 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
   const [tags, setTags] = useState<string[]>([]);
   const {
     register,
+    control,
     handleSubmit,
     setValue,
     watch,
@@ -70,6 +90,7 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
       cost: 0,
       price: 0,
       iva: 0,
+      providerId: undefined,
       tags: "",
       category: "PRODUCT",
       imageFile: undefined,
@@ -91,14 +112,18 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
         setValue("cost", productData.cost ?? 0);
         setValue("price", productData.price ?? 0);
         setValue("iva", Number(productData.iva) ?? 0);
+
         setValue("category", productData.category);
-        
+        if (productData.provider?.id) {
+          setValue("providerId", productData.provider.id);
+        }
+
         // Configurar las etiquetas
         if (productData.tags && productData.tags.length > 0) {
           setTags(productData.tags);
           setValue("tags", productData.tags.join(","));
         }
-        
+
         if (productData.image?.originalUrl) {
           setPreviewImage(productData.image.originalUrl);
         }
@@ -143,6 +168,7 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
     if (data.description) {
       formData.append("description", data.description);
     }
+    formData.append("providerId", data.providerId.toString());
 
     Object.entries({
       name: data.productName,
@@ -199,14 +225,14 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
             <div>
               <Label>Descripción</Label>
               <textarea
-              {...register("description")}
-              placeholder="Ingrese una descripción del producto"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black placeholder:text-sm placeholder:text-gray-500"
-            />
+                {...register("description")}
+                placeholder="Ingrese una descripción del producto"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black placeholder:text-sm placeholder:text-gray-500"
+              />
               {errors.description && (
                 <p className="text-red-500">{errors.description.message}</p>
               )}
-          </div>
+            </div>
             <div>
               <Label>Costo</Label>
               <NumericInput
@@ -255,41 +281,85 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
                 error={errors.iva?.message}
               />
             </div>
-{/* Etiquetas */}
-<div>
-  <TagFilter
-    token={token || ""}
-    selectedTags={tags}
-    onChange={handleTagsChange}
-  />
-  {errors.tags && (
-    <p className="text-red-500 text-sm mt-1">{errors.tags.message}</p>
-  )}
-
-  {tags.length > 0 && (
-    <div className="mt-3">
-      <div className="flex flex-wrap gap-2">
-        {tags.map((tag) => (
-          <div
-            key={tag}
-            className="bg-blue-50 border border-blue-100 text-black text-xs font-medium px-2.5 py-1 rounded-md flex items-center gap-1.5 transition-colors hover:bg-blue-100"
-          >
-            <span>{tag}</span>
-            <button
-              type="button"
-              onClick={() => handleTagsChange(tags.filter((t) => t !== tag))}
-              className="inline-flex items-center justify-center rounded-full w-4 h-4 bg-gray text-black hover:bg-blue-300 transition-colors"
-              aria-label={`Eliminar etiqueta ${tag}`}
-            >
-              <X className="w-3 h-3" />
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
-  )}
-</div>
-
+            <div className="flex flex-col md:flex-row gap-4">
+              {/* Proveedor */}
+              <div className="w-full md:w-1/2">
+                <Label>Proveedor</Label>
+                <Controller
+                  name="providerId"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      onValueChange={(val) => field.onChange(Number(val))}
+                      value={field.value?.toString() ?? ""}
+                    >
+                      <SelectTrigger
+                        className={`w-full ${
+                          errors.providerId ? "border-red-500" : ""
+                        }`}
+                      >
+                        <SelectValue placeholder="Seleccionar proveedor" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {providers.map((p) => (
+                          <SelectItem key={p.id} value={String(p.id)}>
+                            {p.businessName}
+                          </SelectItem>
+                        ))}
+                        {providers.length === 0 && (
+                          <SelectItem disabled value="none">
+                            No hay proveedores disponibles
+                          </SelectItem>
+                        )}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {errors.providerId && (
+                  <p className="text-red-500 text-sm">
+                    {errors.providerId.message}
+                  </p>
+                )}
+              </div>
+              {/* Etiquetas */}
+              <div className="w-full md:w-1/2">
+                <Label>Etiqueta/s</Label>
+                <TagFilter
+                  token={token || ""}
+                  selectedTags={tags}
+                  onChange={handleTagsChange}
+                />
+                {errors.tags && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.tags.message}
+                  </p>
+                )}
+                {tags.length > 0 && (
+                  <div className="mt-3">
+                    <div className="flex flex-wrap gap-2">
+                      {tags.map((tag) => (
+                        <div
+                          key={tag}
+                          className="bg-blue-50 border border-blue-100 text-black text-xs font-medium px-2.5 py-1 rounded-md flex items-center gap-1.5 hover:bg-blue-100"
+                        >
+                          <span>{tag}</span>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleTagsChange(tags.filter((t) => t !== tag))
+                            }
+                            className="inline-flex items-center justify-center rounded-full w-4 h-4 bg-gray text-black hover:bg-blue-300"
+                            aria-label={`Eliminar etiqueta ${tag}`}
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
             <div className="w-full flex flex-col items-start relative">
               <Label className="pb-2">Imagen</Label>
               <Label className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-md text-sm font-medium text-center cursor-pointer">

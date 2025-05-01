@@ -11,7 +11,6 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
-  // Ruta de la imagen por defecto en public/
   const defaultImageSrc = "/NotImageNicoPets.png";
 
   return (
@@ -20,7 +19,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
                     hover:shadow-lg transition-shadow duration-300 overflow-hidden
                     bg-white text-gray-900"
     >
-      {/* Columna de imagen: 40% */}
       <div className="w-[45%] relative h-full overflow-hidden rounded-l-lg">
         <Image
           src={product.image?.originalUrl || defaultImageSrc}
@@ -30,7 +28,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
         />
       </div>
 
-      {/* Columna de información: 60% */}
       <div className="w-[65%] p-4 flex flex-col justify-between">
         <div className="space-y-2 overflow-hidden">
           {product.tags && (

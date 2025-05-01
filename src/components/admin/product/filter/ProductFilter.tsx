@@ -55,7 +55,6 @@ export default function ProductFilters({
 
   return (
     <div className="flex flex-col w-full">
-      {/* Fila 1: SearchBar (50%) y Categoría (50%) */}
       <div className="flex flex-col sm:flex-row w-full gap-4">
         <div className="w-full sm:w-[70%]">
           <SearchBar
@@ -79,7 +78,6 @@ export default function ProductFilters({
         </div>
       </div>
 
-      {/* Fila 2: Filtros de Precio y Costo en la misma fila */}
       <div className="w-full flex flex-col sm:flex-row gap-4 mb-5">
         <div className="w-full sm:w-1/2">
           <NumericFilter
@@ -114,8 +112,6 @@ export default function ProductFilters({
           />
         </div>
       </div>
-
-      {/* Fila 4: TagFilter (50%) y área para mostrar etiquetas seleccionadas (50%) */}
       <div className="flex flex-col sm:flex-row sm:gap-4 w-full">
         <div className="w-full sm:w-[24%]">
           <TagFilter

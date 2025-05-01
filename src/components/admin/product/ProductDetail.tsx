@@ -40,7 +40,6 @@ export default function ProductDetail({ token }: ProductDetailProps) {
       setIsLoading(false);
       return;
     }
-
     const fetchData = async () => {
       try {
         const [productData, stockResponse, stocksResponse] = await Promise.all([
@@ -58,20 +57,17 @@ export default function ProductDetail({ token }: ProductDetailProps) {
         setIsLoading(false);
       }
     };
-
     fetchData();
   }, [id, token]);
 
   const handleConfirmDelete = async () => {
     if (!id) return;
-
     const { ok, error } = await deleteReq(null, `${PRODUCT_API}/${id}`);
-
     if (!ok) {
       toast("error", error?.message || "Error al eliminar el producto");
     } else {
       toast("success", "Producto eliminado correctamente");
-      router.push("/dashboard/products");
+      router.back();
     }
     setIsDeleteModalOpen(false);
   };
@@ -80,14 +76,16 @@ export default function ProductDetail({ token }: ProductDetailProps) {
   if (!product)
     return <div className="text-center mt-8">Producto no encontrado</div>;
 
+  // URL por defecto si no hay imagen
+  const defaultImageSrc = "/NotImageNicoPets.png";
+
   return (
     <div className="max-w-5xl mx-auto p-6">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-        {/* Imagen a la izquierda, ocupa 4/12 */}
         <div className="md:col-span-4 flex justify-start">
           <div className="relative w-[300px] h-[300px]">
             <Image
-              src={product.image?.originalUrl || "/placeholder.svg"}
+              src={product.image?.originalUrl || defaultImageSrc}
               alt={product.name}
               fill
               className="object-contain rounded-md"
@@ -96,17 +94,12 @@ export default function ProductDetail({ token }: ProductDetailProps) {
           </div>
         </div>
 
-        {/* Info del producto al lado, ocupa 8/12 */}
         <div className="md:col-span-8 flex flex-col space-y-4 pl-6">
           <div>
             <h1 className="text-3xl font-bold">{product.name}</h1>
-            <p className="text-sm text-gray-500">{product.code}</p>
           </div>
 
-          <ProductInfo
-            product={product}
-            isStockLoading={isLoading}
-          />
+          <ProductInfo product={product} isStockLoading={isLoading} />
         </div>
       </div>
 
