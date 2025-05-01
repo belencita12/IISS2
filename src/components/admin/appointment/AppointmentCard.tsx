@@ -68,7 +68,7 @@ const AppointmentCard = ({
               }}
               className="px-3 py-1 bg-white text-black rounded border border-gray-300 hover:bg-gray-100"
             >
-              {isProcessing ? "Finalizando..." : "Finalizar"}
+              { "Finalizar"}
             </Button>
             <Button
               disabled={isProcessing}
@@ -78,7 +78,7 @@ const AppointmentCard = ({
               }}
               className="px-3 py-1 bg-black text-white rounded border border-gray-300 hover:bg-gray-800"
             >
-              {isProcessing ? "Cancelando..." : "Cancelar"}
+              { "Cancelar"}
             </Button>
           </div>
         )}

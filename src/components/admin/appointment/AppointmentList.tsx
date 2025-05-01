@@ -14,6 +14,7 @@ import GenericPagination from "@/components/global/GenericPagination";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import { completeAppointment, cancelAppointment } from "@/lib/appointment/service";
 import { Modal } from "@/components/global/Modal";
+import { Button } from "@/components/ui/button";
 
 interface AppointmentListProps {
   token: string;
@@ -170,20 +171,20 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
             onChange={(e) => setCancelDescription(e.target.value)}
           />
           <div className="flex justify-end mt-4 gap-2">
-            <button
+            <Button
               className="bg-gray-300 px-4 py-2 rounded"
               onClick={() => setCancelModalOpen(false)}
               disabled={isProcessing}
             >
               Cancelar
-            </button>
-            <button
+            </Button>
+            <Button
               className="bg-red-600 text-white px-4 py-2 rounded"
               onClick={handleConfirmAction}
               disabled={isProcessing || !cancelDescription.trim()}
             >
               {isProcessing ? "Cancelando..." : "Confirmar"}
-            </button>
+            </Button>
           </div>
         </Modal>
       )}
