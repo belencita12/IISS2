@@ -106,7 +106,7 @@ export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
 
   const handleTagsChange = (selectedTags: string[]) => {
     setTags(selectedTags);
-    setValue("tags", selectedTags);
+    setValue("tags", selectedTags, { shouldValidate: true });
   };
 
   const onSubmit = async (data: ServiceTypeFormValues) => {
@@ -128,13 +128,30 @@ export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
       
       // Enviar tags como array
       if (data.tags && data.tags.length > 0) {
-        formData.append("tags", JSON.stringify(data.tags));
+        formData.append("tags", data.tags.join(","));
       }
       
       if (data.img) formData.append("img", data.img);
 
+      console.log("Enviando datos:", {
+        slug: data.slug,
+        name: data.name,
+        description: data.description,
+        durationMin: data.durationMin,
+        iva: data.iva,
+        price: data.price,
+        cost: data.cost,
+        maxColabs: data.maxColabs,
+        isPublic: data.isPublic,
+        tags: data.tags,
+      });
+
       await createServiceType(token, formData);
-      router.push("/dashboard/settings/service-types");
+      toast("success", "Tipo de servicio creado con éxito", {
+        duration: 2000,
+        onAutoClose: () => router.push("/dashboard/settings/service-types"),
+        onDismiss: () => router.push("/dashboard/settings/service-types"),
+      });
     } catch (error: any) {
       console.error("Error al crear el tipo de servicio:", error);
       if (error.message?.includes("ya están en uso")) {

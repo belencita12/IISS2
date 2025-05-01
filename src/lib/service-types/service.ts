@@ -31,7 +31,7 @@ const toServiceType = (data: FormData): ServiceType => {
     cost: data.get("cost") ? Number(data.get("cost")) : 0,
     maxColabs: data.get("maxColabs") ? Number(data.get("maxColabs")) : 1,
     isPublic: data.get("isPublic") ? Boolean(data.get("isPublic")) : false,
-    tags: data.get("tags") ? JSON.parse(String(data.get("tags"))) : [],
+    tags: data.get("tags") ? String(data.get("tags")).split(",") : [],
     img: data.get("img")
       ? {
           id: Number(data.get("img.id")),
