@@ -19,6 +19,8 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
     clientRuc: undefined,
   });
 
+  const [isProcessing, setIsProcessing] = useState(false);
+
   const {
     data,
     loading: isLoading,
@@ -26,6 +28,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
     pagination = { currentPage: 1, totalPages: 1, totalItems: 0, pageSize: 10 },
     setPage,
     search,
+    refresh,
   } = usePaginatedFetch<AppointmentData>(APPOINTMENT_API, token, {
     initialPage: 1,
     size: 7,
@@ -45,23 +48,19 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
     search(safeFilters as Record<string, unknown>);
   };
 
-  if (error) toast("error", error.message || "Error al cargar las citas");
-  console.log("Appointments data:", data);
-
-  const handleChange = () => {
-    const { page, size, ...safeFilters } = filters;
-    search(safeFilters as Record<string, unknown>);
+  const handleSearch = (value: string) => {
+    setFilters((prev) => ({ ...prev, clientRuc: value }));
+    search({ clientRuc: value });
   };
+
+  if (error) toast("error", error.message || "Error al cargar las citas");
 
   return (
     <div className="p-4 mx-auto">
       <div className="max-w-6xl mx-auto p-4 space-y-6">
         <SearchBar
           placeholder="Buscar por RUC del cliente"
-          onSearch={(value) => {
-            setFilters((prev) => ({ ...prev, clientRuc: value }));
-            search({ clientRuc: value });
-          }}
+          onSearch={handleSearch}
         />
       </div>
 
@@ -69,22 +68,26 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
         <h2 className="text-3xl font-bold">Citas</h2>
       </div>
 
-      <div className="grid grid-cols-1 gap-4">
-        {isLoading ? (
-          <p className="text-center text-black">Cargando...</p>
-        ) : data?.length ? (
-          data.map((appointment) => (
-            <AppointmentCard
-              key={appointment.id}
-              appointment={appointment}
-              token={token}
-              onChange={handleChange}
-            />
-          ))
-        ) : (
-          <p className="text-center text-gray-500">No se encontraron citas.</p>
-        )}
-      </div>
+      {isLoading ? (
+        <p className="text-center text-black">Cargando citas...</p>
+      ) : (
+        <div className="grid grid-cols-1 gap-4">
+          {data?.length ? (
+            data.map((appointment) => (
+              <AppointmentCard
+                key={appointment.id}
+                appointment={appointment}
+                token={token}
+                onChange={refresh}
+                isProcessing={isProcessing}
+                setIsProcessing={setIsProcessing}
+              />
+            ))
+          ) : (
+            <p>No se encontraron citas.</p>
+          )}
+        </div>
+      )}
 
       <GenericPagination
         currentPage={pagination.currentPage}

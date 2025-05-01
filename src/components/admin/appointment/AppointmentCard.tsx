@@ -1,35 +1,43 @@
 "use client";
 
+import { useState } from "react";
 import { AppointmentData } from "@/lib/appointment/IAppointment";
 import { useRouter } from "next/navigation";
 import { formatDate } from "@/lib/utils";
 import { toast } from "@/lib/toast";
 import { completeAppointment, cancelAppointment } from "@/lib/appointment/service";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 
 interface AppointmentCardProps {
   appointment: AppointmentData;
   token: string;
   onChange?: () => void;
+  isProcessing?: boolean;
+  setIsProcessing?: (value: boolean) => void;
 }
 
-const AppointmentCard = ({ appointment, token, onChange }: AppointmentCardProps) => {
+const AppointmentCard = ({
+  appointment,
+  token,
+  onChange,
+  isProcessing = false,
+  setIsProcessing,
+}: AppointmentCardProps) => {
   const router = useRouter();
-  const [isCompleting, setIsCompleting] = useState(false);
-  const [isCancelling, setIsCancelling] = useState(false);
+  const [localAction, setLocalAction] = useState<"complete" | "cancel" | null>(null);
 
   const handleViewDetail = () => {
+    if (isProcessing) return;
     if (appointment.id) {
       router.push(`/dashboard/appointment/${appointment.id}`);
     }
   };
 
   const handleStatusChange = async (action: "complete" | "cancel") => {
-    if (action === "complete") setIsCompleting(true);
-    if (action === "cancel") setIsCancelling(true);
-
     try {
+      setLocalAction(action);
+      setIsProcessing?.(true);
+
       if (action === "complete") {
         await completeAppointment(appointment.id, token);
       } else {
@@ -45,15 +53,17 @@ const AppointmentCard = ({ appointment, token, onChange }: AppointmentCardProps)
         toast("error", "Ocurrió un error");
       }
     } finally {
-      setIsCompleting(false);
-      setIsCancelling(false);
+      setLocalAction(null);
+      setIsProcessing?.(false);
     }
   };
 
   return (
     <div
       onClick={handleViewDetail}
-      className="cursor-pointer border p-4 rounded-lg flex justify-between items-start bg-white shadow hover:-translate-y-1 transition-transform duration-300 hover:shadow-md"
+      className={`cursor-pointer border p-4 rounded-lg flex justify-between items-start bg-white shadow transition-transform duration-300 hover:shadow-md ${
+        isProcessing ? "opacity-50 pointer-events-none" : "hover:-translate-y-1"
+      }`}
     >
       <div>
         <h3 className="font-bold text-lg">
@@ -66,24 +76,24 @@ const AppointmentCard = ({ appointment, token, onChange }: AppointmentCardProps)
         {appointment.status === "PENDING" && (
           <div className="flex gap-2 mt-4">
             <Button
+              disabled={isProcessing}
               onClick={(e) => {
                 e.stopPropagation();
                 handleStatusChange("complete");
               }}
-              disabled={isCompleting || isCancelling}
-              className="px-3 py-1 bg-white text-black rounded border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
+              className="px-3 py-1 bg-white text-black rounded border border-gray-300 hover:bg-gray-100"
             >
-              {isCompleting ? "Finalizando..." : "Finalizar"}
+              {isProcessing && localAction === "complete" ? "Finalizando..." : "Finalizar"}
             </Button>
             <Button
+              disabled={isProcessing}
               onClick={(e) => {
                 e.stopPropagation();
                 handleStatusChange("cancel");
               }}
-              disabled={isCancelling || isCompleting}
-              className="px-3 py-1 bg-black text-white rounded border border-gray-300 hover:bg-gray-800 disabled:opacity-50"
+              className="px-3 py-1 bg-black text-white rounded border border-gray-300 hover:bg-gray-800"
             >
-              {isCancelling ? "Cancelando..." : "Cancelar"}
+              {isProcessing && localAction === "cancel" ? "Cancelando..." : "Cancelar"}
             </Button>
           </div>
         )}
