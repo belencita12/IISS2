@@ -1,11 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { AppointmentData } from "@/lib/appointment/IAppointment";
 import { useRouter } from "next/navigation";
 import { formatDate } from "@/lib/utils";
-import { toast } from "@/lib/toast";
-import { completeAppointment, cancelAppointment } from "@/lib/appointment/service";
 import { Button } from "@/components/ui/button";
 
 interface AppointmentCardProps {
@@ -14,6 +11,7 @@ interface AppointmentCardProps {
   onChange?: () => void;
   isProcessing?: boolean;
   setIsProcessing?: (value: boolean) => void;
+  onOpenModal?: (appointment: AppointmentData, action: "complete" | "cancel") => void;
 }
 
 const AppointmentCard = ({
@@ -22,39 +20,14 @@ const AppointmentCard = ({
   onChange,
   isProcessing = false,
   setIsProcessing,
+  onOpenModal,
 }: AppointmentCardProps) => {
   const router = useRouter();
-  const [localAction, setLocalAction] = useState<"complete" | "cancel" | null>(null);
 
   const handleViewDetail = () => {
     if (isProcessing) return;
     if (appointment.id) {
       router.push(`/dashboard/appointment/${appointment.id}`);
-    }
-  };
-
-  const handleStatusChange = async (action: "complete" | "cancel") => {
-    try {
-      setLocalAction(action);
-      setIsProcessing?.(true);
-
-      if (action === "complete") {
-        await completeAppointment(appointment.id, token);
-      } else {
-        await cancelAppointment(appointment.id, token);
-      }
-
-      toast("success", `Cita ${action === "complete" ? "finalizada" : "cancelada"} con éxito`);
-      onChange?.();
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast("error", error.message);
-      } else {
-        toast("error", "Ocurrió un error");
-      }
-    } finally {
-      setLocalAction(null);
-      setIsProcessing?.(false);
     }
   };
 
@@ -79,21 +52,21 @@ const AppointmentCard = ({
               disabled={isProcessing}
               onClick={(e) => {
                 e.stopPropagation();
-                handleStatusChange("complete");
+                onOpenModal?.(appointment, "complete");
               }}
               className="px-3 py-1 bg-white text-black rounded border border-gray-300 hover:bg-gray-100"
             >
-              {isProcessing && localAction === "complete" ? "Finalizando..." : "Finalizar"}
+              {isProcessing ? "Finalizando..." : "Finalizar"}
             </Button>
             <Button
               disabled={isProcessing}
               onClick={(e) => {
                 e.stopPropagation();
-                handleStatusChange("cancel");
+                onOpenModal?.(appointment, "cancel");
               }}
               className="px-3 py-1 bg-black text-white rounded border border-gray-300 hover:bg-gray-800"
             >
-              {isProcessing && localAction === "cancel" ? "Cancelando..." : "Cancelar"}
+              {isProcessing ? "Cancelando..." : "Cancelar"}
             </Button>
           </div>
         )}

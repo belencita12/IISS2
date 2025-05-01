@@ -2,12 +2,17 @@
 
 import { useState } from "react";
 import { toast } from "@/lib/toast";
-import { AppointmentData, AppointmentQueryParams } from "@/lib/appointment/IAppointment";
+import {
+  AppointmentData,
+  AppointmentQueryParams,
+} from "@/lib/appointment/IAppointment";
 import { APPOINTMENT_API } from "@/lib/urls";
 import { usePaginatedFetch } from "@/hooks/api/usePaginatedFetch";
 import SearchBar from "@/components/global/SearchBar";
 import AppointmentCard from "./AppointmentCard";
 import GenericPagination from "@/components/global/GenericPagination";
+import { ConfirmationModal } from "@/components/global/Confirmation-modal";
+import { completeAppointment, cancelAppointment } from "@/lib/appointment/service";
 
 interface AppointmentListProps {
   token: string;
@@ -20,6 +25,9 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
   });
 
   const [isProcessing, setIsProcessing] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState<AppointmentData | null>(null);
+  const [modalAction, setModalAction] = useState<"complete" | "cancel" | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const {
     data,
@@ -53,6 +61,34 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
     search({ clientRuc: value });
   };
 
+  const openConfirmModal = (appointment: AppointmentData, action: "complete" | "cancel") => {
+    setSelectedAppointment(appointment);
+    setModalAction(action);
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmAction = async () => {
+    if (!selectedAppointment || !modalAction) return;
+
+    try {
+      setIsProcessing(true);
+      if (modalAction === "complete") {
+        await completeAppointment(selectedAppointment.id, token);
+      } else {
+        await cancelAppointment(selectedAppointment.id, token);
+      }
+      toast("success", `Cita ${modalAction === "complete" ? "finalizada" : "cancelada"} con éxito`);
+      refresh();
+    } catch (error) {
+      toast("error", "Ocurrió un error al actualizar la cita");
+    } finally {
+      setIsProcessing(false);
+      setIsModalOpen(false);
+      setSelectedAppointment(null);
+      setModalAction(null);
+    }
+  };
+
   if (error) toast("error", error.message || "Error al cargar las citas");
 
   return (
@@ -81,6 +117,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
                 onChange={refresh}
                 isProcessing={isProcessing}
                 setIsProcessing={setIsProcessing}
+                onOpenModal={openConfirmModal}
               />
             ))
           ) : (
@@ -96,6 +133,20 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
         handleNextPage={() => setPage(pagination.currentPage + 1)}
         handlePageChange={setPage}
       />
+
+      {/* Modal de confirmación fuera de la card */}
+      {selectedAppointment && modalAction && (
+        <ConfirmationModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onConfirm={handleConfirmAction}
+          title={`Confirmar ${modalAction === "complete" ? "Finalización" : "Cancelación"}`}
+          message={`¿Estás seguro de que quieres ${modalAction === "complete" ? "finalizar" : "cancelar"} esta cita?`}
+          confirmText="Confirmar"
+          cancelText="Cancelar"
+          isLoading={isProcessing}
+        />
+      )}
     </div>
   );
 };
