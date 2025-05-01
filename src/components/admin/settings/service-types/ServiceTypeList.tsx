@@ -106,7 +106,7 @@ export default function ServiceTypeList({ token }: ServiceTypeListProps) {
       icon: <Trash className="w-4 h-4" />, 
       onClick: handleDeleteClick, 
       label: "Eliminar tipo de servicio" 
-    },
+    }
   ];
 
   return (
