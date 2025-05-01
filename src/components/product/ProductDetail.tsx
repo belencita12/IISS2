@@ -51,7 +51,6 @@ export default function ProductDetailPage({ token }: Props) {
                     setRelatedProducts(filtered);
                 }
             } catch (error) {
-                console.error(error);
                 notFound();
             } finally {
                 setLoading(false);
