@@ -15,7 +15,7 @@ export const Appointments = () => {
             id: 2,
             title: "Vacunación",
             date: "15/10/2022",
-            time: "11:30 AM",
+            time: "11:0 AM",
             icon:  <Syringe className="w-10 h-10 text-gray-700" />,
         },
     ];

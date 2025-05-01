@@ -3,15 +3,15 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { AlertCircle } from "lucide-react";
 import { useParams } from "next/navigation";
 import PetVaccinationTable from "../pet/PetVaccinationTable";
 import { PetData } from "@/lib/pets/IPet";
 import { getPetById } from "@/lib/pets/getPetById";
 import { updatePet } from "@/lib/pets/updatePet";
-//import { notFound } from "next/navigation";
 import { toast } from "@/lib/toast";
 import { formatDate } from "@/lib/utils";
+import { getAppointmentByPetId } from "@/lib/appointment/getAppointmentByPetId";
+import { Appointment } from "@/lib/appointment/IAppointment";
 
 interface EditablePet {
   name: string;
@@ -22,35 +22,9 @@ interface EditablePet {
   speciesId: number;
 }
 
-interface Visita {
-  id: number;
-  fecha: string;
-  descripcion: string;
-  costo: number;
-}
-
-interface Visita_Programada {
-  id: number;
-  fecha: string;
-  descripcion: string;
-}
-
 interface Props {
   token: string;
 }
-
-const visitas: Visita[] = [
-  { id: 1, fecha: "2024-12-20", descripcion: "Chequeo general", costo: 30000 },
-  { id: 2, fecha: "2024-10-15", descripcion: "Vacunación anual", costo: 50000 },
-  { id: 3, fecha: "2024-09-10", descripcion: "Desparasitación", costo: 35000 },
-  { id: 4, fecha: "2024-05-05", descripcion: "Consulta por tos", costo: 40000 },
-  { id: 5, fecha: "2024-02-01", descripcion: "Revisión de piel", costo: 60000 },
-];
-
-const visitasProgramadas: Visita_Programada[] = [
-  { id: 1, fecha: "2025-01-10", descripcion: "Chequeo rutinario" },
-  { id: 2, fecha: "2025-03-05", descripcion: "Vacunación de refuerzo" },
-];
 
 function calcularEdad(fechaNacimiento: string): string {
   const nacimiento = new Date(fechaNacimiento);
@@ -87,38 +61,19 @@ function calcularEdad(fechaNacimiento: string): string {
   return `${edad} Años`;
 }
 
-function convertirFecha(fecha: string): string {
-  console.log(fecha);
-  const meses: string[] = [
-    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-  ];
-
-  const fechaObj = new Date(fecha);
-  const dia = fechaObj.getUTCDate();
-  const mes = meses[fechaObj.getUTCMonth()];
-  const año = fechaObj.getUTCFullYear();
-
-  return `${dia} de ${mes} ${año}`;
-}
-
-function formatNumber(num: number) {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-}
-
 export default function PetDetails({ token }: Props) {
   const { id } = useParams();
 
-  const [showAll, setShowAll] = useState(false);
-  const [showAllProg, setShowAllProg] = useState(false);
   const [pet, setPet] = useState<PetData | null | undefined>(undefined);
   const [isEditingName, setIsEditingName] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [editedPet, setEditedPet] = useState<EditablePet | null>(null);
 
-  const visitasVisibles = showAll ? visitas : visitas.slice(0, 4);
-  const visitasProgramadasVisibles = showAllProg ? visitasProgramadas : visitasProgramadas.slice(0, 4);
+  // Citas
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [loadingAppointments, setLoadingAppointments] = useState(true); 
+  const [errorAppointments, setErrorAppointments] = useState<string | null>(null);
 
   // Actualiza el estado 'editedPet' cuando 'pet' cambia o cuando se entra a modo edición
   useEffect(() => {
@@ -154,12 +109,24 @@ export default function PetDetails({ token }: Props) {
       .then((data) => {
         setPet(data);
       })
-      .catch((error) => {
-        //console.error("Error al obtener la mascota:", error);
+      .catch(() => {
         toast("error", "Error al obtener la mascota.");
         setPet(null);
       });
   }, [id, token]);
+
+  // Obtener citas de la mascota
+  useEffect(() => {
+    if (!pet?.id || !token) return;
+    setLoadingAppointments(true);
+    getAppointmentByPetId(pet.id, token)
+      .then(data => {
+        setAppointments(data);
+        setErrorAppointments(null);
+      })
+      .catch(() => setErrorAppointments("No se pudieron cargar las citas"))
+      .finally(() => setLoadingAppointments(false));
+  }, [pet?.id, token]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -171,32 +138,23 @@ export default function PetDetails({ token }: Props) {
 
   // Se utiliza updatePet para actualizar el nombre de la mascota
   const handleSave = async () => {
-    // Validaciones iniciales
     if (!editedPet || !pet || !editedPet.name.trim()) {
       setError("El nombre no puede estar vacío.");
       return;
     }
-  
-    // Verificación de que pet.id no sea undefined
     if (pet.id === undefined) {
       setError("No se puede actualizar, la mascota no tiene ID.");
       return;
     }
-  
     setIsSaving(true);
     setError(null);
-  
     try {
-      // Se crea un FormData con el nuevo nombre
       const formData = new FormData();
       formData.append("name", editedPet.name);
-  
-      // Aquí pet.id ya es un number, no un number | undefined
       const updatedPet = await updatePet(pet.id, formData, token);
       if (!updatedPet || !updatedPet.id) {
         throw new Error("Respuesta inválida de la API");
       }
-      
       setPet(updatedPet);
       setIsEditingName(false);
     } catch (error: unknown) {
@@ -209,17 +167,13 @@ export default function PetDetails({ token }: Props) {
       setIsSaving(false);
     }
   };
-  
 
   return (
     <div className="flex-col">
       {pet === undefined ? (
         <p className="text-center text-gray-600">Cargando mascota...</p>
       ) : pet === null ? (
-        <>
-          {/*  <p className="text-center mt-4 p-10">Mascota no registrada.</p>
-          <p className="text-center">Error 404</p> */}
-        </>
+        <></>
       ) : (
         <>
           <div className="flex justify-center bg-gray-500 p-5">
@@ -305,56 +259,51 @@ export default function PetDetails({ token }: Props) {
             </div>
           </div>
           <div className="flex-col md:px-28 md:py-10 bg-white">
-            <div className="flex justify-center">
-              <div className="flex-col justify-center items-center w-full pb-7 pt-7">
-                <h2 className="text-2xl font-bold mb-3">Últimas visitas</h2>
-                <ul className="w-full">
-                  {visitasVisibles.map((visita) => (
-                    <li key={visita.id} className="mb-2 border border-gray-400 p-2 rounded">
-                      <div className="flex justify-between">
-                        <p className="text-base">{visita.descripcion}</p>
-                        <p className="text-sm text-gray-600">{formatDate(visita.fecha)}</p>
-                      </div>
-                      <p className="text-base text-left">{formatNumber(visita.costo)} Gs</p>
-                    </li>
-                  ))}
-                </ul>
-                {visitas.length > 4 && (
-                  <div className="flex justify-center">
-                    <button
-                      onClick={() => setShowAll(!showAll)}
-                      className="mt-3 bg-gray-400 text-white rounded-lg p-2 pr-5 pl-5"
-                    >
-                      {showAll ? "Ver menos" : "Ver más"}
-                    </button>
-                  </div>
-                )}
+            {/* Lista unificada de citas */}
+            <h2 className="text-2xl font-bold mb-3">Citas</h2>
+            {loadingAppointments ? (
+              <p>Cargando citas...</p>
+            ) : errorAppointments ? (
+              <p className="text-red-500">{errorAppointments}</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-sm border">
+                  <thead className="bg-gray-100">
+                    <tr>
+                      <th className="px-2 py-1">Detalle</th>
+                      <th className="px-2 py-1">Fecha</th>
+                      <th className="px-2 py-1">Empleados</th>
+                      <th className="px-2 py-1">Estado</th>
+                      <th className="px-2 py-1">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {appointments.length === 0 && (
+                      <tr>
+                        <td colSpan={5} className="py-4 text-center text-gray-500">Sin citas registradas</td>
+                      </tr>
+                    )}
+                    {appointments.map((a) => (
+                      <tr key={a.id} className="border-t">
+                        <td className="px-2 py-1">{a.details}</td>
+                        <td className="px-2 py-1">{formatDate(a.designatedDate)}</td>
+                        <td className="px-2 py-1">{a.employees.map(e => e.name).join(", ") || "Sin asignar"}</td>
+                        <td className="px-2 py-1">{a.status}</td>
+                        <td className="px-2 py-1 space-x-2">
+                          <Button variant="outline" size="sm">Detalle</Button>
+                          {a.status !== "CANCELLED" && (
+                            <Button variant="destructive" size="sm">Cancelar cita</Button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            </div>
+            )}
 
-            <div className="flex justify-between mb-14">
-              <div className="flex-col justify-center items-center w-full">
-                <h2 className="text-2xl font-bold mb-3">Visitas programadas</h2>
-                <ul className="w-full grid grid-cols-2 gap-4">
-                  {visitasProgramadasVisibles.map((visita) => (
-                    <li key={visita.id} className="border border-gray-400 p-2 rounded flex">
-                      <AlertCircle className="w-5 h-5" />
-                      <div className="ml-3">
-                        <p className="text-base">{visita.descripcion}</p>
-                        <p className="text-sm text-gray-600">{formatDate(visita.fecha)}</p>
-                        <Button>Añadir Recordatorio</Button>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-                {visitasProgramadas.length > 4 && (
-                  <Button onClick={() => setShowAllProg(!showAllProg)} className="mt-3 text-blue-500 hover:underline">
-                    {showAllProg ? "Ver menos" : "Ver más"}
-                  </Button>
-                )}
-              </div>
-            </div>
-            <h2 className="text-2xl font-bold mb-3">Control de Vacunas</h2>
+            {/* Control de Vacunas */}
+            <h2 className="text-2xl font-bold mb-3 mt-10">Control de Vacunas</h2>
             <PetVaccinationTable Id={Number(id)} token={token} petId={Number(pet.id)} />
           </div>
         </>
