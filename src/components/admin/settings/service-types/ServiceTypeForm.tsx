@@ -29,9 +29,19 @@ const serviceTypeFormSchema = z.object({
   iva: z.coerce.number()
     .min(0, "El IVA no puede ser negativo")
     .max(100, "El IVA no puede ser mayor a 100"),
-  price: z.coerce.number().min(0, "El precio no puede ser negativo"),
-  cost: z.coerce.number().min(0, "El costo no puede ser negativo"),
-  maxColabs: z.coerce.number().optional(),
+  price: z.coerce.number()
+    .min(1, "El precio es obligatorio y debe ser al menos 1")
+    .refine((val) => val >= 1, {
+      message: "El precio debe ser al menos 1"
+    }),
+  cost: z.coerce.number()
+    .min(1, "El costo es obligatorio y debe ser al menos 1")
+    .refine((val) => val >= 1, {
+      message: "El costo debe ser al menos 1"
+    }),
+  maxColabs: z.coerce.number()
+    .min(0, "El número máximo de colaboradores no puede ser negativo")
+    .optional(),
   isPublic: z.boolean().optional(),
   tags: z.array(z.string()).optional(),
   img: z.instanceof(File).optional(),
@@ -189,6 +199,7 @@ export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
               <Input
                 type="number"
                 {...register("price")}
+                min="1"
               />
               {errors.price && (
                 <p className="text-sm text-red-600">{errors.price.message}</p>
@@ -213,6 +224,7 @@ export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
               <Input
                 type="number"
                 {...register("cost")}
+                min="1"
               />
               {errors.cost && (
                 <p className="text-sm text-red-600">{errors.cost.message}</p>
@@ -224,6 +236,7 @@ export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
               <Input
                 type="number"
                 {...register("maxColabs")}
+                min="0"
               />
               {errors.maxColabs && (
                 <p className="text-sm text-red-600">{errors.maxColabs.message}</p>
@@ -284,7 +297,10 @@ export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
             >
               Cancelar
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button 
+              type="submit" 
+              disabled={isSubmitting}
+            >
               {isSubmitting ? "Guardando..." : "Guardar"}
             </Button>
           </div>
