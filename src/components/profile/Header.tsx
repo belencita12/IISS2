@@ -1,19 +1,20 @@
+// components/profile/Header.tsx
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { getAuth } from "./getAuth";
 import { IUserProfile } from "@/lib/client/IUserProfile";
 import { toast } from "@/lib/toast";
 
-
 interface HeaderProps {
   fullName: string;
   token: string;
 }
 
-export const Header = ({ fullName, token}: HeaderProps) => {
+export const Header = ({ fullName, token }: HeaderProps) => {
   const [avatarSrc, setAvatarSrc] = useState(
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
   );
@@ -22,17 +23,16 @@ export const Header = ({ fullName, token}: HeaderProps) => {
     const fetchAvatar = async () => {
       try {
         const user: IUserProfile = await getAuth(token);
-        if(user?.image?.originalUrl){
-            setAvatarSrc(user.image.originalUrl);
+        if (user?.image?.originalUrl) {
+          setAvatarSrc(user.image.originalUrl);
         }
       } catch {
         toast("error", "Hubo un problema al cargar tu perfil");
       }
     };
-    if(token){
-        fetchAvatar();
+    if (token) {
+      fetchAvatar();
     }
-
   }, [token]);
 
   return (
@@ -40,12 +40,20 @@ export const Header = ({ fullName, token}: HeaderProps) => {
       <Avatar className="w-20 h-20 ml-20">
         <AvatarImage src={avatarSrc} alt={fullName} />
       </Avatar>
-      <div className="ml-4">
+      <div className="ml-4 flex-1">
         <h2 className="text-xl font-bold mt-2">{fullName}</h2>
         <Badge className="bg-gray-300 text-black text-sm mt-2 hover:bg-gray-300">
           Veterinaria Cliente Fiel
         </Badge>
         <p className="text-base mt-2">Bienvenido a nuestro sistema de veterinaria</p>
+      </div>
+      <div className="mr-20">
+      <Link href="/user-profile/profile">
+
+          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+            Mis datos
+          </button>
+        </Link>
       </div>
     </div>
   );
