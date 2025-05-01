@@ -16,7 +16,6 @@ const ServiceTypeList: React.FC = () => {
       toast("success", "Tipo de servicio eliminado correctamente");
       onPageChange(1);
     } catch (error) {
-      console.error("Error al eliminar el tipo de servicio:", error);
       toast("error", "Error al eliminar el tipo de servicio");
     }
   };
