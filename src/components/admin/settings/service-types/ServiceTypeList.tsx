@@ -46,20 +46,20 @@ export default function ServiceTypeList({ token }: ServiceTypeListProps) {
       className: "text-gray-600"
     },
     { 
-      header: "Duración", 
-      accessor: (service: ServiceType) => `${service.duration} min`,
+      header: "Duración (min)", 
+      accessor: (service: ServiceType) => `${service.durationMin} min`,
       className: "text-gray-600"
     },
     { 
       header: "Precio", 
-      accessor: (service: ServiceType) => `$${service.price.toFixed(2)}`,
+      accessor: (service: ServiceType) => `Gs. ${service.price.toLocaleString('es-PY', { maximumFractionDigits: 0 })}`,
       className: "font-medium"
     },
     { 
       header: "Tags", 
-      accessor: (service: ServiceType) => service.tags.join(", "),
+      accessor: (service: ServiceType) => service.tags?.join(", ") || "-",
       className: "text-gray-600"
-    },
+    }
   ];
 
   const handleView = (serviceType: ServiceType) => {
@@ -74,11 +74,13 @@ export default function ServiceTypeList({ token }: ServiceTypeListProps) {
     if (!selectedServiceType) return;
     
     try {
+      console.log("Eliminando tipo de servicio:", selectedServiceType.id);
       await deleteServiceType(token, selectedServiceType.id);
+      console.log("Tipo de servicio eliminado correctamente");
       toast("success", "Tipo de servicio eliminado correctamente");
       onPageChange(pagination.currentPage);
     } catch (error) {
-      //console.error("Error al eliminar tipo de servicio:", error);
+      console.error("Error al eliminar tipo de servicio:", error);
       toast("error", "Error al eliminar el tipo de servicio. Por favor, intente nuevamente.");
     } finally {
       setIsModalOpen(false);

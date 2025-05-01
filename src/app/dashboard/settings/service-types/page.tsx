@@ -2,7 +2,6 @@ import { getServerSession } from "next-auth";
 import authOptions from "@/lib/auth/options";
 import { redirect } from "next/navigation";
 import ServiceTypeList from "@/components/admin/settings/service-types/ServiceTypeList";
-import ServiceTypeForm from "@/components/admin/settings/service-types/ServiceTypeForm";
 
 export default async function ServiceTypesPage() {
   const session = await getServerSession(authOptions);
