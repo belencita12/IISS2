@@ -37,12 +37,14 @@ export const completeAppointment = async (id: number, token: string) => {
   return; 
 };
 
-export const cancelAppointment = async (id: number, token: string) => {
+export const cancelAppointment = async (id: number, token: string, description: string) => {
   const res = await fetch(`${APPOINTMENT_API}/cancel/${id}`, {
     method: "PATCH",
     headers: {
       Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     },
+    body: JSON.stringify({ description }),
   });
 
   if (!res.ok) {
@@ -52,5 +54,5 @@ export const cancelAppointment = async (id: number, token: string) => {
   }
 
 
-  return await res.json();
+  return;
 };

@@ -14,12 +14,15 @@ interface AppointmentCardProps {
   onOpenModal?: (appointment: AppointmentData, action: "complete" | "cancel") => void;
 }
 
+const statusTranslations: Record<string, string> = {
+  PENDING: "Pendiente",
+  COMPLETED: "Finalizada",
+  CANCELLED: "Cancelada",
+};
+
 const AppointmentCard = ({
   appointment,
-  token,
-  onChange,
   isProcessing = false,
-  setIsProcessing,
   onOpenModal,
 }: AppointmentCardProps) => {
   const router = useRouter();
@@ -38,16 +41,25 @@ const AppointmentCard = ({
         isProcessing ? "opacity-50 pointer-events-none" : "hover:-translate-y-1"
       }`}
     >
-      <div>
+      <div className="flex flex-col gap-2">
         <h3 className="font-bold text-lg">
           Servicio de {appointment.service ?? "Servicio no especificado"}
         </h3>
         <p>Dueño: {appointment.pet?.owner?.name ?? "Dueño desconocido"}</p>
         <p>Animal: {appointment.pet?.race ?? "Especie no especificada"}</p>
         <p>Detalles: {appointment.details ?? "Detalles no especificados"}</p>
+        <p className="text-sm text-gray-500 font-semibold">
+          Estado: {statusTranslations[appointment.status] ?? appointment.status}
+        </p>
+      </div>
+
+      <div className="flex flex-col items-end justify-between h-full gap-2">
+        <p className="text-black text-lg font-bold text-right">
+          {appointment.designatedDate ? formatDate(appointment.designatedDate) : ""}
+        </p>
 
         {appointment.status === "PENDING" && (
-          <div className="flex gap-2 mt-4">
+          <div className="flex gap-2">
             <Button
               disabled={isProcessing}
               onClick={(e) => {
@@ -70,13 +82,6 @@ const AppointmentCard = ({
             </Button>
           </div>
         )}
-      </div>
-
-      <div className="flex flex-col justify-between items-end h-full">
-        <p className="text-black text-lg font-bold">
-          {appointment.designatedDate ? formatDate(appointment.designatedDate) : ""}
-        </p>
-        <p className="text-sm text-gray-500">{appointment.status}</p>
       </div>
     </div>
   );

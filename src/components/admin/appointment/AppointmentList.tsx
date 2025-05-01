@@ -13,6 +13,7 @@ import AppointmentCard from "./AppointmentCard";
 import GenericPagination from "@/components/global/GenericPagination";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import { completeAppointment, cancelAppointment } from "@/lib/appointment/service";
+import { Modal } from "@/components/global/Modal";
 
 interface AppointmentListProps {
   token: string;
@@ -28,6 +29,8 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentData | null>(null);
   const [modalAction, setModalAction] = useState<"complete" | "cancel" | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [cancelDescription, setCancelDescription] = useState("");
 
   const {
     data,
@@ -64,7 +67,11 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
   const openConfirmModal = (appointment: AppointmentData, action: "complete" | "cancel") => {
     setSelectedAppointment(appointment);
     setModalAction(action);
-    setIsModalOpen(true);
+    if (action === "cancel") {
+      setCancelModalOpen(true);
+    } else {
+      setIsModalOpen(true);
+    }
   };
 
   const handleConfirmAction = async () => {
@@ -75,7 +82,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
       if (modalAction === "complete") {
         await completeAppointment(selectedAppointment.id, token);
       } else {
-        await cancelAppointment(selectedAppointment.id, token);
+        await cancelAppointment(selectedAppointment.id, token, cancelDescription);
       }
       toast("success", `Cita ${modalAction === "complete" ? "finalizada" : "cancelada"} con éxito`);
       refresh();
@@ -84,8 +91,10 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
     } finally {
       setIsProcessing(false);
       setIsModalOpen(false);
+      setCancelModalOpen(false);
       setSelectedAppointment(null);
       setModalAction(null);
+      setCancelDescription("");
     }
   };
 
@@ -134,18 +143,49 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
         handlePageChange={setPage}
       />
 
-      {/* Modal de confirmación fuera de la card */}
-      {selectedAppointment && modalAction && (
+      {selectedAppointment && modalAction === "complete" && (
         <ConfirmationModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onConfirm={handleConfirmAction}
-          title={`Confirmar ${modalAction === "complete" ? "Finalización" : "Cancelación"}`}
-          message={`¿Estás seguro de que quieres ${modalAction === "complete" ? "finalizar" : "cancelar"} esta cita?`}
+          title="Confirmar Finalización"
+          message="¿Estás seguro de que quieres finalizar esta cita?"
           confirmText="Confirmar"
           cancelText="Cancelar"
           isLoading={isProcessing}
         />
+      )}
+
+      {selectedAppointment && modalAction === "cancel" && (
+        <Modal
+          isOpen={cancelModalOpen}
+          onClose={() => setCancelModalOpen(false)}
+          title="Motivo de cancelación"
+          size="md"
+        >
+          <textarea
+            className="w-full h-32 p-2 border border-gray-300 rounded"
+            placeholder="Escribe una razón para cancelar la cita"
+            value={cancelDescription}
+            onChange={(e) => setCancelDescription(e.target.value)}
+          />
+          <div className="flex justify-end mt-4 gap-2">
+            <button
+              className="bg-gray-300 px-4 py-2 rounded"
+              onClick={() => setCancelModalOpen(false)}
+              disabled={isProcessing}
+            >
+              Cancelar
+            </button>
+            <button
+              className="bg-red-600 text-white px-4 py-2 rounded"
+              onClick={handleConfirmAction}
+              disabled={isProcessing || !cancelDescription.trim()}
+            >
+              {isProcessing ? "Cancelando..." : "Confirmar"}
+            </button>
+          </div>
+        </Modal>
       )}
     </div>
   );
