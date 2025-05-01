@@ -12,7 +12,7 @@ interface Props {
 
 export default function InvoiceDetail({ token }: Props) {
   const params = useParams<{ id: string }>();
-  const invoiceId = params?.id;
+  const invoiceId = params?.id || '';
   const { invoice, invoiceDetails, loading, error } = useInvoiceDetail(
     invoiceId, 
     token

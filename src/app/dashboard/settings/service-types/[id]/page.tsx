@@ -6,6 +6,7 @@ import { useServiceTypeUpdate } from '@/hooks/service-types/useServiceTypeUpdate
 import { useServiceType } from '@/hooks/service-types/useServiceType';
 import { toast } from 'sonner';
 import { useEffect, useState } from 'react';
+import { ServiceTypeFormData } from "@/lib/service-types/types";
 
 interface PageProps {
   params: Promise<{
@@ -34,7 +35,20 @@ export default function ServiceTypeEditPage({ params, searchParams }: PageProps)
 
   const handleSubmit = async (data: Record<string, unknown>) => {
     try {
-      await updateServiceType(id, data);
+      const formData: ServiceTypeFormData = {
+        slug: data.slug as string,
+        name: data.name as string,
+        description: data.description as string,
+        durationMin: data.durationMin as number,
+        iva: data.iva as number,
+        price: data.price as number,
+        cost: data.cost as number,
+        maxColabs: data.maxColabs as number | undefined,
+        isPublic: data.isPublic as boolean | undefined,
+        tags: data.tags as string[] | undefined,
+        img: data.img as File | undefined
+      };
+      await updateServiceType(id, formData);
       toast.success('Tipo de servicio actualizado exitosamente');
       router.push('/dashboard/settings/service-types');
     } catch (error) {

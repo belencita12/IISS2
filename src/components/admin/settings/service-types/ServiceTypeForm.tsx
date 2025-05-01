@@ -51,9 +51,12 @@ type ServiceTypeFormValues = z.infer<typeof serviceTypeFormSchema>;
 
 interface ServiceTypeFormProps {
   token: string;
+  initialData?: ServiceTypeFormValues;
+  onSubmit: (data: ServiceTypeFormValues) => Promise<void>;
+  isSubmitting?: boolean;
 }
 
-export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
+export default function ServiceTypeForm({ token, initialData, onSubmit, isSubmitting = false }: ServiceTypeFormProps) {
   const router = useRouter();
   const [availableTags, setAvailableTags] = useState<Tag[]>([]);
   const [isLoadingTags, setIsLoadingTags] = useState(true);
@@ -79,7 +82,7 @@ export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
     handleSubmit,
     setValue,
     watch,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting: formIsSubmitting },
   } = useForm<ServiceTypeFormValues>({
     resolver: zodResolver(serviceTypeFormSchema),
     defaultValues: {
@@ -109,61 +112,7 @@ export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
     setValue("tags", selectedTags, { shouldValidate: true });
   };
 
-  const onSubmit = async (data: ServiceTypeFormValues) => {
-    try {
-      const formData = new FormData();
-      
-      // Campos obligatorios (*)
-      formData.append("slug", data.slug);
-      formData.append("name", data.name);
-      formData.append("description", data.description);
-      formData.append("durationMin", data.durationMin.toString());
-      formData.append("iva", data.iva.toString());
-      formData.append("price", data.price.toString());
-      formData.append("cost", data.cost.toString());
-      
-      // Campos opcionales
-      if (data.maxColabs) formData.append("maxColabs", data.maxColabs.toString());
-      if (data.isPublic !== undefined) formData.append("isPublic", data.isPublic.toString());
-      
-      // Enviar tags como array
-      if (data.tags && data.tags.length > 0) {
-        formData.append("tags", data.tags.join(","));
-      }
-      
-      if (data.img) formData.append("img", data.img);
-
-      console.log("Enviando datos:", {
-        slug: data.slug,
-        name: data.name,
-        description: data.description,
-        durationMin: data.durationMin,
-        iva: data.iva,
-        price: data.price,
-        cost: data.cost,
-        maxColabs: data.maxColabs,
-        isPublic: data.isPublic,
-        tags: data.tags,
-      });
-
-      await createServiceType(token, formData);
-      toast("success", "Tipo de servicio creado con éxito", {
-        duration: 2000,
-        onAutoClose: () => router.push("/dashboard/settings/service-types"),
-        onDismiss: () => router.push("/dashboard/settings/service-types"),
-      });
-    } catch (error: any) {
-      //console.error("Error al crear el tipo de servicio:", error);
-      if (error.message?.includes("ya están en uso")) {
-        toast("error", "El nombre o slug del servicio ya está en uso. Por favor, elige otros valores.");
-      } else {
-        toast("error", "Error al registrar el tipo de servicio");
-      }
-    }
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleSubmitForm = async (data: any) => {
+  const onSubmitHandler = async (data: ServiceTypeFormValues) => {
     try {
       await onSubmit(data);
     } catch (error) {
@@ -194,7 +143,7 @@ export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 flex-1" noValidate>
+        <form onSubmit={handleSubmit(onSubmitHandler)} className="space-y-4 flex-1" noValidate>
           <div>
             <Label>Nombre</Label>
             <Input
@@ -341,9 +290,9 @@ export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
             </Button>
             <Button 
               type="submit" 
-              disabled={isSubmitting}
+              disabled={formIsSubmitting}
             >
-              {isSubmitting ? "Guardando..." : "Guardar"}
+              {formIsSubmitting ? "Guardando..." : "Guardar"}
             </Button>
           </div>
         </form>
