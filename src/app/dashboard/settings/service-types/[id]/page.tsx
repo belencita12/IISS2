@@ -5,24 +5,34 @@ import ServiceTypeForm from '@/components/admin/settings/service-types/ServiceTy
 import { useServiceTypeUpdate } from '@/hooks/service-types/useServiceTypeUpdate';
 import { useServiceType } from '@/hooks/service-types/useServiceType';
 import { toast } from 'sonner';
+import { useEffect, useState } from 'react';
 
-interface ServiceTypeEditPageProps {
-  params: {
+interface PageProps {
+  params: Promise<{
     id: string;
-  };
-  searchParams: {
+  }>;
+  searchParams: Promise<{
     token: string;
-  };
+  }>;
 }
 
-export default function ServiceTypeEditPage({ params, searchParams }: ServiceTypeEditPageProps) {
+export default function ServiceTypeEditPage({ params, searchParams }: PageProps) {
   const router = useRouter();
-  const { id } = params;
-  const { token } = searchParams;
+  const [id, setId] = useState<string>('');
+  const [token, setToken] = useState<string>('');
   const { serviceType, isLoading: isLoadingServiceType } = useServiceType(id);
   const { updateServiceType, isLoading: isLoadingUpdate } = useServiceTypeUpdate(token);
 
-  const handleSubmit = async (data: any) => {
+  useEffect(() => {
+    params.then(({ id }) => {
+      setId(id);
+    });
+    searchParams.then(({ token }) => {
+      setToken(token);
+    });
+  }, [params, searchParams]);
+
+  const handleSubmit = async (data: Record<string, unknown>) => {
     try {
       await updateServiceType(id, data);
       toast.success('Tipo de servicio actualizado exitosamente');

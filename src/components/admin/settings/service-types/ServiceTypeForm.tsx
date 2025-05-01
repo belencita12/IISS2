@@ -162,6 +162,15 @@ export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleSubmitForm = async (data: any) => {
+    try {
+      await onSubmit(data);
+    } catch (error) {
+      console.error('Error al enviar el formulario:', error);
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
       <div className="flex flex-col pt-6 md:flex-row gap-8">
