@@ -37,7 +37,6 @@ export default function EditVaccinePage({ token, id }: EditVaccinePageProps) {
       })
 
       .catch((error) => {
-        console.error(error);
         toast("error", "Error al cargar los datos de la vacuna");
       })
       .finally(() => setLoading(false));
