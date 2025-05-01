@@ -3,17 +3,15 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import ProductCard from "@/components/admin/product/ProductCard";
 import ProductFilters from "@/components/admin/product/filter/ProductFilter";
 import { getStockDetailsByStock } from "@/lib/stock/getStockDetailsByStock";
-import { getProductById } from "@/lib/products/getProductById";
 import { StockData, StockDetailsResponse, StockDetailsData } from "@/lib/stock/IStock";
 import { Product } from "@/lib/products/IProducts";
 import { toast } from "@/lib/toast";
 import { getStockById } from "@/lib/stock/getStockById";
 import GenericPagination from "../global/GenericPagination";
-import { set } from "react-hook-form";
 import StockDetailsCard from "./StockDetailCard";
+import { getFilteredProducts } from "@/lib/products/getFilteredProducts";
 
 interface DepositDetailsProps {
   token: string;
@@ -22,15 +20,6 @@ interface DepositDetailsProps {
 
 interface ProductWithAmount extends Product {
   amount: number;
-}
-
-interface ProductFilterState {
-  searchTerm: string;
-  category: string;
-  minPrice: string;
-  maxPrice: string;
-  minCost: string;
-  maxCost: string;
 }
 
 export default function DepositDetails({ token, stockId }: DepositDetailsProps) {
@@ -63,26 +52,49 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
   const fetchStockProducts = useCallback(async () => {
     try {
       setIsLoading(true);
-
+      
+      // 1. Obtener stock details del depósito
       const stockDetails = await getStockDetailsByStock(stockId, token);
+      const stockDetailsWithAmount = stockDetails.data.filter((detail) => detail.amount > 0 && detail.product);
+      const productIdsInStock = new Set(stockDetailsWithAmount.map((detail) => detail.product.id));
 
-      const productList: ProductWithAmount[] = stockDetails.data
-        .filter((detail) => detail.product)
-        .map((detail) => ({
-          ...detail.product,
-          amount: detail.amount,
-        }));
+      // 2. Obtener productos filtrados
+      const filteredProductsResponse = await getFilteredProducts(
+        {
+          page: currentPage,
+          size: 20,
+          name: filters.searchTerm,
+          category: filters.category,
+          minPrice: filters.minPrice,
+          maxPrice: filters.maxPrice,
+          minCost: filters.minCost,
+          maxCost: filters.maxCost,
+          tags: selectedTags,
+        },
+        token
+      );
+
+      // 3. Cruzar ambos resultados
+      const productList: ProductWithAmount[] = filteredProductsResponse.data
+      .filter((product) => productIdsInStock.has(product.id))
+      .map((product) => {
+        const stockDetail = stockDetailsWithAmount.find((detail) => detail.product.id === product.id);
+        return {
+          ...product,
+          amount: stockDetail?.amount ?? 0,
+        };
+      });
 
       setProducts(productList);
       setFilteredProducts(productList);
-      setTotalPages(1);
+      setTotalPages(filteredProductsResponse.totalPages || 1);
     } catch (error) {
       console.error("Error al obtener detalles de stock:", error);
       toast("error", "No se pudieron cargar los productos del depósito.");
     } finally {
       setIsLoading(false);
     }
-  }, [stockId, token]);
+  }, [stockId, token, filters, selectedTags, currentPage]);
 
   const applyFilters = useCallback(() => {
     const result = products.filter((product) => {
