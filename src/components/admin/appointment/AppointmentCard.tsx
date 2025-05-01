@@ -6,6 +6,7 @@ import { formatDate } from "@/lib/utils";
 import { toast } from "@/lib/toast";
 import { completeAppointment, cancelAppointment } from "@/lib/appointment/service";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 interface AppointmentCardProps {
   appointment: AppointmentData;
@@ -15,6 +16,8 @@ interface AppointmentCardProps {
 
 const AppointmentCard = ({ appointment, token, onChange }: AppointmentCardProps) => {
   const router = useRouter();
+  const [isCompleting, setIsCompleting] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
 
   const handleViewDetail = () => {
     if (appointment.id) {
@@ -22,7 +25,10 @@ const AppointmentCard = ({ appointment, token, onChange }: AppointmentCardProps)
     }
   };
 
- const handleStatusChange = async (action: "complete" | "cancel") => {
+  const handleStatusChange = async (action: "complete" | "cancel") => {
+    if (action === "complete") setIsCompleting(true);
+    if (action === "cancel") setIsCancelling(true);
+
     try {
       if (action === "complete") {
         await completeAppointment(appointment.id, token);
@@ -31,7 +37,6 @@ const AppointmentCard = ({ appointment, token, onChange }: AppointmentCardProps)
       }
 
       toast("success", `Cita ${action === "complete" ? "finalizada" : "cancelada"} con éxito`);
-      
       onChange?.();
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -39,6 +44,9 @@ const AppointmentCard = ({ appointment, token, onChange }: AppointmentCardProps)
       } else {
         toast("error", "Ocurrió un error");
       }
+    } finally {
+      setIsCompleting(false);
+      setIsCancelling(false);
     }
   };
 
@@ -62,18 +70,20 @@ const AppointmentCard = ({ appointment, token, onChange }: AppointmentCardProps)
                 e.stopPropagation();
                 handleStatusChange("complete");
               }}
-              className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+              disabled={isCompleting || isCancelling}
+              className="px-3 py-1 bg-white text-black rounded border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
             >
-              Finalizar
+              {isCompleting ? "Finalizando..." : "Finalizar"}
             </Button>
             <Button
               onClick={(e) => {
                 e.stopPropagation();
                 handleStatusChange("cancel");
               }}
-              className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+              disabled={isCancelling || isCompleting}
+              className="px-3 py-1 bg-black text-white rounded border border-gray-300 hover:bg-gray-800 disabled:opacity-50"
             >
-              Cancelar
+              {isCancelling ? "Cancelando..." : "Cancelar"}
             </Button>
           </div>
         )}
