@@ -12,6 +12,7 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
   const defaultImageSrc = "/NotImageNicoPets.png";
+  const providerName = product.provider?.name ?? "–";
 
   return (
     <div
@@ -59,7 +60,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
             </div>
             <div className="truncate">
               <span className="text-gray-600">Proveedor:</span>
-              <p className="font-medium truncate">La Mascota S.A.</p>
+              <p className="font-medium truncate">{providerName}</p>
             </div>
             <div className="flex flex-col truncate">
               <span className="text-gray-600">Costo:</span>

@@ -232,6 +232,7 @@ export default function ProductRegisterForm({
           <div className="flex flex-col md:flex-row gap-4">
             {/* Proveedor */}
             <div className="w-full md:w-1/2">
+            <Label>Proveedor</Label>
               <Controller
                 name="providerId"
                 control={control}
