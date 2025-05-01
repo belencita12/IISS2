@@ -1,5 +1,3 @@
-import { toast } from "../toast";
-
 // lib/vaccine/getVaccineById.ts
 import { VACCINE_API } from "../urls";
 
@@ -14,7 +12,7 @@ export async function getVaccineById(token: string, id: number) {
     });
   
     if (!response.ok) {
-      toast("error", `Error en la respuesta de la API: ${response.status} | ${response.statusText}`);
+      // toast("error", `Error en la respuesta de la API: ${response.status} | ${response.statusText}`);
       throw new Error("Error al obtener la vacuna");
     }
   
