@@ -78,7 +78,7 @@ export default function ServiceTypeList({ token }: ServiceTypeListProps) {
       toast("success", "Tipo de servicio eliminado correctamente");
       onPageChange(pagination.currentPage);
     } catch (error) {
-      console.error("Error al eliminar tipo de servicio:", error);
+      //console.error("Error al eliminar tipo de servicio:", error);
       toast("error", "Error al eliminar el tipo de servicio. Por favor, intente nuevamente.");
     } finally {
       setIsModalOpen(false);

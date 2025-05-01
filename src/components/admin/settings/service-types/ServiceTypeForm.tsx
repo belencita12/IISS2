@@ -65,7 +65,7 @@ export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
         const response = await getAllTags(token);
         setAvailableTags(response.data);
       } catch (error) {
-        console.error("Error al cargar tags:", error);
+       // console.error("Error al cargar tags:", error);
       } finally {
         setIsLoadingTags(false);
       }
@@ -153,7 +153,7 @@ export default function ServiceTypeForm({ token }: ServiceTypeFormProps) {
         onDismiss: () => router.push("/dashboard/settings/service-types"),
       });
     } catch (error: any) {
-      console.error("Error al crear el tipo de servicio:", error);
+      //console.error("Error al crear el tipo de servicio:", error);
       if (error.message?.includes("ya están en uso")) {
         toast("error", "El nombre o slug del servicio ya está en uso. Por favor, elige otros valores.");
       } else {
