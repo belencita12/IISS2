@@ -48,7 +48,7 @@ export default function ListPets({ token }: ListPetsProps) {
 
   useEffect(() => {
     if (error) {
-      toast("error", "Error al cargar las mascotas: ${error.message}");
+      toast("error", `Error al cargar las mascotas: ${error.message}`);
     }
   }, [error]);
 
