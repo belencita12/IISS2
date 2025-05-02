@@ -1,4 +1,6 @@
 import { SERVICE_TYPE_API } from "@/lib/urls";
+import { toast } from "@/lib/toast";
+//import { ServiceTypeTableSkeleton } from "@/components/admin/settings/service-types/ServiceTypeTableSkeleton";
 
 export interface ServiceType {
   id: number;
@@ -81,8 +83,12 @@ export const createServiceType = async (token: string, data: FormData) => {
     }
 
     return await response.json();
-  } catch (error: any) {
-    console.error('Error en createServiceType:', error);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      toast("error", error.message || "Error al crear el tipo de servicio");
+    } else {
+      toast("error", "Error al crear el tipo de servicio");
+    }
     throw error;
   }
 };
