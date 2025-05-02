@@ -16,8 +16,6 @@ import { getAllTags } from "@/lib/tags/service";
 import { Tag } from "@/lib/tags/types";
 import { toast } from '@/lib/toast';
 import { TagFilter } from "@/components/admin/product/filter/TagFilter";
-import { getServerSession } from "next-auth";
-import authOptions from "@/lib/auth/options";
 import { ServiceTypeFormData } from '@/lib/service-types/types';
 import { createServiceType } from '@/lib/service-types/service';
 
@@ -110,10 +108,13 @@ export default function ServiceTypeForm({
   const onSubmit = async (data: ServiceTypeFormData) => {
     try {
       const formData = new FormData();
-      const session = await getServerSession(authOptions);
-      if (!session) {
-        notFound();
+      
+      // Usar el token que viene como prop
+      if (!token) {
+        toast("error", "No se encontró el token de autenticación");
+        return;
       }
+
       // Campos obligatorios (*)
       formData.append("slug", data.slug);
       formData.append("name", data.name);
@@ -127,24 +128,41 @@ export default function ServiceTypeForm({
       if (data.maxColabs) formData.append("maxColabs", data.maxColabs.toString());
       if (data.isPublic !== undefined) formData.append("isPublic", data.isPublic.toString());
       
-      // Enviar tags como array
-      if (data.tags && data.tags.length > 0) {
-        formData.append("tags", data.tags.join(","));
-      }
+      // Enviar tags como array JSON
+      const tagsToSend = data.tags || [];
+      let stringTags = "";
+      tagsToSend.forEach((tag, index) => {
+        stringTags += `${tag}`;
+        if(tagsToSend.length > index + 1) stringTags += ",";
+      });
+      console.log('Tags a enviar:', stringTags);
+      formData.append("tags", stringTags);
       
       if (data.img) formData.append("img", data.img);
 
-      await createServiceType(session.user.token, formData);
-      toast("success", "Tipo de servicio creado con éxito", {
-        duration: 2000,
-        onAutoClose: () => router.push("/dashboard/settings/service-types"),
-        onDismiss: () => router.push("/dashboard/settings/service-types"),
-      });
-    } catch (error: unknown) {
-      if (error instanceof Error && error.message?.includes("ya están en uso")) {
+      // Log de todos los datos del FormData
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+      }
+
+      const response = await createServiceType(token, formData);
+      
+      if (response) {
+        console.log(response)
+        toast("success", "Tipo de servicio creado con éxito", {
+          duration: 2000,
+          onAutoClose: () => router.push("/dashboard/settings/service-types"),
+          onDismiss: () => router.push("/dashboard/settings/service-types"),
+        });
+      }
+    } catch (error: any) {
+      console.error('Error detallado:', error);
+      if (error.message?.includes("ya están en uso")) {
         toast("error", "El nombre o slug del servicio ya está en uso. Por favor, elige otros valores.");
+      } else if (error.message) {
+        toast("error", error.message);
       } else {
-        toast("error", "Error al registrar el tipo de servicio");
+        toast("error", "Error al registrar el tipo de servicio. Por favor, intente nuevamente.");
       }
     }
   };

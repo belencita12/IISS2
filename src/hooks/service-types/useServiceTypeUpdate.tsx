@@ -23,9 +23,9 @@ export const useServiceTypeUpdate = (token: string) => {
       if (data.maxColabs) formData.append("maxColabs", data.maxColabs.toString());
       if (data.isPublic !== undefined) formData.append("isPublic", data.isPublic.toString());
       
-      // Enviar tags como array
+      // Enviar tags como array JSON
       if (data.tags && data.tags.length > 0) {
-        formData.append("tags", data.tags.join(","));
+        formData.append("tags", JSON.stringify(data.tags));
       }
       
       if (data.img) formData.append("img", data.img);

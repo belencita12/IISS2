@@ -66,21 +66,25 @@ export const getServiceTypeById = async (token: string, id: number) => {
 };
 
 export const createServiceType = async (token: string, data: FormData) => {
-  const response = await fetch(SERVICE_TYPE_API, {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${token}`,
-      "Accept": "application/json",
-    },
-    body: data,
-  });
+  try {
+    const response = await fetch(SERVICE_TYPE_API, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+      body: data,
+    });
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || "Error al crear el tipo de servicio");
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Error al crear el tipo de servicio");
+    }
+
+    return await response.json();
+  } catch (error: any) {
+    console.error('Error en createServiceType:', error);
+    throw error;
   }
-
-  return await response.json();
 };
 
 export const updateServiceType = async (token: string, id: number, data: FormData) => {
