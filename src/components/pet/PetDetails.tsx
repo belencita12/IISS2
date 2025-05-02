@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useParams } from "next/navigation";
 import PetVaccinationTable from "../pet/PetVaccinationTable";
@@ -12,6 +12,8 @@ import { toast } from "@/lib/toast";
 import { formatDate } from "@/lib/utils";
 import { getAppointmentByPetId } from "@/lib/appointment/getAppointmentByPetId";
 import { Appointment } from "@/lib/appointment/IAppointment";
+import GenericTable, { Column, PaginationInfo, TableAction } from "@/components/global/GenericTable";
+import { Eye, XCircle, Pencil } from "lucide-react";
 
 interface EditablePet {
   name: string;
@@ -25,6 +27,16 @@ interface EditablePet {
 interface Props {
   token: string;
 }
+
+type AppointmentApiResponse = {
+  data: Appointment[];
+  total: number;
+  size: number;
+  prev: boolean;
+  next: boolean;
+  currentPage: number;
+  totalPages: number;
+};
 
 function calcularEdad(fechaNacimiento: string): string {
   const nacimiento = new Date(fechaNacimiento);
@@ -63,6 +75,7 @@ function calcularEdad(fechaNacimiento: string): string {
 
 export default function PetDetails({ token }: Props) {
   const { id } = useParams();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [pet, setPet] = useState<PetData | null | undefined>(undefined);
   const [isEditingName, setIsEditingName] = useState(false);
@@ -74,6 +87,31 @@ export default function PetDetails({ token }: Props) {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loadingAppointments, setLoadingAppointments] = useState(true); 
   const [errorAppointments, setErrorAppointments] = useState<string | null>(null);
+  const [pagination, setPagination] = useState<PaginationInfo>({
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    pageSize: 100,
+  });
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!pet?.id || !e.target.files || e.target.files.length === 0) return;
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append("profileImg", file);
+
+    try {
+      const updatedPet = await updatePet(pet.id, formData, token);
+      if (!updatedPet || !updatedPet.id) {
+        throw new Error("No se pudo actualizar la imagen");
+      }
+      setPet(updatedPet);
+      toast("success", "Imagen actualizada correctamente");
+    } catch (error) {
+      toast("error", "Error al actualizar la imagen");
+    }
+  };
+  
 
   // Actualiza el estado 'editedPet' cuando 'pet' cambia o cuando se entra a modo edición
   useEffect(() => {
@@ -136,6 +174,57 @@ export default function PetDetails({ token }: Props) {
     });
   };
 
+   // Se utiliza getPetById para obtener los detalles de la mascota
+   useEffect(() => {
+    setPet(undefined);
+    getPetById(Number(id), token)
+      .then((data) => {
+        setPet(data);
+      })
+      .catch(() => {
+        toast("error", "Error al obtener la mascota.");
+        setPet(null);
+      });
+  }, [id, token]);
+
+  // Obtener citas de la mascota
+  const fetchAppointments = (page = 1) => {
+    if (!pet?.id || !token) return;
+    setLoadingAppointments(true);
+    getAppointmentByPetId(pet.id, token, page, pagination.pageSize)
+      .then((resp: Appointment[] | AppointmentApiResponse) => {
+        if (Array.isArray(resp)) {
+          setAppointments(resp);
+          setPagination((prev) => ({
+            ...prev,
+            currentPage: page,
+            totalPages: 1,
+            totalItems: resp.length,
+          }));
+        } else {
+          setAppointments(resp.data ?? []);
+          setPagination({
+            currentPage: resp.currentPage ?? 1,
+            totalPages: resp.totalPages ?? 1,
+            totalItems: resp.total ?? 0,
+            pageSize: resp.size ?? 100,
+          });
+        }
+        setErrorAppointments(null);
+      })
+      .catch(() => setErrorAppointments("No se pudieron cargar las citas"))
+      .finally(() => setLoadingAppointments(false));
+  };
+
+  useEffect(() => {
+    fetchAppointments(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pet?.id, token]);
+
+  const handlePageChange = (page: number) => {
+    fetchAppointments(page);
+  };
+
   // Se utiliza updatePet para actualizar el nombre de la mascota
   const handleSave = async () => {
     if (!editedPet || !pet || !editedPet.name.trim()) {
@@ -168,6 +257,44 @@ export default function PetDetails({ token }: Props) {
     }
   };
 
+  // Columnas para la tabla de citas
+  const appointmentColumns: Column<Appointment>[] = [
+    {
+      header: "Detalle",
+      accessor: "details",
+    },
+    {
+      header: "Fecha",
+      accessor: (a) => formatDate(a.designatedDate),
+    },
+    {
+      header: "Empleados",
+      accessor: (a) => a.employees?.map(e => e.name).join(", ") || "Sin asignar",
+    },
+    {
+      header: "Estado",
+      accessor: "status",
+    },
+  ];
+
+  // Acciones para la tabla de citas
+  const appointmentActions: TableAction<Appointment>[] = [
+    {
+      icon: <Eye className="w-4 h-4" />,
+      onClick: (a: Appointment) => {
+        toast("info", `Detalle de cita: ${a.id}`);
+      },
+      label: "Detalle",
+    },
+    {
+      icon: <XCircle className="w-4 h-4 text-red-500" />,
+      onClick: (a: Appointment) => {
+        toast("info", `Cancelar cita: ${a.id}`);
+      },
+      label: "Cancelar cita",
+    },
+  ];
+
   return (
     <div className="flex-col">
       {pet === undefined ? (
@@ -192,7 +319,28 @@ export default function PetDetails({ token }: Props) {
                     <span className="text-gray-500">Sin imagen</span>
                   </div>
                 )}
-              </div>
+                </div>
+                {isEditingName && (
+                <div className="flex flex-col items-center mt-2 mb-2">
+                  <Button
+                    type="button"
+                    className="rounded-md p-2 shadow-md flex items-center gap-2 text-sm font-medium transition"
+                    onClick={() => fileInputRef.current?.click()}
+                    title="Cambiar foto de perfil"
+                  >
+                    <Pencil className="w-4 h-4 mr-1" />
+                    Cambiar foto de perfil
+                  </Button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageChange}
+                  />
+                </div>
+              )}
+              
               <div className="flex-col p-2 text-black">
                 <p className="flex justify-center font-bold">{pet.name}</p>
                 <p className="flex justify-center font-bold text-xl">{calcularEdad(pet.dateOfBirth)}</p>
@@ -259,48 +407,19 @@ export default function PetDetails({ token }: Props) {
             </div>
           </div>
           <div className="flex-col md:px-28 md:py-10 bg-white">
-            {/* Lista unificada de citas */}
-            <h2 className="text-2xl font-bold mb-3">Citas</h2>
-            {loadingAppointments ? (
-              <p>Cargando citas...</p>
-            ) : errorAppointments ? (
-              <p className="text-red-500">{errorAppointments}</p>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="min-w-full text-sm border">
-                  <thead className="bg-gray-100">
-                    <tr>
-                      <th className="px-2 py-1">Detalle</th>
-                      <th className="px-2 py-1">Fecha</th>
-                      <th className="px-2 py-1">Empleados</th>
-                      <th className="px-2 py-1">Estado</th>
-                      <th className="px-2 py-1">Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {appointments.length === 0 && (
-                      <tr>
-                        <td colSpan={5} className="py-4 text-center text-gray-500">Sin citas registradas</td>
-                      </tr>
-                    )}
-                    {appointments.map((a) => (
-                      <tr key={a.id} className="border-t">
-                        <td className="px-2 py-1">{a.details}</td>
-                        <td className="px-2 py-1">{formatDate(a.designatedDate)}</td>
-                        <td className="px-2 py-1">{a.employees.map(e => e.name).join(", ") || "Sin asignar"}</td>
-                        <td className="px-2 py-1">{a.status}</td>
-                        <td className="px-2 py-1 space-x-2">
-                          <Button variant="outline" size="sm">Detalle</Button>
-                          {a.status !== "CANCELLED" && (
-                            <Button variant="destructive" size="sm">Cancelar cita</Button>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+             {/* Lista de citas */}
+             <h2 className="text-2xl font-bold mb-3">Citas</h2>
+            <GenericTable<Appointment>
+              data={appointments}
+              columns={appointmentColumns}
+              actions={appointmentActions}
+              actionsTitle="Acciones"
+              pagination={pagination}
+              onPageChange={handlePageChange}
+              isLoading={loadingAppointments}
+              emptyMessage="Sin citas registradas"
+              className="mb-10"
+            />
 
             {/* Control de Vacunas */}
             <h2 className="text-2xl font-bold mb-3 mt-10">Control de Vacunas</h2>
