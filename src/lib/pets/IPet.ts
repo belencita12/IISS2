@@ -40,3 +40,18 @@ export interface RacesQueryParams extends BaseQueryParams {
 }
 
 export type PetDataResponse = PaginationResponse<PetData>;
+
+export interface ListPetData {
+  id: number;
+  name: string;
+  owner: {
+    id: number;
+    name: string;
+  }
+  species: Species;
+  race: Race;
+  profileImg?: Image | null;
+}
+
+
+ 

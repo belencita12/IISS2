@@ -45,6 +45,12 @@ const settingsOptions = [
     icon: "🛁",
     link: "/dashboard/settings/service-types",
   },
+  {
+    name: "Mascotas",
+    description: "Consulta y gestiona todas las mascotas registradas en el sistema.",
+    icon: "🦴",
+    link: "/dashboard/settings/pets",
+  },
 ];
 
 export function SettingsList() {
