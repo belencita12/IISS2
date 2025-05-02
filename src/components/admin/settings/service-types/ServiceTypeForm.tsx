@@ -6,7 +6,7 @@ import { z } from "zod";
 import { toast as _toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import FormImgUploader from "@/components/global/FormImgUploader";
@@ -14,7 +14,12 @@ import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { getAllTags } from "@/lib/tags/service";
 import { Tag } from "@/lib/tags/types";
+import { toast } from '@/lib/toast';
 import { TagFilter } from "@/components/admin/product/filter/TagFilter";
+import { getServerSession } from "next-auth";
+import authOptions from "@/lib/auth/options";
+import { ServiceTypeFormData } from '@/lib/service-types/types';
+import { createServiceType } from '@/lib/service-types/service';
 
 const serviceTypeFormSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
@@ -51,17 +56,15 @@ type ServiceTypeFormValues = z.infer<typeof serviceTypeFormSchema>;
 interface ServiceTypeFormProps {
   token: string;
   _initialData?: ServiceTypeFormValues;
-  onSubmit: (data: ServiceTypeFormValues) => Promise<void>;
   _isSubmitting?: boolean;
 }
 
 export default function ServiceTypeForm({ 
   token, 
   _initialData, 
-  onSubmit,
   _isSubmitting = false 
 }: ServiceTypeFormProps) {
-  const _router = useRouter();
+  const router = useRouter();
   const [_availableTags, setAvailableTags] = useState<Tag[]>([]);
   const [_isLoadingTags, setIsLoadingTags] = useState(true);
   const [tags, setTags] = useState<string[]>([]);
@@ -69,7 +72,7 @@ export default function ServiceTypeForm({
   useEffect(() => {
     const loadTags = async () => {
       try {
-        const response = await getAllTags(token);
+        const response = await getAllTags(token, "page=1");
         setAvailableTags(response.data);
       } catch (error) {
        // console.error("Error al cargar tags:", error);
@@ -103,6 +106,48 @@ export default function ServiceTypeForm({
       img: undefined,
     },
   });
+
+  const onSubmit = async (data: ServiceTypeFormData) => {
+    try {
+      const formData = new FormData();
+      const session = await getServerSession(authOptions);
+      if (!session) {
+        notFound();
+      }
+      // Campos obligatorios (*)
+      formData.append("slug", data.slug);
+      formData.append("name", data.name);
+      formData.append("description", data.description);
+      formData.append("durationMin", data.durationMin.toString());
+      formData.append("iva", data._iva.toString());
+      formData.append("price", data._price.toString());
+      formData.append("cost", data.cost.toString());
+      
+      // Campos opcionales
+      if (data.maxColabs) formData.append("maxColabs", data.maxColabs.toString());
+      if (data.isPublic !== undefined) formData.append("isPublic", data.isPublic.toString());
+      
+      // Enviar tags como array
+      if (data.tags && data.tags.length > 0) {
+        formData.append("tags", data.tags.join(","));
+      }
+      
+      if (data.img) formData.append("img", data.img);
+
+      await createServiceType(session.user.token, formData);
+      toast("success", "Tipo de servicio creado con éxito", {
+        duration: 2000,
+        onAutoClose: () => router.push("/dashboard/settings/service-types"),
+        onDismiss: () => router.push("/dashboard/settings/service-types"),
+      });
+    } catch (error: unknown) {
+      if (error instanceof Error && error.message?.includes("ya están en uso")) {
+        toast("error", "El nombre o slug del servicio ya está en uso. Por favor, elige otros valores.");
+      } else {
+        toast("error", "Error al registrar el tipo de servicio");
+      }
+    }
+  };
 
   const _price = watch("_price");
   const _iva = watch("_iva");
@@ -288,7 +333,7 @@ export default function ServiceTypeForm({
             <Button
               type="button"
               variant="outline"
-              onClick={() => _router.push("/dashboard/settings/service-types")}
+              onClick={() => router.push("/dashboard/settings/service-types")}
             >
               Cancelar
             </Button>
