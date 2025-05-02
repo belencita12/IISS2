@@ -58,10 +58,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
                 {product.price.toLocaleString()} Gs
               </p>
             </div>
-            <div className="truncate">
-              <span className="text-gray-600">Proveedor:</span>
-              <p className="font-medium truncate">{providerName}</p>
-            </div>
+            {product.provider && (
+              <div className="truncate">
+                <span className="text-gray-600">Proveedor:</span>
+                <p className="font-medium truncate">{product.provider.name}</p>
+              </div>
+            )}
             <div className="flex flex-col truncate">
               <span className="text-gray-600">Costo:</span>
               <p className="font-medium truncate">
