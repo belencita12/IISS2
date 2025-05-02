@@ -14,7 +14,7 @@ import GenericTable, {
 } from "@/components/global/GenericTable";
 import PetsTableSkeleton from "@/components/admin/settings/pets/skeleton/PetsTableSkeleton";
 import { toast } from "@/lib/toast";
-import { PetFilters } from "./PetFilters";
+import { PetFilters } from "./PetsFilters";
 import { deletePet } from "@/lib/pets/deletePet";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 
