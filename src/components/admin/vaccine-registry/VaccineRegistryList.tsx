@@ -58,7 +58,8 @@ export default function VaccineRegistryList({ token }: Props) {
             new Date(b.expectedDate).getTime()
         );
   
-        // 🔁 Una sola llamada para obtener todos los usuarios (clientes)
+        console.log(sorted)
+       
         const clientData = await fetchUsers(1, "", token);
         const clientMap = new Map<number, IUserProfile>(
           (clientData.data as IUserProfile[]).map((client) => [client.id, client])
@@ -66,8 +67,11 @@ export default function VaccineRegistryList({ token }: Props) {
   
         const enriched = await Promise.all(
           sorted.map(async (record) => {
-            const pet = await getPetById(record.petId, token);
-            const client = pet?.userId ? clientMap.get(pet.userId) : undefined;
+            const pet = await getPetById(Number(record.petId), token); 
+            console.log(pet)
+            const client = pet?.owner?.id ? clientMap.get(Number(pet.owner.id)) : undefined;
+
+            console.log(client)
   
             return {
               ...record,
@@ -150,7 +154,7 @@ export default function VaccineRegistryList({ token }: Props) {
       icon: <Pencil className="w-4 h-4" />,
       label: "Editar",
       onClick: (r) =>
-        router.push(`/dashboard/settings/vaccine-registry/${r.id}/edit`),
+        router.push(`/dashboard/settings/vaccine-registry/${r.id}/`), //ESTE FALTA ARREGLAR
     },
   ];
 
@@ -159,22 +163,25 @@ export default function VaccineRegistryList({ token }: Props) {
       <div className="flex justify-between items-center mb-4">
         <div className="flex flex-col"> 
             <h2 className="text-3xl font-bold">Historial de vacunación</h2>
-            <h4>Página secreta en construcción por diversión :)</h4>
         </div>        
         <Button
           onClick={() =>
-            router.push("/dashboard/settings/vaccine-registry/register")
+            router.push("/dashboard/settings/vaccine-registry/new")
           }
         >
           Nuevo registro
         </Button>
       </div>
 
+        
+      {/*
+      DEJO ESTO COMENTADO POR MIENTRAS, COMO NO ES SOLICITUD HACER EL LISTADO, DEJO MAL MAL HASTA TERMINAR EL RESTO DE TAREAS :)
       <SearchBar
         onSearch={handleSearch}
         placeholder="Buscar por nombre de mascota o cliente"
         debounceDelay={400}
       />
+      */}
 
       <GenericTable
         data={data.registries}

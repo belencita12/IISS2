@@ -9,7 +9,10 @@ export interface Image {
 export interface PetData {
   id?: number;
   name: string;
-  userId: number;
+  owner: {
+    id: number;
+    name: string;
+  };
   species: Species;
   race: Race;
   weight: number;
@@ -17,6 +20,7 @@ export interface PetData {
   profileImg?: Image | null;
   dateOfBirth: string;
 }
+
 
 export interface Race {
   id: number;
