@@ -106,26 +106,20 @@ export default function ServiceTypeDetail({ token }: ServiceTypeDetailProps) {
                 <p className="text-muted-foreground">{formatCurrency(serviceType.price)}</p>
               </div>
 
-              {serviceType.cost > 0 && (
-                <div>
-                  <h3 className="text-lg font-semibold">Costo</h3>
-                  <p className="text-muted-foreground">{formatCurrency(serviceType.cost)}</p>
-                </div>
-              )}
+              <div>
+                <h3 className="text-lg font-semibold">Costo</h3>
+                <p className="text-muted-foreground">{formatCurrency(serviceType.cost)}</p>
+              </div>
 
-              {serviceType.iva > 0 && (
-                <div>
-                  <h3 className="text-lg font-semibold">IVA</h3>
-                  <p className="text-muted-foreground">{serviceType.iva}%</p>
-                </div>
-              )}
+              <div>
+                <h3 className="text-lg font-semibold">IVA</h3>
+                <p className="text-muted-foreground">{serviceType.iva}%</p>
+              </div>
 
-              {serviceType.maxColabs && (
-                <div>
-                  <h3 className="text-lg font-semibold">Máximo de Colaboradores</h3>
-                  <p className="text-muted-foreground">{serviceType.maxColabs}</p>
-                </div>
-              )}
+              <div>
+                <h3 className="text-lg font-semibold">Máximo de Colaboradores</h3>
+                <p className="text-muted-foreground">{serviceType.maxColabs}</p>
+              </div>
 
               <div>
                 <h3 className="text-lg font-semibold">Estado</h3>
@@ -138,11 +132,15 @@ export default function ServiceTypeDetail({ token }: ServiceTypeDetailProps) {
             <div>
               <h3 className="text-lg font-semibold">Etiquetas</h3>
               <div className="flex flex-wrap gap-2 mt-2">
-                {serviceType.tags.map((tag) => (
-                  <Badge key={tag} variant="secondary">
-                    {tag}
-                  </Badge>
-                ))}
+                {serviceType.tags && serviceType.tags.length > 0 ? (
+                  serviceType.tags.map((tag) => (
+                    <Badge key={tag} variant="secondary">
+                      {tag}
+                    </Badge>
+                  ))
+                ) : (
+                  <p className="text-muted-foreground">No hay etiquetas</p>
+                )}
               </div>
             </div>
           </div>
