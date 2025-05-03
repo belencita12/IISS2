@@ -66,13 +66,13 @@ export default function ServiceTypeDetail({ token }: ServiceTypeDetailProps) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-        <div className="md:col-span-4 flex justify-start">
-          <div className="relative w-[300px] h-[300px]">
+        <div className="md:col-span-4 flex justify-center">
+          <div className="relative w-[300px] h-[300px] border rounded-lg overflow-hidden">
             <Image
               src={imageUrl}
               alt={serviceType.name}
               fill
-              className="object-contain rounded-md"
+              className="object-cover"
               priority
               unoptimized
               onError={(e) => {
@@ -106,15 +106,19 @@ export default function ServiceTypeDetail({ token }: ServiceTypeDetailProps) {
                 <p className="text-muted-foreground">{formatCurrency(serviceType.price)}</p>
               </div>
 
-              <div>
-                <h3 className="text-lg font-semibold">Costo</h3>
-                <p className="text-muted-foreground">{formatCurrency(serviceType.cost)}</p>
-              </div>
+              {serviceType.cost > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold">Costo</h3>
+                  <p className="text-muted-foreground">{formatCurrency(serviceType.cost)}</p>
+                </div>
+              )}
 
-              <div>
-                <h3 className="text-lg font-semibold">IVA</h3>
-                <p className="text-muted-foreground">{serviceType.iva}%</p>
-              </div>
+              {serviceType.iva > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold">IVA</h3>
+                  <p className="text-muted-foreground">{serviceType.iva}%</p>
+                </div>
+              )}
 
               {serviceType.maxColabs && (
                 <div>

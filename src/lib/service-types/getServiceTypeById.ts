@@ -23,11 +23,11 @@ export async function getServiceTypeById(id: string, token: string): Promise<Ser
     description: data.description,
     duration: data.durationMin,
     price: data.price || 0,
-    cost: data.cost || 0,
-    iva: data.iva || 0,
-    maxColabs: data.maxColabs,
+    cost: 0, // Valor por defecto ya que no viene de la API
+    iva: 0, // Valor por defecto ya que no viene de la API
+    maxColabs: undefined, // No viene de la API
     isPublic: data.isPublic || false,
-    imageUrl: data.image?.originalUrl || "",
+    imageUrl: data.img?.originalUrl || "",
     tags: data.tags || [],
   };
 } 
