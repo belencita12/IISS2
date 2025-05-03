@@ -59,6 +59,10 @@ export default function ServiceTypeDetail({ token }: ServiceTypeDetailProps) {
     }).format(amount);
   };
 
+  const capitalizeFirstLetter = (string: string): string => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   return (
     <div className="max-w-5xl mx-auto p-6">
       <div className="mb-6">
@@ -85,7 +89,7 @@ export default function ServiceTypeDetail({ token }: ServiceTypeDetailProps) {
 
         <div className="md:col-span-8 flex flex-col space-y-4 pl-6">
           <div>
-            <h1 className="text-3xl font-bold">{serviceType.name}</h1>
+            <h1 className="text-3xl font-bold">{capitalizeFirstLetter(serviceType.name)}</h1>
             <p className="text-muted-foreground mt-1">Slug: {serviceType.slug}</p>
           </div>
 
