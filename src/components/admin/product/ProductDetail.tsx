@@ -22,7 +22,8 @@ interface ProductDetailProps {
 
 export default function ProductDetail({ token }: ProductDetailProps) {
   const router = useRouter();
-  const { id } = useParams();
+  const params = useParams<{ id: string }>();
+  const id = params?.id || '';
   const [product, setProduct] = useState<Product | null>(null);
   const [stockDetails, setStockDetails] = useState<StockDetailsData[]>([]);
   const [stocks, setStocks] = useState<StockData[]>([]);

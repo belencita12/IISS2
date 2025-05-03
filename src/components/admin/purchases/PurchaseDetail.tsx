@@ -15,11 +15,12 @@ interface PurchaseDetailProps {
 }
 
 const PurchaseDetail: React.FC<PurchaseDetailProps> = ({ token, purchaseInfo, initialPage = 1 }) => {
-  const { id } = useParams();
+  const params = useParams();
+  const id = params?.id as string;
   const [page, setPage] = useState<number>(initialPage);
   const [toastShown, setToastShown] = useState<boolean>(false);
   
-  const { data: purchaseDetails, totalPages, loading, error } = usePurchaseDetail(id as string, token, page);
+  const { data: purchaseDetails, totalPages, loading, error } = usePurchaseDetail(id, token, page);
 
   useEffect(() => {
     if (!loading && !toastShown && (!purchaseDetails || purchaseDetails.length === 0)) {

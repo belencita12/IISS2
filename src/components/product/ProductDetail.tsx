@@ -8,7 +8,7 @@ import { getProducts } from "@/lib/products/getProducts"
 import type { Product } from "@/lib/products/IProducts"
 import { notFound } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, ShoppingCart, Tag } from "lucide-react"
+import { ChevronLeft, Tag } from "lucide-react"
 import NotImageNicoPets from "../../../public/NotImageNicoPets.png"
 import { Card } from "./ProductCardCliente"
 
@@ -17,7 +17,8 @@ interface Props {
 }
 
 export default function ProductDetailPage({ token }: Props) {
-    const { id } = useParams()
+    const params = useParams()
+    const id = params?.id as string;
     const router = useRouter()
     const [product, setProduct] = useState<Product>()
     const [relatedProducts, setRelatedProducts] = useState<Product[]>([])

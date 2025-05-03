@@ -64,6 +64,11 @@ export default function CustomerSearch({
     setIsCommandOpen(false);
   };
 
+  useEffect(() => {
+    get();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="space-y-2">
       <div className="flex gap-2">

@@ -104,7 +104,7 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
     if (!id || !token) return;
     const fetchProduct = async () => {
       try {
-        const productData = await getProductById(id as string, token);
+        const productData = await getProductById(id, token);
 
         setProduct(productData);
         setValue("productName", productData.name);
@@ -182,7 +182,7 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
     setIsSubmitting(true);
 
     try {
-      await updateProduct(id as string, formData, token);
+      await updateProduct(id, formData, token);
       toast("success", "Producto actualizado con éxito", {
         duration: 2000,
         onAutoClose: () => {

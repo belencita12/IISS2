@@ -38,15 +38,15 @@ interface ServiceType {
 interface ServiceTypeFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  token: string;
+  _token: string;
   onSuccess: () => void;
-  defaultValues?: ServiceType | null;
+  defaultValues?: ServiceTypeFormData | null;
 }
 
-export function ServiceTypeFormModal({
+export default function ServiceTypeFormModal({
   isOpen,
   onClose,
-  token,
+  _token,
   onSuccess,
   defaultValues,
 }: ServiceTypeFormModalProps) {
@@ -90,11 +90,11 @@ export function ServiceTypeFormModal({
     try {
       if (defaultValues) {
         // TODO: Implementar la llamada a la API para actualizar el tipo de servicio
-        // await updateServiceType(defaultValues.id, data, token);
+        // await updateServiceType(defaultValues.id, data, _token);
         toast("success", "Tipo de servicio actualizado correctamente");
       } else {
         // TODO: Implementar la llamada a la API para crear el tipo de servicio
-        // await createServiceType(data, token);
+        // await createServiceType(data, _token);
         toast("success", "Tipo de servicio creado correctamente");
       }
       onSuccess();

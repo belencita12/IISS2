@@ -23,7 +23,7 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
   const [totalPages, setTotalPages] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [allDeposits, setAllDeposits] = useState<StockData[]>([]);
+  const [_allDeposits, setAllDeposits] = useState<StockData[]>([]);
   const [selectedDeposit, setSelectedDeposit] = useState<StockData | null>(null);
 
   const showDeposits = useCallback(

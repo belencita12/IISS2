@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/lib/toast";
 import { registerStock } from "@/lib/stock/registerStock";
-import { useRouter } from "next/navigation";
 import { setStock } from "@/lib/stock/setStock";
 import { StockData } from "@/lib/stock/IStock";
 import {Modal} from "@/components/global/Modal";
@@ -29,7 +28,6 @@ interface StockFormProps {
 }
 
 export const StockForm = ({ token, isOpen, onClose, onRegisterSuccess, initialData}: StockFormProps) => {
-  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -54,7 +52,7 @@ export const StockForm = ({ token, isOpen, onClose, onRegisterSuccess, initialDa
         address: "",
       })
     }
-  }, [initialData, setValue]);
+  }, [initialData, setValue, reset]);
 
   const onSubmit = async (data: StockFormValues) => {
     setIsSubmitting(true);

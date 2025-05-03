@@ -33,6 +33,7 @@ export default function InvoiceNumericFilter({ filters, setFilters }: Props) {
         toTotal: totalMax,
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedMin, debouncedMax]);
 
   return (

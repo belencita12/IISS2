@@ -1,7 +1,6 @@
 "use client";
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { getProducts } from "@/lib/products/getProducts";
-import { getStockDetails } from "@/lib/stock/getStockDetails";
 import { Product, ProductResponse } from "@/lib/products/IProducts";
 import useDebounce from "@/hooks/useDebounce";
 import { toast } from "@/lib/toast";
@@ -43,7 +42,7 @@ export function useProductList(token: string) {
 
   const [inputFilters, setInputFilters] = useState<FiltersType>(initialFilters);
   const debouncedFilters = useDebounce(inputFilters, 600);
-  const { query, setQuery, toQueryString } = useQuery<QueryParams>({
+  const { setQuery, toQueryString } = useQuery<QueryParams>({
     page: 1,
     size: 16,
   });
@@ -157,7 +156,8 @@ export function useProductList(token: string) {
 
   useEffect(() => {
     loadProducts(1, initialFilters);
-  }, [token]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, initialFilters]);
 
   const handleSearch = () => loadProducts(1, inputFilters);
 

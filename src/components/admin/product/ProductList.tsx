@@ -30,7 +30,7 @@ export default function ProductListPage({ token }: ProductListProps) {
 
   // Hook para filtrado por tags
   const {
-    filteredProducts: tagFilteredProducts,
+    filteredProducts: _tagFilteredProducts,
     isTagFiltering,
     fetchFilteredProducts,
     tagPagination,

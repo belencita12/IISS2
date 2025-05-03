@@ -29,6 +29,7 @@ export default function PurchaseNumericFilter({ filters, setFilters }: Props) {
         totalMax,
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedMin, debouncedMax]);
 
   return (

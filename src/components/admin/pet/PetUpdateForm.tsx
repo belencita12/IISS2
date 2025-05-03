@@ -227,7 +227,6 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
 
   // Obtiene los datos de la mascota y su dueño
   useEffect(() => {
-    setPet(undefined);
     if (!petId || !token) {
       toast("error", "Faltan datos");
       return;
@@ -235,17 +234,17 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
 
     const fetchPetAndClient = async () => {
       try {
-        const petData = await getPetById(Number(petId), token);
+        const _response = await getPetById(Number(petId), token);
 
-        if (petData) {
-          setPet(petData);
+        if (_response) {
+          setPet(_response);
 
-          setValue("petName", petData.name);
-          setValue("birthDate", formatDateToInput(petData.dateOfBirth));
-          setValue("animalType", petData.species.id.toString());
-          setValue("breed", petData.race.id.toString());
-          setValue("gender", petData.sex);
-          setValue("weight", petData.weight);
+          setValue("petName", _response.name);
+          setValue("birthDate", formatDateToInput(_response.dateOfBirth));
+          setValue("animalType", _response.species.id.toString());
+          setValue("breed", _response.race.id.toString());
+          setValue("gender", _response.sex);
+          setValue("weight", _response.weight);
 
         } else {
           setPet(null);
@@ -256,6 +255,7 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
     };
 
     fetchPetAndClient();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, petId, token, setValue]);
 
   return (
