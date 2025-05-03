@@ -70,30 +70,56 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
 
   {/* Fecha y hora */}
   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div>
-      <label className="block text-sm font-medium text-gray-700">Fecha</label>
-      <input
-        type="date"
-        {...register("designatedDate")}
-        className="w-full border border-gray-300 rounded-md p-2"
-      />
-      {errors.designatedDate && (
-        <p className="text-red-500 text-sm mt-1">{errors.designatedDate.message}</p>
-      )}
-    </div>
-
-    <div>
-      <label className="block text-sm font-medium text-gray-700">Hora</label>
-      <input
-        type="time"
-        {...register("designatedTime")}
-        className="w-full border border-gray-300 rounded-md p-2"
-      />
-      {errors.designatedTime && (
-        <p className="text-red-500 text-sm mt-1">{errors.designatedTime.message}</p>
-      )}
-    </div>
+      {/* Mascota */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">Seleccionar Mascota</label>
+    <PetSearch token={token} onSelectPet={handleSelectPet} />
+    <input type="hidden" {...register("petId")} />
+    {errors.petId && <p className="text-red-500 text-sm mt-1">{errors.petId.message}</p>}
   </div>
+
+    {/* Servicio */}
+    <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">Seleccionar Servicio</label>
+    <ServiceSelect token={token} onSelectService={handleSelectService} />
+    <input type="hidden" {...register("serviceId")} />
+    {errors.serviceId && <p className="text-red-500 text-sm mt-1">{errors.serviceId.message}</p>}
+  </div>
+
+    {/* Empleado */}
+  <div className="md:col-span-2">
+    <label className="block text-sm font-medium text-gray-700 mb-1">Seleccionar Empleado</label>
+    <EmployeeSelect token={token} onSelectEmployee={handleSelectEmployee} />
+    <input type="hidden" {...register("employeesId")} />
+    {errors.employeesId && <p className="text-red-500 text-sm mt-1">{errors.employeesId.message}</p>}
+  </div>
+
+  <div className="md:col-span-2 flex flex-col md:flex-row gap-6">
+  <div className="w-full">
+    <label className="block text-sm font-medium text-gray-700">Fecha</label>
+    <input
+      type="date"
+      {...register("designatedDate")}
+      className="w-full border border-gray-300 rounded-md p-2"
+    />
+    {errors.designatedDate && (
+      <p className="text-red-500 text-sm mt-1">{errors.designatedDate.message}</p>
+    )}
+  </div>
+
+  <div className="w-full">
+    <label className="block text-sm font-medium text-gray-700">Hora</label>
+    <input
+      type="time"
+      {...register("designatedTime")}
+      className="w-full border border-gray-300 rounded-md p-2"
+    />
+    {errors.designatedTime && (
+      <p className="text-red-500 text-sm mt-1">{errors.designatedTime.message}</p>
+    )}
+  </div>
+</div>
+</div>
 
   {/* Detalles */}
   <div>
@@ -105,29 +131,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
     />
   </div>
 
-  {/* Mascota */}
-  <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">Seleccionar Mascota</label>
-    <PetSearch token={token} onSelectPet={handleSelectPet} />
-    <input type="hidden" {...register("petId")} />
-    {errors.petId && <p className="text-red-500 text-sm mt-1">{errors.petId.message}</p>}
-  </div>
 
-  {/* Servicio */}
-  <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">Seleccionar Servicio</label>
-    <ServiceSelect token={token} onSelectService={handleSelectService} />
-    <input type="hidden" {...register("serviceId")} />
-    {errors.serviceId && <p className="text-red-500 text-sm mt-1">{errors.serviceId.message}</p>}
-  </div>
-
-  {/* Empleado */}
-  <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">Seleccionar Empleado</label>
-    <EmployeeSelect token={token} onSelectEmployee={handleSelectEmployee} />
-    <input type="hidden" {...register("employeesId")} />
-    {errors.employeesId && <p className="text-red-500 text-sm mt-1">{errors.employeesId.message}</p>}
-  </div>
 
   {/* Botón */}
   <div className="flex justify-center">
