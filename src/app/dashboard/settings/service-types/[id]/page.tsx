@@ -1,60 +1,28 @@
-"use client";
+import ServiceTypeDetail from "@/components/admin/settings/service-types/ServiceTypeDetail";
+import authOptions from "@/lib/auth/options";
+import { getServerSession } from "next-auth";
+import { notFound, redirect } from "next/navigation";
+import { getServiceTypeById } from "@/lib/service-types/getServiceTypeById";
 
-import { useRouter } from 'next/navigation';
-import ServiceTypeForm from '@/components/admin/settings/service-types/ServiceTypeForm';
-import { useServiceTypeUpdate } from '@/hooks/service-types/useServiceTypeUpdate';
-import { useServiceType } from '@/hooks/service-types/useServiceType';
-//import { toast } from "@/lib/toast";
-import { useEffect, useState } from 'react';
-//import { ServiceTypeFormData } from "@/lib/service-types/types";
+export default async function ServiceTypeDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const resolvedParams = await params;
+  const serviceTypeId = resolvedParams.id;
 
-interface PageProps {
-  params: Promise<{
-    id: string;
-  }>;
-  searchParams: Promise<{
-    token: string;
-  }>;
-}
-
-export default function ServiceTypeEditPage({ params, searchParams }: PageProps) {
-  const router = useRouter();
-  const [id, setId] = useState<string>('');
-  const [token, setToken] = useState<string>('');
-  const { serviceType, isLoading: isLoadingServiceType } = useServiceType(id, token);
-  const { updateServiceType, isLoading: isLoadingUpdate } = useServiceTypeUpdate(token);
-
-  useEffect(() => {
-    params.then(({ id }) => {
-      setId(id);
-    });
-    searchParams.then(({ token }) => {
-      setToken(token);
-    });
-  }, [params, searchParams]);
-
-  if (isLoadingServiceType) {
-    return <div>Cargando...</div>;
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    redirect("/login");
   }
+  const token = session.user.token as string;
 
+  // Obtenemos el tipo de servicio, si no existe -> 404
+  const serviceType = await getServiceTypeById(serviceTypeId, token).catch(() => null);
   if (!serviceType) {
-    return <div>Tipo de servicio no encontrado</div>;
+    notFound();
   }
 
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Editar Tipo de Servicio</h1>
-        <p className="text-muted-foreground">
-          Modifique los datos del tipo de servicio
-        </p>
-      </div>
-
-      <ServiceTypeForm
-        token={token}
-        _initialData={serviceType}
-        _isSubmitting={isLoadingUpdate}
-      />
-    </div>
-  );
+  return <ServiceTypeDetail token={token} />;
 } 
