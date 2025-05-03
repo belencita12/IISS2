@@ -40,3 +40,22 @@ export interface AppointmentRegister {
     petId: number;
     employeesId: number[];
   }
+
+  export interface ServiceType{
+    id?: number,
+    slug: string,
+    name: string,
+    description: string,
+    durationMin: number,
+    maxColabs?: number,
+    isPublic?: boolean,
+    iva: number,
+    price: number,
+    cost: number,
+    tags?: string[],
+    img?: {
+      id: number,
+      previewUrl: string,
+      originalUrl: string
+    }
+  }

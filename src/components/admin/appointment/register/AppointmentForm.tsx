@@ -8,6 +8,10 @@ import { createAppointment } from "@/lib/appointment/service";
 import { toast } from "@/lib/toast";
 import  EmployeeSelect  from "./EmployeeSelect"; // Importa el nuevo componente
 import { EmployeeData } from "@/lib/employee/IEmployee";
+import ServiceSelect from "./ServiceSelect";
+import { ServiceType } from "@/lib/appointment/IAppointment";
+import PetSearch from "./PetSearch";
+import { PetData } from "@/lib/pets/IPet";
 
 type AppointmentFormProps = {
   token: string;
@@ -43,40 +47,99 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
     }
   };
 
+  const handleSelectService = (service: ServiceType) => {
+    // Si el servicio tiene un ID, lo asignamos
+    if (service.id) {
+      setValue("serviceId", service.id);
+    }
+  }
+
+  const handleSelectPet = (pet: PetData) => {
+    // Si la mascota tiene un ID, lo asignamos
+    if (pet.id) {
+      setValue("petId", pet.id);
+    }
+  };
+
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div>
-        <label>Fecha</label>
-        <input type="date" {...register("designatedDate")} className="input" />
-        {errors.designatedDate && <p className="text-red-500">{errors.designatedDate.message}</p>}
-      </div>
+    <form
+  onSubmit={handleSubmit(onSubmit)}
+  className="w-full min-h-screen px-6 py-10 md:px-20 lg:px-32 space-y-10"
+>
 
-      <div>
-        <label>Hora</label>
-        <input type="time" {...register("designatedTime")} className="input" />
-        {errors.designatedTime && <p className="text-red-500">{errors.designatedTime.message}</p>}
-      </div>
+  {/* Fecha y hora */}
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <label className="block text-sm font-medium text-gray-700">Fecha</label>
+      <input
+        type="date"
+        {...register("designatedDate")}
+        className="w-full border border-gray-300 rounded-md p-2"
+      />
+      {errors.designatedDate && (
+        <p className="text-red-500 text-sm mt-1">{errors.designatedDate.message}</p>
+      )}
+    </div>
 
-      <div>
-        <label>Detalles</label>
-        <textarea {...register("details")} className="textarea" />
-      </div>
+    <div>
+      <label className="block text-sm font-medium text-gray-700">Hora</label>
+      <input
+        type="time"
+        {...register("designatedTime")}
+        className="w-full border border-gray-300 rounded-md p-2"
+      />
+      {errors.designatedTime && (
+        <p className="text-red-500 text-sm mt-1">{errors.designatedTime.message}</p>
+      )}
+    </div>
+  </div>
+
+  {/* Detalles */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700">Detalles</label>
+    <textarea
+      {...register("details")}
+      className="w-full border border-gray-300 rounded-md p-2"
+      rows={4}
+    />
+  </div>
+
+  {/* Mascota */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">Seleccionar Mascota</label>
+    <PetSearch token={token} onSelectPet={handleSelectPet} />
+    <input type="hidden" {...register("petId")} />
+    {errors.petId && <p className="text-red-500 text-sm mt-1">{errors.petId.message}</p>}
+  </div>
+
+  {/* Servicio */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">Seleccionar Servicio</label>
+    <ServiceSelect token={token} onSelectService={handleSelectService} />
+    <input type="hidden" {...register("serviceId")} />
+    {errors.serviceId && <p className="text-red-500 text-sm mt-1">{errors.serviceId.message}</p>}
+  </div>
+
+  {/* Empleado */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">Seleccionar Empleado</label>
+    <EmployeeSelect token={token} onSelectEmployee={handleSelectEmployee} />
+    <input type="hidden" {...register("employeesId")} />
+    {errors.employeesId && <p className="text-red-500 text-sm mt-1">{errors.employeesId.message}</p>}
+  </div>
+
+  {/* Botón */}
+  <div className="flex justify-center">
+    <button
+      type="submit"
+      className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition"
+    >
+      Registrar Cita
+    </button>
+  </div>
+</form>
 
 
-
-
-      <div>
-        <label>Empleado</label>
-        <EmployeeSelect
-          token={token}
-          onSelectEmployee={handleSelectEmployee} // Usamos el callback para establecer el empleado
-        />
-        {errors.employeesId && <p className="text-red-500">{errors.employeesId.message}</p>}
-      </div>
-
-      <button type="submit" className="btn btn-primary">
-        Registrar Cita
-      </button>
-    </form>
   );
 };

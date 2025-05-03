@@ -13,7 +13,7 @@ export default async function AppointmentsPage() {
   const token = session?.user?.token || "";
 
   return (
-    <div className="max-w-xl mx-auto mt-10 p-4 bg-white shadow rounded">
+    <div >
       <h1 className="text-2xl font-bold mb-6">Registrar nueva cita</h1>
       <AppointmentForm token={token} />
     </div>
