@@ -66,7 +66,8 @@ interface ProductUpdateFormProps {
 }
 
 export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
-  const { id } = useParams();
+  const params = useParams<{ id: string }>();
+  const id = params?.id || '';
   const { providers } = useInitialData(token || "");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
