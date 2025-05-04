@@ -28,7 +28,6 @@ export const AvailabilityPicker = ({ token, employeeId, date, onSelectTime }: Pr
         setSlots(data);
       } catch (error) {
         toast("error", error instanceof Error ? error.message : "Error al cargar disponibilidad");
-      //  console.error("Error al cargar disponibilidad", error);
         setSlots([]);
       } finally {
         setLoading(false);
@@ -62,7 +61,7 @@ export const AvailabilityPicker = ({ token, employeeId, date, onSelectTime }: Pr
                 onClick={() => handleSelect(slot.time)}
                 className={`p-2 rounded-md border text-sm ${
                   selectedTime === slot.time
-                    ? "bg-blue-600 text-white border-blue-600"
+                    ? "bg-gray-400 text-black border-gray-400"
                     : "bg-white border-gray-300 hover:bg-gray-100"
                 }`}
               >

@@ -13,7 +13,7 @@ export interface AppointmentQueryParams extends BaseQueryParams {
 
 
 export interface AppointmentData {
-    id?: number;
+    id: number;
     designatedDate: string;
     completedDate: string;
     details: string;
