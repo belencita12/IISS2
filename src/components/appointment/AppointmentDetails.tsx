@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { getAppointmentById } from '@/lib/appointment/getAppointmentById';
-import Appointment from '@/lib/appointment/IAppointment';
+import {Appointment} from '@/lib/appointment/IAppointment';
 
 interface AppointmentDetailsProps {
   token: string;

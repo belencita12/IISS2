@@ -2,13 +2,39 @@ import AppointmentDetails from "@/components/appointment/AppointmentDetails";
 import authOptions from "@/lib/auth/options";
 import { getServerSession } from "next-auth/next";
 
-export default async function Page({ params }: { params: { id: string } }) {
+interface PageProps {
+    params: Promise<{id: string;}>;
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function Page({ params, }: { params: Promise<{id: string}>}) {
     const session = await getServerSession(authOptions);
-    if (!session) return <p>No autorizado</p>;
+    if (!session) {
+        return (
+            <div className="flex justify-center items-center min-h-[200px]">
+                <p className="text-red-500">No autorizado</p>
+            </div>
+        );
+    }
     
     const { id } = await params;
-    if (!id) return <p>ID de cita no proporcionado</p>;
-      if (isNaN(Number(id))) return <p>ID de cita no válido</p>;
+
+    if (!id) {
+        return (
+            <div className="flex justify-center items-center min-h-[200px]">
+                <p className="text-red-500">ID de cita no proporcionado</p>
+            </div>
+        );
+    }
+
+    if (isNaN(Number(id))) {
+        return (
+            <div className="flex justify-center items-center min-h-[200px]">
+                <p className="text-red-500">ID de cita no válido</p>
+            </div>
+        );
+    }
+
     const token = session.user.token;
       
     return (
@@ -18,4 +44,4 @@ export default async function Page({ params }: { params: { id: string } }) {
             </div>
         </div>
     );
-  }
+}
