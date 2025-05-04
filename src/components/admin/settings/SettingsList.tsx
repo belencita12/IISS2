@@ -37,13 +37,19 @@ const settingsOptions = [
     name: "Historial de Vacunación",
     description: "Gestionar y revisar los registros de vacunación de las mascotas.",
     icon: "💉",
-    link: "/dashboard/settings/vaccine-registry/new",
+    link: "/dashboard/settings/vaccine-registry",
   },
   {
     name: "Tipos de servicio",
     description: "Administrar los diferentes tipos de servicios disponibles en la veterinaria.",
     icon: "🛁",
     link: "/dashboard/settings/service-types",
+  },
+  {
+    name: "Mascotas",
+    description: "Consulta y gestiona todas las mascotas registradas en el sistema.",
+    icon: "🦴",
+    link: "/dashboard/settings/pets",
   },
 ];
 
