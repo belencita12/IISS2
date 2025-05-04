@@ -32,10 +32,10 @@ export const MovementDetailsList = ({ id, token }: Props) => {
     try {
       setIsReverting(true);
       await revertMovement(id, token);
-      toast.success('Movimiento revertido exitosamente');
+      toast('success', 'Movimiento revertido exitosamente');
       router.push("/dashboard/movement");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Error al revertir el movimiento');
+      toast('error', error instanceof Error ? error.message : 'Error al revertir el movimiento');
     } finally {
       setIsReverting(false);
       setIsRevertModalOpen(false);
