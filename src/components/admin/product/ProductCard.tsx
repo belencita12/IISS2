@@ -1,10 +1,9 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-import { Card } from "@/components/ui/card";
 import { Product } from "@/lib/products/IProducts";
-import { Badge } from "@/components/ui/badge";
 import { getCategoryLabel } from "@/lib/products/utils/categoryLabel";
+import { Button } from "@/components/ui/button";
 
 interface ProductCardProps {
   product: Product;
@@ -12,69 +11,87 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
+  const defaultImageSrc = "/NotImageNicoPets.png";
+  const providerName = product.provider?.name ?? "–";
+
   return (
-    <Card
-      className="overflow-hidden mb-4 cursor-pointer hover:shadow-md transition-shadow"
-      onClick={() => onClick(product.id)}
+    <div
+      className="flex w-full max-w-[550px] min-w-[280px] h-[250px] m-2 rounded-lg shadow-md
+                    hover:shadow-lg transition-shadow duration-300 overflow-hidden
+                    bg-white text-gray-900"
     >
-      <div className="flex flex-col sm:flex-row p-4">
-        <div className="w-[100px] h-[100px] mb-4 sm:mb-0 sm:mr-4 flex-shrink-0">
-          {product.image?.originalUrl ? (
-            <Image
-              src={product.image.originalUrl}
-              alt={product.name}
-              width={100}
-              height={100}
-              className="w-full h-full object-cover rounded"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded">
-              {product.name.charAt(0).toUpperCase()}
-            </div>
-          )}
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 mb-4">
-            <div className="col-span-1 sm:col-span-2 md:col-span-3">
-              <h3 className="text-lg font-semibold break-words">{product.name}</h3>
-            </div>
-            <div className="col-span-1 flex flex-wrap gap-1 items-start min-w-0">
-              {product.tags?.map((tag, index) => (
-                <Badge
-                  key={index}
-                  variant="outline"
-                  className="px-2 py-1 text-sm text-gray-500 font-normal break-words"
+      <div className="w-[45%] relative h-full overflow-hidden rounded-l-lg">
+        <Image
+          src={product.image?.originalUrl || defaultImageSrc}
+          alt={product.name}
+          fill
+          style={{ objectFit: "cover" }}
+        />
+      </div>
+
+      <div className="w-[65%] p-4 flex flex-col justify-between">
+        <div className="space-y-2 overflow-hidden">
+          {product.tags && (
+            <div className="flex flex-wrap gap-1 mb-1 max-h-[32px] overflow-hidden">
+              {product.tags.map((tag, idx) => (
+                <span
+                  key={idx}
+                  className="bg-gray-100 text-gray-600 text-[10px] font-medium
+                             px-2 py-0.5 rounded-full border border-gray-300 truncate"
                 >
-                  #{tag}
-                </Badge>
+                  {tag}
+                </span>
               ))}
             </div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="flex flex-col">
-              <p className="text-sm text-gray-500">Código</p>
-              <p className="text-sm text-gray-500 mt-2">Proveedor</p>
-              <p className="text-sm text-gray-500 mt-2">Categoría</p>
-              <p className="text-sm text-gray-500 mt-2">Precio Unitario</p>
+          )}
+
+          <h3 className="text-md font-semibold line-clamp-2">{product.name}</h3>
+
+          <div className="grid grid-cols-[1fr_0.6fr] gap-x-10 gap-y-2 text-xs">
+            <div className="truncate">
+              <span className="text-gray-600">Código:</span>
+              <p className="font-medium truncate">{product.code || "-"}</p>
             </div>
-            <div className="flex flex-col min-w-0">
-              <p className="text-sm break-words">{product.code}</p>
-              <p className="text-sm mt-2 break-words">La Mascota S.A.</p>
-              <p className="text-sm mt-2 break-words">{getCategoryLabel(product.category)}</p>
-              <p className="text-sm mt-2">{product.price.toLocaleString()} Gs</p>
+            <div className="flex flex-col truncate">
+              <span className="text-gray-600">Precio:</span>
+              <p className="font-medium truncate">
+                {product.price.toLocaleString()} Gs
+              </p>
             </div>
-            <div className="flex flex-col">
-              <p className="text-sm text-gray-500">Costo</p>
-              <p className="text-sm text-gray-500 mt-2">Cantidad</p>
+            {product.provider && (
+              <div className="truncate">
+                <span className="text-gray-600">Proveedor:</span>
+                <p className="font-medium truncate">{product.provider.name}</p>
+              </div>
+            )}
+            <div className="flex flex-col truncate">
+              <span className="text-gray-600">Costo:</span>
+              <p className="font-medium truncate">
+                {product.cost?.toLocaleString() || "-"} Gs
+              </p>
             </div>
-            <div className="flex flex-col">
-              <p className="text-sm">{product.cost?.toLocaleString()} Gs</p>
-              <p className="text-sm mt-2">{product.quantity}</p>
+            <div className="truncate">
+              <span className="text-gray-600">Categoría:</span>
+              <p className="font-medium truncate">
+                {getCategoryLabel(product.category)}
+              </p>
+            </div>
+            <div className="flex flex-col truncate">
+              <span className="text-gray-600">Cantidad:</span>
+              <p className="font-medium truncate">{product.quantity}</p>
             </div>
           </div>
         </div>
+
+        <Button
+          onClick={() => onClick(product.id)}
+          className="mt-2 w-full py-1 text-xs bg-gray-900 hover:bg-gray-800
+                     text-white rounded-md"
+        >
+          Ver detalles
+        </Button>
       </div>
-    </Card>
+    </div>
   );
 };
 

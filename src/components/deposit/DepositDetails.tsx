@@ -3,14 +3,15 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import ProductCard from "@/components/admin/product/ProductCard";
 import ProductFilters from "@/components/admin/product/filter/ProductFilter";
 import { getStockDetailsByStock } from "@/lib/stock/getStockDetailsByStock";
-import { getProductById } from "@/lib/products/getProductById";
-import { StockData, StockDetailsResponse, StockDetailsData} from "@/lib/stock/IStock";
+import { StockData, StockDetailsResponse, StockDetailsData } from "@/lib/stock/IStock";
 import { Product } from "@/lib/products/IProducts";
 import { toast } from "@/lib/toast";
+import { getStockById } from "@/lib/stock/getStockById";
 import GenericPagination from "../global/GenericPagination";
+import StockDetailsCard from "./StockDetailCard";
+import { getFilteredProducts } from "@/lib/products/getFilteredProducts";
 
 interface DepositDetailsProps {
   token: string;
@@ -19,15 +20,6 @@ interface DepositDetailsProps {
 
 interface ProductWithAmount extends Product {
   amount: number;
-}
-
-interface ProductFilterState {
-  searchTerm: string;
-  category: string;
-  minPrice: string;
-  maxPrice: string;
-  minCost: string;
-  maxCost: string;
 }
 
 export default function DepositDetails({ token, stockId }: DepositDetailsProps) {
@@ -41,13 +33,17 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
   const [totalPages, setTotalPages] = useState(1);
 
   const [filters, setFilters] = useState({
-    searchTerm: "", 
+    searchTerm: "",
     category: "",
     minPrice: "",
     maxPrice: "",
     minCost: "",
     maxCost: "",
   });
+
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+  const [depositInfo, setDepositInfo] = useState<{ name: string; address: string } | null>(null);
 
   const preventInvalidKeys = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "-" || e.key === "e") e.preventDefault();
@@ -56,27 +52,36 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
   const fetchStockProducts = useCallback(async () => {
     try {
       setIsLoading(true);
-
-      const stockDetails = await getStockDetailsByStock(stockId, token);
+      
+      const stockDetails = await getStockDetailsByStock(stockId, token, { 
+        page: currentPage,
+        size: 500,
+        productSearch: filters.searchTerm,
+        category: filters.category,
+        minPrice: filters.minPrice,
+        maxPrice: filters.maxPrice,
+        minCost: filters.minCost,
+        maxCost: filters.maxCost,
+        tags: selectedTags,
+      });
 
       const productList: ProductWithAmount[] = stockDetails.data
-        .filter((detail) => detail.product)
-        .map((detail) => ({
-          ...detail.product,
-          amount: detail.amount,
-        }));
+      .filter(detail => detail.amount > 0 && detail.product)
+      .map(detail => ({
+        ...detail.product,
+        amount: detail.amount,
+      }));
 
       setProducts(productList);
       setFilteredProducts(productList);
-      setTotalPages(1);
+      setTotalPages(stockDetails.totalPages || 1);
     } catch (error) {
       console.error("Error al obtener detalles de stock:", error);
       toast("error", "No se pudieron cargar los productos del depósito.");
     } finally {
       setIsLoading(false);
     }
-  }, [stockId, token]);
-
+  }, [stockId, token, filters, selectedTags, currentPage]);
 
   const applyFilters = useCallback(() => {
     const result = products.filter((product) => {
@@ -84,13 +89,13 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
         filters.searchTerm === "" ||
         product.name.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
         product.code.toLowerCase().includes(filters.searchTerm.toLowerCase());
-  
+
       const categoryMatch =
         filters.category === "" || product.category === filters.category;
-  
+
       const price = Number(product.price ?? 0);
       const cost = Number(product.cost ?? 0);
-  
+
       const minPriceMatch =
         filters.minPrice === "" || price >= Number(filters.minPrice);
       const maxPriceMatch =
@@ -99,20 +104,25 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
         filters.minCost === "" || cost >= Number(filters.minCost);
       const maxCostMatch =
         filters.maxCost === "" || cost <= Number(filters.maxCost);
-  
+
+      const tagsMatch =
+        selectedTags.length === 0 ||
+        (Array.isArray(product.tags) && selectedTags.every(tag => product.tags?.includes(tag)));
+
       return (
         searchTermMatch &&
         categoryMatch &&
         minPriceMatch &&
         maxPriceMatch &&
         minCostMatch &&
-        maxCostMatch
+        maxCostMatch &&
+        tagsMatch
       );
     });
-  
+
     setFilteredProducts(result);
     setCurrentPage(1);
-  }, [filters, products]);  
+  }, [filters, products, selectedTags]);
 
   useEffect(() => {
     fetchStockProducts();
@@ -121,6 +131,21 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
   useEffect(() => {
     applyFilters();
   }, [filters, applyFilters]);
+
+  useEffect(() => {
+    async function fetchDepositInfo() {
+      try {
+        const stock = await getStockById(stockId, token);
+        setDepositInfo({
+          name: stock.name,
+          address: stock.address,
+        });
+      } catch (error) {
+        setDepositInfo(null);
+      }
+    }
+    fetchDepositInfo();
+  }, [stockId, token]);
 
   const handleSearch = () => {
     applyFilters();
@@ -138,13 +163,26 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
 
   return (
     <div className="max-w-6xl mx-auto p-4">
+      <div className="mb-6">
+        {depositInfo ? (
+          <div>
+            <h2 className="text-3xl font-bold">{depositInfo.name}</h2>
+            <p className="text-gray-600">{depositInfo.address}</p>
+          </div>
+        ) : (
+          <div>
+            <h2 className="text-3xl font-bold">Depósito</h2>
+            <p className="text-gray-400">Cargando información del depósito...</p>
+          </div>
+        )}
+      </div>
       <ProductFilters
         filters={filters}
         setFilters={setFilters}
         onSearch={handleSearch}
         preventInvalidKeys={preventInvalidKeys}
-        selectedTags={[]} 
-        onTagsChange={() => {}}
+        selectedTags={selectedTags}
+        onTagsChange={setSelectedTags}
         token={token}
       />
       <div className="flex justify-between items-center mb-6">
@@ -159,14 +197,15 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
       </div>
 
       {isLoading ? (
-        <p className="text-center py-4">Cargando detalles de stock...</p>
+        <p className="text-center py-4">Cargando detalles del Depósito...</p>
       ) : products.length === 0 ? (
-        <p className="text-center py-4">No hay información de stock disponible</p>
+        <p className="text-center py-4">No hay información del Depósito disponible</p>
       ) : (
         filteredProducts.map((product) => (
-          <ProductCard
+          <StockDetailsCard
             key={product.id}
             product={product}
+            amount={product.amount}
             onClick={handleCardClick}
           />
         ))
@@ -183,7 +222,6 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
           if (currentPage < totalPages) handlePageChange(currentPage + 1);
         }}
       />
-
     </div>
   );
 }
