@@ -53,41 +53,28 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
     try {
       setIsLoading(true);
       
-      // 1. Obtener stock details del depósito
-      const stockDetails = await getStockDetailsByStock(stockId, token);
-      const stockDetailsWithAmount = stockDetails.data.filter((detail) => detail.amount > 0 && detail.product);
-      const productIdsInStock = new Set(stockDetailsWithAmount.map((detail) => detail.product.id));
-
-      // 2. Obtener productos filtrados
-      const filteredProductsResponse = await getFilteredProducts(
-        {
-          page: currentPage,
-          size: 500,
-          name: filters.searchTerm,
-          category: filters.category,
-          minPrice: filters.minPrice,
-          maxPrice: filters.maxPrice,
-          minCost: filters.minCost,
-          maxCost: filters.maxCost,
-          tags: selectedTags,
-        },
-        token
-      );
-
-      // 3. Cruzar ambos resultados
-      const productList: ProductWithAmount[] = filteredProductsResponse.data
-      .filter((product) => productIdsInStock.has(product.id))
-      .map((product) => {
-        const stockDetail = stockDetailsWithAmount.find((detail) => detail.product.id === product.id);
-        return {
-          ...product,
-          amount: stockDetail?.amount ?? 0,
-        };
+      const stockDetails = await getStockDetailsByStock(stockId, token, { 
+        page: currentPage,
+        size: 500,
+        productSearch: filters.searchTerm,
+        category: filters.category,
+        minPrice: filters.minPrice,
+        maxPrice: filters.maxPrice,
+        minCost: filters.minCost,
+        maxCost: filters.maxCost,
+        tags: selectedTags,
       });
+
+      const productList: ProductWithAmount[] = stockDetails.data
+      .filter(detail => detail.amount > 0 && detail.product)
+      .map(detail => ({
+        ...detail.product,
+        amount: detail.amount,
+      }));
 
       setProducts(productList);
       setFilteredProducts(productList);
-      setTotalPages(filteredProductsResponse.totalPages || 1);
+      setTotalPages(stockDetails.totalPages || 1);
     } catch (error) {
       console.error("Error al obtener detalles de stock:", error);
       toast("error", "No se pudieron cargar los productos del depósito.");
@@ -105,8 +92,6 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
 
       const categoryMatch =
         filters.category === "" || product.category === filters.category;
-
-      
 
       const price = Number(product.price ?? 0);
       const cost = Number(product.cost ?? 0);
