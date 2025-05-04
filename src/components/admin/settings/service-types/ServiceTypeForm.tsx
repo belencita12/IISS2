@@ -68,7 +68,7 @@ export default function ServiceTypeForm({
   const router = useRouter();
   const [_availableTags, setAvailableTags] = useState<Tag[]>([]);
   const [_isLoadingTags, setIsLoadingTags] = useState(true);
-  const [tags, setTags] = useState<string[]>([]);
+  const [tags, setTags] = useState<string[]>(_initialData?.tags || []);
 
   useEffect(() => {
     const loadTags = async () => {
@@ -84,6 +84,8 @@ export default function ServiceTypeForm({
 
     loadTags();
   }, [token]);
+
+
 
   const {
     register,
@@ -170,6 +172,15 @@ export default function ServiceTypeForm({
       }
     }
   };
+
+  useEffect(() => {
+    if (_initialData?.tags) {
+      setTags(_initialData.tags);
+    }
+    if (_initialData?.isPublic !== undefined) {
+      setValue("isPublic", _initialData.isPublic);
+    }
+  }, [_initialData?.tags, _initialData?.isPublic, setValue]);
 
   const _price = watch("_price");
   const _iva = watch("_iva");
@@ -321,6 +332,7 @@ export default function ServiceTypeForm({
             <Checkbox
               id="isPublic"
               {...register("isPublic")}
+              defaultChecked={_initialData?.isPublic}
             />
             <Label htmlFor="isPublic">Público</Label>
           </div>

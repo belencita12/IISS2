@@ -2,29 +2,32 @@ import ServiceTypeForm from '@/components/admin/settings/service-types/ServiceTy
 import { getServerSession } from 'next-auth';
 import authOptions from '@/lib/auth/options';
 import { redirect } from "next/navigation";
-import { getServiceTypeById } from '@/lib/service-types/service';
+import { getServiceTypeById } from '@/lib/service-types/getServiceTypeById';
 
-export default async function ServiceTypeEditPage({ params }: { params: { id: string } }) {
+export default async function ServiceTypeEditPage({ params }: { params: Promise<{ id: string }> }) {
     const session = await getServerSession(authOptions);
     if (!session) {
       redirect("/login");
     }
+    const param = await params;
+    const id = param.id;
 
-    const serviceType = await getServiceTypeById(session.user.token, parseInt(params.id));
+    const serviceType = await getServiceTypeById(id, session.user.token);
+    console.log(serviceType);
 
     const initialData = {
       name: serviceType.name,
       slug: serviceType.slug,
       description: serviceType.description,
-      durationMin: serviceType.durationMin,
+      durationMin: serviceType.duration,
       _iva: serviceType.iva,
       _price: serviceType.price,
       cost: serviceType.cost,
-      maxColabs: serviceType.maxColabs,
-      isPublic: serviceType.isPublic,
+      maxColabs: serviceType.maxColabs ?? 0,
+      isPublic: serviceType.isPublic ?? false,
       tags: serviceType.tags || [],
       img: undefined,
-      imageUrl: serviceType.img?.originalUrl || "/NotImageNicoPets.png",
+      imageUrl: serviceType.imageUrl || "/NotImageNicoPets.png",
     };
 
     return (
@@ -33,7 +36,7 @@ export default async function ServiceTypeEditPage({ params }: { params: { id: st
           token={session?.user.token} 
           _initialData={initialData}
           _isSubmitting={false}
-          id={parseInt(params.id)}
+          id={parseInt(id)}
         />
       </div>
     );

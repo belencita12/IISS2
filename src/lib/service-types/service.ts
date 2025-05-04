@@ -94,15 +94,29 @@ export const createServiceType = async (token: string, data: FormData) => {
 };
 
 export const updateServiceType = async (token: string, id: number, data: FormData) => {
-  const response = await fetch(`${SERVICE_TYPE_API}/${id}`, {
-    method: "PUT",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: data,
-  });
-  if (!response.ok) throw new Error("Error al actualizar el tipo de servicio");
-  return await response.json();
+  try {
+    const response = await fetch(`${SERVICE_TYPE_API}/${id}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: data,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Error al actualizar el tipo de servicio");
+    }
+
+    return await response.json();
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      toast("error", error.message || "Error al actualizar el tipo de servicio");
+    } else {
+      toast("error", "Error al actualizar el tipo de servicio");
+    }
+    throw error;
+  }
 };
 
 export const deleteServiceType = async (token: string, id: number) => {
