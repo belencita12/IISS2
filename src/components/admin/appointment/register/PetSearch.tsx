@@ -106,7 +106,7 @@ export default function PetSearch({
         </div>
 
         <Link
-          href={"/dashboard/employees/register"}
+          href={"/dashboard/clients"}
           target="_blank"
           className="flex items-center justify-center rounded-md border border-muted bg-muted p-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
         >

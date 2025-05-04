@@ -2,6 +2,7 @@ import { AppointmentData } from "./IAppointment";
 import { APPOINTMENT_API } from "../urls";
 import { PaginationResponse } from "../types";
 import { AppointmentRegister } from "./IAppointment";
+import { AvailabilitySlot } from "./IAppointment";
 
 export const getAppointments = async (token: string, queryParamsStr?: string) => {
   const url = `${APPOINTMENT_API}?${queryParamsStr ?? ""}`;
@@ -76,4 +77,24 @@ export const createAppointment = async (token: string, appointment: AppointmentR
 
   return;
 };
+
+export const getAvailability = async (token: string, id: string, date: string) => {
+  const res = await fetch(`${APPOINTMENT_API}/availability/${id}?date=${date}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    const message = errorData?.message || "Error al obtener la disponibilidad";
+    throw new Error(message);
+  }
+
+  const data = await res.json();
+  return data as AvailabilitySlot[];
+};
+
 

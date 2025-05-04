@@ -59,3 +59,8 @@ export interface AppointmentRegister {
       originalUrl: string
     }
   }
+
+  export interface AvailabilitySlot {
+    time: string;
+    isOcuppy: boolean;
+  }
