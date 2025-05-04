@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 export interface AppointmentEmployee {
     id: number;
     name: string;
@@ -27,3 +28,39 @@ export interface AppointmentEmployee {
     status: AppointmentStatus;
     employees: AppointmentEmployee[];
   }
+=======
+
+import { BaseQueryParams } from "../types";
+
+export interface AppointmentData {
+    id: number;
+    designatedDate: string;
+    completedDate: string;
+    details: string;
+    service: string; 
+    pet: {
+      id: number;
+      name: string;
+      race: string;
+      owner: {
+        id: number;
+        name: string;
+      };
+    };
+    status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "CANCELED";
+    employees: {
+      id: number;
+      name: string;
+    }[];
+  }
+
+export interface AppointmentQueryParams extends BaseQueryParams {
+    clientRuc?: string;
+    employeeRuc?: string;
+    petId?: number;
+    serviceId?: number;
+    fromDesignatedDate?: string;
+    toDesignatedDate?: string;
+    status?: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELED' ;
+}
+>>>>>>> 793df39b8a80e28f6fd1ffdea49152dcd147e735

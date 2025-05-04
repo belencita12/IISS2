@@ -20,7 +20,7 @@ import {
 
 const linksUser = [
   { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
-  { name: "Citas", href: "/dashboard/citas", icon: CalendarIcon },
+  { name: "Citas", href: "/dashboard/appointment", icon: CalendarIcon },
   { name: "Clientes", href: "/dashboard/clients", icon: UserIcon },
   { name: "Productos", href: "/dashboard/products", icon: BoneIcon },  
   { name: "Vacunas", href: "/dashboard/vaccine", icon: SyringeIcon },
@@ -45,7 +45,8 @@ export default function NavLinks() {
     <>
       {linksUser.map((link) => {
         const LinkIcon = link.icon;
-        const isActive = pathname.startsWith(link.href);
+        const isActive = pathname === link.href || (pathname.startsWith(link.href) && link.href !== "/dashboard");
+
 
         return (
           <Link
