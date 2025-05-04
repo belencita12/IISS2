@@ -1,5 +1,17 @@
 import { BaseQueryParams } from "../types";
 
+
+export interface AppointmentQueryParams extends BaseQueryParams {
+    clientRuc?: string;
+    employeeRuc?: string;
+    petId?: number;
+    serviceId?: number;
+    fromDesignatedDate?: string;
+    toDesignatedDate?: string;
+    status?: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELED' ;
+}
+
+
 export interface AppointmentData {
     id?: number;
     designatedDate: string;

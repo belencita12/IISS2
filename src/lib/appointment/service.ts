@@ -1,8 +1,11 @@
 import { AppointmentData } from "./IAppointment";
 import { APPOINTMENT_API } from "../urls";
 import { PaginationResponse } from "../types";
+<<<<<<< HEAD
 import { AppointmentRegister } from "./IAppointment";
 import { AvailabilitySlot } from "./IAppointment";
+=======
+>>>>>>> 793df39b8a80e28f6fd1ffdea49152dcd147e735
 
 export const getAppointments = async (token: string, queryParamsStr?: string) => {
   const url = `${APPOINTMENT_API}?${queryParamsStr ?? ""}`;
@@ -58,6 +61,7 @@ export const cancelAppointment = async (id: number, token: string, description: 
 
   return;
 };
+<<<<<<< HEAD
 
 export const createAppointment = async (token: string, appointment: AppointmentRegister) => {
   const res = await fetch(APPOINTMENT_API, {
@@ -98,3 +102,5 @@ export const getAvailability = async (token: string, id: string, date: string) =
 };
 
 
+=======
+>>>>>>> 793df39b8a80e28f6fd1ffdea49152dcd147e735
