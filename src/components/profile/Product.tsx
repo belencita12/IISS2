@@ -1,63 +1,82 @@
-import Link from "next/link";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { ShoppingCart, Package } from "lucide-react";
+"use client"
 
-const products = [
-    {
-        id: 1,
-        name: "Alimento Premium para Perros",
-        price: "$50",
-        image: "https://purina.com.py/sites/default/files/2023-06/adulto_perro_pollo_alimento_humedo_frente_pro_plan.png.webp",
-    },
-    {
-        id: 2,
-        name: "Collar Antipulgas y Garrapatas Seresto",
-        price: "$20",
-        image: "https://myfamilypet.com.gt/wp-content/uploads/2022/12/150507_1400x-1024x1024.webp",
-    },
-    {
-        id: 3,
-        name: "Juguete Interactivo para Perros",
-        price: "$15",
-        image: "https://pawshop.cl/cdn/shop/files/aa34eb88d4ed61333ea6b930ea71ba38_0199e5b7-5fad-4323-b188-5e4a0468bbac.png?v=1731268421",
-    },
-];
+import { useEffect, useState } from "react"
+import { Product } from "@/lib/products/IProducts"
+import { getProducts } from "@/lib/products/getProducts"
+import { Card } from "@/components/product/ProductCardCliente"
+import NotImageNicoPets from "../../../public/NotImageNicoPets.png"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
 
-export const VeterinaryProducts = () => {
-    return (
-        <section className="max-w-5xl mx-auto mt-10 p-6 bg-white">
-            <div className="text-center">
-                <h2 className="text-3xl font-bold">Productos Veterinarios</h2>
-                <p className="text-gray-600 mt-2">Explora los productos disponibles</p>
-                <Button asChild className="mt-2">
-                    <Link href="/user-profile/product">Ver más</Link>
-                </Button>
+export const VeterinaryProducts = ({ token }: { token?: string }) => {
+  const [allProducts, setAllProducts] = useState<Product[]>([])
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const router = useRouter()
+  const itemsPerView = 4
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await getProducts({ page: 1, size: 20 }, token ?? "")
+        setAllProducts(res?.data || [])
+      } catch (err) {
+        console.error("Error al obtener productos", err)
+      }
+    }
+
+    fetchProducts()
+  }, [token])
+
+  // Carrusel automático que avanza de a 1
+  useEffect(() => {
+    if (allProducts.length <= itemsPerView) return
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) =>
+        (prevIndex + 1) % (allProducts.length - itemsPerView + 1)
+      )
+    }, 3000) // cada 3 segundos
+
+    return () => clearInterval(interval)
+  }, [allProducts])
+
+  if (allProducts.length === 0) return null
+
+  return (
+    <section className="max-w-6xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-sm text-center">
+      <h2 className="text-2xl font-bold">Productos Veterinarios</h2>
+      <p className="text-gray-600 mt-2">Explora los productos disponibles</p>
+      <Button asChild className="mt-2">
+        <Link href="/user-profile/product">Ver más</Link>
+      </Button>
+
+      <div className="relative overflow-hidden mt-6">
+        <div
+          className="flex transition-transform duration-700 ease-in-out"
+          style={{
+            transform: `translateX(-${(100 / allProducts.length) * currentIndex}%)`,
+            width: `${(allProducts.length * 100) / itemsPerView}%`,
+          }}
+        >
+          {allProducts.map((product) => (
+            <div
+              key={product.id}
+              onClick={() => router.push(`/user-profile/product/${product.id}`)}
+              className="cursor-pointer w-[25%] px-2 box-border"
+            >
+              <Card
+                title={product.name}
+                description={`${product.price.toLocaleString()} Gs.`}
+                image={product.image?.originalUrl ?? NotImageNicoPets.src}
+                ctaText="Ver detalles"
+                ctaLink={`/user-profile/product/${product.id}`}
+                tags={product.tags}
+              />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-                {products.map((product) => (
-                    <Card key={product.id} className="shadow-lg rounded-lg overflow-hidden">
-                        <div className="relative w-full h-56">
-                            <Image
-                                src={product.image}
-                                alt={product.name}
-                                fill
-                                style={{ objectFit: "cover" }} 
-                            />
-                        </div>
-                        <CardContent className="p-4">
-                            <h3 className="text-lg font-semibold">{product.name}</h3>
-                            <p className="text-xl font-bold mt-1">{product.price}</p>
-                            <div className="flex items-center gap-2 text-gray-500 mt-2">
-                                <ShoppingCart className="w-5 h-5" />
-                                <Package className="w-5 h-5" />
-                            </div>
-                        </CardContent>
-                    </Card>
-                ))}
-            </div>
-        </section>
-    );
-};
-
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
