@@ -1,58 +1,40 @@
-'use client';
-
-import { useRouter } from 'next/navigation';
 import ServiceTypeForm from '@/components/admin/settings/service-types/ServiceTypeForm';
-import { useServiceTypeUpdate } from '@/hooks/service-types/useServiceTypeUpdate';
-import { useServiceType } from '@/hooks/service-types/useServiceType';
-import { useEffect, useState } from 'react';
+import { getServerSession } from 'next-auth';
+import authOptions from '@/lib/auth/options';
+import { redirect } from "next/navigation";
+import { getServiceTypeById } from '@/lib/service-types/service';
 
-interface PageProps {
-  params: Promise<{
-    id: string;
-  }>;
-  searchParams: Promise<{
-    token: string;
-  }>;
-}
+export default async function ServiceTypeEditPage({ params }: { params: { id: string } }) {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      redirect("/login");
+    }
 
-export default function ServiceTypeEditPage({ params, searchParams }: PageProps) {
-  const router = useRouter();
-  const [id, setId] = useState<string>('');
-  const [token, setToken] = useState<string>('');
-  const { serviceType, isLoading: isLoadingServiceType } = useServiceType(id, token);
-  const { updateServiceType, isLoading: isLoadingUpdate } = useServiceTypeUpdate(token);
+    const serviceType = await getServiceTypeById(session.user.token, parseInt(params.id));
 
-  useEffect(() => {
-    params.then(({ id }) => {
-      setId(id);
-    });
-    searchParams.then(({ token }) => {
-      setToken(token);
-    });
-  }, [params, searchParams]);
+    const initialData = {
+      name: serviceType.name,
+      slug: serviceType.slug,
+      description: serviceType.description,
+      durationMin: serviceType.durationMin,
+      _iva: serviceType.iva,
+      _price: serviceType.price,
+      cost: serviceType.cost,
+      maxColabs: serviceType.maxColabs,
+      isPublic: serviceType.isPublic,
+      tags: serviceType.tags || [],
+      img: undefined,
+      imageUrl: serviceType.img?.originalUrl || "/NotImageNicoPets.png",
+    };
 
-  if (isLoadingServiceType) {
-    return <div>Cargando...</div>;
-  }
-
-  if (!serviceType) {
-    return <div>Tipo de servicio no encontrado</div>;
-  }
-
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Editar Tipo de Servicio</h1>
-        <p className="text-muted-foreground">
-          Modifique los datos del tipo de servicio
-        </p>
+    return (
+      <div className="space-y-6">
+        <ServiceTypeForm 
+          token={session?.user.token} 
+          _initialData={initialData}
+          _isSubmitting={false}
+          id={parseInt(params.id)}
+        />
       </div>
-
-      <ServiceTypeForm
-        token={token}
-        _initialData={serviceType}
-        _isSubmitting={isLoadingUpdate}
-      />
-    </div>
-  );
+    );
 } 

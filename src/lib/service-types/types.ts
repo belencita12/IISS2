@@ -10,6 +10,7 @@ export interface ServiceTypeFormData {
   isPublic?: boolean;
   tags?: string[];
   img?: File;
+  imageUrl?: string;
 }
 
 export interface ServiceType {

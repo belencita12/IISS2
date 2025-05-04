@@ -17,7 +17,7 @@ import { Tag } from "@/lib/tags/types";
 import { toast } from '@/lib/toast';
 import { TagFilter } from "@/components/admin/product/filter/TagFilter";
 import { ServiceTypeFormData } from '@/lib/service-types/types';
-import { createServiceType } from '@/lib/service-types/service';
+import { createServiceType, updateServiceType } from '@/lib/service-types/service';
 
 const serviceTypeFormSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
@@ -47,6 +47,7 @@ const serviceTypeFormSchema = z.object({
   isPublic: z.boolean().optional(),
   tags: z.array(z.string()).optional(),
   img: z.instanceof(File).optional(),
+  imageUrl: z.string().optional(),
 });
 
 type ServiceTypeFormValues = z.infer<typeof serviceTypeFormSchema>;
@@ -55,12 +56,14 @@ interface ServiceTypeFormProps {
   token: string;
   _initialData?: ServiceTypeFormValues;
   _isSubmitting?: boolean;
+  id?: number;
 }
 
 export default function ServiceTypeForm({ 
   token, 
   _initialData, 
-  _isSubmitting = false 
+  _isSubmitting = false,
+  id
 }: ServiceTypeFormProps) {
   const router = useRouter();
   const [_availableTags, setAvailableTags] = useState<Tag[]>([]);
@@ -102,6 +105,7 @@ export default function ServiceTypeForm({
       isPublic: false,
       tags: [],
       img: undefined,
+      imageUrl: "/NotImageNicoPets.png",
     },
   });
 
@@ -139,10 +143,16 @@ export default function ServiceTypeForm({
       
       if (data.img) formData.append("img", data.img);
 
-      const response = await createServiceType(token, formData);
+      let response;
+      if (id) {
+        response = await updateServiceType(token, id, formData);
+      } else {
+        response = await createServiceType(token, formData);
+      }
       
       if (response) {
-        toast("success", "Tipo de servicio creado con éxito", {
+        const successMessage = id ? "Tipo de servicio actualizado con éxito" : "Tipo de servicio creado con éxito";
+        toast("success", successMessage, {
           duration: 2000,
           onAutoClose: () => router.push("/dashboard/settings/service-types"),
           onDismiss: () => router.push("/dashboard/settings/service-types"),
@@ -153,10 +163,10 @@ export default function ServiceTypeForm({
         if (error.message?.includes("ya están en uso")) {
           toast("error", "El nombre o slug del servicio ya está en uso. Por favor, elige otros valores.");
         } else {
-          toast("error", error.message || "Error al registrar el tipo de servicio. Por favor, intente nuevamente.");
+          toast("error", error.message || `Error al ${id ? 'actualizar' : 'registrar'} el tipo de servicio. Por favor, intente nuevamente.`);
         }
       } else {
-        toast("error", "Error al registrar el tipo de servicio. Por favor, intente nuevamente.");
+        toast("error", `Error al ${id ? 'actualizar' : 'registrar'} el tipo de servicio. Por favor, intente nuevamente.`);
       }
     }
   };
@@ -190,10 +200,10 @@ export default function ServiceTypeForm({
       <div className="flex flex-col pt-6 md:flex-row gap-8">
         <div className="flex flex-col items-center space-y-4 w-full md:w-1/3">
           <h1 className="text-2xl font-bold self-start">
-            Registro de Tipo de Servicio
+            {id ? "Editar Tipo de Servicio" : "Registro de Tipo de Servicio"}
           </h1>
           <p className="text-gray-600 self-start">
-            Ingresa los datos del tipo de servicio
+            {id ? "Modifique los datos del tipo de servicio" : "Ingresa los datos del tipo de servicio"}
           </p>
           <div className="w-full">
             <h3 className="text-sm font-semibold mb-2 text-gray-700">
@@ -203,6 +213,7 @@ export default function ServiceTypeForm({
               <FormImgUploader
                 prevClassName="rounded-lg w-full h-full object-cover"
                 onChange={handleImageChange}
+                defaultImage={_initialData?.imageUrl || "/NotImageNicoPets.png"}
               />
             </div>
           </div>
