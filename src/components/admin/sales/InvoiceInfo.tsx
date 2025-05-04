@@ -2,6 +2,7 @@ import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
 
 // Validación de Zod para el número de factura en formato 123-123-1234567
@@ -18,41 +19,45 @@ const timbradoNumberSchema = z.string().regex(/^\d{8}$/, {
 type InvoiceInfoProps = {
   invoiceNumber: string;
   timbradoNumber: string;
+  saleCondition: "CASH" | "CREDIT";
   setInvoiceNumber: (value: string) => void;
   setTimbradoNumber: (value: string) => void;
+  setSaleCondition: (value: "CASH" | "CREDIT") => void;
 };
 
 export default function InvoiceInfo({
   invoiceNumber,
   timbradoNumber,
+  saleCondition,
   setInvoiceNumber,
   setTimbradoNumber,
+  setSaleCondition,
 }: InvoiceInfoProps) {
   const [invoiceError, setInvoiceError] = useState<string | null>(null);
   const [timbradoError, setTimbradoError] = useState<string | null>(null);
 
   // Función de validación para el número de factura
   const validateInvoiceNumber = (value: string) => {
-    const trimmedValue = value.trim(); // Eliminamos los espacios en blanco antes de validar
+    const trimmedValue = value.trim();
     try {
-      invoiceNumberSchema.parse(trimmedValue); // Validamos el número de factura
-      setInvoiceError(null); // Si es válido, eliminamos el error
+      invoiceNumberSchema.parse(trimmedValue);
+      setInvoiceError(null);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        setInvoiceError(error.errors[0].message); // Si no es válido, mostramos el mensaje de error
+        setInvoiceError(error.errors[0].message);
       }
     }
   };
 
   // Función de validación para el número de timbrado
   const validateTimbradoNumber = (value: string) => {
-    const trimmedValue = value.trim(); // Eliminamos los espacios en blanco antes de validar
+    const trimmedValue = value.trim();
     try {
-      timbradoNumberSchema.parse(trimmedValue); // Validamos el número de timbrado
-      setTimbradoError(null); // Si es válido, eliminamos el error
+      timbradoNumberSchema.parse(trimmedValue);
+      setTimbradoError(null);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        setTimbradoError(error.errors[0].message); // Si no es válido, mostramos el mensaje de error
+        setTimbradoError(error.errors[0].message);
       }
     }
   };
@@ -61,13 +66,13 @@ export default function InvoiceInfo({
   const handleInvoiceNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInvoiceNumber(value);
-    validateInvoiceNumber(value); // Validamos el número de factura en cada cambio
+    validateInvoiceNumber(value);
   };
 
   const handleTimbradoNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setTimbradoNumber(value);
-    validateTimbradoNumber(value); // Validamos el número de timbrado en cada cambio
+    validateTimbradoNumber(value);
   };
 
   return (
@@ -82,20 +87,32 @@ export default function InvoiceInfo({
             <Input
               id="invoice-number"
               value={invoiceNumber}
-              onChange={handleInvoiceNumberChange} // Usamos el manejador de cambios
+              onChange={handleInvoiceNumberChange}
               placeholder="123-123-1234567"
             />
-            {invoiceError && <p className="text-red-500 text-sm mt-1">{invoiceError}</p>} {/* Error de factura */}
+            {invoiceError && <p className="text-red-500 text-sm mt-1">{invoiceError}</p>}
           </div>
           <div className="space-y-2">
             <Label htmlFor="timbrado-number">Número de Timbrado</Label>
             <Input
               id="timbrado-number"
               value={timbradoNumber}
-              onChange={handleTimbradoNumberChange} // Usamos el manejador de cambios
+              onChange={handleTimbradoNumberChange}
               placeholder="12345678"
             />
-            {timbradoError && <p className="text-red-500 text-sm mt-1">{timbradoError}</p>} {/* Error de timbrado */}
+            {timbradoError && <p className="text-red-500 text-sm mt-1">{timbradoError}</p>}
+          </div>
+          <div className="space-y-2 col-span-2">
+            <Label htmlFor="sale-condition">Condición de Venta</Label>
+            <Select value={saleCondition} onValueChange={(value) => setSaleCondition(value as "CASH" | "CREDIT")}>
+              <SelectTrigger id="sale-condition">
+                <SelectValue placeholder="Seleccionar condición" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="CASH">Contado</SelectItem>
+                <SelectItem value="CREDIT">Crédito</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </CardContent>
