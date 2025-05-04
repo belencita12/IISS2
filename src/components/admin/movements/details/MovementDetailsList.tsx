@@ -10,7 +10,7 @@ import GenericPagination from "@/components/global/GenericPagination";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import { useState } from "react";
 import { revertMovement } from "@/lib/movements/revertMovement";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { useRouter } from "next/navigation";
 
 interface Props {
