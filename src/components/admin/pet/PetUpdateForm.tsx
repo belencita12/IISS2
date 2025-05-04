@@ -199,7 +199,7 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
     try {
       const response = await updatePet(Number(petId), formData, token);
       toast("success", "Mascota actualizada correctamente");
-      router.push(`/dashboard/clients/${id}`);
+      router.back();
     } catch (error) {
       toast("error", "Error al actualizar la mascota");
     } finally {
@@ -451,7 +451,7 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
                     className="p-1 pl-3 pr-3"
                     onClick={() => {
                       setIsCancelling(true)
-                      router.push(`/dashboard/clients/${id}`)
+                      router.back()
                     }}
                   >
                     Cancelar
