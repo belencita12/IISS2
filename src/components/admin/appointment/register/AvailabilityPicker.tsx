@@ -23,7 +23,6 @@ export const AvailabilityPicker = ({ token, employeeId, date, onSelectTime }: Pr
     const fetchAvailability = async () => {
       setLoading(true);
       try {
-        console.log("Fetching availability with date:", date);
         const data = await getAvailability(token, employeeId, date);
         setSlots(data);
       } catch (error) {
