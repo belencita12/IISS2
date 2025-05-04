@@ -1,7 +1,7 @@
 import ServiceTypeForm from '@/components/admin/settings/service-types/ServiceTypeForm';
 import { getServerSession } from 'next-auth';
 import authOptions from '@/lib/auth/options';
-import { redirect } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import { getServiceTypeById } from '@/lib/service-types/getServiceTypeById';
 
 export default async function ServiceTypeEditPage({ params }: { params: Promise<{ id: string }> }) {
@@ -12,8 +12,10 @@ export default async function ServiceTypeEditPage({ params }: { params: Promise<
     const param = await params;
     const id = param.id;
 
-    const serviceType = await getServiceTypeById(id, session.user.token);
-    console.log(serviceType);
+    const serviceType = await getServiceTypeById(id, session.user.token).catch(() => null);
+    if (!serviceType) {
+      notFound();
+    }
 
     const initialData = {
       name: serviceType.name,
