@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { string, z } from "zod";
 import { toast as _toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -115,6 +115,11 @@ export default function ServiceTypeForm({
         return;
       }
 
+      if(data._price < data.cost){
+        toast("error", "El precio no puede ser menor que el costo");
+        return;
+      }
+
       // Campos obligatorios (*)
       formData.append("slug", data.slug);
       formData.append("name", data.name);
@@ -131,11 +136,13 @@ export default function ServiceTypeForm({
       // Enviar tags como string separado por comas
       const tagsToSend = data.tags || [];
       let stringTags = "";
-      tagsToSend.forEach((tag, index) => {
-        stringTags += `${tag}`;
-        if(tagsToSend.length > index + 1) stringTags += ",";
-      });
-      formData.append("tags", stringTags);
+      if(tagsToSend.length > 0) {
+        tagsToSend.forEach((tag, index) => {
+          stringTags += `${tag}`;
+          if(tagsToSend.length > index + 1) stringTags += ",";
+        });
+        formData.append("tags", stringTags);
+      }
       
       if (data.img) formData.append("img", data.img);
 
