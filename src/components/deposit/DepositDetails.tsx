@@ -62,7 +62,7 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
       const filteredProductsResponse = await getFilteredProducts(
         {
           page: currentPage,
-          size: 20,
+          size: 500,
           name: filters.searchTerm,
           category: filters.category,
           minPrice: filters.minPrice,

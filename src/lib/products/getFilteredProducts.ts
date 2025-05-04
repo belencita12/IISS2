@@ -42,7 +42,9 @@ export const getFilteredProducts = async (
     },
   });
 
+  const json = await response.json();
+
   if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
 
-  return await response.json();
+  return json;
 };
