@@ -5,6 +5,7 @@ import { usePaginatedFetch } from "@/hooks/api/usePaginatedFetch";
 import { APPOINTMENT_API } from "@/lib/urls";
 import { AppointmentData, AppointmentQueryParams } from "@/lib/appointment/IAppointment";
 import AppointmentCard from "@/components/admin/appointment/AppointmentCard";
+import AppointmentDateFilter from "@/components/admin/appointment/filters/AppointmentDateFilter";
 import AppointmentStatusFilter from "@/components/admin/appointment/filters/AppointmentStatusFilter";
 import GenericPagination from "@/components/global/GenericPagination";
 
@@ -16,53 +17,43 @@ interface VisitListProps {
 export default function VisitList({ token, petId }: VisitListProps) {
   const [filters, setFilters] = useState<AppointmentQueryParams>({
     page: 1,
-    status: undefined,
     petId,
+    status: undefined,
+    fromDesignatedDate: undefined,
+    toDesignatedDate: undefined,
   });
-
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   const {
     data: appointments,
     loading,
     error,
-    pagination,
+    pagination = { currentPage: 1, totalPages: 1, totalItems: 0, pageSize: 3 },
     setPage,
     search,
   } = usePaginatedFetch<AppointmentData>(APPOINTMENT_API, token, {
-    initialPage: 1,
+    initialPage: filters.page ?? 1,
     size: 3,
     autoFetch: true,
-    extraParams: { petId: filters.petId, status: filters.status },
+    extraParams: {
+      petId: filters.petId,
+      status: filters.status,
+      fromDesignatedDate: filters.fromDesignatedDate,
+      toDesignatedDate: filters.toDesignatedDate,
+    },
   });
 
-  const sortedAppointments = [...appointments].sort((a, b) => {
-    const dateA = new Date(a.designatedDate).getTime();
-    const dateB = new Date(b.designatedDate).getTime();
-    return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
-  });
-
-  const handleStatusChange = (newFilters: AppointmentQueryParams) => {
-    setFilters({ ...filters, ...newFilters, page: 1 });
-    search({ petId, status: newFilters.status });
+  const handleFilterChange = (updatedFilters: AppointmentQueryParams) => {
+    const { page, size, ...safeFilters } = updatedFilters;
+    setFilters({ ...filters, ...safeFilters, page: 1 });
+    search({ ...filters, ...safeFilters });
   };
 
   return (
     <div className="space-y-6">
       {/* Filtros */}
-      <div className="flex flex-col md:flex-row gap-4">
-        <AppointmentStatusFilter filters={filters} setFilters={handleStatusChange} />
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Ordenar por fecha</label>
-          <select
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value as "asc" | "desc")}
-            className="border rounded p-2"
-          >
-            <option value="desc">Más recientes primero</option>
-            <option value="asc">Más antiguas primero</option>
-          </select>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <AppointmentDateFilter filters={filters} setFilters={handleFilterChange} />
+        <AppointmentStatusFilter filters={filters} setFilters={handleFilterChange} />
       </div>
 
       {/* Lista */}
@@ -70,16 +61,20 @@ export default function VisitList({ token, petId }: VisitListProps) {
         <p className="text-center">Cargando visitas...</p>
       ) : error ? (
         <p className="text-center text-red-500">Error al cargar visitas.</p>
-      ) : sortedAppointments.length === 0 ? (
-        <p className="text-center text-gray-600">Esta mascota aún no tiene visitas registradas.</p>
+      ) : appointments.length === 0 ? (
+        <p className="text-center text-gray-600">
+          Esta mascota aún no tiene visitas registradas.
+        </p>
       ) : (
-        sortedAppointments.map((appointment) => (
-          <AppointmentCard key={appointment.id} appointment={appointment} token={token} />
-        ))
+        <div className="space-y-4">
+          {appointments.map((appointment) => (
+            <AppointmentCard key={appointment.id} appointment={appointment} token={token} />
+          ))}
+        </div>
       )}
 
       {/* Paginación */}
-      {pagination && pagination.totalPages > 1 && (
+      {pagination.totalPages > 1 && (
         <GenericPagination
           currentPage={pagination.currentPage}
           totalPages={pagination.totalPages}
