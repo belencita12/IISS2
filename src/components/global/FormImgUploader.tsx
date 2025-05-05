@@ -16,6 +16,7 @@ const FormImgUploader = ({
   error,
   prevClassName,
   prevWidth = 256,
+  defaultImage,
 }: FormImgUploaderProps) => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
@@ -47,11 +48,9 @@ const FormImgUploader = ({
         {previewImage ? "Cambiar imagen" : "Subir imagen"}
       </Label>
 
-      {previewImage && (
       {(previewImage || defaultImage) && (
         <div className="w-full flex justify-center mt-4">
           <Image
-            src={previewImage}
             src={previewImage || defaultImage || ""}
             className={prevClassName}
             alt="Vista previa de la imagen"
@@ -67,5 +66,4 @@ const FormImgUploader = ({
   );
 };
 
-export default FormImgUploader;
 export default FormImgUploader;
