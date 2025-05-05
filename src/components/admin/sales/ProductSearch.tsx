@@ -5,7 +5,7 @@ import { Command, CommandEmpty, CommandItem, CommandList } from "@/components/ui
 import { ProductWithExtraData as Product } from "@/lib/products/IProducts"
 
 import { useFetch } from "@/hooks/api/useFetch"
-import { PRODUCT_API } from "@/lib/urls"
+import { PRODUCT_API, STOCK_DETAILS_API } from "@/lib/urls"
 import SearchBar from "@/components/global/SearchBar"
 
 type ProductSearchProps = {
@@ -14,32 +14,50 @@ type ProductSearchProps = {
   stockId: string
 }
 
-export default function ProductSearch({ onSelectProduct, token,stockId }: ProductSearchProps) {
+type StockProductResponse = {
+  stockId: number;
+  amount: number;
+  product: Product;
+};
+
+
+export default function ProductSearch({ onSelectProduct, token, stockId }: ProductSearchProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [isCommandOpen, setIsCommandOpen] = useState(false)
   const [products, setProducts] = useState<Product[]>([])
 
-  // Using useFetch to get products with filtering
-  const { data, loading, error, get } = useFetch<{ data: Product[] }>("", token)
+  const { get } = useFetch<{ data: Product[] }>("", token)
+  const { get:anotherGet } = useFetch<{ data: StockProductResponse []}>("", token)
 
-  // Fetch products when search term changes (with debounce)
+  // Fetch products + services when search term changes
   useEffect(() => {
-    if(searchTerm && stockId){
-        get(undefined, `${PRODUCT_API}?name=${encodeURIComponent(searchTerm)}&stockId=${stockId}&page=1&size=5`);
-    }
-  }, [searchTerm,stockId]);
+    if (searchTerm && stockId) {
+      // Productos (con stockId)
+      const productsPromise = anotherGet(undefined, `${STOCK_DETAILS_API}?productSearch=${encodeURIComponent(searchTerm)}&stockId=${stockId}&fromAmount=1&page=1&size=5`)
 
-  // Update products when data changes
-  useEffect(() => {
-    if (data?.data) {
-      const mappedProducts = data.data.map((product) => ({
-        ...product,
-        quantity: 1,
-        total: product.price,
-      }))
-      setProducts(mappedProducts)
+      // Servicios (sin stockId)
+      const servicesPromise = get(undefined, `${PRODUCT_API}?name=${encodeURIComponent(searchTerm)}&category=SERVICE&page=1&size=5`)
+
+      Promise.all([productsPromise, servicesPromise]).then(([{data:productsRes}, {data:servicesRes}]) => {
+        const productsDatas = productsRes?.data || []
+        const productsData = productsDatas.map((product) => ({
+          ...product.product,
+          quantity: product.amount,
+          total: product.product.price,
+        }))
+
+        const servicesData = servicesRes?.data || []
+
+        const combined = [...productsData, ...servicesData].map((product) => ({
+          ...product,
+          quantity: 1,
+          total: product.price,
+        }))
+
+        setProducts(combined)
+      })
     }
-  }, [data])
+  }, [searchTerm, stockId])
 
   const handleSelectProduct = (product: Product) => {
     onSelectProduct(product)
@@ -51,6 +69,12 @@ export default function ProductSearch({ onSelectProduct, token,stockId }: Produc
     setSearchTerm(query)
     setIsCommandOpen(!!query)
   }
+
+  const formatCategory = (category: string) => {
+    return category === "SERVICE" ? "Servicio" : category === "PRODUCT" ? "Producto" : category
+  }
+
+  console.log("Products fetched:", products)
 
   return (
     <div className="space-y-2">
@@ -69,27 +93,21 @@ export default function ProductSearch({ onSelectProduct, token,stockId }: Produc
             <div className="absolute top-full left-0 right-0 z-10 mt-1">
               <Command className="rounded-lg border shadow-md">
                 <CommandList>
-                  {
-                    loading ? (
-                      <CommandEmpty>Cargando...</CommandEmpty>
-                    ) : error ? (
-                      <CommandEmpty>{error.message}</CommandEmpty>
-                    ) : products.length === 0 ? (
-                      <CommandEmpty>No se encontraron productos</CommandEmpty>
-                    ) : (
-                      products.map((product) => (
-                        <CommandItem key={product.id} onSelect={() => handleSelectProduct(product)}>
-                          <div className="flex items-center justify-between w-full">
-                            <div className="flex flex-col">
-                              <span className="text-sm font-medium">{product.name}</span>
-                              <span className="text-xs text-muted-foreground">{product.code}</span>
-                            </div>
-                            <span className="text-sm font-medium">{product.price.toLocaleString("ES-PY")} Gs.</span>
+                  {products.length === 0 ? (
+                    <CommandEmpty>No se encontraron productos ni servicios</CommandEmpty>
+                  ) : (
+                    products.map((product) => (
+                      <CommandItem key={product.id} onSelect={() => handleSelectProduct(product)}>
+                        <div className="flex items-center justify-between w-full">
+                          <div className="flex flex-col">
+                            <span className="text-sm font-medium">{product.name}</span>
+                            <span className="text-xs text-muted-foreground">{product.code} • {formatCategory(product.category)}</span>
                           </div>
-                        </CommandItem>
-                      ))
-                    )
-                  }
+                          <span className="text-sm font-medium">{product?.price?.toLocaleString("ES-PY")} Gs.</span>
+                        </div>
+                      </CommandItem>
+                    ))
+                  )}
                 </CommandList>
               </Command>
             </div>
