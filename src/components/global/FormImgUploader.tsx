@@ -8,6 +8,7 @@ interface FormImgUploaderProps {
   error?: string;
   prevClassName?: string;
   prevWidth?: number;
+  defaultImage?: string;
 }
 
 const FormImgUploader = ({
@@ -47,9 +48,11 @@ const FormImgUploader = ({
       </Label>
 
       {previewImage && (
+      {(previewImage || defaultImage) && (
         <div className="w-full flex justify-center mt-4">
           <Image
             src={previewImage}
+            src={previewImage || defaultImage || ""}
             className={prevClassName}
             alt="Vista previa de la imagen"
             width={prevWidth}
@@ -64,4 +67,5 @@ const FormImgUploader = ({
   );
 };
 
+export default FormImgUploader;
 export default FormImgUploader;
