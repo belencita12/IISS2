@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import { getAvailability } from "@/lib/appointment/service";
 import { AvailabilitySlot } from "@/lib/appointment/IAppointment";
 import { toast } from "@/lib/toast";
+import { isToday, set, parseISO } from "date-fns";
 
 type Props = {
   token: string;
   employeeId: string;
-  date: string;
+  date: string; 
   onSelectTime: (time: string) => void;
 };
 
@@ -41,6 +42,28 @@ export const AvailabilityPicker = ({ token, employeeId, date, onSelectTime }: Pr
     onSelectTime(time);
   };
 
+  const now = new Date();
+
+  const selectedDate = parseISO(date);
+  const isTodaySelected = isToday(selectedDate);
+
+  const isSlotValid = (slot: AvailabilitySlot) => {
+    if (slot.isOcuppy) return false;
+
+    if (isTodaySelected) {
+      const [hour, minute] = slot.time.split(":").map(Number);
+      const slotDateTime = set(selectedDate, {
+        hours: hour,
+        minutes: minute,
+        seconds: 0,
+        milliseconds: 0,
+      });
+      return slotDateTime.getTime() > now.getTime();
+    }
+
+    return true;
+  };
+
   if (!employeeId || !date) return null;
 
   return (
@@ -52,7 +75,7 @@ export const AvailabilityPicker = ({ token, employeeId, date, onSelectTime }: Pr
       ) : (
         <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
           {slots
-            .filter((slot) => !slot.isOcuppy)
+            .filter(isSlotValid)
             .map((slot) => (
               <button
                 key={slot.time}
