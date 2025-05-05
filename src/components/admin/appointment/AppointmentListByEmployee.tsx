@@ -45,60 +45,49 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [cancelModalOpen, setCancelModalOpen] = useState(false);
     const [cancelDescription, setCancelDescription] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
-    const {
-        data,
-        error,
-        pagination = {
-            currentPage: 1,
-            totalPages: 1,
-            totalItems: 0,
-            pageSize: 10,
-        },
-        setPage,
-        search,
-        refresh,
-    } = usePaginatedFetch<AppointmentData>(APPOINTMENT_API, token, {
-        initialPage: 1,
-        size: 10,
-        autoFetch: true,
-        extraParams: {
-            clientRuc: filters.clientRuc,
-            employeeRuc: filters.employeeRuc,
-            fromDesignatedDate: filters.fromDesignatedDate,
-            toDesignatedDate: filters.toDesignatedDate,
-            status: filters.status,
-        },
-    });
+    const { data, error, pagination, fetchData, refresh } =
+        usePaginatedFetch<AppointmentData>(APPOINTMENT_API, token, {
+            initialPage: 1,
+            size: 10,
+            autoFetch: false,
+        });
+
+    const performSearchWithFilters = (
+        updatedFilters: AppointmentQueryParams
+    ) => {
+        setFilters(updatedFilters);
+        const queryParams = Object.fromEntries(
+            Object.entries(updatedFilters).filter(([key]) => key !== "page")
+        );
+
+        setIsLoading(true);
+        fetchData(updatedFilters.page || 1, queryParams).finally(() =>
+            setIsLoading(false)
+        );
+    };
 
     const handleFilterChange = (updatedFilters: AppointmentQueryParams) => {
         const newFilters = {
             ...filters,
             ...updatedFilters,
-            employeeRuc: employeeRuc,
+            employeeRuc,
+            page: 1, 
         };
-        setFilters(newFilters);
-    
-        const { page, ...searchParams } = newFilters;
-    
-        setPage(1);
-        search(searchParams as Record<string, unknown>);
+        performSearchWithFilters(newFilters);
     };
-    
+
     const handleSearch = (value: string) => {
         const newFilters = {
             ...filters,
             clientRuc: value,
-            employeeRuc: employeeRuc,
+            employeeRuc,
+            page: 1,
         };
-        setFilters(newFilters);
-    
-        const { page, ...searchParams } = newFilters;
-    
-        setPage(1);
-        search(searchParams as Record<string, unknown>);
+        performSearchWithFilters(newFilters);
     };
-    
+
     const openConfirmModal = (
         appointment: AppointmentData,
         action: "complete" | "cancel"
@@ -145,7 +134,9 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
         }
     };
 
-    if (error) toast("error", error.message || "Error al cargar las citas");
+    if (error) {
+        toast("error", error.message || "Error al cargar las citas");
+    }
 
     return (
         <div className="p-4 mx-auto">
@@ -174,7 +165,7 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
                 <h2 className="text-3xl font-bold">Citas</h2>
             </div>
 
-            {isProcessing ? (
+            {isLoading || isProcessing ? (
                 <p className="text-center text-black">Cargando citas...</p>
             ) : (
                 <div className="grid grid-cols-1 gap-4">
@@ -199,18 +190,25 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
             <GenericPagination
                 currentPage={pagination.currentPage}
                 totalPages={pagination.totalPages}
-                handlePreviousPage={() =>
-                    pagination.currentPage > 1 &&
-                    setPage(pagination.currentPage - 1)
-                }
-                handleNextPage={() =>
-                    pagination.currentPage < pagination.totalPages &&
-                    setPage(pagination.currentPage + 1)
-                }
+                handlePreviousPage={() => {
+                    if (pagination.currentPage > 1) {
+                        performSearchWithFilters({
+                            ...filters,
+                            page: pagination.currentPage - 1,
+                        });
+                    }
+                }}
+                handleNextPage={() => {
+                    if (pagination.currentPage < pagination.totalPages) {
+                        performSearchWithFilters({
+                            ...filters,
+                            page: pagination.currentPage + 1,
+                        });
+                    }
+                }}
                 handlePageChange={(page) => {
-                    const safePage = page < 1 ? 1 : page;
-                    setPage(safePage);
-                    setFilters((prev) => ({ ...prev, page: safePage }));
+                    const safePage = Math.max(1, page);
+                    performSearchWithFilters({ ...filters, page: safePage });
                 }}
             />
 

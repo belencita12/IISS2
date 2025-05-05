@@ -7,7 +7,7 @@ import { getServerSession } from "next-auth";
 import AppointmentList from "@/components/admin/appointment/AppointmentListByEmployee";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Mail, FileText, Briefcase } from "lucide-react";
+import { Mail, FileText, Briefcase, MapPin, Phone } from "lucide-react";
 
 export default async function Page({
     params,
@@ -50,6 +50,7 @@ export default async function Page({
                                 className="w-full h-full object-cover"
                             />
                         </div>
+
                         <div className="flex-1 space-y-4">
                             <div>
                                 <h2 className="text-2xl font-bold">
@@ -73,6 +74,7 @@ export default async function Page({
                                         </p>
                                     </div>
                                 </div>
+
                                 <div className="flex items-center gap-2">
                                     <FileText className="w-5 h-5 text-muted-foreground" />
                                     <div>
@@ -84,6 +86,32 @@ export default async function Page({
                                         </p>
                                     </div>
                                 </div>
+
+                                <div className="flex items-center gap-2">
+                                    <Phone className="w-5 h-5 text-muted-foreground" />
+                                    <div>
+                                        <p className="text-sm text-muted-foreground">
+                                            Teléfono
+                                        </p>
+                                        <p className="font-medium">
+                                            {employee.phoneNumber}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {employee.adress && (
+                                    <div className="flex items-center gap-2">
+                                        <MapPin className="w-5 h-5 text-muted-foreground" />
+                                        <div>
+                                            <p className="text-sm text-muted-foreground">
+                                                Dirección
+                                            </p>
+                                            <p className="font-medium">
+                                                {employee.adress}
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
