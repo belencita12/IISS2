@@ -1,4 +1,3 @@
-// components/PetSelected.ts
 import { ServiceType } from "@/lib/appointment/IAppointment";
 
 type ServiceSelectedProps = {

@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ServiceType } from "@/lib/appointment/IAppointment";
-import { SERVICE_TYPE_API } from "@/lib/urls";
+import { SERVICE_TYPE} from "@/lib/urls";
 import { useFetch } from "@/hooks/api";
 
 type ServiceSelectProps = {
@@ -32,7 +32,7 @@ export default function ServiceSelect({
   const { data, get } = useFetch<ServiceResponse>("", token);
 
   useEffect(() => {
-    get(undefined, `${SERVICE_TYPE_API}?page=1&size=100`);
+    get(undefined, `${SERVICE_TYPE}?page=1&size=100`);
   }, []);
 
   useEffect(() => {
