@@ -35,7 +35,6 @@ export async function getStockDetailsByStock (
 
   const url = `${STOCK_DETAILS_API}?${params.toString()}`;
 
-  console.log(params.toString());
   const response = await fetch(url, {
     headers: {
       "Content-Type": "application/json",
