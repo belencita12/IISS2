@@ -10,7 +10,7 @@ import { Product } from "@/lib/products/IProducts";
 import { toast } from "@/lib/toast";
 import { getStockById } from "@/lib/stock/getStockById";
 import GenericPagination from "../global/GenericPagination";
-import StockDetailsCard from "./StockDetailCard";
+import StockDetailCard from "./StockDetailCard";
 import { getFilteredProducts } from "@/lib/products/getFilteredProducts";
 
 interface DepositDetailsProps {
@@ -202,7 +202,7 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
         <p className="text-center py-4">No hay información del Depósito disponible</p>
       ) : (
         filteredProducts.map((product) => (
-          <StockDetailsCard
+          <StockDetailCard
             key={product.id}
             product={product}
             amount={product.amount}
