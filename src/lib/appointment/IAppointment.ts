@@ -30,5 +30,5 @@ export interface AppointmentQueryParams extends BaseQueryParams {
     serviceId?: number;
     fromDesignatedDate?: string;
     toDesignatedDate?: string;
-    status?: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELED' ;
+    status?: 'PENDING' | 'COMPLETED' | 'CANCELED' ;
 }

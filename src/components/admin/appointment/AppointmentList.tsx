@@ -185,14 +185,14 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
           />
           <div className="flex justify-end mt-4 gap-2">
             <Button
-              className="bg-gray-300 px-4 py-2 rounded"
+              className="bg-white text-black px-4 py-2 rounded border hover:bg-gray-100"
               onClick={() => setCancelModalOpen(false)}
               disabled={isProcessing}
             >
               Cancelar
             </Button>
             <Button
-              className="bg-red-600 text-white px-4 py-2 rounded"
+              className="bg-red-600 text-white px-4 py-2 rounded border hover:bg-red-700"
               onClick={handleConfirmAction}
               disabled={isProcessing || !cancelDescription.trim()}
             >
