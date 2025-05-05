@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { Header } from "./Header";
 import { PetsList } from "./PetLists";
@@ -11,6 +10,7 @@ interface ProfileTabsProps {
   token: string;
   clientId: number;
   ruc: string | null;
+  avatarSrc: string; // Recibimos la URL de la imagen
 }
 
 export default function ProfileTabs({
@@ -18,14 +18,12 @@ export default function ProfileTabs({
   token,
   clientId,
   ruc,
+  avatarSrc, // Recibimos la URL de la imagen
 }: ProfileTabsProps) {
-  const [selected, setSelected] = useState<"datos" | "mascotas" | "citas">(
-    "mascotas"
-  );
+  const [selected, setSelected] = useState<"datos" | "mascotas" | "citas">("mascotas");
 
   const tabClasses = (tab: string) =>
     `flex-1 text-center py-1 px-3 text-sm font-medium transition-colors cursor-pointer flex items-center justify-center gap-1.5
-
      border-b-2 ${
        selected === tab
          ? "bg-white text-violet-600 border-white shadow-md rounded-t-md"
@@ -34,9 +32,8 @@ export default function ProfileTabs({
 
   return (
     <div>
-      {/* Encabezado con pestañas integradas */}
       <div className="bg-gradient-to-r from-violet-300 via-violet-500 to-fuchsia-300 pt-2 pb-0">
-        <Header fullName={fullName} token={token} />
+        <Header fullName={fullName} token={token} avatarSrc={avatarSrc} />
         <div className="flex w-full mt-2 border-b border-gray-300/30">
           <div
             onClick={() => setSelected("datos")}
@@ -64,7 +61,6 @@ export default function ProfileTabs({
 
       {/* Contenido de las pestañas */}
       <div className="w-full px-4">
-
         {selected === "datos" && (
           <div className="text-center text-gray-500 py-10">
             <p>Próximamente podrás ver y editar tus datos aquí.</p>
