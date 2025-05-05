@@ -11,7 +11,6 @@ import { toast } from "@/lib/toast";
 import { getStockById } from "@/lib/stock/getStockById";
 import GenericPagination from "../global/GenericPagination";
 import StockDetailCard from "./StockDetailCard";
-import { getFilteredProducts } from "@/lib/products/getFilteredProducts";
 
 interface DepositDetailsProps {
   token: string;
@@ -26,7 +25,6 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
   const router = useRouter();
 
   const [products, setProducts] = useState<ProductWithAmount[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<ProductWithAmount[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -73,7 +71,6 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
       }));
 
       setProducts(productList);
-      setFilteredProducts(productList);
       setTotalPages(stockDetails.totalPages || 1);
     } catch (error) {
       console.error("Error al obtener detalles de stock:", error);
@@ -83,54 +80,10 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
     }
   }, [stockId, token, filters, selectedTags, currentPage]);
 
-  const applyFilters = useCallback(() => {
-    const result = products.filter((product) => {
-      const searchTermMatch =
-        filters.searchTerm === "" ||
-        product.name.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-        product.code.toLowerCase().includes(filters.searchTerm.toLowerCase());
-
-      const categoryMatch =
-        filters.category === "" || product.category === filters.category;
-
-      const price = Number(product.price ?? 0);
-      const cost = Number(product.cost ?? 0);
-
-      const minPriceMatch =
-        filters.minPrice === "" || price >= Number(filters.minPrice);
-      const maxPriceMatch =
-        filters.maxPrice === "" || price <= Number(filters.maxPrice);
-      const minCostMatch =
-        filters.minCost === "" || cost >= Number(filters.minCost);
-      const maxCostMatch =
-        filters.maxCost === "" || cost <= Number(filters.maxCost);
-
-      const tagsMatch =
-        selectedTags.length === 0 ||
-        (Array.isArray(product.tags) && selectedTags.every(tag => product.tags?.includes(tag)));
-
-      return (
-        searchTermMatch &&
-        categoryMatch &&
-        minPriceMatch &&
-        maxPriceMatch &&
-        minCostMatch &&
-        maxCostMatch &&
-        tagsMatch
-      );
-    });
-
-    setFilteredProducts(result);
-    setCurrentPage(1);
-  }, [filters, products, selectedTags]);
 
   useEffect(() => {
     fetchStockProducts();
   }, [fetchStockProducts]);
-
-  useEffect(() => {
-    applyFilters();
-  }, [filters, applyFilters]);
 
   useEffect(() => {
     async function fetchDepositInfo() {
@@ -146,10 +99,6 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
     }
     fetchDepositInfo();
   }, [stockId, token]);
-
-  const handleSearch = () => {
-    applyFilters();
-  };
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -179,7 +128,7 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
       <ProductFilters
         filters={filters}
         setFilters={setFilters}
-        onSearch={handleSearch}
+        onSearch={fetchStockProducts}
         preventInvalidKeys={preventInvalidKeys}
         selectedTags={selectedTags}
         onTagsChange={setSelectedTags}
@@ -201,7 +150,7 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
       ) : products.length === 0 ? (
         <p className="text-center py-4">No hay información del Depósito disponible</p>
       ) : (
-        filteredProducts.map((product) => (
+        products.map((product) => (
           <StockDetailCard
             key={product.id}
             product={product}
