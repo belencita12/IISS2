@@ -48,10 +48,6 @@ export const VaccineRegistryDetail = ({ id, token }: Props) => {
             label="Próxima aplicación"
             value={formatDate(registry.expectedDate)}
           />
-          <Detail
-            label="Fecha de creación"
-            value={formatDate(registry.createdAt)}
-          />
         </div>
       </div>
 
