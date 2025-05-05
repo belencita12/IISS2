@@ -8,7 +8,9 @@ import { PetData } from "@/lib/pets/IPet";
 import { toast } from "@/lib/toast";
 import Image from "next/image";
 import { List, Plus } from "lucide-react";
-import { RecommendedProducts } from "./Product";
+import { RecommendedProducts } from "./RecommendedProducts";
+import PetListsSkeleton from "./skeleton/PetListsSkeleton";
+import { ProductSkeleton } from "./skeleton/ProductSkeleton";
 
 interface PetsListProps {
   clientId: number;
@@ -51,9 +53,13 @@ export const PetsList = ({ clientId, token }: PetsListProps) => {
 
   return (
     <>
-      <section className="max-w-5xl mx-auto mt-10 bg-white text-center">
-        <h3 className="text-3xl font-bold mt-2 text-purple-600">Mascotas Registradas</h3>
-        <p className="text-gray-500 mt-2 text-sm">Administra la información de tus mascotas</p>
+      <section className="w-full mt-10 bg-white text-center px-4">
+        <h3 className="text-3xl font-bold mt-2 text-purple-600">
+          Mascotas Registradas
+        </h3>
+        <p className="text-gray-500 mt-2 text-sm">
+          Administra la información de tus mascotas
+        </p>
 
         <div className="flex gap-4 mt-4 justify-center flex-wrap">
           <Link href="/user-profile/pet/register">
@@ -71,17 +77,17 @@ export const PetsList = ({ clientId, token }: PetsListProps) => {
         </div>
 
         {loading ? (
-          <p className="mt-4 text-gray-500">Cargando mascotas...</p>
+          <PetListsSkeleton />
         ) : pets.length === 0 ? (
           <p className="mt-4 text-gray-500">No tienes mascotas registradas.</p>
         ) : (
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-32 justify-items-center">
-            {pets.map((pet) => (
-              <Link
-                key={pet.id}
-                href={`/user-profile/pet/${pet.id}`}
-                className="flex flex-col w-[260px] rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden bg-white text-gray-900"
-              >
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-3 justify-items-center">
+  {pets.map((pet) => (
+    <Link
+      key={pet.id}
+      href={`/user-profile/pet/${pet.id}`}
+      className="flex flex-col w-full max-w-[260px] rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden bg-white text-gray-900"
+    >
                 <div className="relative w-full h-[180px] flex items-center justify-center bg-gray-100">
                   <div className="w-40 h-40 rounded-full overflow-hidden bg-gray-200">
                     {pet.profileImg?.originalUrl ? (
@@ -121,16 +127,21 @@ export const PetsList = ({ clientId, token }: PetsListProps) => {
             ))}
           </div>
         )}
+        <h2 className="text-3xl font-bold text-purple-600 mt-20">
+          Productos recomendados
+        </h2>
+        <p className="text-gray-500 mt-1 text-sm">
+          Basado en las mascotas que tienes registradas
+        </p>
+        <Button className="bg-white text-pink-500 border border-pink-500 mt-3 hover:bg-pink-600 hover:text-white">
+          <Link href="/user-profile/product">Ver más</Link>
+        </Button>
       </section>
 
-      {/* Render RecommendedProducts solo si hay mascotas */}
       {!loading && pets.length > 0 && (
-        <RecommendedProducts 
-          clientId={clientId} 
-          token={token} 
-          pets={pets} 
-        />
+        <RecommendedProducts clientId={clientId} token={token} pets={pets} />
       )}
+      {loading && <ProductSkeleton />}
     </>
   );
 };

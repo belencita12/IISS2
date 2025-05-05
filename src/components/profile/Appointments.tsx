@@ -6,39 +6,13 @@ import Link from "next/link";
 import { APPOINTMENT_API } from "@/lib/urls";
 import { useFetch } from "@/hooks/api/useFetch";
 import GenericTable, { Column } from "@/components/global/GenericTable";
-import { formatDate, formatTimeUTC } from "@/lib/utils"
-import { List, Plus } from "lucide-react";
-
-interface Owner {
-  id: number;
-  name: string;
-}
-
-interface Pet {
-  id: number;
-  name: string;
-  race: string;
-  owner: Owner;
-}
-
-interface Employee {
-  id: number;
-  name: string;
-}
-
-interface Appointment {
-  id: number;
-  designatedDate: string;
-  completedDate: string | null;
-  details: string;
-  service: string;
-  status: 'PENDING'|'IN_PROGRESS'|'COMPLETED'|'CANCELLED';
-  pet: Pet;
-  employees: Employee[];
-}
+import { formatDate, formatTimeUTC } from "@/lib/utils";
+import { Plus } from "lucide-react";
+import { AppointmentData } from "@/lib/appointment/IAppointment";
+import AppointmentsTableSkeleton from "@/components/profile/skeleton/AppointmentsSkeleton";
 
 interface AppointmentsData {
-  data: Appointment[];
+  data: AppointmentData[];
   total: number;
 }
 
@@ -48,63 +22,58 @@ interface AppointmentsProps {
   ruc: string | null;
 }
 
-export const Appointments = ({ clientId, token, ruc }: AppointmentsProps) => {
+export const Appointments = ({ token, ruc }: AppointmentsProps) => {
   const [executed, setExecuted] = useState(false);
-  
+
   const {
     data: appointmentsResponse,
     loading,
     error: fetchError,
-    execute
-  } = useFetch<AppointmentsData>(
-    APPOINTMENT_API,
-    token,
-    { immediate: false }
-  );
-  
+    execute,
+  } = useFetch<AppointmentsData>(APPOINTMENT_API, token, { immediate: false });
+
   useEffect(() => {
     if (ruc && !executed) {
       const url = new URL(APPOINTMENT_API);
       url.searchParams.append("clientRuc", ruc);
       url.searchParams.append("page", "1");
       url.searchParams.append("size", "100");
-      
+
       execute(undefined, url.toString());
       setExecuted(true);
     }
   }, [ruc, executed, execute]);
-  
-  const error = !ruc 
-    ? "No se pudo obtener el RUC del cliente" 
+
+  const error = !ruc
+    ? "No se pudo obtener el RUC del cliente"
     : fetchError?.message || null;
-  
+
   const appointments = appointmentsResponse?.data || [];
 
+  const iconFor = (svc: string) => svc.toLowerCase().includes("vacun");
 
-  const iconFor = (svc: string) =>
-    svc.toLowerCase().includes("vacun")
-
-      
-  const statusInfo = (st: Appointment["status"]) => {
+  const statusInfo = (st: AppointmentData["status"]) => {
     switch (st) {
-      case "COMPLETED":   return { txt: "Completada", style: "bg-green-100 text-green-800" };
-      case "CANCELLED":   return { txt: "Cancelada", style: "bg-red-100 text-red-800" };
-      case "IN_PROGRESS": return { txt: "En progreso", style: "bg-blue-100 text-blue-800" };
-      default:            return { txt: "Pendiente",  style: "bg-yellow-100 text-yellow-800" };
+      case "COMPLETED":
+        return { txt: "Completada", style: "bg-green-100 text-green-800" };
+      case "CANCELED":
+        return { txt: "Cancelada", style: "bg-red-100 text-red-800" };
+      case "IN_PROGRESS":
+        return { txt: "En progreso", style: "bg-blue-100 text-blue-800" };
+      default:
+        return { txt: "Pendiente", style: "bg-yellow-100 text-yellow-800" };
     }
   };
 
   // Definir las columnas para la tabla genérica
-  const columns: Column<Appointment>[] = [
+  const columns: Column<AppointmentData>[] = [
     {
       header: "Mascota",
       accessor: (app) => (
-        
-          <div>
-            <p className="font-medium">{app.pet.name}</p>
-          </div>
-        
-      )
+        <div>
+          <p className="font-medium">{app.pet.name}</p>
+        </div>
+      ),
     },
     {
       header: "Servicio",
@@ -115,17 +84,19 @@ export const Appointments = ({ clientId, token, ruc }: AppointmentsProps) => {
             <p className="font-medium">{app.service}</p>
           </div>
         </div>
-      )
+      ),
     },
     {
       header: "Encargado",
       accessor: (app) => (
         <div className="flex items-center gap-2">
-         
           <div>
             {app.employees && app.employees.length > 0 ? (
               app.employees.map((emp, i) => (
-                <p key={emp.id} className={i > 0 ?  "font-medium": "font-medium"}>
+                <p
+                  key={emp.id}
+                  className={i > 0 ? "font-medium" : "font-medium"}
+                >
                   {emp.name}
                 </p>
               ))
@@ -134,16 +105,15 @@ export const Appointments = ({ clientId, token, ruc }: AppointmentsProps) => {
             )}
           </div>
         </div>
-      )
+      ),
     },
     {
       header: "Detalles",
       accessor: (app) => (
         <div className="flex items-start gap-2">
-          
           <p className="font-medium">{app.details || "Sin detalles"}</p>
         </div>
-      )
+      ),
     },
     {
       header: "Fecha",
@@ -151,7 +121,7 @@ export const Appointments = ({ clientId, token, ruc }: AppointmentsProps) => {
         <div>
           <p className="font-medium">{formatDate(app.designatedDate)}</p>
         </div>
-      )
+      ),
     },
     {
       header: "Hora",
@@ -159,51 +129,57 @@ export const Appointments = ({ clientId, token, ruc }: AppointmentsProps) => {
         <div>
           <p className="font-medium">{formatTimeUTC(app.designatedDate)}</p>
         </div>
-      )
-    
+      ),
     },
-    
-    
     {
       header: "Estado",
       accessor: (app) => (
-        <span className={`px-2 py-1 rounded text-xs ${statusInfo(app.status).style}`}>
+        <span
+          className={`px-2 py-1 rounded text-xs ${
+            statusInfo(app.status).style
+          }`}
+        >
           {statusInfo(app.status).txt}
         </span>
-      )
+      ),
     },
   ];
 
-  if (loading) return <p className="text-center py-4">Cargando citas…</p>;
-  if (error)   return <p className="text-red-500 text-center py-4">{error}</p>;
+  if (error) return <p className="text-red-500 text-center py-4">{error}</p>;
 
   return (
-    <section className="max-w-5xl mx-auto mt-5 bg-white rounded-lg shadow-sm pb-5">
-
+    <section className="w-full px-6 mt-5 bg-white rounded-lg shadow-sm pb-5">
       <div className="text-center">
-  <h3 className="text-3xl font-bold mt-2 text-purple-600">Citas Agendadas</h3>
-  <p className="text-gray-500 mt-2 text-sm">Consulta y agenda nuevas citas médicas para tus mascotas</p>
+        <h3 className="text-3xl font-bold mt-2 text-purple-600">
+          Citas Agendadas
+        </h3>
+        <p className="text-gray-500 mt-2 text-sm">
+          Consulta y agenda nuevas citas médicas para tus mascotas
+        </p>
 
-  <div className="flex gap-4 mt-4 justify-center flex-wrap">
-    <Link href="/user-profile/appointments/create">
-      <Button className="bg-pink-500 text-white flex items-center gap-2 hover:bg-pink-600">
-        <Plus className="w-5 h-5" />
-        Agendar Cita
-      </Button>
-    </Link>
-  </div>
-</div>
+        <div className="flex gap-4 mt-4 justify-center flex-wrap">
+          <Link href="/user-profile/appointments/create">
+            <Button className="bg-pink-500 text-white flex items-center gap-2 hover:bg-pink-600">
+              <Plus className="w-5 h-5" />
+              Agendar Cita
+            </Button>
+          </Link>
+        </div>
+      </div>
 
-
-<div className="mt-10">
-      <GenericTable
-        data={appointments}
-        columns={columns}
-        isLoading={loading}
-        emptyMessage="No tienes citas agendadas"
-        className="w-full"
-      />
-    </div>
+      <div className="mt-10">
+        {loading ? (
+          <AppointmentsTableSkeleton />
+        ) : (
+          <GenericTable
+            data={appointments}
+            columns={columns}
+            isLoading={loading}
+            emptyMessage="No tienes citas agendadas"
+            className="w-full"
+          />
+        )}
+      </div>
     </section>
   );
-}
+};
