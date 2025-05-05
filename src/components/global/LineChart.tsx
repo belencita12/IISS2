@@ -28,13 +28,19 @@ function LineChart<T extends Record<string, unknown>>({
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey={xKey as string} />
         <YAxis
-          width={80}
-          tickFormatter={(value) => value.toLocaleString("es-PY")}
+          width={120}
+          tickFormatter={(value) =>
+            `Gs. ${Number(value).toLocaleString("es-PY")}`
+          }
         />
         <Tooltip
-          formatter={(value: number) => `Gs. ${value.toLocaleString("es-PY")}`}
+          formatter={(value: number) => [
+            `Gs. ${value.toLocaleString("es-PY")}`,
+            "Monto",
+          ]}
+          labelFormatter={(label) => `Mes: ${label}`}
         />
-        <Legend />
+        <Legend formatter={() => "Monto"} />
         <Line type="monotone" dataKey={yKey as string} stroke="#8884d8" />
       </RechartsLineChart>
     </ResponsiveContainer>

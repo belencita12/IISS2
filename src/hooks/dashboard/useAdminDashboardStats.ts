@@ -11,6 +11,7 @@ interface MonthlyStat {
   [key: string]: string | number;
 }
 
+
 // Helper para agrupar por mes
 const aggregateByMonth = <T>(
   data: T[],
@@ -87,10 +88,18 @@ export const useAdminDashboardStats = (token: string) => {
     return acc;
   }, {});
 
-  const invoiceTypeChart = Object.entries(invoiceTypeDistribution).map(([label, value]) => ({
-    label,
-    value,
-  }));
+  // 💬 Traducción de tipos de factura
+  const invoiceTypeLabels: Record<string, string> = {
+    CASH: "Contado",
+    CREDIT: "Crédito",
+  };
+
+  const invoiceTypeChart = Object.entries(invoiceTypeDistribution).map(
+    ([label, value]) => ({
+      label: invoiceTypeLabels[label] || label, // ← traducido
+      value,
+    })
+  );
 
 
   if (invoiceError || appointmentError || servicesError) {

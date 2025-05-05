@@ -22,14 +22,16 @@ export default function DashboardContent({ token }: Props) {
     invoiceTypeChart,
   } = useAdminDashboardStats(token);
 
-  if (loading)
+  if (loading) {
     return <p className="text-center mt-10">Cargando estadísticas...</p>;
+  }
 
   return (
-    <div className="text-sm sm:text-base flex flex-col gap-3 mt-3">
+    <div className="text-sm sm:text-base flex flex-col gap-6 mt-4 p-4">
+      {/* Tarjetas resumen */}
       <div className="flex md:flex-row flex-col items-center w-full gap-3">
         <StatCard
-          label="Total Facturado"
+          label="Total facturado"
           value={`Gs. ${totalRevenue.toLocaleString("es-PY")}`}
           icon={<DollarSign size={32} className="text-green-500" />}
         />
@@ -45,31 +47,28 @@ export default function DashboardContent({ token }: Props) {
         />
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-4">
-        <div className="flex flex-col flex-1 gap-4">
-          <div>
-            <h2 className="text-lg font-semibold mb-2">Ingresos mensuales</h2>
-            <LineChart data={monthlyRevenue} xKey="label" yKey="value" />
-          </div>
-          <div>
-            <h2 className="text-lg font-semibold mb-2">Citas por mes</h2>
-            <BarChart data={monthlyAppointments} xKey="label" yKey="value" />
-          </div>
+      {/* Pie charts arriba */}
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex-1">
+          <h2 className="text-lg font-semibold mb-2">Distribución por servicio</h2>
+          <PieChart data={serviceDistribution} nameKey="label" dataKey="value" />
         </div>
         <div className="flex-1">
-          <h2 className="text-lg font-semibold mb-2">
-            Distribución de servicios
-          </h2>
-          <PieChart
-            data={serviceDistribution}
-            nameKey="label"
-            dataKey="value"
-          />
-          <div className="flex-1">
-            <h2 className="text-lg font-semibold mb-2">Tipo de facturas</h2>
-            <PieChart data={invoiceTypeChart} nameKey="label" dataKey="value" />
-          </div>
+          <h2 className="text-lg font-semibold mb-2">Distribución por tipo de factura</h2>
+          <PieChart data={invoiceTypeChart} nameKey="label" dataKey="value" />
         </div>
+      </div>
+
+      {/* Gráfico de líneas */}
+      <div>
+        <h2 className="text-lg font-semibold mb-2">Ingresos mensuales</h2>
+        <LineChart data={monthlyRevenue} xKey="label" yKey="value" />
+      </div>
+
+      {/* Gráfico de barras */}
+      <div>
+        <h2 className="text-lg font-semibold mb-2">Citas por mes</h2>
+        <BarChart data={monthlyAppointments} xKey="label" yKey="value" />
       </div>
     </div>
   );
