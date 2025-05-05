@@ -3,11 +3,15 @@
 import { useState } from "react";
 import { usePaginatedFetch } from "@/hooks/api/usePaginatedFetch";
 import { APPOINTMENT_API } from "@/lib/urls";
-import { AppointmentData, AppointmentQueryParams } from "@/lib/appointment/IAppointment";
+import {
+  AppointmentData,
+  AppointmentQueryParams,
+} from "@/lib/appointment/IAppointment";
 import AppointmentCard from "@/components/admin/appointment/AppointmentCard";
 import AppointmentDateFilter from "@/components/admin/appointment/filters/AppointmentDateFilter";
 import AppointmentStatusFilter from "@/components/admin/appointment/filters/AppointmentStatusFilter";
 import GenericPagination from "@/components/global/GenericPagination";
+import { Loader2 } from "lucide-react";
 
 interface VisitListProps {
   token: string;
@@ -45,20 +49,33 @@ export default function VisitList({ token, petId }: VisitListProps) {
   const handleFilterChange = (updatedFilters: AppointmentQueryParams) => {
     const { page, size, ...safeFilters } = updatedFilters;
     setFilters({ ...filters, ...safeFilters, page: 1 });
-    search({...safeFilters });
+    search({ ...safeFilters });
   };
 
   return (
     <div className="space-y-6">
       {/* Filtros */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <AppointmentDateFilter filters={filters} setFilters={handleFilterChange} />
-        <AppointmentStatusFilter filters={filters} setFilters={handleFilterChange} />
+      <div className="flex flex-col gap-4">
+        <div className="w-full">
+          <AppointmentDateFilter
+            filters={filters}
+            setFilters={handleFilterChange}
+          />
+        </div>
+        <div className="w-full">
+          <AppointmentStatusFilter
+            filters={filters}
+            setFilters={handleFilterChange}
+          />
+        </div>
       </div>
 
       {/* Lista */}
       {loading ? (
-        <p className="text-center">Cargando visitas...</p>
+        <div className="flex justify-center items-center py-8">
+          <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
+          <span className="ml-2 text-gray-600">Cargando visitas...</span>
+        </div>
       ) : error ? (
         <p className="text-center text-red-500">Error al cargar visitas.</p>
       ) : appointments.length === 0 ? (
@@ -68,7 +85,11 @@ export default function VisitList({ token, petId }: VisitListProps) {
       ) : (
         <div className="space-y-4">
           {appointments.map((appointment) => (
-            <AppointmentCard key={appointment.id} appointment={appointment} token={token} />
+            <AppointmentCard
+              key={appointment.id}
+              appointment={appointment}
+              token={token}
+            />
           ))}
         </div>
       )}
