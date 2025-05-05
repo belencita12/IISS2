@@ -1,8 +1,8 @@
 import { usePaginatedFetch } from "@/hooks/api/usePaginatedFetch";
 import { toast } from "@/lib/toast";
-import { INVOICE_API, APPOINTMENT, SERVICE_TYPE } from "@/lib/urls";
+import { INVOICE_API, APPOINTMENT_API, SERVICE_TYPE } from "@/lib/urls";
 import { Invoice } from "@/lib/invoices/IInvoice";
-import { Appointment } from "@/lib/appointments/IAppointments";
+import { AppointmentData } from "@/lib/appointment/IAppointment";
 import { ServiceType } from "@/lib/service-types/IServiceType";
 
 interface MonthlyStat {
@@ -58,14 +58,14 @@ export const useAdminDashboardStats = (token: string) => {
     data: appointments,
     loading: appointmentLoading,
     error: appointmentError,
-  } = usePaginatedFetch<Appointment>(APPOINTMENT, token, {
+  } = usePaginatedFetch<AppointmentData>(APPOINTMENT_API, token, {
     initialPage: 1,
     size: 1000,
     autoFetch: true,
   });
 
   const appointmentCount = appointments.length;
-  const monthlyAppointments = aggregateByMonth<Appointment>(appointments, "designatedDate");
+  const monthlyAppointments = aggregateByMonth<AppointmentData>(appointments, "designatedDate");
 
   // 🣼 Servicios
   const {

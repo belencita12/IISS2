@@ -1,10 +1,10 @@
-import { APPOINTMENT } from "../urls";
-import { AppointmentResponse } from "./IAppointments";
+import { APPOINTMENT_API } from "../urls";
+import { AppointmentData } from "./IAppointment";
 
 export const getAllAppointments = async (
     token: string
-  ): Promise<AppointmentResponse> => {
-    const response = await fetch(`${APPOINTMENT}`, {
+  ): Promise<AppointmentData> => {
+    const response = await fetch(`${APPOINTMENT_API}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -15,5 +15,5 @@ export const getAllAppointments = async (
     }
   
     const data = await response.json();
-    return data as AppointmentResponse;
+    return data as AppointmentData;
   };
