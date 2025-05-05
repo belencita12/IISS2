@@ -49,7 +49,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
     autoFetch: true,
     extraParams: {
       clientRuc: filters.clientRuc,
-      formDesignatedDate: filters.fromDesignatedDate,
+      fromDesignatedDate: filters.fromDesignatedDate,
       toDesignatedDate: filters.toDesignatedDate,
       status: filters.status,
     },
