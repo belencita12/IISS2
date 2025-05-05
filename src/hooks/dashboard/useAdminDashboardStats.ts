@@ -8,9 +8,9 @@ import { ServiceType } from "@/lib/service-types/IServiceType";
 interface MonthlyStat {
   label: string;
   value: number;
-  [key: string]: string | number;
+  dateRaw: Date; 
+  [key: string]: string | number | Date;
 }
-
 
 // Helper para agrupar por mes
 const aggregateByMonth = <T>(
@@ -18,7 +18,7 @@ const aggregateByMonth = <T>(
   dateKey: keyof T,
   valueKey?: keyof T
 ): MonthlyStat[] => {
-  const result: Record<string, number> = {};
+  const map = new Map<string, { value: number; dateRaw: Date }>();
 
   data.forEach((item) => {
     const rawDate = item[dateKey];
@@ -26,16 +26,18 @@ const aggregateByMonth = <T>(
 
     const date = new Date(rawDate);
     const label = date.toLocaleString("es-PY", { month: "short", year: "numeric" });
-    if (!result[label]) result[label] = 0;
 
-    if (valueKey && typeof item[valueKey] === "number") {
-      result[label] += item[valueKey] as number;
-    } else {
-      result[label] += 1;
+    if (!map.has(label)) {
+      map.set(label, { value: 0, dateRaw: new Date(date.getFullYear(), date.getMonth(), 1) });
     }
+
+    const current = map.get(label)!;
+    current.value += valueKey && typeof item[valueKey] === "number" ? (item[valueKey] as number) : 1;
   });
 
-  return Object.entries(result).map(([label, value]) => ({ label, value }));
+  return Array.from(map.entries())
+    .map(([label, { value, dateRaw }]) => ({ label, value, dateRaw }))
+    .sort((a, b) => a.dateRaw.getTime() - b.dateRaw.getTime()); // ← aquí ordenamos por fecha
 };
 
 export const useAdminDashboardStats = (token: string) => {
