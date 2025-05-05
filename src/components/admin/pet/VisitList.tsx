@@ -45,7 +45,7 @@ export default function VisitList({ token, petId }: VisitListProps) {
   const handleFilterChange = (updatedFilters: AppointmentQueryParams) => {
     const { page, size, ...safeFilters } = updatedFilters;
     setFilters({ ...filters, ...safeFilters, page: 1 });
-    search({ ...filters, ...safeFilters });
+    search({...safeFilters });
   };
 
   return (
