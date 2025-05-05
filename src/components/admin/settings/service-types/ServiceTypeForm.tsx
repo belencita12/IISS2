@@ -224,7 +224,6 @@ export default function ServiceTypeForm({
               <FormImgUploader
                 prevClassName="rounded-lg w-full h-full object-cover"
                 onChange={handleImageChange}
-                defaultImage={_initialData?.imageUrl || "/NotImageNicoPets.png"}
               />
             </div>
           </div>

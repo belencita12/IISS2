@@ -30,8 +30,8 @@ export default function ServiceTypeList({ token }: ServiceTypeListProps) {
     onSearch,
   } = useServiceTypeList(token);
 
-  const handleSearch = (query: string) => {
-    onSearch(query);
+  const handleSearch = (name: string) => {
+    onSearch(name);
   };
 
   const columns: Column<ServiceType>[] = [
@@ -115,7 +115,7 @@ export default function ServiceTypeList({ token }: ServiceTypeListProps) {
     <div className="p-4 mx-auto">
       <div className="flex items-center gap-4 mb-4">
         <SearchBar 
-          onSearch={()=>{handleSearch("")}} 
+          onSearch={handleSearch}
           placeholder="Buscar tipo de servicio..." 
         />
       </div>

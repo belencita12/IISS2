@@ -36,7 +36,7 @@ export const useServiceTypeList = (token: string) => {
 
   const handleSearch = useCallback((query: string) => {
     setSearchQuery(query);
-    search({ search: query });
+    search({ name: query });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
