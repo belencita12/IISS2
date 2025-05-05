@@ -7,6 +7,7 @@ import { APPOINTMENT_API } from "@/lib/urls";
 import { useFetch } from "@/hooks/api/useFetch";
 import GenericTable, { Column } from "@/components/global/GenericTable";
 import { formatDate, formatTimeUTC } from "@/lib/utils"
+import { List, Plus } from "lucide-react";
 
 interface Owner {
   id: number;
@@ -177,26 +178,32 @@ export const Appointments = ({ clientId, token, ruc }: AppointmentsProps) => {
   if (error)   return <p className="text-red-500 text-center py-4">{error}</p>;
 
   return (
-    <section className="max-w-6xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-sm">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Citas Agendadas</h2>
-        <Button asChild className="flex items-center gap-2">
-          <Link href="">
-            
-            Agendar nueva cita
-          </Link>
-        </Button>
-      </div>
+    <section className="max-w-5xl mx-auto mt-5 bg-white rounded-lg shadow-sm pb-5">
 
-      <GenericTable 
+      <div className="text-center">
+  <h3 className="text-3xl font-bold mt-2 text-purple-600">Citas Agendadas</h3>
+  <p className="text-gray-500 mt-2 text-sm">Consulta y agenda nuevas citas médicas para tus mascotas</p>
+
+  <div className="flex gap-4 mt-4 justify-center flex-wrap">
+    <Link href="/user-profile/appointments/create">
+      <Button className="bg-pink-500 text-white flex items-center gap-2 hover:bg-pink-600">
+        <Plus className="w-5 h-5" />
+        Agendar Cita
+      </Button>
+    </Link>
+  </div>
+</div>
+
+
+<div className="mt-10">
+      <GenericTable
         data={appointments}
         columns={columns}
         isLoading={loading}
         emptyMessage="No tienes citas agendadas"
         className="w-full"
       />
-
-
+    </div>
     </section>
   );
 }
