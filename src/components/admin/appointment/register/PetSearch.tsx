@@ -81,7 +81,7 @@ export default function PetSearch({
               <Command className="rounded-lg border shadow-md">
                 <CommandList>
                   <CommandEmpty>
-                    {loading ? "Cargando..." : "No se encontraron empleados."}
+                    {loading ? "Cargando..." : "No se encontraron mascotas."}
                   </CommandEmpty>
                   <CommandGroup>
                     {pets.map((pet) => (
@@ -93,7 +93,7 @@ export default function PetSearch({
                         <div>
                           <p>{pet.name}</p>
                           <p className="text-sm text-muted-foreground">
-                            Duenho: {pet.owner.name}
+                            Dueño: {pet.owner.name}
                           </p>
                         </div>
                       </CommandItem>
