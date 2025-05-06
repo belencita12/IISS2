@@ -17,7 +17,6 @@ export default async function Page({ params, }: { params: Promise<{ id: string }
       <div className="w-4/5 space-y-4 mt-4">
         <DepositDetails token={token} stockId={id} />
       </div>
-
     </div>
   );
 }

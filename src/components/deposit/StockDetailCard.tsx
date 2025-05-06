@@ -6,6 +6,8 @@ import { Product } from "@/lib/products/IProducts";
 import { Badge } from "@/components/ui/badge";
 import { getCategoryLabel } from "@/lib/products/utils/categoryLabel";
 
+const defaultImage = "/NotImageNicoPets.png";
+
 interface StockDetailCardProps {
   product: Product;
   amount: number;
@@ -20,19 +22,13 @@ const StockDetailCard: React.FC<StockDetailCardProps> = ({ product, amount, onCl
     >
       <div className="flex flex-col sm:flex-row p-4">
         <div className="w-[100px] h-[100px] mb-4 sm:mb-0 sm:mr-4 flex-shrink-0">
-          {product.image?.originalUrl ? (
-            <Image
-              src={product.image.originalUrl}
-              alt={product.name}
-              width={100}
-              height={100}
-              className="w-full h-full object-cover rounded"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded">
-              {product.name.charAt(0).toUpperCase()}
-            </div>
-          )}
+          <Image
+            src={product.image?.originalUrl || defaultImage}
+            alt={product.name}
+            width={100}
+            height={100}
+            className="w-full h-full object-cover rounded"
+          />          
         </div>
         <div className="flex-1 min-w-0">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 mb-4">
