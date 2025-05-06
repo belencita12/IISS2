@@ -163,7 +163,7 @@ const ClientAppointmentList = ({
                 }}
                 handlePageChange={handlePageChange}
             />
-
+            
             {selectedAppointment && modalAction === "complete" && (
                 <ConfirmationModal
                     isOpen={isModalOpen}
