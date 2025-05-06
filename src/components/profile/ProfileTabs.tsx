@@ -4,6 +4,7 @@ import { Header } from "./Header";
 import { PetsList } from "./PetLists";
 import { Appointments } from "./Appointments";
 import { User, Dog, Calendar } from "lucide-react";
+import { ProfileUser } from "./ProfileUser";
 
 interface ProfileTabsProps {
   fullName: string;
@@ -62,9 +63,7 @@ export default function ProfileTabs({
       {/* Contenido de las pestañas */}
       <div className="w-full px-4">
         {selected === "datos" && (
-          <div className="text-center text-gray-500 py-10">
-            <p>Próximamente podrás ver y editar tus datos aquí.</p>
-          </div>
+          <ProfileUser clientId={clientId} token={token} />
         )}
 
         {selected === "mascotas" && (

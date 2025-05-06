@@ -28,11 +28,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "cypress-mailosaur": "^2.17.0",
-<<<<<<< HEAD
-    "embla-carousel-react": "^8.6.0",
-=======
     "date-fns": "^4.1.0",
->>>>>>> 1dbc2516cbc6bdf5ee0d1d6782bb03cdf8ae5520
     "lucide-react": "^0.475.0",
     "next": "15.1.7",
     "next-auth": "^4.24.11",
