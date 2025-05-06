@@ -2,7 +2,7 @@ import ServiceTypeDetail from "@/components/admin/settings/service-types/Service
 import authOptions from "@/lib/auth/options";
 import { getServerSession } from "next-auth";
 import { notFound, redirect } from "next/navigation";
-import { fetchServiceTypeById } from "@/lib/service-types/service";
+import { getServiceTypeById } from "@/lib/service-types/getServiceTypeById";
 
 export default async function ServiceTypeDetailPage({
   params,
@@ -19,7 +19,7 @@ export default async function ServiceTypeDetailPage({
   const token = session.user.token as string;
 
   // Obtenemos el tipo de servicio, si no existe -> 404
-  const serviceType = await fetchServiceTypeById(serviceTypeId, token).catch(() => null);
+  const serviceType = await getServiceTypeById(serviceTypeId, token).catch(() => null);
   if (!serviceType) {
     notFound();
   }

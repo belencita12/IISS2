@@ -109,18 +109,3 @@ export const useServiceTypeApi = (token: string) => {
     loading,
   };
 };
-
-export const fetchServiceTypeById = async (id: string, token: string) => {
-  const dynamicUrl = `${SERVICE_TYPE}/${id}`;
-  const response = await fetch(dynamicUrl, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error("Error al obtener el tipo de servicio");
-  }
-
-  return response.json();
-};
