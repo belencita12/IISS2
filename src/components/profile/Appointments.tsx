@@ -158,7 +158,7 @@ export const Appointments = ({ token, ruc }: AppointmentsProps) => {
         </p>
 
         <div className="flex gap-4 mt-4 justify-center flex-wrap">
-          <Link href="/user-profile/appointments/create">
+          <Link href="/user-profile/appointment/register">
             <Button className="bg-pink-500 text-white flex items-center gap-2 hover:bg-pink-600">
               <Plus className="w-5 h-5" />
               Agendar Cita
