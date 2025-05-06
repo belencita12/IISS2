@@ -15,9 +15,6 @@ export const updatePet = async (petId: number, petData: FormData, token: string)
             body: petData,
         });
 
-        console.log("Respuesta del servidor - Status:", response.status);
-        console.log("Headers de la respuesta:", Object.fromEntries(response.headers.entries()));
-        
         if (!response.ok) {
             const errorData = await response.json().catch(() => null);
             console.error("Error en la respuesta:", errorData);
