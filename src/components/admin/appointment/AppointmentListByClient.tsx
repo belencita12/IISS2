@@ -22,6 +22,7 @@ interface ClientAppointmentListProps {
     token: string;
     clientRuc: string;
 }
+
 const ClientAppointmentList = ({
     token,
     clientRuc,
