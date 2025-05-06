@@ -1,5 +1,5 @@
 import { useFetch } from "@/hooks/api/useFetch";
-import { SERVICE_TYPE_API } from "@/lib/urls";
+import { SERVICE_TYPE } from "@/lib/urls";
 import { toast } from "@/lib/toast";
 
 export const useServiceTypeApi = (token: string) => {
@@ -9,7 +9,7 @@ export const useServiceTypeApi = (token: string) => {
     patch,
     delete: del,
     loading,
-  } = useFetch(SERVICE_TYPE_API, token);
+  } = useFetch(SERVICE_TYPE, token);
 
   /**
    * Obtener lista de tipos de servicio con paginación y búsqueda
@@ -18,7 +18,7 @@ export const useServiceTypeApi = (token: string) => {
    * @returns Lista de tipos de servicio
    */
   const getServiceTypes = async (page: number = 1, query: string = "") => {
-    const dynamicUrl = `${SERVICE_TYPE_API}?page=${page}&search=${encodeURIComponent(query)}`;
+    const dynamicUrl = `${SERVICE_TYPE}?page=${page}&search=${encodeURIComponent(query)}`;
     const response = await get(undefined, dynamicUrl);
 
     if (!response.ok) {
@@ -35,7 +35,7 @@ export const useServiceTypeApi = (token: string) => {
    * @returns Datos del tipo de servicio
    */
   const getServiceTypeById = async (id: number) => {
-    const dynamicUrl = `${SERVICE_TYPE_API}/${id}`;
+    const dynamicUrl = `${SERVICE_TYPE}/${id}`;
     const response = await get(undefined, dynamicUrl);
 
     if (!response.ok) {
@@ -70,7 +70,7 @@ export const useServiceTypeApi = (token: string) => {
    * @returns Datos del tipo de servicio actualizado
    */
   const updateServiceType = async (id: number, data: FormData) => {
-    const dynamicUrl = `${SERVICE_TYPE_API}/${id}`;
+    const dynamicUrl = `${SERVICE_TYPE}/${id}`;
     const response = await patch(data, dynamicUrl);
 
     if (!response.ok) {
@@ -88,7 +88,7 @@ export const useServiceTypeApi = (token: string) => {
    * @returns `true` si la eliminación fue exitosa
    */
   const deleteServiceType = async (id: number) => {
-    const dynamicUrl = `${SERVICE_TYPE_API}/${id}`;
+    const dynamicUrl = `${SERVICE_TYPE}/${id}`;
     const response = await del(undefined, dynamicUrl);
 
     if (!response.ok) {
