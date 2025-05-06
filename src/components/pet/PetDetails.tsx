@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState} from "react";
 import { Button } from "@/components/ui/button";
 import { useParams } from "next/navigation";
 import PetVaccinationTable from "../pet/PetVaccinationTable";
@@ -13,7 +13,8 @@ import { formatDate } from "@/lib/utils";
 import { getAppointmentByPetId } from "@/lib/appointment/getAppointmentByPetId";
 import { Appointment } from "@/lib/appointment/IAppointment";
 import GenericTable, { Column, PaginationInfo, TableAction } from "@/components/global/GenericTable";
-import { Eye, XCircle, Pencil } from "lucide-react";
+import { Eye, XCircle} from "lucide-react";
+import UpdatePetImage from "@/components/pet/UpdatePetImage"
 
 interface EditablePet {
   name: string;
@@ -75,7 +76,6 @@ function calcularEdad(fechaNacimiento: string): string {
 
 export default function PetDetails({ token }: Props) {
   const { id } = useParams();
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [pet, setPet] = useState<PetData | null | undefined>(undefined);
   const [isEditingName, setIsEditingName] = useState(false);
@@ -94,24 +94,12 @@ export default function PetDetails({ token }: Props) {
     pageSize: 100,
   });
 
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!pet?.id || !e.target.files || e.target.files.length === 0) return;
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("profileImg", file);
-
-    try {
-      const updatedPet = await updatePet(pet.id, formData, token);
-      if (!updatedPet || !updatedPet.id) {
-        throw new Error("No se pudo actualizar la imagen");
-      }
-      setPet(updatedPet);
-      toast("success", "Imagen actualizada correctamente");
-    } catch (error) {
-      toast("error", "Error al actualizar la imagen");
-    }
+  const estadoCitaEsp: Record<string, string> = {
+    COMPLETED: "Completado",
+    CANCELLED: "Cancelada",
+    SCHEDULED: "Programada",
+    IN_PROGRESS: "En progreso",
   };
-  
 
   // Actualiza el estado 'editedPet' cuando 'pet' cambia o cuando se entra a modo edición
   useEffect(() => {
@@ -273,7 +261,7 @@ export default function PetDetails({ token }: Props) {
     },
     {
       header: "Estado",
-      accessor: "status",
+      accessor: (a) => estadoCitaEsp[a.status] || a.status,
     },
   ];
 
@@ -305,42 +293,12 @@ export default function PetDetails({ token }: Props) {
         <>
           <div className="flex justify-center bg-gray-500 p-5">
             <div className="flex-col justify-center items-center p-3 pr-8">
-              <div className="w-[250px] h-[250px] rounded-full overflow-hidden border-[3px] border-black flex justify-center items-center">
-                {pet.profileImg?.originalUrl || pet.profileImg?.previewUrl ? (
-                  <Image
-                    src={pet.profileImg.originalUrl || pet.profileImg.previewUrl}
-                    alt={pet.name}
-                    width={100}
-                    height={100}
-                    className="object-cover object-center w-full h-full"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gray-300 mx-auto flex items-center justify-center">
-                    <span className="text-gray-500">Sin imagen</span>
-                  </div>
-                )}
-                </div>
-                {isEditingName && (
-                <div className="flex flex-col items-center mt-2 mb-2">
-                  <Button
-                    type="button"
-                    className="rounded-md p-2 shadow-md flex items-center gap-2 text-sm font-medium transition"
-                    onClick={() => fileInputRef.current?.click()}
-                    title="Cambiar foto de perfil"
-                  >
-                    <Pencil className="w-4 h-4 mr-1" />
-                    Cambiar foto de perfil
-                  </Button>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleImageChange}
-                  />
-                </div>
-              )}
-              
+              <UpdatePetImage
+                pet = {pet}
+                token = {token}
+                onImageUpdate={setPet}
+                showEditButton={isEditingName}
+              />
               <div className="flex-col p-2 text-black">
                 <p className="flex justify-center font-bold">{pet.name}</p>
                 <p className="flex justify-center font-bold text-xl">{calcularEdad(pet.dateOfBirth)}</p>
