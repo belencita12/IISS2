@@ -10,6 +10,8 @@ import { getManufacturers } from "@/lib/vaccine-manufacturer/getVaccineManufactu
 import { getSpecies } from "@/lib/pets/getRacesAndSpecies";
 import { updateVaccineById } from "@/lib/vaccine/updateVaccine";
 import { VaccineFormValues, Manufacturer, Species } from "@/lib/vaccine/IVaccine";
+import { getProviders } from "@/lib/provider/getProviders";
+import { Provider } from "@/lib/provider/IProvider";
 
 // Form schema
 const vaccineSchema = z.object({
@@ -20,7 +22,10 @@ const vaccineSchema = z.object({
   iva: z.number().min(1, "El IVA debe ser mayor a 0"),
   price: z.number().min(1, "El precio debe ser mayor a 0"),
   productImg: z.any().optional(),
+  providerId: z.number().min(1, "Seleccione un proveedor"),
+  description: z.string().min(1, "La descripción es obligatoria"),
 });
+
 
 export type VaccineFormData = z.infer<typeof vaccineSchema>;
 
@@ -37,6 +42,10 @@ export function useVaccineForm(token: string | null, initialData?: VaccineFormVa
   const [selectedManufacturerId, setSelectedManufacturerId] = useState<number | null>(initialData?.manufacturer.id || null);
   const [selectedSpeciesId, setSelectedSpeciesId] = useState<number | null>(initialData?.species.id || null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [providerSearch, setProviderSearch] = useState("");
+  const [isProviderListVisible, setIsProviderListVisible] = useState(false);
+  const [filteredProviders, setFilteredProviders] = useState<Provider[]>([]);
+
 
   const {
     register,
@@ -53,8 +62,26 @@ export function useVaccineForm(token: string | null, initialData?: VaccineFormVa
       cost: initialData?.cost,
       iva: initialData?.iva,
       price: initialData?.price,
+      providerId: initialData?.providerId || 0,
+      description: initialData?.description || "",
     },
+
   });
+
+  useEffect(() => {
+    const fetchProvidersList = async () => {
+      if (!token) return;
+      try {
+        const res = await getProviders(token, { page: 1, query: providerSearch });
+        setFilteredProviders(res.data); // asumiendo que `res.data` tiene la lista
+      } catch {
+        toast("error", "No se pudieron cargar los proveedores");
+      }
+    };
+
+    if (providerSearch) fetchProvidersList();
+  }, [providerSearch, token]);
+
 
   useEffect(() => {
     if (token) {
@@ -102,6 +129,8 @@ export function useVaccineForm(token: string | null, initialData?: VaccineFormVa
           cost: data.cost,
           iva: data.iva,
           price: data.price,
+          providerId: data.providerId,
+          description: data.description,
           productImg: data.productImg instanceof File ? data.productImg : null,
         });
 
@@ -114,6 +143,9 @@ export function useVaccineForm(token: string | null, initialData?: VaccineFormVa
         formData.append("cost", data.cost.toString());
         formData.append("iva", data.iva.toString());
         formData.append("price", data.price.toString());
+        formData.append("providerId", data.providerId.toString());
+        formData.append("description", data.description);
+
         if (data.productImg instanceof File) {
           formData.append("productImg", data.productImg);
         }
@@ -168,19 +200,19 @@ export function useVaccineForm(token: string | null, initialData?: VaccineFormVa
   const filteredManufacturers = manufacturers.filter((manu) =>
     manu.name.toLowerCase().includes(manufacturerSearch.toLowerCase())
   );
-  
+
   const filteredSpecies = species.filter((spec) =>
     spec.name.toLowerCase().includes(speciesSearch.toLowerCase())
   );
-  
+
   const goToManufacturerPage = () => {
     router.push("/dashboard/vaccine/manufacturer/new");
   };
-  
+
   const goBackToVaccineList = () => {
     router.push("/dashboard/vaccine");
   };
-  
+
 
   return {
     register,
@@ -203,11 +235,17 @@ export function useVaccineForm(token: string | null, initialData?: VaccineFormVa
     validateSpeciesSelection,
     setIsManufacturerListVisible,
     setIsSpeciesListVisible,
-    filteredManufacturers, 
-    filteredSpecies,       
-    setSelectedManufacturerId, 
+    filteredManufacturers,
+    filteredSpecies,
+    setSelectedManufacturerId,
     setSelectedSpeciesId,
     goToManufacturerPage,
-    goBackToVaccineList
+    goBackToVaccineList,
+    providerSearch,
+    setProviderSearch,
+    filteredProviders,
+    isProviderListVisible,
+    setIsProviderListVisible,
   };
+
 }

@@ -13,9 +13,7 @@ interface EditVaccinePageProps {
 }
 
 export default function EditVaccinePage({ token, id }: EditVaccinePageProps) {
-  const [vaccineData, setVaccineData] = useState<VaccineFormValues | null>(
-    null
-  );
+  const [vaccineData, setVaccineData] = useState<VaccineFormValues | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -32,11 +30,13 @@ export default function EditVaccinePage({ token, id }: EditVaccinePageProps) {
           iva: Number(data.product.iva),
           price: Number(data.product.price),
           productImgUrl: data.product?.image?.previewUrl || "",
+          description: data.description || "",
+          providerId: data.providerId || 0,
+          provider: data.provider || undefined,
         };
         setVaccineData(adaptedData);
       })
-
-      .catch((error) => {
+      .catch(() => {
         toast("error", "Error al cargar los datos de la vacuna");
       })
       .finally(() => setLoading(false));
@@ -48,7 +48,7 @@ export default function EditVaccinePage({ token, id }: EditVaccinePageProps) {
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
       </div>
     );
-  
+
   if (!vaccineData) return <p>No se encontró la vacuna</p>;
 
   return <VaccineForm token={token} initialData={vaccineData} />;

@@ -40,6 +40,11 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
     setSelectedSpeciesId,
     goToManufacturerPage,
     goBackToVaccineList,
+    providerSearch,
+    setProviderSearch,
+    setIsProviderListVisible,
+    isProviderListVisible,
+    filteredProviders
   } = useVaccineForm(token, initialData);
 
   return (
@@ -195,6 +200,56 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
             className="mb-2"
             error={errors.price?.message}
           />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Descripción</label>
+          <Input
+            {...register("description")}
+            placeholder="Ingrese una descripción"
+            className="mb-2"
+          />
+          {errors.description && (
+            <p className="text-red-500 text-sm">{errors.description.message}</p>
+          )}
+        </div>
+
+        {/* Proveedor */}
+        <div>
+          <label className="block text-sm font-medium mb-2">Proveedor</label>
+          <div className="relative">
+            <Input
+              type="text"
+              value={providerSearch}
+              onChange={(e) => setProviderSearch(e.target.value)}
+              onFocus={() => setIsProviderListVisible(true)}
+              onBlur={() => {
+                setTimeout(() => setIsProviderListVisible(false), 150);
+              }}
+              placeholder="Buscar proveedor..."
+              className="w-full mb-2"
+            />
+            {isProviderListVisible && (
+              <div className="absolute z-50 w-full bg-white border rounded shadow-lg max-h-40 overflow-y-auto">
+                {filteredProviders.map((prov) => (
+                  <div
+                    key={prov.id}
+                    className="p-2 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => {
+                      setProviderSearch(prov.businessName);
+                      setValue("providerId", prov.id ?? 0);
+                      setIsProviderListVisible(false);
+                    }}
+                  >
+                    {prov.businessName} - {prov.ruc}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          {errors.providerId && (
+            <p className="text-red-500 text-sm">{errors.providerId.message}</p>
+          )}
         </div>
 
         <div>
