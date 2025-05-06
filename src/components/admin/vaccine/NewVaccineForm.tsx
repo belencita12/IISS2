@@ -2,12 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import NumericInput from "@/components/global/NumericInput";
 import Image from "next/image";
 import { useVaccineForm } from "@/hooks/vaccine/useVaccineForm";
-import { Species, VaccineFormValues } from "@/lib/vaccine/IVaccine";
-import { Manufacturer } from "@/lib/vaccine/IVaccine";
+import { VaccineFormValues } from "@/lib/vaccine/IVaccine";
 
 interface VaccineFormProps {
   token: string | null;
@@ -34,12 +33,22 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
     validateSpeciesSelection,
     setIsSpeciesListVisible,
     setIsManufacturerListVisible,
-    filteredManufacturers,
-    setSelectedManufacturerId,
-    filteredSpecies,
-    setSelectedSpeciesId,
+    manufacturers,
+    species,
     goToManufacturerPage,
     goBackToVaccineList,
+    providerSearch,
+    setProviderSearch,
+    setIsProviderListVisible,
+    isProviderListVisible,
+    filteredProviders,
+    validateProviderSelection,
+    setSelectedProviderId,
+    setSelectedManufacturerId,
+    setSelectedSpeciesId,
+    isLoadingSpecies,
+    isLoadingManufacturers,
+    isLoadingProviders,
   } = useVaccineForm(token, initialData);
 
   return (
@@ -86,20 +95,26 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
             </button>
             {isManufacturerListVisible && (
               <div className="absolute z-50 w-full bg-white border rounded shadow-lg max-h-40 overflow-y-auto">
-                {filteredManufacturers.map((manu: Manufacturer) => (
-                  <div
-                    key={manu.id}
-                    className="p-2 hover:bg-gray-100 cursor-pointer"
-                    onClick={() => {
-                      setSelectedManufacturerId(manu.id);
-                      setManufacturerSearch(manu.name);
-                      setValue("manufacturerId", manu.id);
-                      setIsManufacturerListVisible(false);
-                    }}
-                  >
-                    {manu.name}
+                {isLoadingManufacturers ? (
+                  <div className="flex justify-center p-2">
+                    <Loader2 className="animate-spin" />
                   </div>
-                ))}
+                ) : (
+                  manufacturers.map((manu) => (
+                    <div
+                      key={manu.id}
+                      onMouseDown={() => {
+                        setSelectedManufacturerId(manu.id);
+                        setManufacturerSearch(manu.name);
+                        setValue("manufacturerId", manu.id);
+                        setIsManufacturerListVisible(false);
+                      }}
+                      className="p-2 hover:bg-gray-100 cursor-pointer"
+                    >
+                      {manu.name}
+                    </div>
+                  ))
+                )}
               </div>
             )}
           </div>
@@ -125,26 +140,29 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
             />
             {isSpeciesListVisible && (
               <div className="absolute z-50 w-full bg-white border rounded shadow-lg max-h-40 overflow-y-auto">
-                {filteredSpecies.map((spec: Species) => (
-                  <div
-                    key={spec.id}
-                    className="p-2 hover:bg-gray-100 cursor-pointer"
-                    onClick={() => {
-                      setSelectedSpeciesId(spec.id);
-                      setSpeciesSearch(spec.name);
-                      setValue("speciesId", spec.id);
-                      setIsSpeciesListVisible(false);
-                    }}
-                  >
-                    {spec.name}
+                {isLoadingSpecies ? (
+                  <div className="flex justify-center p-2">
+                    <Loader2 className="animate-spin" />
                   </div>
-                ))}
+                ) : (
+                  species.map((spec) => (
+                    <div
+                      key={spec.id}
+                      onMouseDown={() => {
+                        setSelectedSpeciesId(spec.id);
+                        setSpeciesSearch(spec.name);
+                        setValue("speciesId", spec.id);
+                        setIsSpeciesListVisible(false);
+                      }}
+                      className="p-2 hover:bg-gray-100 cursor-pointer"
+                    >
+                      {spec.name}
+                    </div>
+                  ))
+                )}
               </div>
             )}
           </div>
-          {errors.speciesId && (
-            <p className="text-red-500 text-sm">{errors.speciesId.message}</p>
-          )}
         </div>
 
         {/* Costo */}
@@ -195,6 +213,61 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
             className="mb-2"
             error={errors.price?.message}
           />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Descripción</label>
+          <Input
+            {...register("description")}
+            placeholder="Ingrese una descripción"
+            className="mb-2"
+          />
+          {errors.description && (
+            <p className="text-red-500 text-sm">{errors.description.message}</p>
+          )}
+        </div>
+
+        {/* Proveedor */}
+        <div>
+          <label className="block text-sm font-medium mb-2">Proveedor</label>
+          <div className="relative">
+            <Input
+              type="text"
+              value={providerSearch}
+              onChange={(e) => setProviderSearch(e.target.value)}
+              onFocus={() => setIsProviderListVisible(true)}
+              onBlur={validateProviderSelection}
+              placeholder="Buscar proveedor..."
+              className="w-full mb-2"
+            />
+            {isProviderListVisible && (
+              <div className="absolute z-50 w-full bg-white border rounded shadow-lg max-h-40 overflow-y-auto">
+                {isLoadingProviders ? (
+                  <div className="flex justify-center p-2">
+                    <Loader2 className="animate-spin" />
+                  </div>
+                ) : (
+                  filteredProviders.map((prov) => (
+                    <div
+                      key={prov.id}
+                      className="p-2 hover:bg-gray-100 cursor-pointer"
+                      onMouseDown={() => {
+                        setSelectedProviderId(prov.id ?? null);
+                        setProviderSearch(prov.businessName);
+                        setValue("providerId", prov.id ?? 0);
+                        setIsProviderListVisible(false);
+                      }}
+                    >
+                      {prov.businessName} - {prov.ruc}
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+          {errors.providerId && (
+            <p className="text-red-500 text-sm">{errors.providerId.message}</p>
+          )}
         </div>
 
         <div>
