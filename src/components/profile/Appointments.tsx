@@ -1,8 +1,10 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { CalendarIcon, ClockIcon, Syringe} from "lucide-react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export const Appointments = () => {
+    const router = useRouter();
     const appointments = [
         {
             id: 1,
@@ -25,11 +27,13 @@ export const Appointments = () => {
             <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold">Citas Agendadas</h2>
 
-                <Button asChild className="mt-2 flex items-center gap-2">
-                    <Link href="/">
+                <Button
+                 className="mt-2 flex items-center gap-2"
+                 onClick={() => router.push("/user-profile/appointment/register")}
+                    >
                         <CalendarIcon className="w-5 h-5" />
                         Agendar una cita
-                    </Link>
+                        
                 </Button>
 
             </div>
