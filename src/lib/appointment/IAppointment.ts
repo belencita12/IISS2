@@ -1,19 +1,6 @@
 import App from "next/app";
 import { BaseQueryParams } from "../types";
 
-export type AppointmentStatus = "PENDING" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
-
-export interface AppointmentQueryParams extends BaseQueryParams {
-    clientRuc?: string;
-    employeeRuc?: string;
-    petId?: number;
-    serviceId?: number;
-    fromDesignatedDate?: string;
-    toDesignatedDate?: string;
-    status?: AppointmentStatus;
-}
-
-
 export interface AppointmentEmployee {
     id: number;
     name: string;
@@ -42,6 +29,20 @@ export interface AppointmentPetOwner {
   name: string;
 }
   
+  
+export type AppointmentStatus = "PENDING" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
+
+export interface AppointmentQueryParams extends BaseQueryParams {
+    clientRuc?: string;
+    employeeRuc?: string;
+    petId?: number;
+    serviceId?: number;
+    fromDesignatedDate?: string;
+    toDesignatedDate?: string;
+    status?: AppointmentStatus;
+}
+
+
 export interface AppointmentData {
     id: number;
     designatedDate: string;
@@ -63,16 +64,6 @@ export interface AppointmentData {
       name: string;
     }[];
   }
-
-export interface AppointmentQueryParams extends BaseQueryParams {
-    clientRuc?: string;
-    employeeRuc?: string;
-    petId?: number;
-    serviceId?: number;
-    fromDesignatedDate?: string;
-    toDesignatedDate?: string;
-    status?: AppointmentStatus;
-}
 
 export interface AppointmentRegister {
     designatedDate: string;
