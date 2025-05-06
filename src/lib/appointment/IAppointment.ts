@@ -32,6 +32,17 @@ export interface AppointmentPetOwner {
   
 export type AppointmentStatus = "PENDING" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
 
+export interface AppointmentQueryParams extends BaseQueryParams {
+    clientRuc?: string;
+    employeeRuc?: string;
+    petId?: number;
+    serviceId?: number;
+    fromDesignatedDate?: string;
+    toDesignatedDate?: string;
+    status?: AppointmentStatus;
+}
+
+
 export interface AppointmentData {
     id: number;
     designatedDate: string;
@@ -54,12 +65,35 @@ export interface AppointmentData {
     }[];
   }
 
-export interface AppointmentQueryParams extends BaseQueryParams {
-    clientRuc?: string;
-    employeeRuc?: string;
-    petId?: number;
-    serviceId?: number;
-    fromDesignatedDate?: string;
-    toDesignatedDate?: string;
-    status?: AppointmentStatus;
-}
+export interface AppointmentRegister {
+    designatedDate: string;
+    designatedTime: string;
+    details?: string;
+    serviceId: number; 
+    petId: number;
+    employeesId: number[];
+  }
+
+  export interface ServiceType{
+    id?: number,
+    slug: string,
+    name: string,
+    description: string,
+    durationMin: number,
+    maxColabs?: number,
+    isPublic?: boolean,
+    iva: number,
+    price: number,
+    cost: number,
+    tags?: string[],
+    img?: {
+      id: number,
+      previewUrl: string,
+      originalUrl: string
+    }
+  }
+
+  export interface AvailabilitySlot {
+    time: string;
+    isOcuppy: boolean;
+  }

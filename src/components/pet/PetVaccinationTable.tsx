@@ -43,11 +43,13 @@ export default function PetVaccinationTable({
   ];
 
   const actions = [
-    {
+   /* { COMENTADO PARA IMPLEMENTAR MÁS ADELANTE
+        CAMPANA NOTIFICACION DE RECORDATORIO ACTIVA O DESACTIVADA
+
       icon: <Bell className="w-4 h-4" />,
       onClick: onReminder,
       label: "Recordatorio",
-    },
+    }, */
     {
       icon: <Pencil className="w-4 h-4" />,
       onClick: (vac: VaccineRecord) => {

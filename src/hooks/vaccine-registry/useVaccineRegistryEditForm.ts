@@ -15,6 +15,7 @@ import {
 import { toast } from "@/lib/toast";
 import { getVaccinesBySpecies } from "@/lib/vaccine/getVaccinesBySpecies";
 import useDebounce from "@/hooks/useDebounce";
+import { getClientById } from "@/lib/client/getClientById";
 
 type Option = { id: number; label: string };
 type PetOption = Option & { speciesId: number };
@@ -132,15 +133,17 @@ export const useVaccineRegistryEditForm = (
   useEffect(() => {
     const fetchAll = async () => {
       try {
-        const userRes = await fetchUsers(1, "", token);
-        const clientList: Option[] = userRes.data.map((c: IUserProfile) => ({
-          id: c.id,
-          label: `${c.fullName} - ${c.ruc}`,
-        }));
-        setClients(clientList);
-        const selectedClient = clientList.find((c) => c.id === clientId);
-        if (selectedClient) setClientSearch(selectedClient.label);
+        const client = await getClientById(clientId, token);
+        if (client) {
+          setClientSearch(`${client.fullName} - ${client.ruc}`);
+          setClients([
+            {
+              id: client.id,
+              label: `${client.fullName} - ${client.ruc}`,
+            },
+          ]);
 
+        }
         const petRes = await getPetsByUserId(clientId, token);
         const petList: PetOption[] = petRes.map((p: PetData) => ({
           id: p.id,

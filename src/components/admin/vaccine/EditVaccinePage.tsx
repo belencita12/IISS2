@@ -23,20 +23,35 @@ export default function EditVaccinePage({ token, id }: EditVaccinePageProps) {
 
     getVaccineById(token, Number(id))
       .then((data) => {
+        console.log(data);
         const adaptedData: VaccineFormValues = {
           id: data.id,
           name: data.name,
-          manufacturer: data.manufacturer,
-          species: data.species,
+          manufacturer: {
+            id: data.manufacturer.id,
+            name: data.manufacturer.name,
+          },
+          species: {
+            id: data.species.id,
+            name: data.species.name,
+          },
           cost: Number(data.product.cost),
           iva: Number(data.product.iva),
           price: Number(data.product.price),
           productImgUrl: data.product?.image?.previewUrl || "",
+          description: data.product?.description || "",
+          providerId: data.product?.provider?.id ?? 0,
+          provider: data.product?.provider
+            ? {
+                id: data.product.provider.id,
+                businessName: data.product.provider.name, // renombramos "name" a "businessName"
+              }
+            : undefined,
         };
+
         setVaccineData(adaptedData);
       })
-
-      .catch((error) => {
+      .catch(() => {
         toast("error", "Error al cargar los datos de la vacuna");
       })
       .finally(() => setLoading(false));
@@ -48,7 +63,7 @@ export default function EditVaccinePage({ token, id }: EditVaccinePageProps) {
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
       </div>
     );
-  
+
   if (!vaccineData) return <p>No se encontró la vacuna</p>;
 
   return <VaccineForm token={token} initialData={vaccineData} />;
