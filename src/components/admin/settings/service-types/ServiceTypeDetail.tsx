@@ -5,7 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { getServiceTypeById } from "@/lib/service-types/getServiceTypeById";
+import { useServiceTypeApi } from "@/lib/service-types/service";
 import type { ServiceType } from "@/lib/service-types/types";
 import { toast } from "@/lib/toast";
 
@@ -19,6 +19,7 @@ export default function ServiceTypeDetail({ token }: ServiceTypeDetailProps) {
   const id = params?.id || '';
   const [serviceType, setServiceType] = useState<ServiceType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { getServiceTypeById } = useServiceTypeApi(token);
 
   useEffect(() => {
     if (!id || id === "create") {
@@ -27,13 +28,10 @@ export default function ServiceTypeDetail({ token }: ServiceTypeDetailProps) {
     }
     const fetchData = async () => {
       try {
-        const serviceTypeData = await getServiceTypeById(id as string, token);
-        console.log('Datos recibidos:', serviceTypeData); // Para ver los datos recibidos
-        console.log('Costo del servicio:', serviceTypeData.cost); // Para ver específicamente el costo
-        setServiceType(serviceTypeData);
+        const serviceTypeData = await getServiceTypeById(Number(id));
+        setServiceType(serviceTypeData as ServiceType);
       } catch (err) {
         toast("error", "No se pudo cargar la información del tipo de servicio");
-        console.error(err);
       } finally {
         setIsLoading(false);
       }
