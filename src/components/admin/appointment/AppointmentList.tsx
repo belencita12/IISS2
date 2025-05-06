@@ -17,17 +17,18 @@ import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import { completeAppointment, cancelAppointment } from "@/lib/appointment/service";
 import { Modal } from "@/components/global/Modal";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 interface AppointmentListProps {
   token: string;
 }
 
 const AppointmentList = ({ token }: AppointmentListProps) => {
+  const router = useRouter();
   const [filters, setFilters] = useState<AppointmentQueryParams>({
     page: 1,
     clientRuc: undefined,
   });
-
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentData | null>(null);
   const [modalAction, setModalAction] = useState<"complete" | "cancel" | null>(null);
@@ -49,7 +50,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
     autoFetch: true,
     extraParams: {
       clientRuc: filters.clientRuc,
-      formDesignatedDate: filters.fromDesignatedDate,
+      fromDesignatedDate: filters.fromDesignatedDate,
       toDesignatedDate: filters.toDesignatedDate,
       status: filters.status,
     },
@@ -124,8 +125,11 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
       </div>
       
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-3xl font-bold">Citas</h2>
-      </div>
+            <h2 className="text-3xl font-bold">Citas</h2>
+            <Button variant="outline" className="px-6" onClick={() => router.push("/dashboard/appointment/register")}>
+                    Agendar
+            </Button>
+        </div>
 
       {isLoading ? (
         <p className="text-center text-black">Cargando citas...</p>
@@ -185,14 +189,14 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
           />
           <div className="flex justify-end mt-4 gap-2">
             <Button
-              className="bg-gray-300 px-4 py-2 rounded"
+              className="bg-white text-black px-4 py-2 rounded border hover:bg-gray-100"
               onClick={() => setCancelModalOpen(false)}
               disabled={isProcessing}
             >
               Cancelar
             </Button>
             <Button
-              className="bg-red-600 text-white px-4 py-2 rounded"
+              className="bg-red-600 text-white px-4 py-2 rounded border hover:bg-red-700"
               onClick={handleConfirmAction}
               disabled={isProcessing || !cancelDescription.trim()}
             >
