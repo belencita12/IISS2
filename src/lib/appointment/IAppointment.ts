@@ -1,5 +1,6 @@
 import { BaseQueryParams } from "../types";
 
+export type AppointmentStatus = "PENDING" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
 
 export interface AppointmentQueryParams extends BaseQueryParams {
     clientRuc?: string;
@@ -8,7 +9,7 @@ export interface AppointmentQueryParams extends BaseQueryParams {
     serviceId?: number;
     fromDesignatedDate?: string;
     toDesignatedDate?: string;
-    status?: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELED' ;
+    status?: AppointmentStatus;
 }
 
 
@@ -27,7 +28,7 @@ export interface AppointmentData {
         name: string;
       };
     };
-    status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "CANCELED";
+    status: AppointmentStatus;
     employees: {
       id: number;
       name: string;
@@ -41,7 +42,7 @@ export interface AppointmentQueryParams extends BaseQueryParams {
     serviceId?: number;
     fromDesignatedDate?: string;
     toDesignatedDate?: string;
-    status?: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELED' ;
+    status?: AppointmentStatus;
 }
 
 export interface AppointmentRegister {
