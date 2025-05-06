@@ -95,7 +95,7 @@ export function ProfileUser({ clientId, token }: ProfileUserProps) {
   }
 
   return (
-    <div className="w-full p-0">
+    <div className="w-full p-0 min-h-[80vh]">
       <Card className="overflow-hidden rounded-none border-x-0">
         {/* Header with simple background - no gradient */}
         <div className="relative h-28 bg-gray-50 border-b">

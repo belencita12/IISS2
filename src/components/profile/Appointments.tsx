@@ -148,7 +148,7 @@ export const Appointments = ({ token, ruc }: AppointmentsProps) => {
   if (error) return <p className="text-red-500 text-center py-4">{error}</p>;
 
   return (
-    <section className="w-full px-6 mt-5 bg-white rounded-lg shadow-sm pb-5">
+    <section className="w-full px-6 mt-5 bg-white rounded-lg shadow-sm pb-5 min-h-[80vh]">
       <div className="text-center">
         <h3 className="text-3xl font-bold mt-2 text-purple-600">
           Citas Agendadas
