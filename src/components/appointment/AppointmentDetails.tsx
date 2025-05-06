@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { getAppointmentById } from '@/lib/appointment/getAppointmentById';
-import {Appointment} from '@/lib/appointment/IAppointment';
+import { AppointmentData } from '@/lib/appointment/IAppointment';
 
 interface AppointmentDetailsProps {
   token: string;
@@ -10,7 +10,7 @@ interface AppointmentDetailsProps {
 }
 
 export default function AppointmentDetails({ token, appointmentId }: AppointmentDetailsProps) {
-  const [appointment, setAppointment] = useState<Appointment | null>(null);
+  const [appointment, setAppointment] = useState<AppointmentData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

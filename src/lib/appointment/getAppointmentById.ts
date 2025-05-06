@@ -1,8 +1,8 @@
 import { APPOINTMENT_API } from "@/lib/urls";
-import {Appointment} from "@/lib/appointment/IAppointment";
 import { toast } from "@/lib/toast";
+import { AppointmentData } from "./IAppointment";
 
-export async function getAppointmentById(id: string, token:string): Promise<Appointment> {
+export async function getAppointmentById(id: string, token:string): Promise<AppointmentData> {
     try{
         const res = await fetch(`${APPOINTMENT_API}/${id}`, {
             cache: "no-store",
