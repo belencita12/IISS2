@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "@/lib/toast";
 import { getManufacturers } from "@/lib/vaccine-manufacturer/getVaccineManufacturerById";
-import { getSpecies } from "@/lib/pets/getRacesAndSpecies";
+import { getAllSpecies } from "@/lib/pets/getRacesAndSpecies";
 import { updateVaccineById } from "@/lib/vaccine/updateVaccine";
 import { VaccineFormValues, Manufacturer, Species } from "@/lib/vaccine/IVaccine";
 import { getProviders } from "@/lib/provider/getProviders";
@@ -42,15 +42,19 @@ export function useVaccineForm(token: string | null, initialData?: VaccineFormVa
   const [selectedManufacturerId, setSelectedManufacturerId] = useState<number | null>(initialData?.manufacturer.id || null);
   const [selectedSpeciesId, setSelectedSpeciesId] = useState<number | null>(initialData?.species.id || null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [providerSearch, setProviderSearch] = useState("");
+  const [providerSearch, setProviderSearch] = useState(initialData?.provider?.businessName || "");
   const [isProviderListVisible, setIsProviderListVisible] = useState(false);
   const [filteredProviders, setFilteredProviders] = useState<Provider[]>([]);
-
+  const [selectedProviderId, setSelectedProviderId] = useState<number | null>(initialData?.providerId || null);
+  const [isLoadingManufacturers, setIsLoadingManufacturers] = useState(false);
+  const [isLoadingSpecies, setIsLoadingSpecies] = useState(false);
+  const [isLoadingProviders, setIsLoadingProviders] = useState(false);
 
   const {
     register,
     handleSubmit,
     setValue,
+    reset,
     watch,
     formState: { errors },
   } = useForm<VaccineFormData>({
@@ -68,47 +72,96 @@ export function useVaccineForm(token: string | null, initialData?: VaccineFormVa
 
   });
 
+
+
   useEffect(() => {
-    const fetchProvidersList = async () => {
-      if (!token) return;
+    if (!token) return;
+
+    const fetchProviders = async () => {
+      setIsLoadingProviders(true);
       try {
-        const res = await getProviders(token, { page: 1, query: providerSearch });
-        setFilteredProviders(res.data); // asumiendo que `res.data` tiene la lista
+        const res = await getProviders(token, {
+          page: 1,
+          ...(providerSearch ? { query: providerSearch } : {}),
+        });
+        const sorted = res.data.sort((a: { businessName: string; }, b: { businessName: string; }) =>
+          a.businessName.localeCompare(b.businessName)
+        );
+        setFilteredProviders(sorted);
       } catch {
         toast("error", "No se pudieron cargar los proveedores");
+      } finally {
+        setIsLoadingProviders(false);
       }
     };
 
-    if (providerSearch) fetchProvidersList();
+    fetchProviders();
   }, [providerSearch, token]);
 
 
   useEffect(() => {
-    if (token) {
-      // Cargar fabricantes
-      getManufacturers(token)
-        .then(({ data }) => {
-          const sorted = data.sort((a: Manufacturer, b: Manufacturer) =>
-            a.name.localeCompare(b.name)
-          );
-          setManufacturers(sorted);
-        })
-        .catch((error) => {
-          toast(error, "Error al cargar fabricantes");
-        });
-      // Cargar especies
-      getSpecies(token)
-        .then((data) => {
-          const sorted = data.sort((a: Species, b: Species) =>
-            a.name.localeCompare(b.name)
-          );
-          setSpecies(sorted);
-        })
-        .catch((error) => {
-          toast(error, "Error al cargar especies");
-        });
+    if (!token) return;
+
+    const fetchManufacturers = async () => {
+      setIsLoadingManufacturers(true);
+      try {
+        const res = await getManufacturers(token, 1, manufacturerSearch);
+        const sorted = res.data.sort((a: Manufacturer, b: Manufacturer) =>
+          a.name.localeCompare(b.name)
+        );
+        setManufacturers(sorted);
+      } catch {
+        toast("error", "No se pudieron cargar los fabricantes");
+      } finally {
+        setIsLoadingManufacturers(false);
+      }
+    };
+
+    fetchManufacturers();
+  }, [manufacturerSearch, token]);
+
+
+
+
+
+  useEffect(() => {
+    if (!token) return;
+
+    const fetchSpecies = async () => {
+      setIsLoadingSpecies(true);
+      try {
+        const res = await getAllSpecies(token, `page=1&name=${encodeURIComponent(speciesSearch)}`);
+        const sorted = res.data.sort((a: Species, b: Species) =>
+          a.name.localeCompare(b.name)
+        );
+        setSpecies(sorted);
+      } catch {
+        toast("error", "Error al cargar especies");
+      } finally {
+        setIsLoadingSpecies(false);
+      }
+    };
+
+    fetchSpecies();
+  }, [speciesSearch, token]);
+
+
+
+  const validateProviderSelection = () => {
+    setTimeout(() => setIsProviderListVisible(false), 200);
+    const found = filteredProviders.find((p) =>
+      p.businessName.toLowerCase() === providerSearch.toLowerCase()
+    );
+
+    if (found) {
+      setSelectedProviderId(found.id ?? null);
+      setValue("providerId", found.id ?? 0);
+    } else {
+      setProviderSearch("");
+      setSelectedProviderId(null);
+      setValue("providerId", 0);
     }
-  }, [token]);
+  };
 
   const onSubmit = async (data: VaccineFormData) => {
     if (isSubmitting) return;
@@ -129,7 +182,7 @@ export function useVaccineForm(token: string | null, initialData?: VaccineFormVa
           cost: data.cost,
           iva: data.iva,
           price: data.price,
-          providerId: data.providerId,
+          providerId: selectedProviderId!,
           description: data.description,
           productImg: data.productImg instanceof File ? data.productImg : null,
         });
@@ -143,8 +196,9 @@ export function useVaccineForm(token: string | null, initialData?: VaccineFormVa
         formData.append("cost", data.cost.toString());
         formData.append("iva", data.iva.toString());
         formData.append("price", data.price.toString());
-        formData.append("providerId", data.providerId.toString());
+        formData.append("providerId", selectedProviderId!.toString());
         formData.append("description", data.description);
+
 
         if (data.productImg instanceof File) {
           formData.append("productImg", data.productImg);
@@ -172,8 +226,11 @@ export function useVaccineForm(token: string | null, initialData?: VaccineFormVa
   };
 
   const validateManufacturerSelection = () => {
-    setTimeout(() => setIsManufacturerListVisible(false), 200);
-    const found = manufacturers.find((m) => m.name.toLowerCase() === manufacturerSearch.toLowerCase());
+    setIsManufacturerListVisible(false);
+    const found = manufacturers.find((m) =>
+      m.name.toLowerCase() === manufacturerSearch.toLowerCase()
+    );
+
     if (found) {
       setSelectedManufacturerId(found.id);
       setValue("manufacturerId", found.id);
@@ -184,9 +241,13 @@ export function useVaccineForm(token: string | null, initialData?: VaccineFormVa
     }
   };
 
+
   const validateSpeciesSelection = () => {
-    setTimeout(() => setIsSpeciesListVisible(false), 200);
-    const found = species.find((s) => s.name.toLowerCase() === speciesSearch.toLowerCase());
+    setIsSpeciesListVisible(false);
+    const found = species.find((s) =>
+      s.name.toLowerCase() === speciesSearch.toLowerCase()
+    );
+
     if (found) {
       setSelectedSpeciesId(found.id);
       setValue("speciesId", found.id);
@@ -197,13 +258,6 @@ export function useVaccineForm(token: string | null, initialData?: VaccineFormVa
     }
   };
 
-  const filteredManufacturers = manufacturers.filter((manu) =>
-    manu.name.toLowerCase().includes(manufacturerSearch.toLowerCase())
-  );
-
-  const filteredSpecies = species.filter((spec) =>
-    spec.name.toLowerCase().includes(speciesSearch.toLowerCase())
-  );
 
   const goToManufacturerPage = () => {
     router.push("/dashboard/vaccine/manufacturer/new");
@@ -219,33 +273,54 @@ export function useVaccineForm(token: string | null, initialData?: VaccineFormVa
     handleSubmit,
     onSubmit,
     setValue,
+    reset,
     watch,
     errors,
     isSubmitting,
     isEdit,
+
+    // valores reactivos usados por campos numéricos
+    cost: watch("cost"),
+    iva: watch("iva"),
+    price: watch("price"),
+
+    // fabricante
     manufacturers,
-    species,
     manufacturerSearch,
-    speciesSearch,
     setManufacturerSearch,
-    setSpeciesSearch,
     isManufacturerListVisible,
-    isSpeciesListVisible,
-    validateManufacturerSelection,
-    validateSpeciesSelection,
     setIsManufacturerListVisible,
-    setIsSpeciesListVisible,
-    filteredManufacturers,
-    filteredSpecies,
+    validateManufacturerSelection,
     setSelectedManufacturerId,
+
+    // especie
+    species,
+    speciesSearch,
+    setSpeciesSearch,
+    isSpeciesListVisible,
+    setIsSpeciesListVisible,
+    validateSpeciesSelection,
     setSelectedSpeciesId,
-    goToManufacturerPage,
-    goBackToVaccineList,
+
+    // proveedor
     providerSearch,
     setProviderSearch,
     filteredProviders,
     isProviderListVisible,
     setIsProviderListVisible,
+    setSelectedProviderId,
+    validateProviderSelection,
+
+    // navegación
+    goToManufacturerPage,
+    goBackToVaccineList,
+
+
+    isLoadingManufacturers,
+    isLoadingSpecies,
+    isLoadingProviders,
+
   };
+
 
 }
