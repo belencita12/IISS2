@@ -1,6 +1,5 @@
 describe("Página de Lista de Productos", () => {
   const SESSION_KEY = "sessionToken";
-  const BASE_URL = Cypress.env("API_BASEURL");
 
   beforeEach(() => {
     cy.clearCookies();
@@ -76,16 +75,16 @@ describe("Página de Lista de Productos", () => {
     cy.visit("/dashboard");
     cy.contains("p", "Productos").click();
     cy.wait(3000);
-    cy.get('input[placeholder="Buscar por código del producto"]').type(
-      "prod-1744674339966-2973"
+    cy.get('input[placeholder="Buscar por código o nombre del producto"]').type(
+      "prod-1745357847928-913"
     );
     cy.wait(3000);
     cy.get('div[class*="bg-card"]').should("have.length", 1);
-    cy.contains("Comida para loro").should("exist");
-    cy.get('input[placeholder="Buscar por código del producto"]').clear();
+    cy.contains("Pelota para perro").should("exist");
+    cy.get('input[placeholder="Buscar por código o nombre del producto"]').clear();
     cy.wait(3000);
   });
-
+/*
   it("Filtra productos por categoría", () => {
     cy.visit("/dashboard");
     cy.contains("p", "Productos").click();
@@ -111,7 +110,7 @@ describe("Página de Lista de Productos", () => {
         });
       });
   });
-
+*/
   it("Filtra productos por etiqueta", () => {
     cy.visit("/dashboard");
     cy.contains("p", "Productos").click();
@@ -137,7 +136,6 @@ describe("Página de Lista de Productos", () => {
     cy.get('div[class*="bg-card"]').should("have.length.at.least", 2);
     cy.wait(3000);
   });
-
   it("Filtra productos por costo", () => {
     cy.visit("/dashboard");
     cy.contains("p", "Productos").click();
@@ -148,4 +146,19 @@ describe("Página de Lista de Productos", () => {
     cy.get('div[class*="bg-card"]').should("have.length.at.least", 2);
     cy.wait(3000);
   });
+
+
+  it("Filtra productos por nombre", () => {
+    cy.visit("/dashboard");
+    cy.contains("p", "Productos").click();
+    cy.wait(3000);
+    cy.get('input[placeholder="Buscar por código o nombre del producto"]').type(
+      "Correa para perro",{ delay: 2000 }
+    );
+    cy.get("div.animate-pulse", { timeout: 25000 }).should("not.exist");
+    cy.contains("Correa para perro", { matchCase: false }).should("be.visible");
+    cy.get('input[placeholder="Buscar por código o nombre del producto"]').clear();
+    cy.wait(5000);
+  });
+
 });

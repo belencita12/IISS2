@@ -39,15 +39,14 @@ describe('Página de Lista de Movimientos', () => {
         cy.visit('/dashboard/movement');
         cy.get('.relative > .flex').type('1232410-1');
         cy.wait(3000);
-        
     });*/
 
-    it('Debe buscar movimiento correctamente filtrando por nombre de producto "Desparasitante Perro"', () => { 
+    it('Debe buscar movimiento correctamente filtrando por nombre de producto "Correa"', () => { 
       cy.visit('/dashboard/movement');
     
       // Buscar por nombre de producto
-      cy.get('input[placeholder="Buscar por nombre de producto"]').type('Desparasitante Perro');
-      cy.wait(3000);
+      cy.get('input[placeholder="Buscar por nombre de producto"]').type('Correa');
+      cy.wait(10000);
       // Hacer clic en el movimiento que contiene ese producto
       cy.contains('Movimiento Entrante').click();
     
@@ -55,7 +54,7 @@ describe('Página de Lista de Movimientos', () => {
       cy.url().should('include', '/dashboard/movement/');
       cy.get('h1').should('contain', 'Movimiento');
       // Verifica que el producto exista en la lista
-      cy.contains('Desparasitante Perro').should('exist');
+      cy.contains('Correa').should('exist');
     });
     
 

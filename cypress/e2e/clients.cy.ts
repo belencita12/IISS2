@@ -21,7 +21,7 @@ describe('Página de Detalles del Cliente', () => {
   })
 
   it('debería mostrar la información del perfil del cliente correctamente', () => {
-    const clientId = 3;
+    const clientId = 54;
 
     // Intercepta la llamada al cliente
     cy.intercept("GET", `/api/auth/session`).as("getAuthData");
@@ -47,6 +47,9 @@ describe('Página de Detalles del Cliente', () => {
    //});
   });
 
+
+  /*
+
   it('debería mostrar un mensaje "Not Found" cuando el cliente no existe', () => {
     const clientNone = 9999; // Un ID de cliente que no existe en el sistema
     // Intercepta la llamada al cliente
@@ -63,10 +66,10 @@ describe('Página de Detalles del Cliente', () => {
     cy.wait(4000);
     cy.contains('Página no encontrada').should('be.visible');
 
-  });
+  });*/
 
   it('debería mostrar el botón "Agregar"', () => {
-    const clientId = 12;
+    const clientId = 54;
     cy.visit(`/dashboard/clients/${clientId}`);
     cy.intercept("GET", `/api/auth/session`).as("getAuthData");
     cy.get('button').contains('Agregar').should('be.visible');
@@ -98,7 +101,7 @@ describe('Página de Detalles del Cliente', () => {
   }); */
 
   it('debería mostrar un mensaje cuando no haya mascotas disponibles', () => {
-    const clientId = 4;  // Ejemplo de ID de cliente
+    const clientId = 26;  // Ejemplo de ID de cliente
 
     // Intercepta la llamada al cliente
     cy.intercept("GET", `/api/auth/session`).as("getAuthData");

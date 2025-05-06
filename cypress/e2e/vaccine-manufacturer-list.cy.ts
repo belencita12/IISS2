@@ -28,9 +28,9 @@ describe('Listado de fabricantes de vacunas', () => {
 
 
     it('Debe buscar fabricantes de vacunas correctamente filtrandolos por nombre', () => {
-        cy.get('input[placeholder="Buscar por nombre..."]').type('Zoetis');
+        cy.get('input[placeholder="Buscar por nombre..."]').type('Nico Pets THE ORIGIN LABS');
         cy.wait(5000);
-        cy.get('table tbody tr').should('contain', 'Zoetis');
+        cy.get('table tbody tr').should('contain', 'Nico Pets THE ORIGIN LABS');
     });
 
     it('Debe abrir la página de registro de fabricantes de vacunas', () => {

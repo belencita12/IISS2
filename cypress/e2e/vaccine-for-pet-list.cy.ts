@@ -18,7 +18,7 @@ describe('Listado de vacunas aplicadas por mascotas', () => {
       cy.wait(3000);
       cy.get('.text-3xl').should('contain', 'Clientes');
       cy.wait(3000);
-      cy.get(':nth-child(2) > .text-right > [aria-label="Ver detalles"]').first().click();
+      cy.contains('td', 'Pedro').parent().find('[aria-label="Ver detalles"]').click();
       cy.wait(5000);
         
     });

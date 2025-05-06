@@ -96,7 +96,7 @@ describe('Página de Lista de Proveedores', () => {
     
       it('Debería actualizar un proveedor existente con datos nuevos', () => {
         // Navegar a la página de edición de proveedor
-        cy.visit(`/dashboard/settings/providers/update/15`);
+        cy.visit(`/dashboard/settings/providers/update/2`);
         cy.wait(3000);
     
         // Verificar que el formulario esté en modo edición

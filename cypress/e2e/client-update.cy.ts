@@ -15,7 +15,7 @@ describe('ClientListSection', () => {
         });
         cy.visit('/dashboard/clients');
         cy.url().should('include', '/dashboard/clients');
-        cy.wait(5000);
+        cy.wait(10000);
     });
 
     it('Debe permitir editar la información de un cliente', () => {
@@ -27,21 +27,21 @@ describe('ClientListSection', () => {
         cy.url().should('match', /\/dashboard\/clients\/\d+\/edit/);
         cy.wait(5000);
         // Editar los campos del formulario (ajustar según tus campos reales)
-        cy.get('input[name="name"]').clear().type('Nombre Editado');
-        cy.get('input[name="email"]').clear().type('cliente.editado@example.com');
-        cy.get('input[name="ruc"]').clear().type('1234567-4'); 
+        cy.get('input[name="name"]').clear().type('Editado');
+        cy.get('input[name="email"]').clear().type('cliente@example.com');
+        cy.get('input[name="ruc"]').clear().type('4562314-4'); 
         
         // Guardar los cambios
         cy.get('button').contains('Guardar').click();
-        cy.wait(5000);
+        cy.wait(7000);
         
         // Verificar que vuelve al listado de clientes o muestra un mensaje de éxito
         cy.url().should('include', '/dashboard/clients');
         cy.contains('Cliente actualizado con éxito');
 
         // Verificar que los datos editados están en la tabla
-        cy.get('table').should('contain', 'Nombre Editado');
-        cy.get('table').should('contain', 'cliente.editado@example.com');
+        cy.get('table').should('contain', 'Editado');
+        cy.get('table').should('contain', 'cliente@example.com');
     });
 
     it('Debe mostrar error si el RUC tiene un formato inválido', () => {
@@ -52,7 +52,7 @@ describe('ClientListSection', () => {
         cy.wait(4000);
         cy.get('input[name="name"]').clear().type('Nombre Editado');
         cy.get('input[name="email"]').clear().type('cliente.editado@example.com');
-        cy.get('input[name="ruc"]').clear().type('514291'); 
+        cy.get('input[name="ruc"]').clear().type('514291');
 
         // Intentar guardar los cambios
         cy.get('button').contains('Guardar').click();

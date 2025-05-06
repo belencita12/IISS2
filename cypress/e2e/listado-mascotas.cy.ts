@@ -19,8 +19,10 @@ describe("Listado de Mascotas", () => {
       const response = int.response;
       expect(response?.statusCode).to.eq(200);
       cy.get("button#animalType").click();
-      cy.get('div[role="listbox"] div').first().click();
-    });
+      cy.get('div[role="listbox"] div')
+        .contains("Canino")
+        .click();
+    });    
 
     cy.wait(5000);
 
@@ -42,6 +44,7 @@ describe("Listado de Mascotas", () => {
   before(() => {
     cy.clearCookies();
     cy.clearLocalStorage();
+    
     cy.intercept("POST", "**/auth/signup").as("register");
     cy.generateUser().then((user) => {
       testUser = user;
