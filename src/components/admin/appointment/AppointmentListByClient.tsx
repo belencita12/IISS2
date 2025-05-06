@@ -22,7 +22,6 @@ interface ClientAppointmentListProps {
     token: string;
     clientRuc: string;
 }
-{/*Si ven esto,ignorenlo*/}
 const ClientAppointmentList = ({
     token,
     clientRuc,
@@ -163,7 +162,7 @@ const ClientAppointmentList = ({
                 }}
                 handlePageChange={handlePageChange}
             />
-            
+
             {selectedAppointment && modalAction === "complete" && (
                 <ConfirmationModal
                     isOpen={isModalOpen}
