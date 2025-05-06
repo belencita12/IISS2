@@ -17,7 +17,8 @@ import { Tag } from "@/lib/tags/types";
 import { toast } from '@/lib/toast';
 import { TagFilter } from "@/components/admin/product/filter/TagFilter";
 import { ServiceTypeFormData } from '@/lib/service-types/types';
-import { createServiceType, updateServiceType } from '@/lib/service-types/service';
+import { useServiceTypeApi } from '@/lib/service-types/service';
+import NumericInput from "@/components/global/NumericInput";
 
 const serviceTypeFormSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
@@ -65,6 +66,7 @@ export default function ServiceTypeForm({
   _isSubmitting = false,
   id
 }: ServiceTypeFormProps) {
+  const { createServiceType, updateServiceType } = useServiceTypeApi(token);
   const router = useRouter();
   const [_availableTags, setAvailableTags] = useState<Tag[]>([]);
   const [_isLoadingTags, setIsLoadingTags] = useState(true);
@@ -76,7 +78,7 @@ export default function ServiceTypeForm({
         const response = await getAllTags(token, "page=1");
         setAvailableTags(response.data);
       } catch (error) {
-       // console.error("Error al cargar tags:", error);
+        toast("error", "Error al cargar las etiquetas");
       } finally {
         setIsLoadingTags(false);
       }
@@ -84,7 +86,6 @@ export default function ServiceTypeForm({
 
     loadTags();
   }, [token]);
-
 
 
   const {
@@ -147,9 +148,9 @@ export default function ServiceTypeForm({
 
       let response;
       if (id) {
-        response = await updateServiceType(token, id, formData);
+        response = await updateServiceType(id, formData);
       } else {
-        response = await createServiceType(token, formData);
+        response = await createServiceType(formData);
       }
       
       if (response) {
@@ -214,7 +215,9 @@ export default function ServiceTypeForm({
             {id ? "Editar Tipo de Servicio" : "Registro de Tipo de Servicio"}
           </h1>
           <p className="text-gray-600 self-start">
-            {id ? "Modifique los datos del tipo de servicio" : "Ingresa los datos del tipo de servicio"}
+            {id
+              ? "Modifique los datos del tipo de servicio"
+              : "Ingresa los datos del tipo de servicio"}
           </p>
           <div className="w-full">
             <h3 className="text-sm font-semibold mb-2 text-gray-700">
@@ -224,13 +227,17 @@ export default function ServiceTypeForm({
               <FormImgUploader
                 prevClassName="rounded-lg w-full h-full object-cover"
                 onChange={handleImageChange}
-                //defaultImage={_initialData?.imageUrl || "/NotImageNicoPets.png"}
+                defaultImage={_initialData?.imageUrl || "/NotImageNicoPets.png"}
               />
             </div>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmitHandler)} className="space-y-4 flex-1" noValidate>
+        <form
+          onSubmit={handleSubmit(onSubmitHandler)}
+          className="space-y-4 flex-1"
+          noValidate
+        >
           <div>
             <Label>Nombre</Label>
             <Input
@@ -244,10 +251,7 @@ export default function ServiceTypeForm({
 
           <div>
             <Label>Slug</Label>
-            <Input
-              {...register("slug")}
-              placeholder="servicio-veterinario"
-            />
+            <Input {...register("slug")} placeholder="servicio-veterinario" />
             {errors.slug && (
               <p className="text-red-500 text-sm mt-1">{errors.slug.message}</p>
             )}
@@ -255,75 +259,97 @@ export default function ServiceTypeForm({
 
           <div>
             <Label>Descripción</Label>
-            <Textarea
-              {...register("description")}
-              className="min-h-[100px]"
-            />
+            <Textarea {...register("description")} className="min-h-[100px]" />
             {errors.description && (
-              <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
+              <p className="text-red-500 text-sm mt-1">
+                {errors.description.message}
+              </p>
             )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Duración */}
             <div>
               <Label>Duración (minutos)</Label>
-              <Input
-                type="number"
-                {...register("durationMin")}
-                step="5"
-                min="5"
+              <NumericInput
+                id="durationMin"
+                type="formattedNumber"
+                placeholder="Ejemplo: 60"
+                value={watch("durationMin")} // Sincroniza el valor con el formulario
+                onChange={(e) => setValue("durationMin", Number(e.target.value))} // Actualiza el valor en el formulario
               />
               {errors.durationMin && (
-                <p className="text-red-500 text-sm mt-1">{errors.durationMin.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.durationMin.message}
+                </p>
               )}
             </div>
 
+            {/* Precio */}
             <div>
               <Label>Precio</Label>
-              <Input
-                type="number"
-                {...register("_price")}
-                min="1"
+              <NumericInput
+                id="_price"
+                type="formattedNumber"
+                placeholder="Ejemplo: 100.000"
+                value={watch("_price")} // Sincroniza el valor con el formulario
+                onChange={(e) => setValue("_price", Number(e.target.value))} // Actualiza el valor en el formulario
               />
               {errors._price && (
-                <p className="text-red-500 text-sm mt-1">{errors._price.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors._price.message}
+                </p>
               )}
             </div>
 
+            {/* IVA */}
             <div>
               <Label>IVA (%)</Label>
-              <Input
-                type="number"
-                {...register("_iva")}
-                min="1"
-                max="100"
+              <NumericInput
+                id="_iva"
+                type="formattedNumber"
+                placeholder="Ejemplo: 10"
+                value={watch("_iva")} // Sincroniza el valor con el formulario
+                onChange={(e) => setValue("_iva", Number(e.target.value))} // Actualiza el valor en el formulario
               />
               {errors._iva && (
-                <p className="text-red-500 text-sm mt-1">{errors._iva.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors._iva.message}
+                </p>
               )}
             </div>
 
+            {/* Costo */}
             <div>
               <Label>Costo</Label>
-              <Input
-                type="number"
-                {...register("cost")}
-                min="1"
+              <NumericInput
+                id="cost"
+                type="formattedNumber"
+                placeholder="Ejemplo: 50.000"
+                value={watch("cost")} // Sincroniza el valor con el formulario
+                onChange={(e) => setValue("cost", Number(e.target.value))} // Actualiza el valor en el formulario
               />
               {errors.cost && (
-                <p className="text-red-500 text-sm mt-1">{errors.cost.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.cost.message}
+                </p>
               )}
             </div>
 
+            {/* MaxColabs */}
             <div>
               <Label>MaxColabs (opcional)</Label>
-              <Input
-                type="number"
-                {...register("maxColabs")}
-                min="0"
+              <NumericInput
+                id="maxColabs"
+                type="formattedNumber"
+                placeholder="Ejemplo: 5"
+                value={watch("maxColabs")} // Sincroniza el valor con el formulario
+                onChange={(e) => setValue("maxColabs", Number(e.target.value))} // Actualiza el valor en el formulario
               />
               {errors.maxColabs && (
-                <p className="text-red-500 text-sm mt-1">{errors.maxColabs.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.maxColabs.message}
+                </p>
               )}
             </div>
           </div>
@@ -331,8 +357,10 @@ export default function ServiceTypeForm({
           <div className="flex items-center space-x-2">
             <Checkbox
               id="isPublic"
-              {...register("isPublic")}
-              defaultChecked={_initialData?.isPublic}
+              checked={watch("isPublic")}
+              onCheckedChange={(checked) => setValue("isPublic", checked===true)}
+              //{...register("isPublic")}
+              //defaultChecked={_initialData?.isPublic}
             />
             <Label htmlFor="isPublic">Público</Label>
           </div>
@@ -354,7 +382,9 @@ export default function ServiceTypeForm({
                     <span>{tag}</span>
                     <button
                       type="button"
-                      onClick={() => handleTagsChange(tags.filter(t => t !== tag))}
+                      onClick={() =>
+                        handleTagsChange(tags.filter((t) => t !== tag))
+                      }
                       className="text-gray-500 hover:text-gray-700"
                     >
                       ×
@@ -376,10 +406,7 @@ export default function ServiceTypeForm({
             >
               Cancelar
             </Button>
-            <Button 
-              type="submit" 
-              disabled={formIsSubmitting}
-            >
+            <Button type="submit" disabled={formIsSubmitting}>
               {formIsSubmitting ? "Guardando..." : "Guardar"}
             </Button>
           </div>
