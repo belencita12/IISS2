@@ -11,7 +11,7 @@ interface ProfileTabsProps {
   token: string;
   clientId: number;
   ruc: string | null;
-  avatarSrc: string; // Recibimos la URL de la imagen
+  avatarSrc: string;
 }
 
 export default function ProfileTabs({
@@ -19,7 +19,7 @@ export default function ProfileTabs({
   token,
   clientId,
   ruc,
-  avatarSrc, // Recibimos la URL de la imagen
+  avatarSrc,
 }: ProfileTabsProps) {
   const [selected, setSelected] = useState<"datos" | "mascotas" | "citas">("mascotas");
 
@@ -63,7 +63,10 @@ export default function ProfileTabs({
       {/* Contenido de las pestañas */}
       <div className="w-full px-4">
         {selected === "datos" && (
-          <ProfileUser clientId={clientId} token={token} />
+          <ProfileUser 
+            clientId={clientId} 
+            token={token} 
+          />
         )}
 
         {selected === "mascotas" && (
