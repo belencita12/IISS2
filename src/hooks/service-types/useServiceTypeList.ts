@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { usePaginatedFetch } from "../api/usePaginatedFetch";
-import { SERVICE_TYPE_API } from "@/lib/urls";
+import { SERVICE_TYPE } from "@/lib/urls";
 
 export interface ServiceType {
   id: number;
@@ -25,7 +25,7 @@ export const useServiceTypeList = (token: string) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data, loading, error, pagination, setPage, search } = usePaginatedFetch<ServiceType>(
-    SERVICE_TYPE_API,
+    SERVICE_TYPE,
     token,
     {
       initialPage: 1,
@@ -37,8 +37,7 @@ export const useServiceTypeList = (token: string) => {
   const handleSearch = useCallback((query: string) => {
     setSearchQuery(query);
     search({ search: query });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [search]);
 
   return {
     serviceTypes: data,

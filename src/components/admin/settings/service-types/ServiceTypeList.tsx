@@ -74,13 +74,10 @@ export default function ServiceTypeList({ token }: ServiceTypeListProps) {
     if (!selectedServiceType) return;
     
     try {
-      //console.log("Eliminando tipo de servicio:", selectedServiceType.id);
       await deleteServiceType(selectedServiceType.id);
-      //console.log("Tipo de servicio eliminado correctamente");
       toast("success", "Tipo de servicio eliminado correctamente");
       onPageChange(pagination.currentPage);
     } catch (error) {
-      //console.error("Error al eliminar tipo de servicio:", error);
       toast("error", "Error al eliminar el tipo de servicio. Por favor, intente nuevamente.");
     } finally {
       setIsModalOpen(false);
