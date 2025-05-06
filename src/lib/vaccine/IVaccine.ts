@@ -51,6 +51,8 @@ export interface Vaccine {
 }
 
 // src/lib/vaccine/types.ts
+// src/lib/vaccine/IVaccine.ts
+
 export interface VaccineFormValues {
   id: number;
   name: string;
@@ -60,7 +62,14 @@ export interface VaccineFormValues {
   iva: number;
   price: number;
   productImgUrl?: string;
+  description: string;
+  providerId: number;
+  provider?: {
+    id: number;
+    businessName: string;
+  };
 }
+
 
 
 export interface IVaccine {

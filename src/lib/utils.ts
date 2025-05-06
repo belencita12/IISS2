@@ -70,7 +70,19 @@ export function formatDate(dateString: string): string {
   return `${day} - ${month} - ${year}`;
 }
 
-
+/**
+ * Formatea una hora en formato HH:MM (24h) a partir de una fecha ISO
+ * - Usa UTC (Hora Universal Coordinada) para evitar discrepancias por zonas horarias
+ * @param dateString - (ej: "2024-05-20T14:30:00Z") -- 14:30
+ */
+export function formatTimeUTC(dateString: string): string {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "--:--";
+  
+  const hours = date.getUTCHours().toString().padStart(2, '0');
+  const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+  return `${hours}:${minutes}`;
+}
 
 
 export function validatePhoneNumber(phoneNumber: string): boolean {
