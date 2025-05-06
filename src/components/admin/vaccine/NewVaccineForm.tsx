@@ -6,8 +6,7 @@ import { Loader2, Plus } from "lucide-react";
 import NumericInput from "@/components/global/NumericInput";
 import Image from "next/image";
 import { useVaccineForm } from "@/hooks/vaccine/useVaccineForm";
-import { Species, VaccineFormValues } from "@/lib/vaccine/IVaccine";
-import { Manufacturer } from "@/lib/vaccine/IVaccine";
+import { VaccineFormValues } from "@/lib/vaccine/IVaccine";
 
 interface VaccineFormProps {
   token: string | null;

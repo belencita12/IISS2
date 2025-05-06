@@ -13,7 +13,9 @@ interface EditVaccinePageProps {
 }
 
 export default function EditVaccinePage({ token, id }: EditVaccinePageProps) {
-  const [vaccineData, setVaccineData] = useState<VaccineFormValues | null>(null);
+  const [vaccineData, setVaccineData] = useState<VaccineFormValues | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,19 +23,32 @@ export default function EditVaccinePage({ token, id }: EditVaccinePageProps) {
 
     getVaccineById(token, Number(id))
       .then((data) => {
+        console.log(data);
         const adaptedData: VaccineFormValues = {
           id: data.id,
           name: data.name,
-          manufacturer: data.manufacturer,
-          species: data.species,
+          manufacturer: {
+            id: data.manufacturer.id,
+            name: data.manufacturer.name,
+          },
+          species: {
+            id: data.species.id,
+            name: data.species.name,
+          },
           cost: Number(data.product.cost),
           iva: Number(data.product.iva),
           price: Number(data.product.price),
           productImgUrl: data.product?.image?.previewUrl || "",
-          description: data.description || "",
-          providerId: data.providerId || 0,
-          provider: data.provider || undefined,
+          description: data.product?.description || "",
+          providerId: data.product?.provider?.id ?? 0,
+          provider: data.product?.provider
+            ? {
+                id: data.product.provider.id,
+                businessName: data.product.provider.name, // renombramos "name" a "businessName"
+              }
+            : undefined,
         };
+
         setVaccineData(adaptedData);
       })
       .catch(() => {
