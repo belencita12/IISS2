@@ -61,7 +61,7 @@ export default function ProfileTabs({
       </div>
 
       {/* Contenido de las pestañas */}
-      <div className="w-full px-4">
+      <div className="w-full">
         {selected === "datos" && (
           <ProfileUser 
             clientId={clientId} 
