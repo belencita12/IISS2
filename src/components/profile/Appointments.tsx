@@ -166,7 +166,6 @@ export const Appointments = ({ token, ruc }: AppointmentsProps) => {
           </Link>
         </div>
       </div>
-
       <div className="mt-10">
         {loading ? (
           <AppointmentsTableSkeleton />
