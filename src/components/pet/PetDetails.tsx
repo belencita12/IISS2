@@ -97,11 +97,10 @@ export default function PetDetails({ token }: Props) {
   const estadoCitaEsp: Record<string, string> = {
     COMPLETED: "Completado",
     CANCELLED: "Cancelada",
-    SCHEDULED: "Programada",
+    PENDING: "Pendiente",
     IN_PROGRESS: "En progreso",
   };
 
-  // Actualiza el estado 'editedPet' cuando 'pet' cambia o cuando se entra a modo edición
   useEffect(() => {
     if (pet) {
       setEditedPet({
