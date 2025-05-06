@@ -20,7 +20,10 @@ export default function DashboardContent({ token }: Props) {
     monthlyAppointments,
     serviceDistribution,
     invoiceTypeChart,
+    groupTopNWithOthers
   } = useAdminDashboardStats(token);
+
+  const groupedServiceData = groupTopNWithOthers(serviceDistribution, 6);
 
   if (loading) {
     return <p className="text-center mt-10">Cargando estadísticas...</p>;
@@ -51,7 +54,7 @@ export default function DashboardContent({ token }: Props) {
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex-1">
           <h2 className="text-lg font-semibold mb-2">Distribución por servicio</h2>
-          <PieChart data={serviceDistribution} nameKey="label" dataKey="value" />
+          <PieChart data={groupedServiceData} nameKey="label" dataKey="value" />
         </div>
         <div className="flex-1">
           <h2 className="text-lg font-semibold mb-2">Distribución por tipo de factura</h2>
