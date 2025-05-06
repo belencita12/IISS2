@@ -52,10 +52,10 @@ const FormImgUploader = ({
         {previewImage ? "Cambiar imagen" : "Subir imagen"}
       </Label>
 
-      {previewImage && (
+      {(previewImage || defaultImage) && (
         <div className="w-full flex justify-center mt-4">
           <Image
-            src={previewImage}
+            src={previewImage || defaultImage || ""}
             className={prevClassName}
             alt="Vista previa de la imagen"
             width={prevWidth}
