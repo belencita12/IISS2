@@ -4,21 +4,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-// Schemas y tipos
 import { appointmentSchema } from "@/lib/appointment/appointmentSchema";
 import { AppointmentRegister, ServiceType } from "@/lib/appointment/IAppointment";
 import { EmployeeData } from "@/lib/employee/IEmployee";
 import { PetData } from "@/lib/pets/IPet";
-
-// Servicios y utilidades
 import { createAppointment } from "@/lib/appointment/service";
 import { toast } from "@/lib/toast";
-
-// Componentes UI
 import { Button } from "@/components/ui/button";
-
-// Componentes personalizados
 import PetSearch from "./PetSearch";
 import PetSelected from "./PetSelected";
 import ServiceSelect from "./ServiceSelect";
@@ -132,11 +124,12 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
             )}
 
             <div className="w-full mt-4">
-              {selectedEmployee && formattedDate && (
+              {selectedEmployee && formattedDate && selectedService && (
                 <AvailabilityPicker
                   token={token}
                   employeeId={String(selectedEmployee.id)}
                   date={formattedDate}
+                  serviceDuration={selectedService?.durationMin || 0}
                   onSelectTime={(time) => setValue("designatedTime", time)}
                 />
               )}

@@ -19,7 +19,7 @@ export default async function AppointmentsPage() {
   }
 
   return (
-    <div className="mx-auto justify-center items-center flex flex-col p-4">
+    <div className="max-w-screen-2xl justify-center items-center flex flex-col p-4">
       <h1 className="text-3xl font-bold mt-6">Agendar Cita</h1>
       <AppointmentForm token={token} clientId={userId} userRole={userRole} />
     </div>

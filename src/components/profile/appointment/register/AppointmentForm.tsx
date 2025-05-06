@@ -4,26 +4,18 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-// Schemas y tipos
 import { appointmentSchema } from "@/lib/appointment/appointmentSchema";
 import { AppointmentRegister, ServiceType } from "@/lib/appointment/IAppointment";
 import { EmployeeData } from "@/lib/employee/IEmployee";
 import { PetData } from "@/lib/pets/IPet";
-
-// Servicios y utilidades
 import { createAppointment } from "@/lib/appointment/service";
 import { toast } from "@/lib/toast";
-
-// Componentes UI
 import { Button } from "@/components/ui/button";
-
-// Componentes personalizados
 import PetSelect from "./PetSelect";
 import PetSelected from "./PetSelected";
 import ServiceSelect from "@/components/admin/appointment/register/ServiceSelect";
 import ServiceSelected from "@/components/admin/appointment/register/ServiceSelected";
-import EmployeeSelect from "@/components/admin/appointment/register/EmployeeSelect";
+import EmployeeSelect from "./EmployeeSelect";
 import EmployeeSelected from "@/components/admin/appointment/register/EmployeeSelected";
 import { AvailabilityPicker } from "@/components/admin/appointment/register/AvailabilityPicker";
 
@@ -93,7 +85,7 @@ export const AppointmentForm = ({ token, clientId, userRole}: AppointmentFormPro
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="w-full min-h-screen px-6 py-10 md:px-20 lg:px-32 space-y-10"
+      className="w-full max-w-screen-xl px-6 py-10 md:px-20 lg:px-32 space-y-12 text-lg"
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
@@ -114,7 +106,7 @@ export const AppointmentForm = ({ token, clientId, userRole}: AppointmentFormPro
 
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-1">Seleccionar Empleado</label>
-          <EmployeeSelect token={token} userRole={userRole} onSelectEmployee={handleSelectEmployee} />
+          <EmployeeSelect token={token}  onSelectEmployee={handleSelectEmployee} />
           <input type="hidden" {...register("employeesId")} />
           {errors.employeesId && <p className="text-red-500 text-sm mt-1">{errors.employeesId.message}</p>}
           {selectedEmployee && <EmployeeSelected employee={selectedEmployee} />}
@@ -139,6 +131,7 @@ export const AppointmentForm = ({ token, clientId, userRole}: AppointmentFormPro
                   token={token}
                   employeeId={String(selectedEmployee.id)}
                   date={formattedDate}
+                  serviceDuration={selectedService?.durationMin || 0}
                   onSelectTime={(time) => setValue("designatedTime", time)}
                 />
               )}

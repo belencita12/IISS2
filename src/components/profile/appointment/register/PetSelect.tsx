@@ -55,25 +55,23 @@ export default function ClientPetSelect({
   return (
     <div className="space-y-2">
       <div className="flex gap-2">
-     <Select onValueChange={handleSelect}>
-  <SelectTrigger className="w-full">
-    <SelectValue placeholder="Selecciona una mascota" />
-  </SelectTrigger>
-  <SelectContent>
-    {pets.map((pet) => (
-      <SelectItem key={pet.id} value={String(pet.id)}>
-        <div>
-                          <p>{pet.name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {pet.race.name}
-                          </p>
-                        </div>
-      </SelectItem>
-    ))}
-  </SelectContent>
-</Select>
-
-    </div>
+        <Select onValueChange={handleSelect}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Selecciona una mascota" />
+          </SelectTrigger>
+          <SelectContent>
+            {pets.map((pet) => (
+              <SelectItem key={pet.id} value={String(pet.id)}>
+                <div>
+                  <p>{pet.name}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {pet.race.name}</p>
+                </div>
+              </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      </div>
     </div>
   );
 }
