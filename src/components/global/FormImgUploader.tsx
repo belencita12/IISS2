@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,7 @@ interface FormImgUploaderProps {
   error?: string;
   prevClassName?: string;
   prevWidth?: number;
+  defaultImage?: string | null;
 }
 
 const FormImgUploader = ({
@@ -15,15 +16,20 @@ const FormImgUploader = ({
   error,
   prevClassName,
   prevWidth = 256,
+  defaultImage,
 }: FormImgUploaderProps) => {
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(defaultImage || null);
+
+  useEffect(() => {
+    setPreviewImage(defaultImage || null);
+  }, [defaultImage]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPreviewImage(null);
     const file = event.target.files?.[0];
 
     if (!file) {
       onChange(undefined);
+      setPreviewImage(defaultImage || null);
       return;
     }
 
@@ -54,6 +60,7 @@ const FormImgUploader = ({
             alt="Vista previa de la imagen"
             width={prevWidth}
             height={prevWidth}
+            quality={100}
             priority
           />
         </div>
