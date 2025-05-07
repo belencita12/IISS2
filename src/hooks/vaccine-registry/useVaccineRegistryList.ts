@@ -8,6 +8,17 @@ import { getPetById } from "@/lib/pets/getPetById";
 import { fetchUsers } from "@/lib/client/getUsers";
 import { toast } from "@/lib/toast";
 
+export interface VaccineRegistryFilters {
+  clientName?: string;
+  vaccineId?: string;
+  dose?: string;
+  from?: string;
+  to?: string;
+  fromExpectedDate?: string;
+  toExpectedDate?: string;
+  [key: string]: unknown;
+}
+
 export const useVaccineRegistryList = (token: string) => {
   const [registries, setRegistries] = useState<(VaccineRecord & { pet?: PetData; clientName?: string })[]>([]);
   const [pagination, setPagination] = useState<PaginationInfo>({
@@ -16,17 +27,14 @@ export const useVaccineRegistryList = (token: string) => {
     totalItems: 0,
     pageSize: 10,
   });
+  const [filters, setFilters] = useState<VaccineRegistryFilters>({});
   const [loading, setLoading] = useState(false);
-  const [search, setSearch] = useState("");
 
   const fetchData = useCallback(
-    async (page = 1, filters = {}) => {
+    async (page = 1, activeFilters: VaccineRegistryFilters = filters) => {
       setLoading(true);
       try {
-        const result = await getAllVaccineRegistries(token, page, pagination.pageSize, filters);
-        const sorted = result.data.sort((a, b) =>
-          new Date(a.expectedDate).getTime() - new Date(b.expectedDate).getTime()
-        );
+        const result = await getAllVaccineRegistries(token, page, pagination.pageSize, activeFilters as Record<string, string>);
 
         const clientData = await fetchUsers(1, "", token);
         const clientMap = new Map<number, IUserProfile>(
@@ -34,7 +42,7 @@ export const useVaccineRegistryList = (token: string) => {
         );
 
         const enriched = await Promise.all(
-          sorted.map(async (record) => {
+          result.data.map(async (record) => {
             const pet = await getPetById(Number(record.petId), token);
             const client = pet?.owner?.id ? clientMap.get(Number(pet.owner.id)) : undefined;
 
@@ -59,26 +67,30 @@ export const useVaccineRegistryList = (token: string) => {
         setLoading(false);
       }
     },
-    [token, pagination.pageSize]
+    [token, pagination.pageSize, filters]
   );
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    fetchData(1, filters);
+  }, [fetchData, filters]);
 
   const handleSearch = (query: string) => {
-    setSearch(query);
-    fetchData(1, { search: query });
+    setFilters((prev) => ({
+      ...prev,
+      clientName: query,
+    }));
   };
 
   const handlePageChange = (page: number) => {
-    fetchData(page, { search });
+    fetchData(page);
   };
 
   return {
     registries,
     pagination,
     loading,
+    filters,
+    setFilters,
     handleSearch,
     handlePageChange,
   };
