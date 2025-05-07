@@ -1,8 +1,8 @@
 import { ServiceType } from "./types";
-import { SERVICE_TYPE_API } from "@/lib/urls";
+import { SERVICE_TYPE } from "@/lib/urls";
 
 export async function getServiceTypeById(id: string, token: string): Promise<ServiceType> {
-  const response = await fetch(`${SERVICE_TYPE_API}/${id}`, {
+  const response = await fetch(`${SERVICE_TYPE}/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -30,4 +30,8 @@ export async function getServiceTypeById(id: string, token: string): Promise<Ser
     imageUrl: data.img?.originalUrl || "",
     tags: data.tags || [],
   };
+<<<<<<< HEAD
 } 
+=======
+} 
+>>>>>>> b8156d115233ee8ac87f3fe834f9c550e8b5c9b4

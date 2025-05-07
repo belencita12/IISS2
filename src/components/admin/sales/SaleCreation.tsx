@@ -20,8 +20,14 @@ import PaymentMethods from "./PaymentMethods";
 import { useFetch } from "@/hooks/api";
 import { INVOICE_API } from "@/lib/urls";
 import { InvoiceForm } from "@/lib/invoices/IInvoice";
-import InvoiceInfo from "./InvoiceInfo";
 import { useRouter } from "next/navigation";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 type Props = {
   token: string;
@@ -37,14 +43,12 @@ export default function SaleCreation({ token }: Props) {
   >([]);
 
   const [selectedMethod, setSelectedMethod] = useState<string>("");
-  const [invoiceNumber, setInvoiceNumber] = useState("");
   const [selectedStock, setSelectedStock] = useState("");
   const [saleCondition, setSaleCondition] = useState<"CASH" | "CREDIT">("CASH");
 
   const [depositError, setDepositError] = useState<string | undefined>(
     undefined
   );
-  const [timbradoNumber, setTimbradoNumber] = useState("");
   const router = useRouter();
 
   // Calcular el total de la factura
@@ -112,7 +116,7 @@ export default function SaleCreation({ token }: Props) {
       return;
     }
 
-    if (!selectedCustomer) {
+    if (!selectedCustomer && saleCondition === "CREDIT") {
       toast("error", "Debe seleccionar un cliente");
       return;
     }
@@ -123,12 +127,10 @@ export default function SaleCreation({ token }: Props) {
     }
 
     const saleData: InvoiceForm = {
-      invoiceNumber,
-      stamped: timbradoNumber,
-      clientId: Number(selectedCustomer.id),
+      clientId: Number(selectedCustomer?.id),
       stockId: Number(selectedStock),
       issueDate: new Date().toLocaleDateString("en-CA"),
-      details: products.map((p) => ({
+      details: products.filter((p) => p.category === "PRODUCT").map((p) => ({
         quantity: p.quantity,
         productId: Number(p.id),
       })),
@@ -138,7 +140,10 @@ export default function SaleCreation({ token }: Props) {
       })),
       totalPayed: totalPaid || 1,
       type: saleCondition,
-      services: [],
+      services: products.filter((p) => p.category === "SERVICE").map((p) => ({
+        quantity: p.quantity,
+        productId: Number(p.id),
+      })),
     };
 
     try {
@@ -173,14 +178,30 @@ export default function SaleCreation({ token }: Props) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Columna izquierda - Información del cliente y factura */}
         <div className="lg:col-span-1 space-y-6">
-          <InvoiceInfo
-            saleCondition={saleCondition}
-            setSaleCondition={setSaleCondition}
-            invoiceNumber={invoiceNumber}
-            timbradoNumber={timbradoNumber}
-            setInvoiceNumber={setInvoiceNumber}
-            setTimbradoNumber={setTimbradoNumber}
-          />
+          <Card>
+            <CardHeader>
+              <CardTitle>Condición de Venta</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Select
+                value={saleCondition}
+                onValueChange={(value) => {
+                  setSaleCondition(value as "CASH" | "CREDIT");
+                  if (value === "CREDIT") {
+                    setPaymentMethods([]);
+                  }
+                }}
+              >
+                <SelectTrigger id="sale-condition">
+                  <SelectValue placeholder="Seleccionar condición" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="CASH">Contado</SelectItem>
+                  <SelectItem value="CREDIT">Crédito</SelectItem>
+                </SelectContent>
+              </Select>
+            </CardContent>
+          </Card>
           <Card>
             <CardHeader>
               <CardTitle>Cliente</CardTitle>
@@ -192,15 +213,31 @@ export default function SaleCreation({ token }: Props) {
               />
 
               {selectedCustomer && (
-                <div className="border rounded-md p-3 bg-gray-50">
+                <div className="border rounded-md p-3 bg-gray-50 relative">
+                  {/* Botón para borrar */}
+                  <button
+                    onClick={() => setSelectedCustomer(null)}
+                    className="absolute top-2 right-2 text-xl text-gray-400 hover:text-red-500"
+                    aria-label="Borrar cliente"
+                  >
+                    &times;
+                  </button>
+
                   <h3 className="font-medium">{selectedCustomer.fullName}</h3>
                   <p className="text-sm text-gray-500">
                     {selectedCustomer.email}
                   </p>
                 </div>
               )}
+
+              {!selectedCustomer && saleCondition === "CREDIT" && (
+                <p className="text-center py-8 text-muted-foreground">
+                  Selecciona un cliente para continuar.
+                </p>
+              )}
             </CardContent>
           </Card>
+
           {saleCondition === "CASH" && (
             <PaymentMethods
               onPaymentMethodsChange={setPaymentMethods}
@@ -286,8 +323,7 @@ export default function SaleCreation({ token }: Props) {
                 disabled={
                   (saleCondition === "CASH" && remainingBalance !== 0) ||
                   !selectedStock ||
-                  !timbradoNumber ||
-                  !selectedCustomer ||
+                  (saleCondition === "CREDIT" && !selectedCustomer) ||
                   products.length === 0 ||
                   loading
                 }
@@ -296,8 +332,6 @@ export default function SaleCreation({ token }: Props) {
                     ? "El pago total debe cubrir el monto completo de la venta"
                     : !selectedStock
                     ? "Debe seleccionar un depósito"
-                    : !timbradoNumber
-                    ? "Complete la información de timbrado"
                     : ""
                 }
                 onClick={handleFinalizeSale}
