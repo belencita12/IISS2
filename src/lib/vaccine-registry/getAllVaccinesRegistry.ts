@@ -1,5 +1,6 @@
 import { VACCINE_REGISTRY_API } from "../urls";
 import { VaccineRecord } from "./IVaccineRegistry";
+import { toast } from "@/lib/toast";
 
 interface ResponseData {
   data: VaccineRecord[];
@@ -16,10 +17,20 @@ export const getAllVaccineRegistries = async (
   filters: Record<string, string> = {}
 ): Promise<ResponseData> => {
   try {
+    const filtersSanitized = Object.entries(filters)
+      .filter(
+        ([_, value]) =>
+          value !== undefined &&
+          value !== null &&
+          value !== "" &&
+          value !== "undefined"
+      )
+      .reduce((acc, [k, v]) => ({ ...acc, [k]: String(v) }), {});
+
     const params = new URLSearchParams({
       page: String(page),
       size: String(size),
-      ...filters,
+      ...filtersSanitized,
     });
 
     const res = await fetch(`${VACCINE_REGISTRY_API}?${params.toString()}`, {
@@ -35,7 +46,7 @@ export const getAllVaccineRegistries = async (
     const data = await res.json();
     return data as ResponseData;
   } catch (error) {
-    console.error("Error en getAllVaccineRegistries:", error);
+    toast("error", "Error al obtener los registros de vacunación");
     throw error;
   }
 };
