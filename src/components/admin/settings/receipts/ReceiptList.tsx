@@ -5,7 +5,6 @@ import { getReceipts } from "@/lib/receipts/getReceipts";
 import { IReceipt, IReceiptResponse } from "@/lib/receipts/IReceipt";
 import GenericTable, { Column } from "@/components/global/GenericTable";
 import { Eye } from "lucide-react";
-import { formatDate } from "@/lib/utils";
 
 type ReceiptListProps = {
   token: string;
@@ -41,8 +40,10 @@ export default function ReceiptList({ token }: ReceiptListProps) {
     },
     {
       header: "Fecha de emisión",
-      accessor: (row: IReceipt): string => 
-        formatDate(row.issueDate),
+      accessor: (row: IReceipt): string => {
+        const [year, month, day] = row.issueDate.split("-");
+        return `${day.padStart(2, '0')} - ${month.padStart(2, '0')} - ${year}`;
+      },
     },
     {
       header: "Métodos de pagos",
