@@ -5,6 +5,7 @@ import type React from "react"
 import Image from "next/image"
 import { useProfileUser } from "@/hooks/users/useProfileUser"
 import { Loader2, Camera, User, Mail, Phone, MapPin, Building } from "lucide-react"
+import { ProfileUserSkeleton } from "./skeleton/ProfileUserSkeleton"
 
 interface ProfileUserProps {
   clientId: number
@@ -13,31 +14,13 @@ interface ProfileUserProps {
 }
 
 export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProps) {
-  const {
-    userData,
-    isEditing,
-    loading,
-    error,
-    updateLoading,
-    profileFile,
-    previewImage,
-    register,
-    errors,
-    handleSubmit,
-    handleFileChange,
-    handleEdit,
-    handleCancel,
+  const { userData, isEditing, loading, error, updateLoading, previewImage, register, errors, handleSubmit, handleFileChange, handleEdit, handleCancel,
   } = useProfileUser(clientId, token, updateUserData)
 
   if (loading) {
-    return (
-      <div className="py-12 flex flex-col items-center justify-center text-violet-700">
-        <Loader2 className="h-8 w-8 animate-spin mb-2" />
-        <p className="text-sm font-medium">Cargando datos...</p>
-      </div>
-    )
+    return <ProfileUserSkeleton />
   }
-
+  
   if (error) {
     return (
       <div className="py-12 text-center">
@@ -61,9 +44,7 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
   return (
     <div className="py-6 px-4">
       <div className="max-w-md mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
-        {/* Header with gradient background */}
-        <div className="bg-gradient-to-r from-violet-500 to-purple-600 h-24 relative">
-          {/* Profile image */}
+        <div className="bg-gradient-to-r from-violet-300 via-violet-500 to-fuchsia-300 h-24 relative px-4 flex items-center text-white">
           <div className="absolute left-1/2 transform -translate-x-1/2 -bottom-16">
             <div className="relative">
               <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-md bg-white">
@@ -90,7 +71,6 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
           </div>
         </div>
 
-        {/* Content */}
         <div className="pt-20 pb-6 px-6">
           {isEditing ? (
             <form onSubmit={handleSubmit} className="space-y-5" noValidate>
@@ -224,11 +204,7 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
   )
 }
 
-function FormField({
-  label,
-  icon,
-  error,
-  children,
+function FormField({ label, icon, error, children,
 }: {
   label: string
   icon: React.ReactNode
@@ -249,10 +225,7 @@ function FormField({
   )
 }
 
-function InfoField({
-  icon,
-  label,
-  value,
+function InfoField({ icon, label, value,
 }: {
   icon: React.ReactNode
   label: string

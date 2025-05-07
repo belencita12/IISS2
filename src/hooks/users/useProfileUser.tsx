@@ -22,7 +22,6 @@ const profileFormSchema = z.object({
   ruc: ruc().optional(), // Reutilizando la validación del RUC, pero opcional
 });
 
-// Tipo inferido del schema
 export type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 export function useProfileUser(
@@ -70,7 +69,6 @@ export function useProfileUser(
     if (data) {
       setUserData(data);
       
-      // Actualizar valores del formulario
       setValue("fullName", data.fullName);
       setValue("email", data.email);
       setValue("adress", data.adress || "");

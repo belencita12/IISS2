@@ -5,11 +5,17 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { APPOINTMENT_API } from "@/lib/urls";
 import { useFetch } from "@/hooks/api/useFetch";
-import GenericTable, { Column } from "@/components/global/GenericTable";
 import { formatDate, formatTimeUTC } from "@/lib/utils";
 import { Plus } from "lucide-react";
 import { AppointmentData } from "@/lib/appointment/IAppointment";
 import AppointmentsTableSkeleton from "@/components/profile/skeleton/AppointmentsSkeleton";
+import { Eye } from "lucide-react";
+import GenericTable, {
+  Column,
+  TableAction,
+} from "@/components/global/GenericTable";
+import { useRouter } from "next/navigation";
+
 
 interface AppointmentsData {
   data: AppointmentData[];
@@ -24,6 +30,7 @@ interface AppointmentsProps {
 
 export const Appointments = ({ token, ruc }: AppointmentsProps) => {
   const [executed, setExecuted] = useState(false);
+  const router = useRouter();
 
   const {
     data: appointmentsResponse,
@@ -144,7 +151,14 @@ export const Appointments = ({ token, ruc }: AppointmentsProps) => {
       ),
     },
   ];
-
+  const actions: TableAction<AppointmentData>[] = [
+    {
+      icon: <Eye size={16} />,
+      onClick: (item) => router.push(`/user-profile/appointment/${item.id}`),
+      label: "Ver detalles",
+    },
+  ];
+  
   if (error) return <p className="text-red-500 text-center py-4">{error}</p>;
 
   return (
@@ -171,12 +185,14 @@ export const Appointments = ({ token, ruc }: AppointmentsProps) => {
           <AppointmentsTableSkeleton />
         ) : (
           <GenericTable
-            data={appointments}
-            columns={columns}
-            isLoading={loading}
-            emptyMessage="No tienes citas agendadas"
-            className="w-full"
-          />
+          data={appointments}
+          columns={columns}
+          actions={actions}
+          actionsTitle="Acciones"
+          isLoading={loading}
+          emptyMessage="No tienes citas agendadas"
+          className="w-full"
+        />
         )}
       </div>
     </section>
