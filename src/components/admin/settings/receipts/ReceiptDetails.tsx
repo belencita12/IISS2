@@ -6,6 +6,7 @@ import { Invoice } from "@/lib/invoices/IInvoice";
 import { getReceiptById } from "@/lib/receipts/getReceiptById";
 import { getInvoiceById } from "@/lib/invoices/getInvoiceById";
 import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/utils";
 
 
 interface ReceiptDetailProps {
@@ -55,20 +56,11 @@ export default function ReceiptDetail({ id, token }: ReceiptDetailProps) {
               <p className="font-medium">{receipt.receiptNumber}</p>
             </div>
             <div>
-              <p className="text-gray-600">Total</p>
-              <p className="font-medium">
-                {receipt.total.toLocaleString("es-PY", {
-                  style: "currency",
-                  currency: "PYG",
-                })}
-              </p>
-            </div>
-            <div>
               <p className="text-gray-600">Fecha de emisión</p>
               <p className="font-medium">
                 {(() => {
                     const [year, month, day] = receipt.issueDate.split("-");
-                    return new Date(Number(year), Number(month) - 1, Number(day)).toLocaleDateString();
+                    return `${day.padStart(2, '0')} - ${month.padStart(2, '0')} - ${year}`;
                 })()}
               </p>
             </div>
@@ -80,7 +72,7 @@ export default function ReceiptDetail({ id, token }: ReceiptDetailProps) {
           <h2 className="text-xl font-semibold">Métodos de Pago</h2>
           <div className="space-y-2">
             {receipt.paymentMethods.map((pm, index) => (
-              <div key={index} className="flex justify-between items-center">
+              <div key={index} className="grid grid-cols-2 gap-4 border-b pb-2">
                 <span>{pm.method}</span>
                 <span className="font-medium">
                   {pm.amount.toLocaleString("es-PY", {
@@ -89,7 +81,7 @@ export default function ReceiptDetail({ id, token }: ReceiptDetailProps) {
                   })}
                 </span>
               </div>
-            ))}
+            ))}            
           </div>
         </section>
 
