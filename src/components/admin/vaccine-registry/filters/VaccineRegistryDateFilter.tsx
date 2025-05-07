@@ -38,9 +38,8 @@ export default function VaccineRegistryDateFilter({
     if (!dateStr) return "";
     const date = new Date(dateStr);
     if (isNaN(date.getTime())) return "";
-    date.setHours(0, 0, 0, 0); 
     date.setDate(date.getDate() + 1); 
-    console.log(date.toISOString())
+    date.setHours(23, 59, 59, 999); 
     return date.toISOString();
   };
   
@@ -52,7 +51,6 @@ export default function VaccineRegistryDateFilter({
             const date = new Date(debouncedFrom);
             date.setDate(date.getDate() + 1);
             date.setHours(0, 0, 0, 0); 
-            console.log(date.toISOString()); 
             return date.toISOString();
           })()
         : undefined;
@@ -128,7 +126,7 @@ export default function VaccineRegistryDateFilter({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor={`${toKey}`}>Hasta ({label})</Label>
+        <Label htmlFor={`${toKey}`}>Hasta ({label}) </Label>
         <div className="relative">
           <input
             id={`${toKey}`}
