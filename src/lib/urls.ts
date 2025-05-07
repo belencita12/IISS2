@@ -27,3 +27,4 @@ export const INVOICE_DETAIL_API = `${BASE_API_URL}/invoice-detail`;
 export const PAYMENT_METHOD_API = `${BASE_API_URL}/payment-method`;
 export const APPOINTMENT_API = `${BASE_API_URL}/appointment`;
 export const SERVICE_TYPE = `${BASE_API_URL}/service-type`;
+export const RECEIPT_API = `${BASE_API_URL}/receipt`;
