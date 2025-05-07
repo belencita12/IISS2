@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "./Header";
 import { PetsList } from "./PetLists";
 import { Appointments } from "./Appointments";
@@ -15,13 +15,25 @@ interface ProfileTabsProps {
 }
 
 export default function ProfileTabs({
-  fullName,
+  fullName: initialFullName,
   token,
   clientId,
   ruc,
-  avatarSrc,
+  avatarSrc: initialAvatarSrc,
 }: ProfileTabsProps) {
   const [selected, setSelected] = useState<"datos" | "mascotas" | "citas">("mascotas");
+  const [userData, setUserData] = useState({
+    fullName: initialFullName,
+    avatarSrc: initialAvatarSrc,
+    ruc: ruc
+  });
+
+  const updateUserData = (newData: { fullName?: string; avatarSrc?: string; ruc?: string | null }) => {
+    setUserData(prev => ({
+      ...prev,
+      ...newData
+    }));
+  };
 
   const tabClasses = (tab: string) =>
     `flex-1 text-center py-1 px-3 text-sm font-medium transition-colors cursor-pointer flex items-center justify-center gap-1.5
@@ -34,7 +46,11 @@ export default function ProfileTabs({
   return (
     <div>
       <div className="bg-gradient-to-r from-violet-300 via-violet-500 to-fuchsia-300 pt-2 pb-0">
-        <Header fullName={fullName} token={token} avatarSrc={avatarSrc} />
+        <Header 
+          fullName={userData.fullName} 
+          token={token} 
+          avatarSrc={userData.avatarSrc} 
+        />
         <div className="flex w-full mt-2 border-b border-gray-300/30">
           <div
             onClick={() => setSelected("datos")}
@@ -65,7 +81,8 @@ export default function ProfileTabs({
         {selected === "datos" && (
           <ProfileUser 
             clientId={clientId} 
-            token={token} 
+            token={token}
+            updateUserData={updateUserData}
           />
         )}
 
@@ -74,7 +91,7 @@ export default function ProfileTabs({
         )}
 
         {selected === "citas" && (
-          <Appointments clientId={clientId} token={token} ruc={ruc} />
+          <Appointments clientId={clientId} token={token} ruc={userData.ruc} />
         )}
       </div>
     </div>

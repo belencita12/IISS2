@@ -6,9 +6,10 @@ import { useProfileUser } from "@/hooks/users/useProfileUser";
 interface ProfileUserProps {
   clientId: number;
   token: string;
+  updateUserData?: (data: { fullName?: string; avatarSrc?: string; ruc?: string | null }) => void;
 }
 
-export function ProfileUser({ clientId, token }: ProfileUserProps) {
+export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProps) {
   const {
     userData,
     editData,
@@ -21,7 +22,7 @@ export function ProfileUser({ clientId, token }: ProfileUserProps) {
     handleEdit,
     handleCancel,
     handleSave,
-  } = useProfileUser(clientId, token);
+  } = useProfileUser(clientId, token, updateUserData);
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
@@ -118,4 +119,4 @@ function Field({ label, value }: { label: string; value: string }) {
       <p className="font-medium">{value}</p>
     </div>
   );
-}  
+}

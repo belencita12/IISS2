@@ -5,7 +5,11 @@ import { toast } from "@/lib/toast";
 import { AUTH_API, CLIENT_API } from "@/lib/urls";
 import { IUserProfile, FormClient } from "@/lib/client/IUserProfile";
 
-export function useProfileUser(clientId: number, token: string) {
+export function useProfileUser(
+  clientId: number, 
+  token: string,
+  updateUserData?: (data: { fullName?: string; avatarSrc?: string; ruc?: string | null }) => void
+) {
   const [userData, setUserData] = useState<IUserProfile | null>(null);
   const [editData, setEditData] = useState<FormClient>({
     fullName: "",
@@ -83,11 +87,20 @@ export function useProfileUser(clientId: number, token: string) {
     const response = await updateUser(formData);
     if (response.ok && response.data) {
       setUserData(response.data);
+      
+      // Actualizar datos en el componente padre
+      if (updateUserData) {
+        updateUserData({
+          fullName: response.data.fullName,
+          avatarSrc: response.data.image?.originalUrl || "/blank-profile-picture-973460_1280.png",
+          ruc: response.data.ruc || null
+        });
+      }
+      
       toast("success", "Datos actualizados correctamente");
       setIsEditing(false);
     }
   };
-  
 
   return {
     userData,
