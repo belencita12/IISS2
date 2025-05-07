@@ -4,7 +4,7 @@ import { PetData } from "@/lib/pets/IPet";
 import { PaginationInfo } from "@/components/global/GenericTable";
 import { getAllVaccineRegistries } from "@/lib/vaccine-registry/getAllVaccinesRegistry";
 import { getPetById } from "@/lib/pets/getPetById";
-import { getClientById } from "@/lib/client/getClientById"; // ✅ Import nuevo
+import { getClientById } from "@/lib/client/getClientById";
 import { toast } from "@/lib/toast";
 
 export interface VaccineRegistryFilters {
@@ -30,26 +30,26 @@ export const useVaccineRegistryList = (token: string) => {
   const [loading, setLoading] = useState(false);
 
   const fetchData = useCallback(
-    async (page = 1, activeFilters: VaccineRegistryFilters = filters) => {
+    async (page: number, activeFilters: VaccineRegistryFilters) => {
       setLoading(true);
       try {
-        const result = await getAllVaccineRegistries(token, page, pagination.pageSize, activeFilters as Record<string, string>);
+        const result = await getAllVaccineRegistries(
+          token,
+          page,
+          pagination.pageSize,
+          activeFilters as Record<string, string>
+        );
 
         const enriched = await Promise.all(
           result.data.map(async (record) => {
             const pet = await getPetById(Number(record.petId), token);
             const clientId = pet?.owner?.id;
-
-            let clientName = "—";
-            if (clientId) {
-              const client = await getClientById(clientId, token);
-              clientName = client?.fullName ?? "—";
-            }
+            const client = clientId ? await getClientById(clientId, token) : null;
 
             return {
               ...record,
               pet: pet ?? undefined,
-              clientName,
+              clientName: client?.fullName ?? "—",
             };
           })
         );
@@ -67,7 +67,7 @@ export const useVaccineRegistryList = (token: string) => {
         setLoading(false);
       }
     },
-    [token, pagination.pageSize, filters]
+    [token, pagination.pageSize]
   );
 
   useEffect(() => {
@@ -82,7 +82,7 @@ export const useVaccineRegistryList = (token: string) => {
   };
 
   const handlePageChange = (page: number) => {
-    fetchData(page);
+    fetchData(page, filters);
   };
 
   return {
