@@ -10,9 +10,9 @@ import GenericTable, {
 } from "@/components/global/GenericTable";
 import { useVaccineRegistryList } from "@/hooks/vaccine-registry/useVaccineRegistryList";
 import { VaccineRecord } from "@/lib/vaccine-registry/IVaccineRegistry";
-import { PetData } from "@/lib/pets/IPet";
 import VaccineRegistryDateFilter from "./filters/VaccineRegistryDateFilter";
 import GenericPagination from "@/components/global/GenericPagination";
+import { getPetById } from "@/lib/pets/getPetById";
 
 interface Props {
   token: string;
@@ -29,13 +29,15 @@ export default function VaccineRegistryList({ token }: Props) {
     handlePageChange,
     filters,
     setFilters,
+    initialized,
   } = useVaccineRegistryList(token);
 
-  const columns: Column<
-    VaccineRecord & { pet?: PetData; clientName?: string }
-  >[] = [
+  const columns: Column<VaccineRecord>[] = [
+    {
+      header: "Cliente",
+      accessor: (item) => item.pet?.client?.user?.fullName ?? "—",
+    },
     { header: "Mascota", accessor: (item) => item.pet?.name ?? "—" },
-    { header: "Cliente", accessor: (item) => item.clientName ?? "—" },
     { header: "Vacuna", accessor: (item) => item.vaccine?.name ?? "—" },
     {
       header: "Aplicación",
@@ -53,7 +55,7 @@ export default function VaccineRegistryList({ token }: Props) {
     },
   ];
 
-  const actions: TableAction<VaccineRecord & { pet?: PetData }>[] = [
+  const actions: TableAction<VaccineRecord>[] = [
     {
       icon: <Eye className="w-4 h-4" />,
       label: "Ver",
@@ -63,12 +65,18 @@ export default function VaccineRegistryList({ token }: Props) {
     {
       icon: <Pencil className="w-4 h-4" />,
       label: "Editar",
-      onClick: (r) => {
-        if (r.pet?.id && r.pet.owner?.id) {
-          router.push(
-            `/dashboard/clients/${r.pet.owner.id}/pet/${r.pet.id}/${r.id}`
-          );
-        } else {
+      //espero no me odien por esto xd 
+      onClick: async (r) => {
+        try {
+          const pet = await getPetById(Number(r.petId), token);
+          const clientId = pet?.owner?.id;
+      
+          if (clientId && pet.id) {
+            router.push(`/dashboard/clients/${clientId}/pet/${pet.id}/${r.id}`);
+          } else {
+            router.push(`/dashboard/settings/vaccine-registry/${r.id}/edit`);
+          }
+        } catch {
           router.push(`/dashboard/settings/vaccine-registry/${r.id}/edit`);
         }
       },
@@ -98,8 +106,8 @@ export default function VaccineRegistryList({ token }: Props) {
 
         <VaccineRegistryDateFilter
           label="Aplicación"
-          fromKey="fromApplicationDate" 
-          toKey="toApplicationDate" 
+          fromKey="fromApplicationDate"
+          toKey="toApplicationDate"
           filters={filters}
           setFilters={setFilters}
         />
@@ -113,29 +121,35 @@ export default function VaccineRegistryList({ token }: Props) {
         />
       </div>
 
-      <GenericTable
-        data={registries}
-        columns={columns}
-        actions={actions}
-        pagination={pagination}
-        onPageChange={handlePageChange}
-        isLoading={loading}
-        emptyMessage="No se encontraron registros"
-      />
+      {loading && !initialized ? (
+        <p className="text-gray-500 text-center py-8">Cargando registros...</p>
+      ) : (
+        <GenericTable
+          data={registries}
+          columns={columns}
+          actions={actions}
+          pagination={pagination}
+          onPageChange={handlePageChange}
+          isLoading={loading}
+          emptyMessage="No se encontraron registros"
+        />
+      )}
 
-      <GenericPagination
-        currentPage={pagination.currentPage}
-        totalPages={pagination.totalPages}
-        handlePreviousPage={() =>
-          pagination.currentPage > 1 &&
-          handlePageChange(pagination.currentPage - 1)
-        }
-        handleNextPage={() =>
-          pagination.currentPage < pagination.totalPages &&
-          handlePageChange(pagination.currentPage + 1)
-        }
-        handlePageChange={handlePageChange}
-      />
+      {!loading && initialized && (
+        <GenericPagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          handlePreviousPage={() =>
+            pagination.currentPage > 1 &&
+            handlePageChange(pagination.currentPage - 1)
+          }
+          handleNextPage={() =>
+            pagination.currentPage < pagination.totalPages &&
+            handlePageChange(pagination.currentPage + 1)
+          }
+          handlePageChange={handlePageChange}
+        />
+      )}
     </div>
   );
 }

@@ -1,10 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { VaccineRecord } from "@/lib/vaccine-registry/IVaccineRegistry";
-import { PetData } from "@/lib/pets/IPet";
 import { PaginationInfo } from "@/components/global/GenericTable";
 import { getAllVaccineRegistries } from "@/lib/vaccine-registry/getAllVaccinesRegistry";
-import { getPetById } from "@/lib/pets/getPetById";
-import { getClientById } from "@/lib/client/getClientById";
 import { toast } from "@/lib/toast";
 
 export interface VaccineRegistryFilters {
@@ -19,7 +16,7 @@ export interface VaccineRegistryFilters {
 }
 
 export const useVaccineRegistryList = (token: string) => {
-  const [registries, setRegistries] = useState<(VaccineRecord & { pet?: PetData; clientName?: string })[]>([]);
+  const [registries, setRegistries] = useState<VaccineRecord[]>([]);
   const [pagination, setPagination] = useState<PaginationInfo>({
     currentPage: 1,
     totalPages: 1,
@@ -28,6 +25,7 @@ export const useVaccineRegistryList = (token: string) => {
   });
   const [filters, setFilters] = useState<VaccineRegistryFilters>({});
   const [loading, setLoading] = useState(false);
+  const [initialized, setInitialized] = useState(false);
 
   const fetchData = useCallback(
     async (page: number, activeFilters: VaccineRegistryFilters) => {
@@ -40,27 +38,14 @@ export const useVaccineRegistryList = (token: string) => {
           activeFilters as Record<string, string>
         );
 
-        const enriched = await Promise.all(
-          result.data.map(async (record) => {
-            const pet = await getPetById(Number(record.petId), token);
-            const clientId = pet?.owner?.id;
-            const client = clientId ? await getClientById(clientId, token) : null;
-
-            return {
-              ...record,
-              pet: pet ?? undefined,
-              clientName: client?.fullName ?? "—",
-            };
-          })
-        );
-
-        setRegistries(enriched);
-        setPagination({
+        setRegistries(result.data);
+       setPagination({
           currentPage: result.currentPage || 1,
           totalPages: result.totalPages || 1,
           totalItems: result.total || 0,
           pageSize: result.size || 10,
         });
+        setInitialized(true);
       } catch {
         toast("error", "Error al cargar registros de vacunación");
       } finally {
@@ -93,5 +78,6 @@ export const useVaccineRegistryList = (token: string) => {
     setFilters,
     handleSearch,
     handlePageChange,
+    initialized,
   };
 };
