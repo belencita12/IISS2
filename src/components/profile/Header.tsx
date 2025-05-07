@@ -12,8 +12,12 @@ interface HeaderProps {
 export const Header = ({ fullName, avatarSrc }: HeaderProps) => {
   return (
     <div className="bg-gradient-to-r from-violet-300 via-violet-500 to-fuchsia-300 py-3 px-4 flex items-center text-white">
-      <Avatar className="w-25 h-20 ml-20">
-        <AvatarImage src={avatarSrc} alt={fullName} />
+      <Avatar className="w-16 h-16 ml-20 rounded-full overflow-hidden">
+        <AvatarImage
+          src={avatarSrc}
+          alt={fullName}
+          className="object-cover w-full h-full"
+        />
       </Avatar>
       <div className="ml-3">
         <h2 className="text-xl font-bold">{fullName}</h2>

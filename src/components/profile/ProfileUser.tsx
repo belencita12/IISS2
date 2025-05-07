@@ -1,122 +1,270 @@
-"use client";
-import Image from "next/image";
-import { useState } from "react";
-import { useProfileUser } from "@/hooks/users/useProfileUser";
+"use client"
+
+import type React from "react"
+
+import Image from "next/image"
+import { useProfileUser } from "@/hooks/users/useProfileUser"
+import { Loader2, Camera, User, Mail, Phone, MapPin, Building } from "lucide-react"
 
 interface ProfileUserProps {
-  clientId: number;
-  token: string;
-  updateUserData?: (data: { fullName?: string; avatarSrc?: string; ruc?: string | null }) => void;
+  clientId: number
+  token: string
+  updateUserData?: (data: { fullName?: string; avatarSrc?: string; ruc?: string | null }) => void
 }
 
 export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProps) {
   const {
     userData,
-    editData,
     isEditing,
     loading,
     error,
     updateLoading,
-    handleChange,
+    profileFile,
+    previewImage,
+    register,
+    errors,
+    handleSubmit,
     handleFileChange,
     handleEdit,
     handleCancel,
-    handleSave,
-  } = useProfileUser(clientId, token, updateUserData);
+  } = useProfileUser(clientId, token, updateUserData)
 
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  if (loading) {
+    return (
+      <div className="py-12 flex flex-col items-center justify-center text-violet-700">
+        <Loader2 className="h-8 w-8 animate-spin mb-2" />
+        <p className="text-sm font-medium">Cargando datos...</p>
+      </div>
+    )
+  }
 
-  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleFileChange(e);
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setPreviewImage(event.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setPreviewImage(null);
-    }
-  };
+  if (error) {
+    return (
+      <div className="py-12 text-center">
+        <div className="bg-red-50 text-red-600 px-4 py-3 rounded-lg inline-block">
+          <p className="font-medium">Error: {error.message}</p>
+        </div>
+      </div>
+    )
+  }
 
-  if (loading) return <div className="py-8 text-center">Cargando datos...</div>;
-  if (error) return <div className="py-8 text-center text-red-500">{error.message}</div>;
-  if (!userData) return <div className="py-8 text-center">No se encontraron datos del usuario</div>;
+  if (!userData) {
+    return (
+      <div className="py-12 text-center">
+        <div className="bg-amber-50 text-amber-600 px-4 py-3 rounded-lg inline-block">
+          <p className="font-medium">No se encontraron datos del usuario</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className="py-4">
-      <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
-        <div className="mb-6 flex justify-center">
-          <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-violet-300">
-            <Image
-              src={
-                previewImage ||
-                userData.image?.originalUrl ||
-                "/blank-profile-picture-973460_1280.png"
-              }
-              alt="Foto de perfil"
-              width={96}
-              height={96}
-              className="rounded-full object-cover"
-            />
+    <div className="py-6 px-4">
+      <div className="max-w-md mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
+        {/* Header with gradient background */}
+        <div className="bg-gradient-to-r from-violet-500 to-purple-600 h-24 relative">
+          {/* Profile image */}
+          <div className="absolute left-1/2 transform -translate-x-1/2 -bottom-16">
+            <div className="relative">
+              <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-md bg-white">
+                <Image
+                  src={
+                    previewImage ||
+                    userData.image?.originalUrl ||
+                    "/blank-profile-picture-973460_1280.png" ||
+                    "/placeholder.svg"
+                  }
+                  alt="Foto de perfil"
+                  width={128}
+                  height={128}
+                  className="rounded-full object-cover w-full h-full"
+                />
+              </div>
+              {isEditing && (
+                <label className="absolute bottom-0 right-0 bg-violet-600 text-white p-2 rounded-full cursor-pointer shadow-md hover:bg-violet-700 transition-colors duration-200">
+                  <Camera size={18} />
+                  <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                </label>
+              )}
+            </div>
           </div>
         </div>
 
-        <div className="space-y-4">
+        {/* Content */}
+        <div className="pt-20 pb-6 px-6">
           {isEditing ? (
-            <>
-              <input type="file" accept="image/*" onChange={onFileChange} />
-              <Input label="Nombre completo" name="fullName" value={editData.fullName} onChange={handleChange} />
-              <Input label="Email" name="email" type="email" value={editData.email} onChange={handleChange} />
-              <Input label="Teléfono" name="phoneNumber" value={editData.phoneNumber} onChange={handleChange} />
-              <Input label="Dirección" name="adress" value={editData.adress} onChange={handleChange} />
-              <Input label="RUC" name="ruc" value={editData.ruc} disabled />
-            </>
-          ) : (
-            <>
-              <Field label="Nombre completo" value={userData.fullName} />
-              <Field label="Email" value={userData.email} />
-              <Field label="Teléfono" value={userData.phoneNumber || "No especificado"} />
-              <Field label="Dirección" value={userData.adress || "No especificada"} />
-              <Field label="RUC" value={userData.ruc || "No especificado"} />
-            </>
-          )}
-        </div>
+            <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+              <div className="space-y-4">
+                <FormField
+                  label="Nombre completo"
+                  icon={<User size={18} className="text-violet-500" />}
+                  error={errors.fullName?.message}
+                >
+                  <input
+                    {...register("fullName")}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-300 transition-all duration-200"
+                    placeholder="Tu nombre completo"
+                  />
+                </FormField>
 
-        <div className="mt-6 flex justify-end space-x-2">
-          {isEditing ? (
-            <>
-              <button onClick={handleCancel} className="px-4 py-2 rounded border" disabled={updateLoading}>
-                Cancelar
-              </button>
-              <button onClick={handleSave} className="px-4 py-2 rounded bg-violet-600 text-white" disabled={updateLoading}>
-                {updateLoading ? "Guardando..." : "Guardar"}
-              </button>
-            </>
+                <FormField
+                  label="Email"
+                  icon={<Mail size={18} className="text-violet-500" />}
+                  error={errors.email?.message}
+                >
+                  <input
+                    {...register("email")}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-300 transition-all duration-200"
+                    placeholder="Tu email"
+                  />
+                </FormField>
+
+                <FormField
+                  label="Teléfono"
+                  icon={<Phone size={18} className="text-violet-500" />}
+                  error={errors.phoneNumber?.message}
+                >
+                  <input
+                    {...register("phoneNumber")}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-300 transition-all duration-200"
+                    placeholder="Tu número de teléfono"
+                  />
+                </FormField>
+
+                <FormField
+                  label="Dirección"
+                  icon={<MapPin size={18} className="text-violet-500" />}
+                  error={errors.adress?.message}
+                >
+                  <input
+                    {...register("adress")}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-300 transition-all duration-200"
+                    placeholder="Tu dirección"
+                  />
+                </FormField>
+
+                <FormField
+                  label="RUC"
+                  icon={<Building size={18} className="text-violet-500" />}
+                  error={errors.ruc?.message}
+                >
+                  <input
+                    {...register("ruc")}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 bg-gray-50 cursor-not-allowed"
+                    disabled
+                  />
+                </FormField>
+              </div>
+
+              <div className="pt-4 flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onClick={handleCancel}
+                  className="px-4 py-2.5 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                  disabled={updateLoading}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 rounded-lg bg-violet-600 text-white font-medium hover:bg-violet-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed flex items-center"
+                  disabled={updateLoading}
+                >
+                  {updateLoading ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin mr-2" />
+                      Guardando...
+                    </>
+                  ) : (
+                    "Guardar cambios"
+                  )}
+                </button>
+              </div>
+            </form>
           ) : (
-            <button onClick={handleEdit} className="px-4 py-2 rounded bg-violet-600 text-white">Editar</button>
+            <>
+              <div className="text-center mb-6">
+                <h2 className="text-xl font-bold text-gray-800">{userData.fullName}</h2>
+                <p className="text-violet-600">{userData.email}</p>
+              </div>
+
+              <div className="space-y-4 bg-gray-50 rounded-xl p-5">
+                <InfoField
+                  icon={<Phone size={18} className="text-violet-500" />}
+                  label="Teléfono"
+                  value={userData.phoneNumber || "No especificado"}
+                />
+                <div className="border-t border-gray-200 pt-4"></div>
+                <InfoField
+                  icon={<MapPin size={18} className="text-violet-500" />}
+                  label="Dirección"
+                  value={userData.adress || "No especificada"}
+                />
+                <div className="border-t border-gray-200 pt-4"></div>
+                <InfoField
+                  icon={<Building size={18} className="text-violet-500" />}
+                  label="RUC"
+                  value={userData.ruc || "No especificado"}
+                />
+              </div>
+
+              <div className="mt-6 flex justify-center">
+                <button
+                  onClick={handleEdit}
+                  className="px-5 py-2.5 rounded-lg bg-violet-600 text-white font-medium hover:bg-violet-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-2"
+                >
+                  Editar perfil
+                </button>
+              </div>
+            </>
           )}
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-function Input({ label, ...props }: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) {
+function FormField({
+  label,
+  icon,
+  error,
+  children,
+}: {
+  label: string
+  icon: React.ReactNode
+  error?: string
+  children: React.ReactNode
+}) {
   return (
     <div>
-      <p className="text-sm text-gray-500">{label}</p>
-      <input {...props} className="w-full border rounded px-2 py-1" />
+      <label className="block mb-1.5">
+        <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+          {icon}
+          {label}
+        </div>
+      </label>
+      {children}
+      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
     </div>
-  );
+  )
 }
 
-function Field({ label, value }: { label: string; value: string }) {
+function InfoField({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode
+  label: string
+  value: string
+}) {
   return (
-    <div>
-      <p className="text-sm text-gray-500">{label}</p>
-      <p className="font-medium">{value}</p>
+    <div className="flex items-start">
+      <div className="mr-3 mt-0.5">{icon}</div>
+      <div>
+        <p className="text-sm text-gray-500 mb-0.5">{label}</p>
+        <p className="font-medium text-gray-800">{value}</p>
+      </div>
     </div>
-  );
+  )
 }
