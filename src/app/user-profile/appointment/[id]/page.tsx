@@ -1,6 +1,7 @@
 import AppointmentDetails from "@/components/appointment/AppointmentDetails";
 import authOptions from "@/lib/auth/options";
 import { getServerSession } from "next-auth/next";
+import { redirect, notFound } from "next/navigation";
 
 interface PageProps {
     params: Promise<{id: string;}>;
@@ -9,13 +10,7 @@ interface PageProps {
 
 export default async function Page({ params, }: { params: Promise<{id: string}>}) {
     const session = await getServerSession(authOptions);
-    if (!session) {
-        return (
-            <div className="flex justify-center items-center min-h-[200px]">
-                <p className="text-red-500">No autorizado</p>
-            </div>
-        );
-    }
+    if (!session) redirect("/login");
     
     const { id } = await params;
 
