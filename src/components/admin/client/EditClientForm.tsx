@@ -14,6 +14,10 @@ import { FormClient } from "@/lib/client/IUserProfile";
 import { phoneNumber, ruc } from "@/lib/schemas"; 
 import { notFound } from "next/navigation";
 import { getClientById } from "@/lib/client/getClientById";
+import FormImgUploader from "@/components/global/FormImgUploader";
+
+const MAX_FILE_SIZE = 1024 * 1024; // 1MB
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 const clientFormSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
@@ -25,6 +29,7 @@ const clientFormSchema = z.object({
   adress: z.string().optional(),
   phoneNumber: phoneNumber(),
   ruc: ruc(),
+  profileImg: z.any().optional(),
 });
 
 type ClientFormValues = z.infer<typeof clientFormSchema>;
@@ -36,6 +41,7 @@ interface EditClientFormProps {
 
 export default function EditClientForm({ token, clientId }: EditClientFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const router = useRouter(); 
 
   const {
@@ -43,9 +49,12 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
     handleSubmit,
     formState: { errors },
     setValue,
+    watch,
   } = useForm<ClientFormValues>({
     resolver: zodResolver(clientFormSchema), 
   });
+
+  const profileImg = watch("profileImg");
 
   useEffect(() => {
     const fetchClientData = async () => {
@@ -55,6 +64,8 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
         if (!clientData) {
           notFound();
         }
+        
+        //console.log("Datos del cliente cargados:", clientData);
         
         // Dividir el nombre completo en nombre y apellido
         const [name, ...lastnameParts] = clientData.fullName.split(' ');
@@ -66,7 +77,15 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
         setValue('adress', clientData.adress);
         setValue('phoneNumber', clientData.phoneNumber);
         setValue('ruc', clientData.ruc);
+
+        // Establecer la imagen de perfil actual si existe
+        if (clientData.image?.originalUrl) {
+         // console.log("Imagen actual del cliente:", clientData.image.originalUrl);
+          setPreviewImage(clientData.image.originalUrl);
+          // No establecemos el valor de profileImg aquí para evitar validación
+        }
       } catch (error) {
+        //console.error("Error al cargar datos del cliente:", error);
         toast("error", "Error al cargar los datos del cliente");
         router.push("/dashboard/clients");
       }
@@ -76,18 +95,25 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
   }, [clientId, token, setValue, router]);
 
   const onSubmit = async (data: ClientFormValues) => {
-    const fullName = `${data.name.trim()} ${data.lastname.trim()}`;
-    const clientData: FormClient = {
-      fullName,
-      email: data.email,
-      adress: data.adress,
-      phoneNumber: data.phoneNumber,
-      ruc: data.ruc,
-    };
-  
-    setIsSubmitting(true); 
     try {
-      const response = await updateClient(clientId, clientData, token);
+      const fullName = `${data.name.trim()} ${data.lastname.trim()}`;
+      
+      const formData = new FormData();
+      formData.append("fullName", fullName);
+      formData.append("email", data.email);
+      if (data.adress) formData.append("adress", data.adress);
+      formData.append("phoneNumber", data.phoneNumber);
+      formData.append("ruc", data.ruc);
+      
+      // Solo agregar la imagen si se ha seleccionado una nueva
+      if (data.profileImg instanceof File) {
+        //console.log("Imagen seleccionada:", data.profileImg);
+        formData.append("profileImg", data.profileImg);
+      }
+    
+      setIsSubmitting(true); 
+      
+      const response = await updateClient(clientId, formData, token);
       
       if ('error' in response) {
         toast("error", response.error || "No se pudo guardar los cambios del cliente");
@@ -96,6 +122,7 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
         router.push("/dashboard/clients"); 
       }
     } catch (error) {
+      console.error("Error al actualizar:", error);
       toast("error", "Hubo un error al actualizar el cliente");
     } finally {
       setIsSubmitting(false);
@@ -106,6 +133,30 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
     <div className="max-w-5xl mx-auto p-8">
       <h1 className="text-3xl font-bold mb-6">Editar Cliente</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
+        <div className="flex flex-col items-center space-y-4">
+          <FormImgUploader
+            onChange={(file) => {
+              if (file) {
+                try {
+                  setValue("profileImg", file, { shouldValidate: false });
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    setPreviewImage(reader.result as string);
+                  };
+                  reader.readAsDataURL(file);
+                } catch (error) {
+                  console.error("Error al procesar la imagen:", error);
+                  toast("error", "Error al procesar la imagen");
+                }
+              }
+            }}
+            error={errors.profileImg?.message?.toString()}
+            prevClassName="w-48 h-48 rounded-full object-cover"
+            prevWidth={192}
+            defaultImage={previewImage}
+          />
+        </div>
+
         <div>
           <Label>Nombre</Label>
           <Input {...register("name")} placeholder="Ingrese el nombre del cliente" />
@@ -136,6 +187,7 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
           <Input {...register("ruc")} placeholder="Ingrese el RUC del cliente" />
           {errors.ruc && <p className="text-red-500">{errors.ruc.message}</p>}
         </div>
+        
         <div className="flex gap-4">
           <Button type="button" variant="outline" onClick={() => router.push("/dashboard/clients")}>
             Cancelar
