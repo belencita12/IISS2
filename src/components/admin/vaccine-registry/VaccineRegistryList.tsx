@@ -30,6 +30,7 @@ export default function VaccineRegistryList({ token }: Props) {
     filters,
     setFilters,
     initialized,
+    pendingUpdate,
   } = useVaccineRegistryList(token);
 
   const columns: Column<VaccineRecord>[] = [
@@ -65,12 +66,12 @@ export default function VaccineRegistryList({ token }: Props) {
     {
       icon: <Pencil className="w-4 h-4" />,
       label: "Editar",
-      //espero no me odien por esto xd 
+      //espero no me odien por esto xd
       onClick: async (r) => {
         try {
           const pet = await getPetById(Number(r.petId), token);
           const clientId = pet?.owner?.id;
-      
+
           if (clientId && pet.id) {
             router.push(`/dashboard/clients/${clientId}/pet/${pet.id}/${r.id}`);
           } else {
@@ -121,7 +122,7 @@ export default function VaccineRegistryList({ token }: Props) {
         />
       </div>
 
-      {loading && !initialized ? (
+      {(loading || pendingUpdate) && !initialized ? (
         <p className="text-gray-500 text-center py-8">Cargando registros...</p>
       ) : (
         <GenericTable

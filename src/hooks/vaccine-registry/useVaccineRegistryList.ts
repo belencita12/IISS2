@@ -26,6 +26,8 @@ export const useVaccineRegistryList = (token: string) => {
   const [filters, setFilters] = useState<VaccineRegistryFilters>({});
   const [loading, setLoading] = useState(false);
   const [initialized, setInitialized] = useState(false);
+  const [pendingUpdate, setPendingUpdate] = useState(false);
+
 
   const fetchData = useCallback(
     async (page: number, activeFilters: VaccineRegistryFilters) => {
@@ -56,8 +58,12 @@ export const useVaccineRegistryList = (token: string) => {
   );
 
   useEffect(() => {
-    fetchData(1, filters);
+    setPendingUpdate(true);
+    fetchData(1, filters).then(() => {
+      setPendingUpdate(false);
+    });
   }, [fetchData, filters]);
+  
 
   const handleSearch = (query: string) => {
     setFilters((prev) => ({
@@ -79,5 +85,6 @@ export const useVaccineRegistryList = (token: string) => {
     handleSearch,
     handlePageChange,
     initialized,
+    pendingUpdate
   };
 };

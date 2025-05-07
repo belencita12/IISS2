@@ -38,14 +38,23 @@ export default function VaccineRegistryDateFilter({
     if (!dateStr) return "";
     const date = new Date(dateStr);
     if (isNaN(date.getTime())) return "";
-    date.setDate(date.getDate() + 1);
+    date.setHours(0, 0, 0, 0); 
+    date.setDate(date.getDate() + 1); 
+    console.log(date.toISOString())
     return date.toISOString();
   };
+  
 
   useEffect(() => {
     const adjustedFrom =
       debouncedFrom && !isNaN(new Date(debouncedFrom).getTime())
-        ? new Date(debouncedFrom).toISOString()
+        ? (() => {
+            const date = new Date(debouncedFrom);
+            date.setDate(date.getDate() + 1);
+            date.setHours(0, 0, 0, 0); 
+            console.log(date.toISOString()); 
+            return date.toISOString();
+          })()
         : undefined;
 
     const adjustedTo =
