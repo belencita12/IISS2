@@ -7,8 +7,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useFetch } from "@/hooks/api/useFetch";
 import { toast } from "@/lib/toast";
 import { AUTH_API, CLIENT_API } from "@/lib/urls";
-import { IUserProfile, FormClient } from "@/lib/client/IUserProfile";
+import { IUserProfile } from "@/lib/client/IUserProfile";
 import { phoneNumber, ruc } from "@/lib/schemas";
+
+const MAX_FILE_SIZE = 1024 * 1024; 
+const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 
 // Schema de validación para el formulario de perfil
 const profileFormSchema = z.object({
@@ -20,6 +23,15 @@ const profileFormSchema = z.object({
   adress: z.string().optional(),
   phoneNumber: phoneNumber(), // Reutilizando la validación del teléfono
   ruc: ruc().optional(), // Reutilizando la validación del RUC, pero opcional
+  profileImg: z
+    .instanceof(File)
+    .refine((file) => ALLOWED_IMAGE_TYPES.includes(file.type), {
+      message: "Solo se permiten imágenes en formato JPG, PNG, WEBP o GIF",
+    })
+    .refine((file) => file.size <= MAX_FILE_SIZE, {
+      message: "La imagen no debe superar 1MB",
+    })
+    .optional(),
 });
 
 export type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -33,6 +45,7 @@ export function useProfileUser(
   const [profileFile, setProfileFile] = useState<File | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
   
   // Configuración del formulario con React Hook Form + Zod
   const {
@@ -49,6 +62,7 @@ export function useProfileUser(
       adress: "",
       phoneNumber: "",
       ruc: "",
+      profileImg: undefined,
     },
   });
 
@@ -77,10 +91,34 @@ export function useProfileUser(
     }
   }, [data, setValue]);
 
+  const validateImage = (file: File): string | null => {
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+      return "Solo se permiten imágenes en formato JPG, PNG, WEBP o GIF";
+    }
+    
+    if (file.size > MAX_FILE_SIZE) {
+      return "La imagen no debe superar 1MB";
+    }
+    
+    return null;
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setImageError(null);
     const file = e.target.files?.[0];
+    
     if (file) {
+      // Validar la imagen
+      const validationError = validateImage(file);
+      
+      if (validationError) {
+        setImageError(validationError);
+        e.target.value = '';
+        return;
+      }
+      
       setProfileFile(file);
+      setValue("profileImg", file);
       
       // Crear preview de la imagen
       const reader = new FileReader();
@@ -91,6 +129,7 @@ export function useProfileUser(
     } else {
       setProfileFile(null);
       setPreviewImage(null);
+      setValue("profileImg", undefined);
     }
   };
 
@@ -105,10 +144,12 @@ export function useProfileUser(
         adress: userData.adress || "",
         phoneNumber: userData.phoneNumber || "",
         ruc: userData.ruc || "",
+        profileImg: undefined,
       });
     }
     setProfileFile(null);
     setPreviewImage(null);
+    setImageError(null);
     setIsEditing(false);
   };
 
@@ -155,6 +196,7 @@ export function useProfileUser(
     updateLoading,
     profileFile,
     previewImage,
+    imageError,
     register,
     errors,
     isDirty,

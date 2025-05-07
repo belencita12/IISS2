@@ -15,7 +15,20 @@ interface ProfileUserProps {
 }
 
 export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProps) {
-  const { userData, isEditing, loading, error, updateLoading, previewImage, register, errors, handleSubmit, handleFileChange, handleEdit, handleCancel,
+  const { 
+    userData, 
+    isEditing, 
+    loading, 
+    error, 
+    updateLoading, 
+    previewImage, 
+    imageError,
+    register, 
+    errors, 
+    handleSubmit, 
+    handleFileChange, 
+    handleEdit, 
+    handleCancel,
   } = useProfileUser(clientId, token, updateUserData)
 
   if (loading) {
@@ -63,10 +76,22 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
                 />
               </div>
               {isEditing && (
-                <label className="absolute bottom-0 right-0 bg-violet-600 text-white p-2 rounded-full cursor-pointer shadow-md hover:bg-violet-700 transition-colors duration-200">
-                  <Camera size={18} />
-                  <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
-                </label>
+                <div className="relative">
+                  <label className="absolute bottom-0 right-0 bg-violet-600 text-white p-2 rounded-full cursor-pointer shadow-md hover:bg-violet-700 transition-colors duration-200">
+                    <Camera size={18} />
+                    <input 
+                      type="file" 
+                      accept="image/jpeg,image/png,image/webp,image/gif" 
+                      onChange={handleFileChange} 
+                      className="hidden" 
+                    />
+                  </label>
+                  {imageError && (
+                    <div className="absolute -right-32 bottom-2 bg-red-100 text-red-600 text-xs p-2 rounded-lg shadow-md w-48">
+                      {imageError}
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           </div>
