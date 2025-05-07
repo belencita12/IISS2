@@ -40,6 +40,22 @@ const aggregateByMonth = <T>(
     .sort((a, b) => a.dateRaw.getTime() - b.dateRaw.getTime()); // ← aquí ordenamos por fecha
 };
 
+function groupTopNWithOthers(
+  data: { label: string; value: number }[],
+  topN = 6
+): { label: string; value: number }[] {
+  const sorted = [...data].sort((a, b) => b.value - a.value);
+  const top = sorted.slice(0, topN);
+  const others = sorted.slice(topN);
+
+  const othersTotal = others.reduce((sum, item) => sum + item.value, 0);
+
+  return others.length
+    ? [...top, { label: "Otros", value: othersTotal }]
+    : top;
+}
+
+
 export const useAdminDashboardStats = (token: string) => {
   // 📟 Facturas
   const {
@@ -134,5 +150,6 @@ export const useAdminDashboardStats = (token: string) => {
     monthlyAppointments,
     serviceDistribution,
     invoiceTypeChart,
+    groupTopNWithOthers
   };
 };

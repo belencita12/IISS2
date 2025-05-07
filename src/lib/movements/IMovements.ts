@@ -21,6 +21,8 @@ import { BaseQueryParams } from "../types";
       fullName: string;
       ruc: string;
     };
+    isReversible?: boolean;
+
   }
   export interface Movement {
     id?: number;
@@ -31,6 +33,7 @@ import { BaseQueryParams } from "../types";
     destinationStockId?: number;
     managerId?: number;
     details: MovementDetail[];
+    isReversible?: boolean;
   }
   
   export interface MovementDetail {

@@ -22,7 +22,7 @@ export default async function Page({
   if (!data) {
     return notFound();
   }
-
+  
   return (
     <div className="max-w-3xl mx-auto py-8">
       <VaccineRegistryEditForm
