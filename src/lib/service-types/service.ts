@@ -53,13 +53,6 @@ export const useServiceTypeApi = (token: string) => {
    */
   const createServiceType = async (data: FormData) => {
     const response = await post(data);
-
-    if (!response.ok) {
-      toast("error", response.error?.message || "Error al crear el tipo de servicio");
-      throw new Error(response.error?.message || "Error al crear el tipo de servicio");
-    }
-
-    toast("success", "Tipo de servicio creado correctamente");
     return response.data;
   };
 
