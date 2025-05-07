@@ -11,19 +11,21 @@ import { PetData } from "@/lib/pets/IPet";
 import { createAppointment } from "@/lib/appointment/service";
 import { toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
-import PetSearch from "./PetSearch";
+import PetSelect from "./PetSelect";
 import PetSelected from "./PetSelected";
-import ServiceSelect from "./ServiceSelect";
-import ServiceSelected from "./ServiceSelected";
+import ServiceSelect from "@/components/admin/appointment/register/ServiceSelect";
+import ServiceSelected from "@/components/admin/appointment/register/ServiceSelected";
 import EmployeeSelect from "./EmployeeSelect";
-import EmployeeSelected from "./EmployeeSelected";
-import { AvailabilityPicker } from "./AvailabilityPicker";
+import EmployeeSelected from "@/components/admin/appointment/register/EmployeeSelected";
+import { AvailabilityPicker } from "@/components/admin/appointment/register/AvailabilityPicker";
 
 type AppointmentFormProps = {
   token: string;
+  clientId: number;
+  userRole: string;
 };
 
-export const AppointmentForm = ({ token }: AppointmentFormProps) => {
+export const AppointmentForm = ({ token, clientId, userRole}: AppointmentFormProps) => {
   const {
     register,
     handleSubmit,
@@ -50,7 +52,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
     try {
       await createAppointment(token, data);
       toast("success", "Cita registrada con éxito");
-      router.push("/dashboard/appointment");
+      router.push("/user-profile");
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "Error al registrar la cita";
       toast("error", errorMessage);
@@ -83,12 +85,12 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="w-full min-h-screen px-6 py-10 md:px-20 lg:px-32 space-y-10"
+      className="w-full max-w-screen-xl px-6 py-10 md:px-20 lg:px-32 space-y-12 text-lg"
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Seleccionar Mascota</label>
-          <PetSearch token={token} onSelectPet={handleSelectPet} />
+          <PetSelect clientId={clientId} token={token}  onSelectPet={handleSelectPet} />
           <input type="hidden" {...register("petId")} />
           {errors.petId && <p className="text-red-500 text-sm mt-1">{errors.petId.message}</p>}
           {selectedPet && <PetSelected pet={selectedPet} />}
@@ -96,7 +98,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Seleccionar Servicio</label>
-          <ServiceSelect token={token} onSelectService={handleSelectService} />
+          <ServiceSelect token={token} userRole={userRole} onSelectService={handleSelectService} />
           <input type="hidden" {...register("serviceId")} />
           {errors.serviceId && <p className="text-red-500 text-sm mt-1">{errors.serviceId.message}</p>}
           {selectedService && <ServiceSelected service={selectedService} />}
@@ -104,7 +106,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
 
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-1">Seleccionar Empleado</label>
-          <EmployeeSelect token={token} onSelectEmployee={handleSelectEmployee} />
+          <EmployeeSelect token={token}  onSelectEmployee={handleSelectEmployee} />
           <input type="hidden" {...register("employeesId")} />
           {errors.employeesId && <p className="text-red-500 text-sm mt-1">{errors.employeesId.message}</p>}
           {selectedEmployee && <EmployeeSelected employee={selectedEmployee} />}
@@ -124,7 +126,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
             )}
 
             <div className="w-full mt-4">
-              {selectedEmployee && formattedDate && selectedService && (
+              {selectedEmployee && formattedDate && (
                 <AvailabilityPicker
                   token={token}
                   employeeId={String(selectedEmployee.id)}
@@ -156,7 +158,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
           type="button"
           variant="outline"
           className="bg-white text-black hover:bg-slate-50"
-          onClick={() => router.push("/dashboard/appointment")}
+          onClick={() => router.push("/user-profile")}
           disabled={isSubmitting}
         >
           Cancelar

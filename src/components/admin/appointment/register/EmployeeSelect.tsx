@@ -19,6 +19,7 @@ import useDebounce from "@/hooks/useDebounce";
 type EmployeeSelectProps = {
   onSelectEmployee: (employee: EmployeeData) => void;
   token: string;
+  userRole?: string; 
 };
 
 type EmployeeResponse = {
@@ -34,6 +35,7 @@ type EmployeeResponse = {
 export default function EmployeeSelect({
   onSelectEmployee,
   token,
+  userRole, 
 }: EmployeeSelectProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [isCommandOpen, setIsCommandOpen] = useState(false);
@@ -104,7 +106,7 @@ export default function EmployeeSelect({
             </div>
           )}
         </div>
-
+        {userRole !== "USER" && (
         <Link
           href={"/dashboard/employee/register"}
           target="_blank"
@@ -112,6 +114,7 @@ export default function EmployeeSelect({
         >
           <UserPlus className="h-4 w-4" />
         </Link>
+        )}
       </div>
     </div>
   );
