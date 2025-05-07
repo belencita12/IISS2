@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { getAppointmentById } from '@/lib/appointment/getAppointmentById';
 import { AppointmentData } from '@/lib/appointment/IAppointment';
+import { formatDate, formatTimeUTC } from '@/lib/utils';
 
 interface AppointmentDetailsProps {
   token: string;
@@ -67,18 +68,27 @@ export default function AppointmentDetails({ token, appointmentId }: Appointment
         <div className="border-b pb-4">
           <p className="font-semibold text-gray-700">Fecha designada</p>
           <p className="text-gray-600">
-            {new Date(appointment.designatedDate).toLocaleString()}
+            {formatDate(appointment.designatedDate)}, {formatTimeUTC(appointment.designatedDate)}
           </p>
         </div>
 
         <div className="border-b pb-4">
           <p className="font-semibold text-gray-700">Estado</p>
-          <p className="text-gray-600">{appointment.status}</p>
+          <p className="text-gray-600">
+            {{
+              PENDING: 'Pendiente',
+              IN_PROGRESS: 'En Progreso',
+              COMPLETED: 'Completado',
+              CANCELLED: 'Cancelado',
+            }[appointment.status] || 'Desconocido'}
+          </p>
         </div>
 
         <div className="border-b pb-4">
           <p className="font-semibold text-gray-700">Detalles</p>
-          <p className="text-gray-600">{appointment.details}</p>
+          <p className="text-gray-600">
+            {appointment.details ? appointment.details : 'Sin Detalles'}
+          </p>
         </div>
 
         <div className="border-b pb-4">
