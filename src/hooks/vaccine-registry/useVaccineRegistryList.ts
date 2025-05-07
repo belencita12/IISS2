@@ -11,8 +11,8 @@ export interface VaccineRegistryFilters {
   clientName?: string;
   vaccineId?: string;
   dose?: string;
-  from?: string;
-  to?: string;
+  fromApplicationDate?: string;
+  toApplicationDate?: string;
   fromExpectedDate?: string;
   toExpectedDate?: string;
   [key: string]: unknown;

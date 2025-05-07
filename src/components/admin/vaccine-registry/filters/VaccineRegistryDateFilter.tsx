@@ -29,8 +29,8 @@ export default function VaccineRegistryDateFilter({
     (filters[toKey] as string) ?? ""
   );
 
-  const debouncedFrom: string = useDebounce(fromDate, 500);
-  const debouncedTo: string = useDebounce(toDate, 500);
+  const debouncedFrom: string = useDebounce(fromDate, 1000);
+  const debouncedTo: string = useDebounce(toDate, 1000);
 
   const prevDebounced = useRef({ from: "", to: "" });
 
@@ -39,7 +39,6 @@ export default function VaccineRegistryDateFilter({
     const date = new Date(dateStr);
     if (isNaN(date.getTime())) return "";
     date.setDate(date.getDate() + 1);
-    console.log(date.toISOString());
     return date.toISOString();
   };
 

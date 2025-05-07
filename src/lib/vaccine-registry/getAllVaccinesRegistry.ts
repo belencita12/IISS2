@@ -33,10 +33,6 @@ export const getAllVaccineRegistries = async (
       ...filtersSanitized,
     });
 
-    console.log("▶️ GET /vaccine-registry");
-    console.log("🔹 Filters:", filtersSanitized);
-    console.log("🔹 URL:", `${VACCINE_REGISTRY_API}?${params.toString()}`);
-
     const res = await fetch(`${VACCINE_REGISTRY_API}?${params.toString()}`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -48,11 +44,6 @@ export const getAllVaccineRegistries = async (
     }
 
     const data = await res.json();
-
-    console.log(data)
-    console.log("✅ Result count:", data.data?.length ?? 0);
-
-
     return data as ResponseData;
   } catch (error) {
     toast("error", "Error al obtener los registros de vacunación");

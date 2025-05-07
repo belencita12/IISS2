@@ -98,8 +98,8 @@ export default function VaccineRegistryList({ token }: Props) {
 
         <VaccineRegistryDateFilter
           label="Aplicación"
-          fromKey="from"
-          toKey="to"
+          fromKey="fromApplicationDate" 
+          toKey="toApplicationDate" 
           filters={filters}
           setFilters={setFilters}
         />
