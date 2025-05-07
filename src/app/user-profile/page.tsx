@@ -17,13 +17,13 @@ export default async function Profile() {
   //para obtener la foto de perfil del cliente rapido
   const avatarSrc = authData?.image?.originalUrl ?? "/blank-profile-picture-973460_1280.png";
 
-  return (
-    <ProfileTabs
-      fullName={user.fullName!}
-      token={user.token!}
-      clientId={user.clientId}
-      ruc={ruc}
-      avatarSrc={avatarSrc}
-    />
+return (
+  <ProfileTabs
+    fullName={authData.fullName}
+    token={user.token}
+    clientId={user.clientId}
+    ruc={authData.ruc}
+    avatarSrc={authData.image?.originalUrl ?? "/blank-profile-picture-973460_1280.png"}
+  />
   );
 }
