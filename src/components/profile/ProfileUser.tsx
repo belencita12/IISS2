@@ -6,6 +6,7 @@ import Image from "next/image"
 import { useProfileUser } from "@/hooks/users/useProfileUser"
 import { Loader2, Camera, User, Mail, Phone, MapPin, Building } from "lucide-react"
 import { ProfileUserSkeleton } from "./skeleton/ProfileUserSkeleton"
+import { Button } from "../ui/button"
 
 interface ProfileUserProps {
   clientId: number
@@ -137,17 +138,17 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
               </div>
 
               <div className="pt-4 flex justify-end space-x-3">
-                <button
-                  type="button"
-                  onClick={handleCancel}
-                  className="px-4 py-2.5 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
-                  disabled={updateLoading}
-                >
-                  Cancelar
-                </button>
-                <button
+              <Button
+                type="button"
+                onClick={handleCancel}
+                className="px-4 py-2.5 rounded-lg border border-gray-300 hover:bg-white text-gray-700 font-medium bg-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                disabled={updateLoading}
+              >
+                Cancelar
+              </Button>
+                <Button
                   type="submit"
-                  className="px-5 py-2.5 rounded-lg bg-violet-600 text-white font-medium hover:bg-violet-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed flex items-center"
+                  className="bg-pink-500 text-white flex items-center gap-2 hover:bg-pink-600 px-5 py-2.5 rounded-lg font-medium transition-colors duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
                   disabled={updateLoading}
                 >
                   {updateLoading ? (
@@ -156,9 +157,9 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
                       Guardando...
                     </>
                   ) : (
-                    "Guardar cambios"
+                    "Guardar"
                   )}
-                </button>
+                </Button>
               </div>
             </form>
           ) : (
@@ -189,12 +190,12 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
               </div>
 
               <div className="mt-6 flex justify-center">
-                <button
-                  onClick={handleEdit}
-                  className="px-5 py-2.5 rounded-lg bg-violet-600 text-white font-medium hover:bg-violet-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-2"
-                >
-                  Editar perfil
-                </button>
+              <Button
+                onClick={handleEdit}
+                className="bg-pink-500 text-white flex items-center gap-2 hover:bg-pink-600 px-5 py-2.5 rounded-lg font-medium transition-colors duration-200"
+              >
+                Editar perfil
+              </Button>
               </div>
             </>
           )}
