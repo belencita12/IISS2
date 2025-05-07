@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { VaccineRecord } from "@/lib/vaccine-registry/IVaccineRegistry";
 import { PetData } from "@/lib/pets/IPet";
-import { IUserProfile } from "@/lib/client/IUserProfile";
 import { PaginationInfo } from "@/components/global/GenericTable";
 import { getAllVaccineRegistries } from "@/lib/vaccine-registry/getAllVaccinesRegistry";
 import { getPetById } from "@/lib/pets/getPetById";
-import { fetchUsers } from "@/lib/client/getUsers";
+import { getClientById } from "@/lib/client/getClientById"; // ✅ Import nuevo
 import { toast } from "@/lib/toast";
 
 export interface VaccineRegistryFilters {
@@ -36,20 +35,21 @@ export const useVaccineRegistryList = (token: string) => {
       try {
         const result = await getAllVaccineRegistries(token, page, pagination.pageSize, activeFilters as Record<string, string>);
 
-        const clientData = await fetchUsers(1, "", token);
-        const clientMap = new Map<number, IUserProfile>(
-          (clientData.data as IUserProfile[]).map((client) => [client.id, client])
-        );
-
         const enriched = await Promise.all(
           result.data.map(async (record) => {
             const pet = await getPetById(Number(record.petId), token);
-            const client = pet?.owner?.id ? clientMap.get(Number(pet.owner.id)) : undefined;
+            const clientId = pet?.owner?.id;
+
+            let clientName = "—";
+            if (clientId) {
+              const client = await getClientById(clientId, token);
+              clientName = client?.fullName ?? "—";
+            }
 
             return {
               ...record,
               pet: pet ?? undefined,
-              clientName: client?.fullName ?? "—",
+              clientName,
             };
           })
         );

@@ -33,14 +33,14 @@ export default function VaccineRegistryDateFilter({
   const adjustEndDate = (dateStr: string) => {
     if (!dateStr) return "";
     const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return "";
     date.setDate(date.getDate() + 1);
     return date.toISOString().split("T")[0];
-  };
+  };  
 
   useEffect(() => {
     const adjustedTo = adjustEndDate(debouncedTo);
 
-    // Solo actualizar si algo cambió
     if (
       prevDebounced.current.from !== debouncedFrom ||
       prevDebounced.current.to !== adjustedTo

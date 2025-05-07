@@ -93,7 +93,7 @@ export default function VaccineRegistryList({ token }: Props) {
       <div className="space-y-4 mb-4">
         <SearchBar
           onSearch={handleSearch}
-          placeholder="Buscar por nombre de cliente o mascota"
+          placeholder="Buscar por nombre de cliente"
         />
 
         <VaccineRegistryDateFilter
