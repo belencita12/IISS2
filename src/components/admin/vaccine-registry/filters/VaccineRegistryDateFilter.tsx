@@ -97,7 +97,7 @@ export default function VaccineRegistryDateFilter({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
       <div className="space-y-2">
-        <Label htmlFor={`${fromKey}`}>Desde ({label})</Label>
+        <Label htmlFor={`${fromKey}`}>{label} Desde </Label>
         <div className="relative">
           <input
             id={`${fromKey}`}
@@ -126,7 +126,7 @@ export default function VaccineRegistryDateFilter({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor={`${toKey}`}>Hasta ({label}) </Label>
+        <Label htmlFor={`${toKey}`}>{label} Hasta</Label>
         <div className="relative">
           <input
             id={`${toKey}`}

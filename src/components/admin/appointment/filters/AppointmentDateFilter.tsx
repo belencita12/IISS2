@@ -21,7 +21,19 @@ export default function AppointmentDateFilter({ filters, setFilters }: Props) {
   const adjustEndDate = (dateStr: string) => {
     if (!dateStr) return undefined;
     const date = new Date(dateStr);
-    date.setDate(date.getDate() + 1);
+    date.setDate(date.getDate());
+
+    /*const adjustedFrom =
+      debouncedFrom && !isNaN(new Date(debouncedFrom).getTime())
+        ? (() => {
+            const date = new Date(debouncedFrom);
+            date.setDate(date.getDate() + 1);
+            date.setHours(0, 0, 0, 0); 
+            return date.toISOString();
+          })()
+        : undefined;*/
+
+
     return date.toISOString().split("T")[0];
   };
 

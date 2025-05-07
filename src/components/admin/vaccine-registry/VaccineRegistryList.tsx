@@ -13,6 +13,7 @@ import { VaccineRecord } from "@/lib/vaccine-registry/IVaccineRegistry";
 import VaccineRegistryDateFilter from "./filters/VaccineRegistryDateFilter";
 import GenericPagination from "@/components/global/GenericPagination";
 import { getPetById } from "@/lib/pets/getPetById";
+import { formatDate } from "@/lib/utils";
 
 interface Props {
   token: string;
@@ -43,16 +44,12 @@ export default function VaccineRegistryList({ token }: Props) {
     {
       header: "Aplicación",
       accessor: (item) =>
-        item.applicationDate
-          ? new Date(item.applicationDate).toLocaleDateString()
-          : "—",
+        item.applicationDate ? formatDate(item.applicationDate) : "—",
     },
     {
       header: "Próxima aplicación",
       accessor: (item) =>
-        item.expectedDate
-          ? new Date(item.expectedDate).toLocaleDateString()
-          : "—",
+        item.expectedDate ? formatDate(item.expectedDate) : "—",
     },
   ];
 
@@ -106,7 +103,7 @@ export default function VaccineRegistryList({ token }: Props) {
         />
 
         <VaccineRegistryDateFilter
-          label="Aplicación"
+          label="Aplicada"
           fromKey="fromApplicationDate"
           toKey="toApplicationDate"
           filters={filters}
