@@ -81,13 +81,13 @@ export const PetsList = ({ clientId, token }: PetsListProps) => {
         ) : pets.length === 0 ? (
           <p className="mt-4 text-gray-500">No tienes mascotas registradas.</p>
         ) : (
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-3 justify-items-center">
-  {pets.map((pet) => (
-    <Link
-      key={pet.id}
-      href={`/user-profile/pet/${pet.id}`}
-      className="flex flex-col w-full max-w-[260px] rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden bg-white text-gray-900"
-    >
+          <div className="mt-8 flex flex-wrap justify-center gap-2 md:gap-3">
+            {pets.map((pet) => (
+              <Link
+                key={pet.id}
+                href={`/user-profile/pet/${pet.id}`}
+                className="flex flex-col w-full max-w-[260px] rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden bg-white text-gray-900"
+              >
                 <div className="relative w-full h-[180px] flex items-center justify-center bg-gray-100">
                   <div className="w-40 h-40 rounded-full overflow-hidden bg-gray-200">
                     {pet.profileImg?.originalUrl ? (
