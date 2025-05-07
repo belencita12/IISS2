@@ -5,6 +5,7 @@ import { getReceipts } from "@/lib/receipts/getReceipts";
 import { IReceipt, IReceiptResponse } from "@/lib/receipts/IReceipt";
 import GenericTable, { Column } from "@/components/global/GenericTable";
 import { Eye } from "lucide-react";
+import { formatDate } from "@/lib/utils";
 
 type ReceiptListProps = {
   token: string;
@@ -41,7 +42,7 @@ export default function ReceiptList({ token }: ReceiptListProps) {
     {
       header: "Fecha de emisión",
       accessor: (row: IReceipt): string => 
-        new Date(row.issueDate).toLocaleDateString(),
+        formatDate(row.issueDate),
     },
     {
       header: "Métodos de pagos",
