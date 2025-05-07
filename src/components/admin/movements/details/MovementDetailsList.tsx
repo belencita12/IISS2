@@ -75,7 +75,6 @@ export const MovementDetailsList = ({ id, token }: Props) => {
             <p className="text-sm text-gray-500 mb-1">Descripción</p>
             <p className="bg-gray-200 rounded-md px-3 py-2 text-sm text-gray-800 w-full break-words">
                 {movement.description}
-                {movement.isReversible ? "(Reversible)" : "(Not Reversible)"}
             </p>
             {movement.type === "TRANSFER" && movement.isReversible && (
               <div className="mt-4">
