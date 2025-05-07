@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import { useState } from "react";
 import { useProfileUser } from "@/hooks/users/useProfileUser";
 
 interface ProfileUserProps {
@@ -22,6 +23,22 @@ export function ProfileUser({ clientId, token }: ProfileUserProps) {
     handleSave,
   } = useProfileUser(clientId, token);
 
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleFileChange(e);
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setPreviewImage(event.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setPreviewImage(null);
+    }
+  };
+
   if (loading) return <div className="py-8 text-center">Cargando datos...</div>;
   if (error) return <div className="py-8 text-center text-red-500">{error.message}</div>;
   if (!userData) return <div className="py-8 text-center">No se encontraron datos del usuario</div>;
@@ -32,7 +49,11 @@ export function ProfileUser({ clientId, token }: ProfileUserProps) {
         <div className="mb-6 flex justify-center">
           <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-violet-300">
             <Image
-              src={userData.image?.originalUrl || "/blank-profile-picture-973460_1280.png"}
+              src={
+                previewImage ||
+                userData.image?.originalUrl ||
+                "/blank-profile-picture-973460_1280.png"
+              }
               alt="Foto de perfil"
               width={96}
               height={96}
@@ -44,7 +65,7 @@ export function ProfileUser({ clientId, token }: ProfileUserProps) {
         <div className="space-y-4">
           {isEditing ? (
             <>
-              <input type="file" accept="image/*" onChange={handleFileChange} />
+              <input type="file" accept="image/*" onChange={onFileChange} />
               <Input label="Nombre completo" name="fullName" value={editData.fullName} onChange={handleChange} />
               <Input label="Email" name="email" type="email" value={editData.email} onChange={handleChange} />
               <Input label="Teléfono" name="phoneNumber" value={editData.phoneNumber} onChange={handleChange} />
@@ -97,4 +118,4 @@ function Field({ label, value }: { label: string; value: string }) {
       <p className="font-medium">{value}</p>
     </div>
   );
-}
+}  
