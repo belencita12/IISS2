@@ -8,6 +8,12 @@ import AppointmentList from "@/components/admin/appointment/AppointmentListByEmp
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Mail, FileText, Briefcase, MapPin, Phone } from "lucide-react";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default async function Page({
     params,
@@ -30,7 +36,7 @@ export default async function Page({
 
     return (
         <div className="container py-8 h-full">
-            <Card className="mb-8 shadow-md">
+            <Card className="mb-8 shadow-md w-full">
                 <CardHeader className="pb-0">
                     <h1 className="text-3xl font-bold tracking-tight">
                         Perfil de Empleado
@@ -38,7 +44,7 @@ export default async function Page({
                 </CardHeader>
                 <CardContent>
                     <div className="flex flex-col md:flex-row items-center gap-8 py-4">
-                        <div className="w-[200px] h-[200px] rounded-full overflow-hidden border-4 border-background shadow-lg flex-shrink-0">
+                        <div className="w-[180px] h-[180px] rounded-full overflow-hidden border-4 border-background shadow-lg flex-shrink-0">
                             <Image
                                 src={
                                     employee.image?.originalUrl ||
@@ -51,7 +57,7 @@ export default async function Page({
                             />
                         </div>
 
-                        <div className="flex-1 space-y-4">
+                        <div className="flex-1 space-y-4 w-full">
                             <div>
                                 <h2 className="text-2xl font-bold">
                                     {employee.fullName}
@@ -64,51 +70,79 @@ export default async function Page({
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="flex items-center gap-2">
-                                    <Mail className="w-5 h-5 text-muted-foreground" />
-                                    <div>
-                                        <p className="text-sm text-muted-foreground">
-                                            Correo Electrónico
-                                        </p>
-                                        <p className="font-medium">
-                                            {employee.email}
-                                        </p>
+                                    <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-gray-600">
+                                        <FileText className="w-5 h-5" />
                                     </div>
-                                </div>
-
-                                <div className="flex items-center gap-2">
-                                    <FileText className="w-5 h-5 text-muted-foreground" />
-                                    <div>
+                                    <div className="min-w-0 flex-1">
                                         <p className="text-sm text-muted-foreground">
                                             RUC
                                         </p>
-                                        <p className="font-medium">
+                                        <p className="font-medium truncate">
                                             {employee.ruc}
                                         </p>
                                     </div>
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                    <Phone className="w-5 h-5 text-muted-foreground" />
-                                    <div>
+                                    <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-gray-600">
+                                        <Mail className="w-5 h-5" />
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                        <p className="text-sm text-muted-foreground">
+                                            Correo Electrónico
+                                        </p>
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <p className="font-medium truncate">
+                                                        {employee.email}
+                                                    </p>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <p>{employee.email}</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                    <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-gray-600">
+                                        <Phone className="w-5 h-5" />
+                                    </div>
+                                    <div className="min-w-0 flex-1">
                                         <p className="text-sm text-muted-foreground">
                                             Teléfono
                                         </p>
-                                        <p className="font-medium">
+                                        <p className="font-medium truncate">
                                             {employee.phoneNumber}
                                         </p>
                                     </div>
                                 </div>
 
+                                
+
                                 {employee.adress && (
                                     <div className="flex items-center gap-2">
-                                        <MapPin className="w-5 h-5 text-muted-foreground" />
-                                        <div>
+                                        <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-gray-600">
+                                            <MapPin className="w-5 h-5" />
+                                        </div>
+                                        <div className="min-w-0 flex-1">
                                             <p className="text-sm text-muted-foreground">
                                                 Dirección
                                             </p>
-                                            <p className="font-medium">
-                                                {employee.adress}
-                                            </p>
+                                            <TooltipProvider>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <p className="font-medium truncate">
+                                                            {employee.adress}
+                                                        </p>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <p>{employee.adress}</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
                                         </div>
                                     </div>
                                 )}
