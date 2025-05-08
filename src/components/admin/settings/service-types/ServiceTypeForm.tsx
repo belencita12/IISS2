@@ -3,7 +3,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { toast as _toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
@@ -24,7 +23,7 @@ const MAX_FILE_SIZE = 1024 * 1024; // 1MB
 
 const serviceTypeFormSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
-  slug: z.string().min(1, "El Identificador es obligatorio"),
+  slug: z.string().min(1, "El identificador es obligatorio"),
   description: z.string().min(10, "La descripción debe tener al menos 10 caracteres"),
   durationMin: z.coerce.number()
     .min(1, "La duración es obligatoria")
@@ -212,7 +211,7 @@ export default function ServiceTypeForm({
       <div className="flex flex-col pt-6 md:flex-row gap-8">
         <div className="flex flex-col items-center space-y-4 w-full md:w-1/3">
           <h1 className="text-2xl font-bold self-start">
-            {id ? "Editar Tipo de Servicio" : "Registro de Tipo de Servicio"}
+            {id ? "Actualizar Tipo de Servicio" : "Registro de Tipo de Servicio"}
           </h1>
           <p className="text-gray-600 self-start">
             {id
@@ -341,7 +340,7 @@ export default function ServiceTypeForm({
 
             {/* MaxColabs */}
             <div>
-              <Label>Numero de Colaboradores Maximo (opcional)</Label>
+              <Label>Número de colaboradores máximo (opcional)</Label>
               <NumericInput
                 id="maxColabs"
                 type="formattedNumber"
@@ -369,7 +368,7 @@ export default function ServiceTypeForm({
           </div>
 
           <div>
-            <Label>Etiqutas</Label>
+            <Label>Etiquetas</Label>
             <TagFilter
               token={token}
               selectedTags={tags}
@@ -410,7 +409,10 @@ export default function ServiceTypeForm({
               Cancelar
             </Button>
             <Button type="submit" disabled={formIsSubmitting}>
-              {formIsSubmitting ? "Registrando..." : "Registrar"}
+              {id
+                ? (formIsSubmitting ? "Actualizando..." : "Actualizar")
+                : (formIsSubmitting ? "Registrando..." : "Registrar")
+              }
             </Button>
           </div>
         </form>
