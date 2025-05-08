@@ -3,7 +3,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { toast as _toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
@@ -20,9 +19,11 @@ import { ServiceTypeFormData } from '@/lib/service-types/types';
 import { useServiceTypeApi } from '@/lib/service-types/service';
 import NumericInput from "@/components/global/NumericInput";
 
+const MAX_FILE_SIZE = 1024 * 1024; // 1MB
+
 const serviceTypeFormSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
-  slug: z.string().min(1, "El slug es obligatorio"),
+  slug: z.string().min(1, "El identificador es obligatorio"),
   description: z.string().min(10, "La descripción debe tener al menos 10 caracteres"),
   durationMin: z.coerce.number()
     .min(1, "La duración es obligatoria")
@@ -47,7 +48,11 @@ const serviceTypeFormSchema = z.object({
     .optional(),
   isPublic: z.boolean().optional(),
   tags: z.array(z.string()).optional(),
-  img: z.instanceof(File).optional(),
+  img: z.instanceof(File)
+  .refine((file) => file.size <= MAX_FILE_SIZE, {
+    message: "La imagen no debe superar 1MB",
+  })
+  .optional(),
   imageUrl: z.string().optional(),
 });
 
@@ -137,12 +142,14 @@ export default function ServiceTypeForm({
       
       // Enviar tags como string separado por comas
       const tagsToSend = data.tags || [];
-      let stringTags = "";
-      tagsToSend.forEach((tag, index) => {
-        stringTags += `${tag}`;
-        if(tagsToSend.length > index + 1) stringTags += ",";
-      });
-      formData.append("tags", stringTags);
+      if(tagsToSend.length > 0) {
+        let stringTags = "";
+        tagsToSend.forEach((tag, index) => {
+          stringTags += `${tag}`;
+          if(tagsToSend.length > index + 1) stringTags += ",";
+        });
+        formData.append("tags", stringTags);
+      } 
       
       if (data.img) formData.append("img", data.img);
 
@@ -164,7 +171,7 @@ export default function ServiceTypeForm({
     } catch (error: unknown) {
       if (error instanceof Error) {
         if (error.message?.includes("ya están en uso")) {
-          toast("error", "El nombre o slug del servicio ya está en uso. Por favor, elige otros valores.");
+          toast("error", "El nombre o Identificador del servicio ya está en uso. Por favor, elige otros valores.");
         } else {
           toast("error", error.message || `Error al ${id ? 'actualizar' : 'registrar'} el tipo de servicio. Por favor, intente nuevamente.`);
         }
@@ -196,15 +203,7 @@ export default function ServiceTypeForm({
   };
 
   const onSubmitHandler = async (data: ServiceTypeFormValues) => {
-    try {
-      await onSubmit(data);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast("error", error.message);
-      } else {
-        toast("error", "Error al enviar el formulario");
-      }
-    }
+    await onSubmit(data);
   };
 
   return (
@@ -212,7 +211,7 @@ export default function ServiceTypeForm({
       <div className="flex flex-col pt-6 md:flex-row gap-8">
         <div className="flex flex-col items-center space-y-4 w-full md:w-1/3">
           <h1 className="text-2xl font-bold self-start">
-            {id ? "Editar Tipo de Servicio" : "Registro de Tipo de Servicio"}
+            {id ? "Actualizar Tipo de Servicio" : "Registro de Tipo de Servicio"}
           </h1>
           <p className="text-gray-600 self-start">
             {id
@@ -230,6 +229,9 @@ export default function ServiceTypeForm({
                 defaultImage={_initialData?.imageUrl || "/NotImageNicoPets.png"}
               />
             </div>
+            {errors.img && (
+              <p className="text-red-500 text-sm mt-1">{errors.img.message}</p>
+            )}
           </div>
         </div>
 
@@ -250,7 +252,7 @@ export default function ServiceTypeForm({
           </div>
 
           <div>
-            <Label>Slug</Label>
+            <Label>Identificador</Label>
             <Input {...register("slug")} placeholder="servicio-veterinario" />
             {errors.slug && (
               <p className="text-red-500 text-sm mt-1">{errors.slug.message}</p>
@@ -338,7 +340,7 @@ export default function ServiceTypeForm({
 
             {/* MaxColabs */}
             <div>
-              <Label>MaxColabs (opcional)</Label>
+              <Label>Número de colaboradores máximo (opcional)</Label>
               <NumericInput
                 id="maxColabs"
                 type="formattedNumber"
@@ -366,7 +368,7 @@ export default function ServiceTypeForm({
           </div>
 
           <div>
-            <Label>Tags</Label>
+            <Label>Etiquetas</Label>
             <TagFilter
               token={token}
               selectedTags={tags}
@@ -407,7 +409,10 @@ export default function ServiceTypeForm({
               Cancelar
             </Button>
             <Button type="submit" disabled={formIsSubmitting}>
-              {formIsSubmitting ? "Guardando..." : "Guardar"}
+              {id
+                ? (formIsSubmitting ? "Actualizando..." : "Actualizar")
+                : (formIsSubmitting ? "Registrando..." : "Registrar")
+              }
             </Button>
           </div>
         </form>
