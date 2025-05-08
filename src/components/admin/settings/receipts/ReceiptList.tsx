@@ -40,8 +40,10 @@ export default function ReceiptList({ token }: ReceiptListProps) {
     },
     {
       header: "Fecha de emisión",
-      accessor: (row: IReceipt): string => 
-        new Date(row.issueDate).toLocaleDateString(),
+      accessor: (row: IReceipt): string => {
+        const [year, month, day] = row.issueDate.split("-");
+        return `${day.padStart(2, '0')} - ${month.padStart(2, '0')} - ${year}`;
+      },
     },
     {
       header: "Métodos de pagos",
