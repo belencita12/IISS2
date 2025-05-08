@@ -5,21 +5,20 @@ import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useServiceTypeApi } from "@/lib/service-types/service";
 import type { ServiceType } from "@/lib/service-types/types";
 import { toast } from "@/lib/toast";
 
 interface ServiceTypeDetailProps {
   token: string;
+  data: ServiceType;
 }
 
-export default function ServiceTypeDetail({ token }: ServiceTypeDetailProps) {
+export default function ServiceTypeDetail({ token, data }: ServiceTypeDetailProps) {
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const id = params?.id || '';
   const [serviceType, setServiceType] = useState<ServiceType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { getServiceTypeById } = useServiceTypeApi(token);
 
   useEffect(() => {
     if (!id || id === "create") {
@@ -28,7 +27,7 @@ export default function ServiceTypeDetail({ token }: ServiceTypeDetailProps) {
     }
     const fetchData = async () => {
       try {
-        const serviceTypeData = await getServiceTypeById(Number(id));
+        const serviceTypeData = data;
         setServiceType(serviceTypeData as ServiceType);
       } catch (err) {
         toast("error", "No se pudo cargar la información del tipo de servicio");

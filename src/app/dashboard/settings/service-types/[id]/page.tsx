@@ -24,5 +24,5 @@ export default async function ServiceTypeDetailPage({
     notFound();
   }
 
-  return <ServiceTypeDetail token={token} />;
+  return <ServiceTypeDetail token={token} data={serviceType} />;
 } 
