@@ -1,52 +1,26 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { ServiceType } from "@/lib/service-types/types";
-import { toast } from "@/lib/toast";
 
 interface ServiceTypeDetailProps {
-  token: string;
   data: ServiceType;
 }
 
-export default function ServiceTypeDetail({ token, data }: ServiceTypeDetailProps) {
+export default function ServiceTypeDetail({data }: ServiceTypeDetailProps) {
   const router = useRouter();
-  const params = useParams<{ id: string }>();
-  const id = params?.id || '';
-  const [serviceType, setServiceType] = useState<ServiceType | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    if (!id || id === "create") {
-      setIsLoading(false);
-      return;
-    }
-    const fetchData = async () => {
-      try {
-        const serviceTypeData = data;
-        setServiceType(serviceTypeData as ServiceType);
-      } catch (err) {
-        toast("error", "No se pudo cargar la información del tipo de servicio");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, [id, token]);
-
-  if (isLoading) return <div className="text-center mt-8">Cargando...</div>;
-  if (!serviceType)
+  if (!data)
     return <div className="text-center mt-8">Tipo de servicio no encontrado</div>;
 
   // URL por defecto si no hay imagen
   const defaultImageSrc = "/NotImageNicoPets.png";
   // Verificar si hay una imagen válida
-  const imageUrl = serviceType.imageUrl && serviceType.imageUrl !== "" 
-    ? serviceType.imageUrl 
+  const imageUrl = data.imageUrl && data.imageUrl !== "" 
+    ? data.imageUrl 
     : defaultImageSrc;
 
   const formatCurrency = (amount: number): string => {
@@ -71,7 +45,7 @@ export default function ServiceTypeDetail({ token, data }: ServiceTypeDetailProp
           <div className="relative w-[300px] h-[300px] border rounded-lg overflow-hidden">
             <Image
               src={imageUrl}
-              alt={serviceType.name}
+              alt={data.name}
               fill
               className="object-cover"
               priority
@@ -86,46 +60,46 @@ export default function ServiceTypeDetail({ token, data }: ServiceTypeDetailProp
 
         <div className="md:col-span-8 flex flex-col space-y-4 pl-6">
           <div>
-            <h1 className="text-3xl font-bold">{capitalizeFirstLetter(serviceType.name)}</h1>
-            <p className="text-muted-foreground mt-1">Slug: {serviceType.slug}</p>
+            <h1 className="text-3xl font-bold">{capitalizeFirstLetter(data.name)}</h1>
+            <p className="text-muted-foreground mt-1">Slug: {data.slug}</p>
           </div>
 
           <div className="space-y-4">
             <div>
               <h3 className="text-lg font-semibold">Descripción</h3>
-              <p className="text-muted-foreground">{serviceType.description}</p>
+              <p className="text-muted-foreground">{data.description}</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <h3 className="text-lg font-semibold">Duración</h3>
-                <p className="text-muted-foreground">{serviceType.duration} minutos</p>
+                <p className="text-muted-foreground">{data.duration} minutos</p>
               </div>
               
               <div>
                 <h3 className="text-lg font-semibold">Precio</h3>
-                <p className="text-muted-foreground">{formatCurrency(serviceType.price)}</p>
+                <p className="text-muted-foreground">{formatCurrency(data.price)}</p>
               </div>
 
               <div>
                 <h3 className="text-lg font-semibold">Costo</h3>
-                <p className="text-muted-foreground">{formatCurrency(serviceType.cost)}</p>
+                <p className="text-muted-foreground">{formatCurrency(data.cost)}</p>
               </div>
 
               <div>
                 <h3 className="text-lg font-semibold">IVA</h3>
-                <p className="text-muted-foreground">{serviceType.iva}%</p>
+                <p className="text-muted-foreground">{data.iva}%</p>
               </div>
 
               <div>
                 <h3 className="text-lg font-semibold">Máximo de Colaboradores</h3>
-                <p className="text-muted-foreground">{serviceType.maxColabs}</p>
+                <p className="text-muted-foreground">{data.maxColabs}</p>
               </div>
 
               <div>
                 <h3 className="text-lg font-semibold">Estado</h3>
-                <Badge variant={serviceType.isPublic ? "default" : "secondary"}>
-                  {serviceType.isPublic ? "Público" : "Privado"}
+                <Badge variant={data.isPublic ? "default" : "secondary"}>
+                  {data.isPublic ? "Público" : "Privado"}
                 </Badge>
               </div>
             </div>
@@ -133,8 +107,8 @@ export default function ServiceTypeDetail({ token, data }: ServiceTypeDetailProp
             <div>
               <h3 className="text-lg font-semibold">Etiquetas</h3>
               <div className="flex flex-wrap gap-2 mt-2">
-                {serviceType.tags && serviceType.tags.length > 0 ? (
-                  serviceType.tags.map((tag) => (
+                {data.tags && data.tags.length > 0 ? (
+                  data.tags.map((tag) => (
                     <Badge key={tag} variant="secondary">
                       {tag}
                     </Badge>
