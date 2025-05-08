@@ -14,7 +14,7 @@ export async function getServiceTypeById(id: string, token: string): Promise<Ser
 
   const data = await response.json();
   console.log('Datos del servicio:', data); // Para ver la estructura exacta
-  
+
   // Mapear los campos según la estructura de la API
   return {
     id: data.id,
