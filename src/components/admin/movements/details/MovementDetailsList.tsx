@@ -74,9 +74,9 @@ export const MovementDetailsList = ({ id, token }: Props) => {
           <div className="flex flex-col">
             <p className="text-sm text-gray-500 mb-1">Descripción</p>
             <p className="bg-gray-200 rounded-md px-3 py-2 text-sm text-gray-800 w-full break-words">
-              {movement.description}
+                {movement.description}
             </p>
-            {movement.type === "TRANSFER" && (
+            {movement.type === "TRANSFER" && movement.isReversible && (
               <div className="mt-4">
                 <Button
                   variant="default"
@@ -91,8 +91,6 @@ export const MovementDetailsList = ({ id, token }: Props) => {
           </div>
         )}
       </Card>
-
-
 
       <h2 className="text-xl font-semibold mb-2 text-gray-700">Productos</h2>
       <Separator className="mb-4" />

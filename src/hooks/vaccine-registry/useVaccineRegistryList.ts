@@ -1,58 +1,53 @@
 import { useCallback, useEffect, useState } from "react";
 import { VaccineRecord } from "@/lib/vaccine-registry/IVaccineRegistry";
-import { PetData } from "@/lib/pets/IPet";
-import { IUserProfile } from "@/lib/client/IUserProfile";
 import { PaginationInfo } from "@/components/global/GenericTable";
 import { getAllVaccineRegistries } from "@/lib/vaccine-registry/getAllVaccinesRegistry";
-import { getPetById } from "@/lib/pets/getPetById";
-import { fetchUsers } from "@/lib/client/getUsers";
 import { toast } from "@/lib/toast";
 
+export interface VaccineRegistryFilters {
+  clientName?: string;
+  vaccineId?: string;
+  dose?: string;
+  fromApplicationDate?: string;
+  toApplicationDate?: string;
+  fromExpectedDate?: string;
+  toExpectedDate?: string;
+  [key: string]: unknown;
+}
+
 export const useVaccineRegistryList = (token: string) => {
-  const [registries, setRegistries] = useState<(VaccineRecord & { pet?: PetData; clientName?: string })[]>([]);
+  const [registries, setRegistries] = useState<VaccineRecord[]>([]);
   const [pagination, setPagination] = useState<PaginationInfo>({
     currentPage: 1,
     totalPages: 1,
     totalItems: 0,
     pageSize: 10,
   });
+  const [filters, setFilters] = useState<VaccineRegistryFilters>({});
   const [loading, setLoading] = useState(false);
-  const [search, setSearch] = useState("");
+  const [initialized, setInitialized] = useState(false);
+  const [pendingUpdate, setPendingUpdate] = useState(false);
+
 
   const fetchData = useCallback(
-    async (page = 1, filters = {}) => {
+    async (page: number, activeFilters: VaccineRegistryFilters) => {
       setLoading(true);
       try {
-        const result = await getAllVaccineRegistries(token, page, pagination.pageSize, filters);
-        const sorted = result.data.sort((a, b) =>
-          new Date(a.expectedDate).getTime() - new Date(b.expectedDate).getTime()
+        const result = await getAllVaccineRegistries(
+          token,
+          page,
+          pagination.pageSize,
+          activeFilters as Record<string, string>
         );
 
-        const clientData = await fetchUsers(1, "", token);
-        const clientMap = new Map<number, IUserProfile>(
-          (clientData.data as IUserProfile[]).map((client) => [client.id, client])
-        );
-
-        const enriched = await Promise.all(
-          sorted.map(async (record) => {
-            const pet = await getPetById(Number(record.petId), token);
-            const client = pet?.owner?.id ? clientMap.get(Number(pet.owner.id)) : undefined;
-
-            return {
-              ...record,
-              pet: pet ?? undefined,
-              clientName: client?.fullName ?? "—",
-            };
-          })
-        );
-
-        setRegistries(enriched);
-        setPagination({
+        setRegistries(result.data);
+       setPagination({
           currentPage: result.currentPage || 1,
           totalPages: result.totalPages || 1,
           totalItems: result.total || 0,
           pageSize: result.size || 10,
         });
+        setInitialized(true);
       } catch {
         toast("error", "Error al cargar registros de vacunación");
       } finally {
@@ -63,23 +58,33 @@ export const useVaccineRegistryList = (token: string) => {
   );
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    setPendingUpdate(true);
+    fetchData(1, filters).then(() => {
+      setPendingUpdate(false);
+    });
+  }, [fetchData, filters]);
+  
 
   const handleSearch = (query: string) => {
-    setSearch(query);
-    fetchData(1, { search: query });
+    setFilters((prev) => ({
+      ...prev,
+      clientName: query,
+    }));
   };
 
   const handlePageChange = (page: number) => {
-    fetchData(page, { search });
+    fetchData(page, filters);
   };
 
   return {
     registries,
     pagination,
     loading,
+    filters,
+    setFilters,
     handleSearch,
     handlePageChange,
+    initialized,
+    pendingUpdate
   };
 };

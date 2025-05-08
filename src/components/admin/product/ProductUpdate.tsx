@@ -43,8 +43,10 @@ const productFormSchema = z.object({
     .number({ message: "Complete con valores numéricos adecuados" })
     .min(1, "El IVA debe ser mayor a 0"),
   providerId: z
-    .number({ invalid_type_error: "Selecciona un proveedor" })
-    .min(1, "Selecciona un proveedor"),
+    .number({
+      required_error: "Selecciona un proveedor",
+      invalid_type_error: "Selecciona un proveedor",
+    }),
   tags: z.string().min(1, "Selecciona al menos una etiqueta"),
   category: z.string().min(1, "Selecciona una categoría"),
   imageFile: z
@@ -290,7 +292,7 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
                   control={control}
                   render={({ field }) => (
                     <Select
-                      onValueChange={(val) => field.onChange(Number(val))}
+                      onValueChange={(val) => field.onChange(val ? Number(val) : undefined)}
                       value={field.value?.toString() ?? ""}
                     >
                       <SelectTrigger

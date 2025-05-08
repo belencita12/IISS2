@@ -40,7 +40,6 @@ const AppointmentStatusFilter: React.FC<AppointmentStatusFilterProps> = ({
         <SelectContent>
           <SelectItem value="ALL">Todos</SelectItem>
           <SelectItem value="PENDING">Pendiente</SelectItem>
-          <SelectItem value="IN_PROGRESS">En curso</SelectItem>
           <SelectItem value="COMPLETED">Finalizada</SelectItem>
           <SelectItem value="CANCELLED">Cancelada</SelectItem>
         </SelectContent>
