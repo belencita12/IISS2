@@ -51,13 +51,11 @@ describe('Gestión de Mascotas - Filtros y acciones', () => {
     });
 
     it('Debe navegar a la edición de "Rufo"', () => {
-        cy.get('input[placeholder*="Buscar mascota"]')
+        cy.get('input[placeholder*="Buscar por nombre de la mascota..."]')
             .should('be.visible')
             .type('Rufo');
 
         cy.wait(2000);
-
-        // Verifica que "Rufo" está en la tabla
         cy.get('table tbody tr').contains('td', 'Rufo').parents('tr').within(() => {
             // Segundo botón: Editar (ícono lápiz)
             cy.get('button').eq(1).click();
