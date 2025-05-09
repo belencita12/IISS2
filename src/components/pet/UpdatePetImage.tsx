@@ -1,52 +1,50 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
-import { updatePet } from "@/lib/pets/updatePet";
-import { toast } from "@/lib/toast";
 import { PetData } from "@/lib/pets/IPet";
 
 interface UpdatePetImageProps {
   pet: PetData;
-  token: string;
-  onImageUpdate: (updatedPet: PetData) => void;
+  previewUrl: string | null;
   showEditButton?: boolean;
+  onSelectImage: (file: File, url: string) => void;
 }
 
 export default function UpdatePetImage({ 
   pet, 
-  token, 
-  onImageUpdate,
-  showEditButton = false 
+  previewUrl, 
+  showEditButton = false,
+  onSelectImage,
 }: UpdatePetImageProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!pet?.id || !e.target.files || e.target.files.length === 0) return;
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
     const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("profileImg", file);
 
-    try {
-      const updatedPet = await updatePet(pet.id, formData, token);
-      if (!updatedPet || !updatedPet.id) {
-        throw new Error("No se pudo actualizar la imagen");
-      }
-      onImageUpdate(updatedPet);
-      toast("success", "Imagen actualizada correctamente");
-    } catch (error) {
-      toast("error", "Error al actualizar la imagen");
-    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const url = reader.result as string;
+      onSelectImage(file, url);
+    };
+    reader.readAsDataURL(file);
   };
+
+  const imageToShow =
+    previewUrl ||
+    pet.profileImg?.originalUrl ||
+    pet.profileImg?.previewUrl ||
+    null;
 
   return (
     <div className="flex-col justify-center items-center">
       <div className="w-[250px] h-[250px] rounded-full overflow-hidden border-[3px] border-black flex justify-center items-center">
-        {pet.profileImg?.originalUrl || pet.profileImg?.previewUrl ? (
+        {imageToShow ? (
           <Image
-            src={pet.profileImg.originalUrl || pet.profileImg.previewUrl}
+            src={imageToShow}
             alt={pet.name}
             width={100}
             height={100}

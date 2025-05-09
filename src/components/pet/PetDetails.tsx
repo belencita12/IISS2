@@ -1,43 +1,21 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useState} from "react";
 import { Button } from "@/components/ui/button";
 import { useParams } from "next/navigation";
 import PetVaccinationTable from "../pet/PetVaccinationTable";
 import { PetData } from "@/lib/pets/IPet";
 import { getPetById } from "@/lib/pets/getPetById";
-import { updatePet } from "@/lib/pets/updatePet";
 import { toast } from "@/lib/toast";
 import { formatDate } from "@/lib/utils";
-import { getAppointmentByPetId } from "@/lib/appointment/getAppointmentByPetId";
-import { Appointment } from "@/lib/appointment/IAppointment";
-import GenericTable, { Column, PaginationInfo, TableAction } from "@/components/global/GenericTable";
-import { Eye, XCircle} from "lucide-react";
-import UpdatePetImage from "@/components/pet/UpdatePetImage"
-
-interface EditablePet {
-  name: string;
-  dateOfBirth: string;
-  weight: number;
-  sex: string;
-  raceId: number;
-  speciesId: number;
-}
+import AppointmentList from "@/components/appointment/AppointmentList";
+import EditPet  from "@/components/pet/EditPet";
+import { updatePet } from "@/lib/pets/updatePet";
+import UpdatePetImage from "@/components/pet/UpdatePetImage";
 
 interface Props {
   token: string;
 }
-
-type AppointmentApiResponse = {
-  data: Appointment[];
-  total: number;
-  size: number;
-  prev: boolean;
-  next: boolean;
-  currentPage: number;
-  totalPages: number;
-};
 
 function calcularEdad(fechaNacimiento: string): string {
   const nacimiento = new Date(fechaNacimiento);
@@ -76,63 +54,36 @@ function calcularEdad(fechaNacimiento: string): string {
 
 export default function PetDetails({ token }: Props) {
   const { id } = useParams();
-
   const [pet, setPet] = useState<PetData | null | undefined>(undefined);
+
   const [isEditingName, setIsEditingName] = useState(false);
+  const [editedName, setEditedName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [editedPet, setEditedPet] = useState<EditablePet | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  // Citas
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [loadingAppointments, setLoadingAppointments] = useState(true); 
-  const [errorAppointments, setErrorAppointments] = useState<string | null>(null);
-  const [pagination, setPagination] = useState<PaginationInfo>({
-    currentPage: 1,
-    totalPages: 1,
-    totalItems: 0,
-    pageSize: 100,
-  });
-
-  const estadoCitaEsp: Record<string, string> = {
-    COMPLETED: "Completado",
-    CANCELLED: "Cancelada",
-    PENDING: "Pendiente",
-    IN_PROGRESS: "En progreso",
+  const handleSelectImage = (file: File, url: string) => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setSelectedFile(file);
+    setPreviewUrl(url);
   };
 
-  useEffect(() => {
-    if (pet) {
-      setEditedPet({
-        name: pet.name,
-        dateOfBirth: pet.dateOfBirth,
-        weight: pet.weight,
-        sex: pet.sex,
-        raceId: pet.race?.id || 0,
-        speciesId: pet.species?.id || 0,
-      });
-    }
-  }, [pet]);
+  const handleCancel = () => {
+    setIsEditingName(false);
+    setEditedName(pet?.name ?? "");
+    setError(null);
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPreviewUrl(null);
+    setSelectedFile(null);
+  };
 
-  useEffect(() => {
-    if (isEditingName && pet) {
-      setEditedPet({
-        name: pet.name || "",
-        dateOfBirth: pet.dateOfBirth || "",
-        weight: pet.weight || 0,
-        raceId: pet.race?.id || 0,
-        speciesId: pet.species?.id || 0,
-        sex: pet.sex || "",
-      });
-    }
-  }, [isEditingName, pet]);
-
-  // Se utiliza getPetById para obtener los detalles de la mascota
   useEffect(() => {
     setPet(undefined);
     getPetById(Number(id), token)
       .then((data) => {
         setPet(data);
+        setEditedName(data?.name ?? "");
       })
       .catch(() => {
         toast("error", "Error al obtener la mascota.");
@@ -140,85 +91,12 @@ export default function PetDetails({ token }: Props) {
       });
   }, [id, token]);
 
-  // Obtener citas de la mascota
-  useEffect(() => {
-    if (!pet?.id || !token) return;
-    setLoadingAppointments(true);
-    getAppointmentByPetId(pet.id, token)
-      .then(data => {
-        setAppointments(data);
-        setErrorAppointments(null);
-      })
-      .catch(() => setErrorAppointments("No se pudieron cargar las citas"))
-      .finally(() => setLoadingAppointments(false));
-  }, [pet?.id, token]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setEditedPet((prev) => {
-      if (!prev) return prev;
-      return { ...prev, [name]: value };
-    });
-  };
-
-   // Se utiliza getPetById para obtener los detalles de la mascota
-   useEffect(() => {
-    setPet(undefined);
-    getPetById(Number(id), token)
-      .then((data) => {
-        setPet(data);
-      })
-      .catch(() => {
-        toast("error", "Error al obtener la mascota.");
-        setPet(null);
-      });
-  }, [id, token]);
-
-  // Obtener citas de la mascota
-  const fetchAppointments = (page = 1) => {
-    if (!pet?.id || !token) return;
-    setLoadingAppointments(true);
-    getAppointmentByPetId(pet.id, token, page, pagination.pageSize)
-      .then((resp: Appointment[] | AppointmentApiResponse) => {
-        if (Array.isArray(resp)) {
-          setAppointments(resp);
-          setPagination((prev) => ({
-            ...prev,
-            currentPage: page,
-            totalPages: 1,
-            totalItems: resp.length,
-          }));
-        } else {
-          setAppointments(resp.data ?? []);
-          setPagination({
-            currentPage: resp.currentPage ?? 1,
-            totalPages: resp.totalPages ?? 1,
-            totalItems: resp.total ?? 0,
-            pageSize: resp.size ?? 100,
-          });
-        }
-        setErrorAppointments(null);
-      })
-      .catch(() => setErrorAppointments("No se pudieron cargar las citas"))
-      .finally(() => setLoadingAppointments(false));
-  };
-
-  useEffect(() => {
-    fetchAppointments(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pet?.id, token]);
-
-  const handlePageChange = (page: number) => {
-    fetchAppointments(page);
-  };
-
-  // Se utiliza updatePet para actualizar el nombre de la mascota
   const handleSave = async () => {
-    if (!editedPet || !pet || !editedPet.name.trim()) {
+    if (!editedName.trim()) {
       setError("El nombre no puede estar vacío.");
       return;
     }
-    if (pet.id === undefined) {
+    if (!pet || pet.id === undefined) {
       setError("No se puede actualizar, la mascota no tiene ID.");
       return;
     }
@@ -226,13 +104,19 @@ export default function PetDetails({ token }: Props) {
     setError(null);
     try {
       const formData = new FormData();
-      formData.append("name", editedPet.name);
+      formData.append("name", editedName);
+      if (selectedFile) {
+        formData.append("profileImg", selectedFile);
+      }
       const updatedPet = await updatePet(pet.id, formData, token);
       if (!updatedPet || !updatedPet.id) {
         throw new Error("Respuesta inválida de la API");
       }
       setPet(updatedPet);
       setIsEditingName(false);
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
+      setSelectedFile(null);
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message);
@@ -243,44 +127,6 @@ export default function PetDetails({ token }: Props) {
       setIsSaving(false);
     }
   };
-
-  // Columnas para la tabla de citas
-  const appointmentColumns: Column<Appointment>[] = [
-    {
-      header: "Detalle",
-      accessor: "details",
-    },
-    {
-      header: "Fecha",
-      accessor: (a) => formatDate(a.designatedDate),
-    },
-    {
-      header: "Empleados",
-      accessor: (a) => a.employees?.map(e => e.name).join(", ") || "Sin asignar",
-    },
-    {
-      header: "Estado",
-      accessor: (a) => estadoCitaEsp[a.status] || a.status,
-    },
-  ];
-
-  // Acciones para la tabla de citas
-  const appointmentActions: TableAction<Appointment>[] = [
-    {
-      icon: <Eye className="w-4 h-4" />,
-      onClick: (a: Appointment) => {
-        toast("info", `Detalle de cita: ${a.id}`);
-      },
-      label: "Detalle",
-    },
-    {
-      icon: <XCircle className="w-4 h-4 text-red-500" />,
-      onClick: (a: Appointment) => {
-        toast("info", `Cancelar cita: ${a.id}`);
-      },
-      label: "Cancelar cita",
-    },
-  ];
 
   return (
     <div className="flex-col">
@@ -293,10 +139,10 @@ export default function PetDetails({ token }: Props) {
           <div className="flex justify-center bg-gray-500 p-5">
             <div className="flex-col justify-center items-center p-3 pr-8">
               <UpdatePetImage
-                pet = {pet}
-                token = {token}
-                onImageUpdate={setPet}
+                pet={pet}
+                previewUrl={previewUrl}
                 showEditButton={isEditingName}
+                onSelectImage={handleSelectImage}
               />
               <div className="flex-col p-2 text-black">
                 <p className="flex justify-center font-bold">{pet.name}</p>
@@ -315,18 +161,16 @@ export default function PetDetails({ token }: Props) {
               ].map(({ label, name }) => (
                 <div key={name} className="p-1 pb-3">
                   <p>{label}</p>
-                  {isEditingName && name === "name" ? (
+                  {name === "name" && isEditingName ? (
                     <>
                       <input
                         type="text"
-                        name={name}
-                        value={editedPet ? editedPet[name as keyof EditablePet] : ""}
-                        onChange={handleChange}
+                        name="name"
+                        value={editedName}
+                        onChange={(e) => setEditedName(e.target.value)}
                         className="text-black w-full border border-gray-300 rounded p-1"
                       />
-                      {error && name === "name" && (
-                        <p className="text-red-500 text-sm mt-1">{error}</p>
-                      )}
+                      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
                     </>
                   ) : (
                     <p className="text-xl">
@@ -343,44 +187,42 @@ export default function PetDetails({ token }: Props) {
                   )}
                 </div>
               ))}
-              {isEditingName ? (
-                <div className="flex gap-2">
-                  <Button
-                    onClick={handleSave}
-                    disabled={isSaving}
-                    className={`p-1 pl-3 pr-3 ${isSaving ? "cursor-not-allowed" : ""}`}
-                  >
-                    {isSaving ? "Guardando..." : "Guardar"}
+
+              <div className="flex gap-2 mt-2">
+                {isEditingName ? (
+                  <>
+                    <Button
+                      onClick={handleSave}
+                      disabled={isSaving}
+                      className={`p-1 pl-3 pr-3 ${isSaving ? "cursor-not-allowed" : ""}`}
+                    >
+                      {isSaving ? "Guardando..." : "Guardar"}
+                    </Button>
+                    <Button
+                      onClick={handleCancel}
+                      className="p-1 pl-3 pr-3"
+                    >
+                      Cancelar
+                    </Button>
+                  </>
+                ) : (
+                  <Button onClick={() => setIsEditingName(true)}
+                    className="p-1 pl-3 pr-3">
+                    Editar
                   </Button>
-                  <Button onClick={() => setIsEditingName(false)} className="p-1 pl-3 pr-3">
-                    Cancelar
-                  </Button>
-                </div>
-              ) : (
-                <Button onClick={() => setIsEditingName(true)} className="p-1 pl-3 pr-3">
-                  Editar
-                </Button>
-              )}
+                )}
+              </div>
             </div>
           </div>
           <div className="flex-col md:px-28 md:py-10 bg-white">
-             {/* Lista de citas */}
-             <h2 className="text-2xl font-bold mb-3">Citas</h2>
-            <GenericTable<Appointment>
-              data={appointments}
-              columns={appointmentColumns}
-              actions={appointmentActions}
-              actionsTitle="Acciones"
-              pagination={pagination}
-              onPageChange={handlePageChange}
-              isLoading={loadingAppointments}
-              emptyMessage="Sin citas registradas"
-              className="mb-10"
-            />
-
-            {/* Control de Vacunas */}
-            <h2 className="text-2xl font-bold mb-3 mt-10">Control de Vacunas</h2>
-            <PetVaccinationTable Id={Number(id)} token={token} petId={Number(pet.id)} />
+            {pet?.id && <AppointmentList token={token} petId={pet.id} />}
+             
+            {pet?.id && (
+              <>
+                <h2 className="text-2xl font-bold mb-3 mt-10">Control de Vacunas</h2>
+                <PetVaccinationTable Id={Number(id)} token={token} petId={pet.id} />
+              </>
+            )}
           </div>
         </>
       )}
