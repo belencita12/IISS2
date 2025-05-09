@@ -62,6 +62,30 @@ describe('Página de Lista Configuraciones', () => {
       cy.wait(3000);
       
       cy.visit('/dashboard/settings')
+      cy.wait(3000);
+      cy.get('[href="/dashboard/settings/vaccine-registry"]').click();
+      cy.get('.text-3xl').should('contain', 'Historial de vacunación');
+      cy.wait(3000);
+      
+      cy.visit('/dashboard/settings')
+      cy.wait(3000);
+      cy.get('[href="/dashboard/settings/service-types"]').click();
+      cy.get('.text-3xl').should('contain', 'Tipos de Servicio');
+      cy.wait(3000);
+
+      cy.visit('/dashboard/settings')
+      cy.wait(3000);
+      cy.get('[href="/dashboard/settings/pets"]').click();
+      cy.get('.text-2xl').should('contain', 'Lista de Mascotas');
+      cy.wait(3000);
+
+      cy.visit('/dashboard/settings')
+      cy.wait(3000);
+      cy.get('[href="/dashboard/settings/receipts"]').click();
+      cy.get('.text-3xl').should('contain', 'Recibos');
+      cy.wait(3000);
+
+      cy.visit('/dashboard/settings')
     });
   
   
