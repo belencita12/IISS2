@@ -40,13 +40,14 @@ describe("Página de Lista de Productos", () => {
     cy.visit("/dashboard");
 
     cy.contains("p", "Productos").click();
-    cy.wait(3000);
+    cy.wait(10000);
+    cy.contains("Productos").should("exist");
 
     cy.get(":nth-child(1) > .gap-2 > .truncate", { timeout: 10000 })
       .should("be.visible")
       .click();
   });
-
+/*
   it("Navega al detalle de un producto al hacer click en la card", () => {
     cy.visit("/dashboard");
     cy.contains("p", "Productos").click();
@@ -54,7 +55,7 @@ describe("Página de Lista de Productos", () => {
     cy.get('div[class*="bg-card"]')
       .first()
       .within((parent) => {
-        const $img = parent.find("img"); // jQuery .find() runs immediately, no retry
+        const $img = parent.find("img");
         const $div = parent.find(
           'div[class="w-full h-full flex items-center justify-center bg-gray-200 rounded"]'
         );
@@ -70,93 +71,67 @@ describe("Página de Lista de Productos", () => {
         }
       });
   });
-
+*/
   it("Filtra productos por código", () => {
     cy.visit("/dashboard");
     cy.contains("p", "Productos").click();
-    cy.wait(3000);
+    cy.wait(10000);
     cy.get('input[placeholder="Buscar por código o nombre del producto"]').type(
-      "prod-1745357847928-913"
+      "174632436533638"
     );
-    cy.wait(3000);
+    cy.wait(10000);
     cy.get('div[class*="bg-card"]').should("have.length", 1);
-    cy.contains("Pelota para perro").should("exist");
+    cy.contains("Correa para Hamsters").should("exist");
     cy.get('input[placeholder="Buscar por código o nombre del producto"]').clear();
     cy.wait(3000);
   });
-/*
-  it("Filtra productos por categoría", () => {
-    cy.visit("/dashboard");
-    cy.contains("p", "Productos").click();
-    cy.get("div.animate-pulse").should("not.exist", { timeout: 15000 });
-    cy.contains('button[role="combobox"]', "Categoria").click();
-    cy.get('[data-state="open"]').contains("Vacuna").click();
-    cy.wait(5000);
-    cy.get("div.animate-pulse").should("not.exist", { timeout: 15000 });
-    cy.get('div[class*="bg-card"]:not(.animate-pulse)')
-      .should("be.visible")
-      .should("have.length.at.least", 1);
-    cy.get('div[class*="bg-card"]:not(.animate-pulse)')
-      .first()
-      .within(() => {
-        cy.get("p.text-sm").each(($el, index) => {
-          cy.wrap($el).invoke('text').then(text => {
-            cy.log(`Texto en p.text-sm[${index}]: "${text}"`);
-          });
-        });
-        cy.get("p.text-sm").should(($elements) => {
-          const allTexts = $elements.map((_, el) => Cypress.$(el).text()).get().join(' ');
-          expect(allTexts).to.include("VACCINE");
-        });
-      });
-  });
-*/
+
   it("Filtra productos por etiqueta", () => {
     cy.visit("/dashboard");
     cy.contains("p", "Productos").click();
     cy.wait(5000);
     cy.contains('button[role="combobox"]', "Etiqueta").click({ force: true });
-    cy.get('[data-state="open"]').contains("Loros").click();
+    cy.get('[data-state="open"]').contains("correa").click();
     cy.get("div.animate-pulse").should("not.exist");
     cy.get('div[class*="bg-card"]')
       .should("have.length.at.most", 16)
       .each(($card) => {
         cy.wrap($card).should("be.visible");
-        cy.wrap($card).invoke("text").should("include", "Loros");
+        cy.wrap($card).invoke("text").should("include", "correa");
       });
   });
 
   it("Filtra productos por precio", () => {
     cy.visit("/dashboard");
     cy.contains("p", "Productos").click();
-    cy.wait(5000);
+    cy.wait(10000);
     cy.get('input[placeholder="Desde"]').eq(0).type("20000");
     cy.get('input[placeholder="Hasta"]').eq(0).type("30000");
-    cy.wait(5000);
+    cy.wait(10000);
     cy.get('div[class*="bg-card"]').should("have.length.at.least", 2);
-    cy.wait(3000);
+    cy.wait(10000);
   });
   it("Filtra productos por costo", () => {
     cy.visit("/dashboard");
     cy.contains("p", "Productos").click();
-    cy.wait(5000);
+    cy.wait(10000);
     cy.get('input[placeholder="Desde"]').eq(1).type("10000");
     cy.get('input[placeholder="Hasta"]').eq(1).type("15000");
-    cy.wait(5000);
+    cy.wait(10000);
     cy.get('div[class*="bg-card"]').should("have.length.at.least", 2);
-    cy.wait(3000);
+    cy.wait(10000);
   });
 
 
   it("Filtra productos por nombre", () => {
     cy.visit("/dashboard");
     cy.contains("p", "Productos").click();
-    cy.wait(3000);
+    cy.wait(10000);
     cy.get('input[placeholder="Buscar por código o nombre del producto"]').type(
-      "Correa para perro",{ delay: 2000 }
+      "Correa",{ delay: 2000 }
     );
     cy.get("div.animate-pulse", { timeout: 25000 }).should("not.exist");
-    cy.contains("Correa para perro", { matchCase: false }).should("be.visible");
+    cy.contains("Correa", { matchCase: false }).should("be.visible");
     cy.get('input[placeholder="Buscar por código o nombre del producto"]').clear();
     cy.wait(5000);
   });

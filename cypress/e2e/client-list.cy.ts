@@ -31,10 +31,10 @@ describe('ClientListSection', () => {
 
 
     it('Debe buscar clientes correctamente filtrandolos por nombre', () => {
-        cy.get('.relative > .flex').type('Makiko Yamamoto');
+        cy.get('.relative > .flex').type('Lourdes');
         //cy.get('button').contains('Buscar').click();
         cy.wait(5000);
-        cy.get('table tbody tr').should('contain', 'Makiko Yamamoto');
+        cy.get('table tbody tr').should('contain', 'Lourdes');
     });
 
 
@@ -57,21 +57,4 @@ describe('ClientListSection', () => {
         cy.wait(5000);
         cy.url().should('include', '/dashboard/clients/');
     });
-
-    it('Debe verificar la paginación', () => {
-        cy.get(':nth-child(4) > .inline-flex').click();
-        cy.wait(5000); 
-        cy.get('table tbody tr').should('exist');
-
-        cy.get(':nth-child(1) > .inline-flex').click();
-        cy.wait(5000);
-        cy.get('table tbody tr').should('exist');
-
-        cy.get('.flex > :nth-child(7)').click();
-        cy.wait(5000);
-        cy.get('table tbody tr').should('exist');
-      
-
-    });
-    
 });

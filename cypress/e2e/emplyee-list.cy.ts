@@ -32,9 +32,9 @@ describe('Lista de empleados', () => {
 
 
     it('Debe buscar empleados correctamente filtrandolos por nombre', () => {
-        cy.get('.relative > .flex').type('Gustavo Cerati');
+        cy.get('.relative > .flex').type('Bryan');
         cy.wait(5000);
-        cy.get('table tbody tr').should('contain', 'Gustavo Cerati');
+        cy.get('table tbody tr').should('contain', 'Bryan');
     });
 
     it('Debe abrir la página de registro de empleados', () => {

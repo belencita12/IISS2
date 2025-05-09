@@ -22,6 +22,7 @@ describe('ProfileTabs - Vista de cliente en /user-profile', () => {
             .should('have.class', 'bg-white')
             .and('have.class', 'text-violet-600');
         cy.contains('Mascotas Registradas').should('exist');
+         cy.wait(10000);
     });
 
     it('Debe mostrar la pestaña "Mis Citas" al hacer clic', () => {
@@ -31,6 +32,7 @@ describe('ProfileTabs - Vista de cliente en /user-profile', () => {
         cy.contains('Mis Citas')
             .should('have.class', 'bg-white')
             .and('have.class', 'text-violet-600');
+         cy.wait(10000);
 
         cy.contains('Citas Agendadas').should('exist');
     });
