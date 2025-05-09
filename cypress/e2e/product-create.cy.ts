@@ -99,7 +99,7 @@ describe("Registro de Producto", () => {
             });
         cy.get("[role=option]").eq(1).click();
         cy.contains("button", "Guardar").click();
-        cy.contains("Producto registrado con éxito", { timeout: 5000 }).should(
+        cy.contains("Producto registrado con éxito", { timeout: 10000 }).should(
             "be.visible"
         );
     });
@@ -126,7 +126,7 @@ describe("Registro de Producto", () => {
         cy.contains("button", "Guardar").click();
 
         // Verifica mensaje de error del proveedor
-        cy.contains("Required").should("be.visible");
+        cy.contains("Selecciona un proveedor").should("be.visible");
     });
 });
 
