@@ -51,6 +51,12 @@ const settingsOptions = [
     icon: "🦴",
     link: "/dashboard/settings/pets",
   },
+  {
+    name: "Recibos",
+    description: "Consulta los recibos de las facturas registradas.",
+    icon: "🧾",
+    link: "/dashboard/settings/receipts",
+  },
 ];
 
 export function SettingsList() {

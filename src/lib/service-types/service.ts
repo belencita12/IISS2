@@ -1,6 +1,5 @@
 import { useFetch } from "@/hooks/api/useFetch";
 import { SERVICE_TYPE } from "@/lib/urls";
-import { toast } from "@/lib/toast";
 
 export const useServiceTypeApi = (token: string) => {
   const {
@@ -22,7 +21,6 @@ export const useServiceTypeApi = (token: string) => {
     const response = await get(undefined, dynamicUrl);
 
     if (!response.ok) {
-      toast("error", "Error al obtener los tipos de servicio");
       throw new Error("Error al obtener los tipos de servicio");
     }
 
@@ -39,7 +37,6 @@ export const useServiceTypeApi = (token: string) => {
     const response = await get(undefined, dynamicUrl);
 
     if (!response.ok) {
-      toast("error", "Error al obtener el tipo de servicio");
       throw new Error("Error al obtener el tipo de servicio");
     }
 
@@ -53,13 +50,6 @@ export const useServiceTypeApi = (token: string) => {
    */
   const createServiceType = async (data: FormData) => {
     const response = await post(data);
-
-    if (!response.ok) {
-      toast("error", response.error?.message || "Error al crear el tipo de servicio");
-      throw new Error(response.error?.message || "Error al crear el tipo de servicio");
-    }
-
-    toast("success", "Tipo de servicio creado correctamente");
     return response.data;
   };
 
@@ -74,11 +64,9 @@ export const useServiceTypeApi = (token: string) => {
     const response = await patch(data, dynamicUrl);
 
     if (!response.ok) {
-      toast("error", response.error?.message || "Error al actualizar el tipo de servicio");
       throw new Error(response.error?.message || "Error al actualizar el tipo de servicio");
     }
 
-    toast("success", "Tipo de servicio actualizado correctamente");
     return response.data;
   };
 
@@ -92,11 +80,8 @@ export const useServiceTypeApi = (token: string) => {
     const response = await del(undefined, dynamicUrl);
 
     if (!response.ok) {
-      toast("error", "Error al eliminar el tipo de servicio");
       throw new Error("Error al eliminar el tipo de servicio");
     }
-
-    toast("success", "Tipo de servicio eliminado correctamente");
     return true;
   };
 
