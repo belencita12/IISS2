@@ -21,6 +21,7 @@ describe("ServiceTypeList", () => {
 
     it("Debe mostrar la lista de tipos de servicio", () => {
         cy.get("h2").contains("Tipos de Servicio");
+        cy.wait(10000);
         cy.get("table").should("exist");
         cy.get("thead").should("contain.text", "Nombre");
         cy.get("tbody tr").should("have.length.greaterThan", 0);
