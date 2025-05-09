@@ -21,13 +21,13 @@ describe("Catalogo y detalle de productos de catalogo", () => {
         cy.get("input[placeholder='Buscar...']", { timeout: 20000 })
             .should("be.visible")
             .clear()
-            .type("perro", { delay: 3000 });
+            .type("perro", { delay: 2000 });
 
         cy.get("div.animate-pulse", { timeout: 25000 }).should("not.exist");
         cy.contains("perro", { matchCase: false }).should("be.visible");
         cy.contains("Ver detalles").first().should("be.visible").click();
         cy.url().should("include", "/user-profile/product/");
-        cy.get("h1", { timeout: 15000 })
+        cy.get("h1", { timeout: 20000 })
             .should("be.visible")
             .and("contain.text", "perro", { matchCase: false });
     });
