@@ -11,7 +11,12 @@ import AppointmentCard from "@/components/admin/appointment/AppointmentCard";
 import AppointmentDateFilter from "@/components/admin/appointment/filters/AppointmentDateFilter";
 import AppointmentStatusFilter from "@/components/admin/appointment/filters/AppointmentStatusFilter";
 import GenericPagination from "@/components/global/GenericPagination";
+import { completeAppointment, cancelAppointment } from "@/lib/appointment/service";
+import { ConfirmationModal } from "@/components/global/Confirmation-modal";
+import { Modal } from "@/components/global/Modal";
+import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { toast } from "@/lib/toast";
 
 interface VisitListProps {
   token: string;
@@ -27,6 +32,13 @@ export default function VisitList({ token, petId }: VisitListProps) {
     toDesignatedDate: undefined,
   });
 
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState<AppointmentData | null>(null);
+  const [modalAction, setModalAction] = useState<"complete" | "cancel" | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [cancelDescription, setCancelDescription] = useState("");
+
   const {
     data: appointments,
     loading,
@@ -34,6 +46,7 @@ export default function VisitList({ token, petId }: VisitListProps) {
     pagination = { currentPage: 1, totalPages: 1, totalItems: 0, pageSize: 3 },
     setPage,
     search,
+    refresh,
   } = usePaginatedFetch<AppointmentData>(APPOINTMENT_API, token, {
     initialPage: filters.page ?? 1,
     size: 3,
@@ -52,21 +65,49 @@ export default function VisitList({ token, petId }: VisitListProps) {
     search({ ...safeFilters });
   };
 
+  const openConfirmModal = (appointment: AppointmentData, action: "complete" | "cancel") => {
+    setSelectedAppointment(appointment);
+    setModalAction(action);
+    if (action === "cancel") {
+      setCancelModalOpen(true);
+    } else {
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleConfirmAction = async () => {
+    if (!selectedAppointment || !modalAction) return;
+
+    try {
+      setIsProcessing(true);
+      if (modalAction === "complete") {
+        await completeAppointment(selectedAppointment.id, token);
+      } else {
+        await cancelAppointment(selectedAppointment.id, token, cancelDescription);
+      }
+      toast("success", `Cita ${modalAction === "complete" ? "finalizada" : "cancelada"} con éxito`);
+      refresh();
+    } catch (error) {
+      toast("error", "Ocurrió un error al actualizar la cita");
+    } finally {
+      setIsProcessing(false);
+      setIsModalOpen(false);
+      setCancelModalOpen(false);
+      setSelectedAppointment(null);
+      setModalAction(null);
+      setCancelDescription("");
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Filtros */}
       <div className="flex flex-col gap-4">
         <div className="w-full">
-          <AppointmentDateFilter
-            filters={filters}
-            setFilters={handleFilterChange}
-          />
+          <AppointmentDateFilter filters={filters} setFilters={handleFilterChange} />
         </div>
         <div className="w-full">
-          <AppointmentStatusFilter
-            filters={filters}
-            setFilters={handleFilterChange}
-          />
+          <AppointmentStatusFilter filters={filters} setFilters={handleFilterChange} />
         </div>
       </div>
 
@@ -89,6 +130,9 @@ export default function VisitList({ token, petId }: VisitListProps) {
               key={appointment.id}
               appointment={appointment}
               token={token}
+              onOpenModal={openConfirmModal}
+              isProcessing={isProcessing}
+              setIsProcessing={setIsProcessing}
             />
           ))}
         </div>
@@ -103,6 +147,53 @@ export default function VisitList({ token, petId }: VisitListProps) {
           handlePreviousPage={() => setPage(pagination.currentPage - 1)}
           handleNextPage={() => setPage(pagination.currentPage + 1)}
         />
+      )}
+
+      {/* Modal Confirmar Finalización */}
+      {selectedAppointment && modalAction === "complete" && (
+        <ConfirmationModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onConfirm={handleConfirmAction}
+          title="Confirmar Finalización"
+          message="¿Estás seguro de que quieres finalizar esta cita?"
+          confirmText="Confirmar"
+          cancelText="Cancelar"
+          isLoading={isProcessing}
+        />
+      )}
+
+      {/* Modal Cancelación */}
+      {selectedAppointment && modalAction === "cancel" && (
+        <Modal
+          isOpen={cancelModalOpen}
+          onClose={() => setCancelModalOpen(false)}
+          title="Motivo de cancelación"
+          size="md"
+        >
+          <textarea
+            className="w-full h-32 p-2 border border-gray-300 rounded"
+            placeholder="Escribe una razón para cancelar la cita"
+            value={cancelDescription}
+            onChange={(e) => setCancelDescription(e.target.value)}
+          />
+          <div className="flex justify-end mt-4 gap-2">
+            <Button
+              className="bg-white text-black px-4 py-2 rounded border hover:bg-gray-100"
+              onClick={() => setCancelModalOpen(false)}
+              disabled={isProcessing}
+            >
+              Cancelar
+            </Button>
+            <Button
+              className="bg-red-600 text-white px-4 py-2 rounded border hover:bg-red-700"
+              onClick={handleConfirmAction}
+              disabled={isProcessing || !cancelDescription.trim()}
+            >
+              {isProcessing ? "Cancelando..." : "Confirmar"}
+            </Button>
+          </div>
+        </Modal>
       )}
     </div>
   );
