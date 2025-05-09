@@ -10,10 +10,7 @@ import { getPetById } from "@/lib/pets/getPetById";
 import { updatePet } from "@/lib/pets/updatePet";
 import { toast } from "@/lib/toast";
 import { formatDate } from "@/lib/utils";
-import { getAppointmentByPetId } from "@/lib/appointment/getAppointmentByPetId";
-import { Appointment } from "@/lib/appointment/IAppointment";
-import GenericTable, { Column, PaginationInfo, TableAction } from "@/components/global/GenericTable";
-import { Eye, XCircle} from "lucide-react";
+import AppointmentList from "@/components/appointment/AppointmentList";
 import UpdatePetImage from "@/components/pet/UpdatePetImage"
 
 interface EditablePet {
@@ -28,16 +25,6 @@ interface EditablePet {
 interface Props {
   token: string;
 }
-
-type AppointmentApiResponse = {
-  data: Appointment[];
-  total: number;
-  size: number;
-  prev: boolean;
-  next: boolean;
-  currentPage: number;
-  totalPages: number;
-};
 
 function calcularEdad(fechaNacimiento: string): string {
   const nacimiento = new Date(fechaNacimiento);
@@ -83,24 +70,6 @@ export default function PetDetails({ token }: Props) {
   const [isSaving, setIsSaving] = useState(false);
   const [editedPet, setEditedPet] = useState<EditablePet | null>(null);
 
-  // Citas
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [loadingAppointments, setLoadingAppointments] = useState(true); 
-  const [errorAppointments, setErrorAppointments] = useState<string | null>(null);
-  const [pagination, setPagination] = useState<PaginationInfo>({
-    currentPage: 1,
-    totalPages: 1,
-    totalItems: 0,
-    pageSize: 100,
-  });
-
-  const estadoCitaEsp: Record<string, string> = {
-    COMPLETED: "Completado",
-    CANCELLED: "Cancelada",
-    PENDING: "Pendiente",
-    IN_PROGRESS: "En progreso",
-  };
-
   useEffect(() => {
     if (pet) {
       setEditedPet({
@@ -127,7 +96,6 @@ export default function PetDetails({ token }: Props) {
     }
   }, [isEditingName, pet]);
 
-  // Se utiliza getPetById para obtener los detalles de la mascota
   useEffect(() => {
     setPet(undefined);
     getPetById(Number(id), token)
@@ -139,19 +107,6 @@ export default function PetDetails({ token }: Props) {
         setPet(null);
       });
   }, [id, token]);
-
-  // Obtener citas de la mascota
-  useEffect(() => {
-    if (!pet?.id || !token) return;
-    setLoadingAppointments(true);
-    getAppointmentByPetId(pet.id, token)
-      .then(data => {
-        setAppointments(data);
-        setErrorAppointments(null);
-      })
-      .catch(() => setErrorAppointments("No se pudieron cargar las citas"))
-      .finally(() => setLoadingAppointments(false));
-  }, [pet?.id, token]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -161,58 +116,6 @@ export default function PetDetails({ token }: Props) {
     });
   };
 
-   // Se utiliza getPetById para obtener los detalles de la mascota
-   useEffect(() => {
-    setPet(undefined);
-    getPetById(Number(id), token)
-      .then((data) => {
-        setPet(data);
-      })
-      .catch(() => {
-        toast("error", "Error al obtener la mascota.");
-        setPet(null);
-      });
-  }, [id, token]);
-
-  // Obtener citas de la mascota
-  const fetchAppointments = (page = 1) => {
-    if (!pet?.id || !token) return;
-    setLoadingAppointments(true);
-    getAppointmentByPetId(pet.id, token, page, pagination.pageSize)
-      .then((resp: Appointment[] | AppointmentApiResponse) => {
-        if (Array.isArray(resp)) {
-          setAppointments(resp);
-          setPagination((prev) => ({
-            ...prev,
-            currentPage: page,
-            totalPages: 1,
-            totalItems: resp.length,
-          }));
-        } else {
-          setAppointments(resp.data ?? []);
-          setPagination({
-            currentPage: resp.currentPage ?? 1,
-            totalPages: resp.totalPages ?? 1,
-            totalItems: resp.total ?? 0,
-            pageSize: resp.size ?? 100,
-          });
-        }
-        setErrorAppointments(null);
-      })
-      .catch(() => setErrorAppointments("No se pudieron cargar las citas"))
-      .finally(() => setLoadingAppointments(false));
-  };
-
-  useEffect(() => {
-    fetchAppointments(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pet?.id, token]);
-
-  const handlePageChange = (page: number) => {
-    fetchAppointments(page);
-  };
-
-  // Se utiliza updatePet para actualizar el nombre de la mascota
   const handleSave = async () => {
     if (!editedPet || !pet || !editedPet.name.trim()) {
       setError("El nombre no puede estar vacío.");
@@ -243,44 +146,6 @@ export default function PetDetails({ token }: Props) {
       setIsSaving(false);
     }
   };
-
-  // Columnas para la tabla de citas
-  const appointmentColumns: Column<Appointment>[] = [
-    {
-      header: "Detalle",
-      accessor: "details",
-    },
-    {
-      header: "Fecha",
-      accessor: (a) => formatDate(a.designatedDate),
-    },
-    {
-      header: "Empleados",
-      accessor: (a) => a.employees?.map(e => e.name).join(", ") || "Sin asignar",
-    },
-    {
-      header: "Estado",
-      accessor: (a) => estadoCitaEsp[a.status] || a.status,
-    },
-  ];
-
-  // Acciones para la tabla de citas
-  const appointmentActions: TableAction<Appointment>[] = [
-    {
-      icon: <Eye className="w-4 h-4" />,
-      onClick: (a: Appointment) => {
-        toast("info", `Detalle de cita: ${a.id}`);
-      },
-      label: "Detalle",
-    },
-    {
-      icon: <XCircle className="w-4 h-4 text-red-500" />,
-      onClick: (a: Appointment) => {
-        toast("info", `Cancelar cita: ${a.id}`);
-      },
-      label: "Cancelar cita",
-    },
-  ];
 
   return (
     <div className="flex-col">
@@ -364,20 +229,9 @@ export default function PetDetails({ token }: Props) {
             </div>
           </div>
           <div className="flex-col md:px-28 md:py-10 bg-white">
-             {/* Lista de citas */}
-             <h2 className="text-2xl font-bold mb-3">Citas</h2>
-            <GenericTable<Appointment>
-              data={appointments}
-              columns={appointmentColumns}
-              actions={appointmentActions}
-              actionsTitle="Acciones"
-              pagination={pagination}
-              onPageChange={handlePageChange}
-              isLoading={loadingAppointments}
-              emptyMessage="Sin citas registradas"
-              className="mb-10"
-            />
-
+            {/* Lista de citas */}
+            {pet?.id && <AppointmentList token={token} petId={pet.id} />}
+             
             {/* Control de Vacunas */}
             <h2 className="text-2xl font-bold mb-3 mt-10">Control de Vacunas</h2>
             <PetVaccinationTable Id={Number(id)} token={token} petId={Number(pet.id)} />

@@ -1,7 +1,7 @@
 "use client";
 
 import GenericTable, { Column } from "@/components/global/GenericTable";
-import { Bell, Pencil } from "lucide-react";
+import { Eye } from "lucide-react";
 import PetsTableSkeleton from "../admin/pet/skeleton/PetsTableSkeleton";
 import { VaccineRecord } from "@/lib/vaccine-registry/IVaccineRegistry";
 import { useEffect, useState } from "react";
@@ -51,9 +51,9 @@ export default function PetVaccinationTable({
       label: "Recordatorio",
     }, */
     {
-      icon: <Pencil className="w-4 h-4" />,
+      icon: <Eye className="w-4 h-4" />,
       onClick: (vac: VaccineRecord) => {
-        router.push(`/dashboard/clients/${Id}/pet/${petId}/${vac.id}`);
+        router.push(`/user-profile/pet/${petId}`);
       },
       label: "Editar",
     }    
