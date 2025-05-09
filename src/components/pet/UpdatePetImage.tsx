@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
@@ -10,13 +10,15 @@ interface UpdatePetImageProps {
   pet: PetData;
   previewUrl: string | null;
   showEditButton?: boolean;
+  disabled?: boolean;
   onSelectImage: (file: File, url: string) => void;
 }
 
-export default function UpdatePetImage({ 
-  pet, 
-  previewUrl, 
+export default function UpdatePetImage({
+  pet,
+  previewUrl,
   showEditButton = false,
+  disabled = false,
   onSelectImage,
 }: UpdatePetImageProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -56,11 +58,12 @@ export default function UpdatePetImage({
           </div>
         )}
       </div>
-      
+
       {showEditButton && (
         <div className="flex flex-col items-center mt-2 mb-2">
           <Button
             type="button"
+            disabled={disabled}
             className="rounded-md p-2 shadow-md flex items-center gap-2 text-sm font-medium transition"
             onClick={() => fileInputRef.current?.click()}
             title="Cambiar foto de perfil"

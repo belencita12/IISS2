@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useParams } from "next/navigation";
 import PetVaccinationTable from "../pet/PetVaccinationTable";
@@ -9,7 +9,6 @@ import { getPetById } from "@/lib/pets/getPetById";
 import { toast } from "@/lib/toast";
 import { formatDate } from "@/lib/utils";
 import AppointmentList from "@/components/appointment/AppointmentList";
-import EditPet  from "@/components/pet/EditPet";
 import { updatePet } from "@/lib/pets/updatePet";
 import UpdatePetImage from "@/components/pet/UpdatePetImage";
 
@@ -29,7 +28,10 @@ function calcularEdad(fechaNacimiento: string): string {
   const mesActual = hoy.getUTCMonth();
   const diaActual = hoy.getUTCDate();
 
-  if (mesActual < mesNacimiento || (mesActual === mesNacimiento && diaActual < diaNacimiento)) {
+  if (
+    mesActual < mesNacimiento ||
+    (mesActual === mesNacimiento && diaActual < diaNacimiento)
+  ) {
     edad--;
   }
 
@@ -141,12 +143,15 @@ export default function PetDetails({ token }: Props) {
               <UpdatePetImage
                 pet={pet}
                 previewUrl={previewUrl}
+                disabled={isSaving}
                 showEditButton={isEditingName}
                 onSelectImage={handleSelectImage}
               />
               <div className="flex-col p-2 text-black">
                 <p className="flex justify-center font-bold">{pet.name}</p>
-                <p className="flex justify-center font-bold text-xl">{calcularEdad(pet.dateOfBirth)}</p>
+                <p className="flex justify-center font-bold text-xl">
+                  {calcularEdad(pet.dateOfBirth)}
+                </p>
               </div>
             </div>
 
@@ -170,7 +175,9 @@ export default function PetDetails({ token }: Props) {
                         onChange={(e) => setEditedName(e.target.value)}
                         className="text-black w-full border border-gray-300 rounded p-1"
                       />
-                      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+                      {error && (
+                        <p className="text-red-500 text-sm mt-1">{error}</p>
+                      )}
                     </>
                   ) : (
                     <p className="text-xl">
@@ -194,20 +201,25 @@ export default function PetDetails({ token }: Props) {
                     <Button
                       onClick={handleSave}
                       disabled={isSaving}
-                      className={`p-1 pl-3 pr-3 ${isSaving ? "cursor-not-allowed" : ""}`}
+                      className={`p-1 pl-3 pr-3 ${
+                        isSaving ? "cursor-not-allowed" : ""
+                      }`}
                     >
                       {isSaving ? "Guardando..." : "Guardar"}
                     </Button>
                     <Button
                       onClick={handleCancel}
                       className="p-1 pl-3 pr-3"
+                      disabled={isSaving}
                     >
                       Cancelar
                     </Button>
                   </>
                 ) : (
-                  <Button onClick={() => setIsEditingName(true)}
-                    className="p-1 pl-3 pr-3">
+                  <Button
+                    onClick={() => setIsEditingName(true)}
+                    className="p-1 pl-3 pr-3"
+                  >
                     Editar
                   </Button>
                 )}
@@ -216,11 +228,17 @@ export default function PetDetails({ token }: Props) {
           </div>
           <div className="flex-col md:px-28 md:py-10 bg-white">
             {pet?.id && <AppointmentList token={token} petId={pet.id} />}
-             
+
             {pet?.id && (
               <>
-                <h2 className="text-2xl font-bold mb-3 mt-10">Control de Vacunas</h2>
-                <PetVaccinationTable Id={Number(id)} token={token} petId={pet.id} />
+                <h2 className="text-2xl font-bold mb-3 mt-10">
+                  Control de Vacunas
+                </h2>
+                <PetVaccinationTable
+                  Id={Number(id)}
+                  token={token}
+                  petId={pet.id}
+                />
               </>
             )}
           </div>
