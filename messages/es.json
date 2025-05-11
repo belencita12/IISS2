@@ -1,0 +1,25 @@
+{
+  "ContactSection": {
+    "contact": "Contacto",
+    "email": "Correo electrónicoooo",
+    "phone": "Teléfonoooo"
+  },
+  "PetLists": {
+    "pets": "Mascotas registradas",
+    "petsDescription": "Administra la información de tus mascotas",
+    "addPetBtn": "Agregar mascota",
+    "petListBtn": "Lista de mascotas",
+    "petNotFound": "No tienes mascotas registradas.",
+    "vetProducts": "Productos veterinarios",
+    "exploreProducts": "Explora los productos disponibles",
+    "seeMore": "Ver más"
+  },
+  "Appointments": {
+    "appointmentTitle": "Citas agendadas",
+    "appointmentsDescription": "Consulta y agenda nuevas citas médicas para tus mascotas",
+    "addAppointmentBtn": "Agendar cita"
+  },
+  "ProfileUser": {
+    "editProfileBtn": "Editar perfil"
+  }
+}

@@ -7,6 +7,7 @@ import { useProfileUser } from "@/hooks/profile/useProfileUser"
 import { Loader2, Camera, User, Mail, Phone, MapPin, Building } from "lucide-react"
 import { ProfileUserSkeleton } from "./skeleton/ProfileUserSkeleton"
 import { Button } from "../ui/button"
+import { useTranslations } from "next-intl"
 
 interface ProfileUserProps {
   clientId: number
@@ -15,6 +16,7 @@ interface ProfileUserProps {
 }
 
 export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProps) {
+  const t = useTranslations("ProfileUser")
   const { 
     userData, 
     isEditing, 
@@ -219,7 +221,7 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
                 onClick={handleEdit}
                 className="bg-pink-500 text-white flex items-center gap-2 hover:bg-pink-600 px-5 py-2.5 rounded-lg font-medium transition-colors duration-200"
               >
-                Editar perfil
+                {t("editProfileBtn")}
               </Button>
               </div>
             </>
