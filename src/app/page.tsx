@@ -14,9 +14,7 @@ export default async function Home() {
     } else {
       redirect("/user-profile");
     }
-  } else {
-    redirect("/login");
-  }
+    }
   return (
     <div className="sm:px-[6.5%] px-5 max-w-full overflow-hidden">
       <Hero />
