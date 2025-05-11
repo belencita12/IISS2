@@ -18,14 +18,14 @@ describe('Listado de vacunas aplicadas por mascotas', () => {
       cy.wait(3000);
       cy.get('.text-3xl').should('contain', 'Clientes');
       cy.wait(3000);
-      cy.contains('td', 'Pedro').parent().find('[aria-label="Ver detalles"]').click();
+      cy.contains('td', 'Seraphina ').parent().find('[aria-label="Ver detalles"]').click();
       cy.wait(5000);
         
     });
 
     it('Debe mostrar correctamente las vacunas aplicadas a la mascota', () => {
         cy.get(':nth-child(1) > .text-right > [aria-label="Detalles"]').first().click();
-        cy.wait(3000);
+        cy.wait(10000);
         cy.get('body').then(($body) => {
             if ($body.find('table tbody tr').length > 0) {
                 // Hay filas en la tabla → validar las vacunas

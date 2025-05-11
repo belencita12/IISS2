@@ -179,6 +179,6 @@ describe("Edición de Producto", () => {
         cy.contains("button", "Guardar").click();
 
         // Verifica mensaje de error del proveedor
-        cy.contains("Required").should("be.visible");
+        cy.contains("Selecciona un proveedor").should("be.visible");
     });
 });
