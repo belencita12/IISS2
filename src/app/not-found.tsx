@@ -2,8 +2,12 @@
 
 import Link from "next/link"
 import { AlertTriangle, Home, ArrowLeft, RefreshCw } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { Button } from "@/components/ui/button"
 
 export default function NotFound() {
+  const router = useRouter()
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#d8b4fe]/20 to-[#f9a8d4]/20 p-4">
       <div className="max-w-2xl w-full bg-white rounded-lg shadow-xl overflow-hidden">
@@ -29,21 +33,21 @@ export default function NotFound() {
               Ir a la página de inicio
             </Link>
 
-            <button
-              onClick={() => window.history.back()}
-              className="flex items-center justify-center gap-2 w-full py-2 px-4 bg-white border border-[#ec4899] text-[#ec4899] hover:bg-[#fbcfe8]/20 font-medium rounded-md transition-colors"
+            <Button 
+            onClick={() => router.back()} 
+            className="flex items-center justify-center gap-2 w-full py-2 px-4 bg-white border border-[#ec4899] text-[#ec4899] hover:bg-[#fbcfe8]/20 font-medium rounded-md transition-colors"
             >
               <ArrowLeft className="h-4 w-4" />
               Volver atrás
-            </button>
+            </Button>
 
-            <button
-              onClick={() => window.location.reload()}
+            <Button
+              onClick={() => router.refresh()}
               className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-white border-2 border-[#d8b4fe] text-[#a855f7] hover:bg-[#e9d5ff]/30 font-medium rounded-md transition-colors"
             >
               <RefreshCw className="h-4 w-4" />
               Intentar de nuevo
-            </button>
+            </Button>
           </div>
         </div>
 
