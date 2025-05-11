@@ -9,12 +9,12 @@ import Image from "next/image";
 export default async function Home() {
   const session = await getServerSession(authOptions);
   if (session?.user?.token) {
-    if(session.user.roles.includes("ADMIN")) {
+    if (session.user.roles.includes("ADMIN")) {
       redirect("/dashboard");
     } else {
       redirect("/user-profile");
     }
-    }
+  }
   return (
     <div className="sm:px-[6.5%] px-5 max-w-full overflow-hidden">
       <Hero />
