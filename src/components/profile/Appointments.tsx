@@ -6,14 +6,16 @@ import Link from "next/link";
 import { APPOINTMENT_API } from "@/lib/urls";
 import { useFetch } from "@/hooks/api/useFetch";
 import { formatDate, formatTimeUTC } from "@/lib/utils";
-import { Plus, Eye } from "lucide-react";
+import { Plus } from "lucide-react";
 import { AppointmentData } from "@/lib/appointment/IAppointment";
 import AppointmentsTableSkeleton from "@/components/profile/skeleton/AppointmentsSkeleton";
+import { Eye } from "lucide-react";
 import GenericTable, {
   Column,
   TableAction,
 } from "@/components/global/GenericTable";
 import { useRouter } from "next/navigation";
+
 
 interface AppointmentsData {
   data: AppointmentData[];
@@ -27,8 +29,6 @@ interface AppointmentsProps {
 }
 
 export const Appointments = ({ token, ruc }: AppointmentsProps) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
   const [executed, setExecuted] = useState(false);
   const router = useRouter();
 
@@ -41,34 +41,23 @@ export const Appointments = ({ token, ruc }: AppointmentsProps) => {
 
   useEffect(() => {
     if (ruc && !executed) {
-      fetchAppointments(currentPage);
+      const url = new URL(APPOINTMENT_API);
+      url.searchParams.append("clientRuc", ruc);
+      url.searchParams.append("page", "1");
+      url.searchParams.append("size", "100");
+
+      execute(undefined, url.toString());
       setExecuted(true);
     }
-  }, [ruc, executed]);
-
-  const fetchAppointments = (page: number) => {
-    if (!ruc) return;
-    
-    const url = new URL(APPOINTMENT_API);
-    url.searchParams.append("clientRuc", ruc);
-    url.searchParams.append("page", page.toString());
-    url.searchParams.append("size", pageSize.toString());
-
-    execute(undefined, url.toString());
-    setCurrentPage(page);
-  };
-
-  const handlePageChange = (page: number) => {
-    fetchAppointments(page);
-  };
+  }, [ruc, executed, execute]);
 
   const error = !ruc
     ? "No se pudo obtener el RUC del cliente"
     : fetchError?.message || null;
 
   const appointments = appointmentsResponse?.data || [];
-  const totalItems = appointmentsResponse?.total || 0;
-  const totalPages = Math.ceil(totalItems / pageSize);
+
+  const iconFor = (svc: string) => svc.toLowerCase().includes("vacun");
 
   const statusInfo = (st: AppointmentData["status"]) => {
     switch (st) {
@@ -97,6 +86,7 @@ export const Appointments = ({ token, ruc }: AppointmentsProps) => {
       header: "Servicio",
       accessor: (app) => (
         <div className="flex items-center gap-3">
+          {iconFor(app.service)}
           <div>
             <p className="font-medium">{app.service}</p>
           </div>
@@ -161,7 +151,6 @@ export const Appointments = ({ token, ruc }: AppointmentsProps) => {
       ),
     },
   ];
-  
   const actions: TableAction<AppointmentData>[] = [
     {
       icon: <Eye size={16} />,
@@ -169,6 +158,8 @@ export const Appointments = ({ token, ruc }: AppointmentsProps) => {
       label: "Ver detalles",
     },
   ];
+  
+  if (error) return <p className="text-red-500 text-center py-4">{error}</p>;
 
   return (
     <section className="w-full px-6 mt-5 bg-white rounded-lg shadow-sm pb-5 min-h-[80vh]">
@@ -194,21 +185,14 @@ export const Appointments = ({ token, ruc }: AppointmentsProps) => {
           <AppointmentsTableSkeleton />
         ) : (
           <GenericTable
-            data={appointments}
-            columns={columns}
-            actions={actions}
-            actionsTitle="Acciones"
-            isLoading={loading}
-            emptyMessage="No tienes citas agendadas"
-            className="w-full"
-            pagination={{
-              currentPage,
-              totalPages,
-              totalItems,
-              pageSize
-            }}
-            onPageChange={handlePageChange}
-          />
+          data={appointments}
+          columns={columns}
+          actions={actions}
+          actionsTitle="Acciones"
+          isLoading={loading}
+          emptyMessage="No tienes citas agendadas"
+          className="w-full"
+        />
         )}
       </div>
     </section>
