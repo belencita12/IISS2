@@ -22,6 +22,7 @@ export const PetsList = ({ clientId, token, onFetchError }: PetsListProps) => {
   const [pets, setPets] = useState<PetData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const t = useTranslations("PetLists");
+  const defaultImageSrc = "/NotImageNicoPets.png";
 
   useEffect(() => {
     const fetchPets = async () => {
@@ -92,21 +93,14 @@ export const PetsList = ({ clientId, token, onFetchError }: PetsListProps) => {
                 className="flex flex-col w-full max-w-[260px] rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden bg-white text-gray-900"
               >
                 <div className="relative w-full h-[180px] flex items-center justify-center bg-gray-100">
-                  <div className="w-40 h-40 rounded-full overflow-hidden bg-gray-200">
-                    {pet.profileImg?.originalUrl ? (
-                      <Image
-                        src={pet.profileImg.originalUrl}
-                        alt={pet.name}
-                        width={200}
-                        height={200}
-                        className="object-cover w-full h-full"
-                        priority
-                      />
-                    ) : (
-                      <span className="flex items-center justify-center w-full h-full text-xl font-bold text-gray-700">
-                        {pet.name.charAt(0).toUpperCase()}
-                      </span>
-                    )}
+                  <div className="w-40 h-40 relative overflow-hidden rounded-full bg-gray-200">
+                    <Image
+                      src={pet.profileImg?.originalUrl || defaultImageSrc}
+                      alt={pet.name}
+                      fill
+                      style={{ objectFit: "cover" }}
+                      priority
+                    />
                   </div>
                 </div>
                 <div className="p-3 flex flex-col justify-between flex-1 overflow-hidden">
