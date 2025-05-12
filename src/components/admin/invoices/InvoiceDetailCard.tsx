@@ -68,7 +68,6 @@ export default function InvoiceDetailCard({ invoice }: Props) {
             <div className="border-b border-border/60 mb-3 pb-1"></div>
 
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
-              {/* Columna izquierda */}
               <div className="space-y-3">
                 <div>
                   <p className="text-sm text-muted-foreground">Condición de venta</p>
@@ -80,7 +79,6 @@ export default function InvoiceDetailCard({ invoice }: Props) {
                 </div>
               </div>
 
-              {/* Columna derecha */}
               <div className="space-y-3 text-right">
                 <div>
                   <p className="text-sm text-muted-foreground">Monto Total</p>
