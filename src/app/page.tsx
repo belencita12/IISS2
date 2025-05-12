@@ -9,5 +9,5 @@ export default async function Home() {
       session.user.roles.includes("ADMIN") ? "/dashboard" : "/user-profile"
     );
   }
-  return redirect("/home");
+  return redirect("/login");
 }
