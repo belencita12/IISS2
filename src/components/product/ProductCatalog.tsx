@@ -351,7 +351,7 @@ const ProductCatalog = ({ token }: { token: string | null }) => {
                                                 NotImageNicoPets.src
                                             }
                                             ctaText="Ver detalles"
-                                            ctaLink={`/user-profile/product/${product.id}`}
+                                            ctaLink={`/shop/product/${product.id}`}
                                             tags={product.tags}
                                         />
                                     ))}

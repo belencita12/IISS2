@@ -73,7 +73,7 @@ export default function ProductDetailPage({ token }: Props) {
                     <Button
                         variant="ghost"
                         className="flex items-center text-purple-600 hover:text-purple-900 pl-0"
-                        onClick={() => router.push("/user-profile/product")}
+                        onClick={() => router.push("/shop/product")}
                     >
                         <ChevronLeft className="h-4 w-4 mr-1" />
                         <span>Volver a productos</span>
@@ -158,7 +158,7 @@ export default function ProductDetailPage({ token }: Props) {
                                         price={`Gs. ${relatedProduct.price.toLocaleString()}`}
                                         alt={relatedProduct.name}
                                         ctaText="Ver producto"
-                                        ctaLink={`/user-profile/product/${relatedProduct.id}`}
+                                        ctaLink={`/shop/product/${relatedProduct.id}`}
                                         layout="vertical"
                                         imagePosition="top"
                                         showButton={true}

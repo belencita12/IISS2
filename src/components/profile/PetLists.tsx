@@ -134,7 +134,7 @@ export const PetsList = ({ clientId, token }: PetsListProps) => {
           Explora los productos disponibles
         </p>
         <Button className="bg-white text-pink-500 border border-pink-500 mt-3 hover:bg-pink-600 hover:text-white">
-          <Link href="/user-profile/product">Ver más</Link>
+          <Link href="/shop/product">Ver más</Link>
         </Button>
       </section>
 

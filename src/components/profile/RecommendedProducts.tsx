@@ -72,7 +72,7 @@ export const RecommendedProducts = ({
         items={recommended}
         renderItem={(product) => (
           <div
-            onClick={() => router.push(`/user-profile/product/${product.id}`)}
+            onClick={() => router.push(`/shop/product/${product.id}`)}
             className="cursor-pointer"
           >
             <Card
@@ -80,7 +80,7 @@ export const RecommendedProducts = ({
               price={`${product.price.toLocaleString()} Gs.`}
               image={product.image?.originalUrl ?? NotImageNicoPets.src}
               ctaText="Ver detalles"
-              ctaLink={`/user-profile/product/${product.id}`}
+              ctaLink={`/shop/product/${product.id}`}
               tags={product.tags}
             />
           </div>
