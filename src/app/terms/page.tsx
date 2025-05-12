@@ -3,22 +3,22 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 
 export default function TermsAndConditions() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen ">
       {/* Decorative header background */}
-      <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-r from-myPurple-primary to-myPink-primary opacity-90 z-0">
+      <div className="absolute top-8 left-0 right-0 h-80 -z-20 bg-gradient-to-r from-myPurple-primary to-myPink-primary opacity-90 pt-72">
         <div className="absolute inset-0 bg-[url('/placeholder.svg?height=200&width=200')] bg-repeat opacity-10"></div>
         <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent"></div>
       </div>
 
       {/* Main Content */}
-      <main className="relative z-10 container mx-auto px-4 py-16">
+      <main className="relative z-10 container mx-auto px-4 py-16 ">
         <div className="max-w-4xl mx-auto">
           {/* Page Header */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-myPurple-primary to-myPink-primary bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold mb-4 text-white bg-clip-text text-transparent">
               Términos y Condiciones
             </h1>
-            <div className="flex items-center justify-center gap-2 text-gray-500">
+            <div className="flex items-center justify-center gap-2 text-white">
               <span>Última actualización:</span>
               <span className="bg-myPurple-disabled text-myPurple-focus px-3 py-1 rounded-full text-sm font-medium">
                 {new Date().toLocaleDateString()}
