@@ -11,6 +11,7 @@ import { List, Plus } from "lucide-react";
 import { RecommendedProducts } from "./RecommendedProducts";
 import PetListsSkeleton from "./skeleton/PetListsSkeleton";
 import { ProductSkeleton } from "./skeleton/ProductSkeleton";
+import { useTranslations } from "next-intl";
 
 interface PetsListProps {
   clientId: number;
@@ -20,6 +21,7 @@ interface PetsListProps {
 export const PetsList = ({ clientId, token }: PetsListProps) => {
   const [pets, setPets] = useState<PetData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const t = useTranslations("PetLists");
 
   useEffect(() => {
     const fetchPets = async () => {
@@ -55,23 +57,23 @@ export const PetsList = ({ clientId, token }: PetsListProps) => {
     <>
       <section className="w-full mt-10 bg-white text-center px-4">
         <h3 className="text-3xl font-bold mt-2 text-purple-600">
-          Mascotas Registradas
+          {t("pets")}
         </h3>
         <p className="text-gray-500 mt-2 text-sm">
-          Administra la información de tus mascotas
+          {t("petsDescription")}
         </p>
 
         <div className="flex gap-4 mt-4 justify-center flex-wrap">
           <Link href="/user-profile/pet/register">
             <Button className="bg-pink-500 text-white flex items-center gap-2 hover:bg-pink-600">
               <Plus className="w-5 h-5" />
-              Agregar Mascota
+              {t("addPetBtn")}
             </Button>
           </Link>
           <Link href="/user-profile/pet/list-pets">
             <Button className="bg-white text-pink-500 border border-pink-500 flex items-center gap-2 hover:bg-pink-600 hover:text-white">
               <List className="w-5 h-5" />
-              Ver lista de mascotas
+              {t("petListBtn")}
             </Button>
           </Link>
         </div>
@@ -79,7 +81,7 @@ export const PetsList = ({ clientId, token }: PetsListProps) => {
         {loading ? (
           <PetListsSkeleton />
         ) : pets.length === 0 ? (
-          <p className="mt-4 text-gray-500">No tienes mascotas registradas.</p>
+          <p className="mt-4 text-gray-500">{t("petNotFound")}</p>
         ) : (
           <div className="mt-8 flex flex-wrap justify-center gap-2 md:gap-3">
             {pets.map((pet) => (
@@ -128,13 +130,13 @@ export const PetsList = ({ clientId, token }: PetsListProps) => {
           </div>
         )}
         <h2 className="text-3xl font-bold text-purple-600 mt-20">
-          Productos Veterinarios
+          {t("vetProducts")}
         </h2>
         <p className="text-gray-500 mt-1 text-sm">
-          Explora los productos disponibles
+          {t("exploreProducts")}
         </p>
         <Button className="bg-white text-pink-500 border border-pink-500 mt-3 hover:bg-pink-600 hover:text-white">
-          <Link href="/user-profile/product">Ver más</Link>
+          <Link href="/user-profile/product">{t("seeMore")}</Link>
         </Button>
       </section>
 
