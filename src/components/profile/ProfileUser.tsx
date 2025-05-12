@@ -165,7 +165,6 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
                 >
                   {updateLoading ? (
                     <>
-                      <Loader2 size={18} className="animate-spin mr-2" />
                       Guardando...
                     </>
                   ) : (

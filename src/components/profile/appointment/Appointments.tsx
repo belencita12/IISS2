@@ -14,6 +14,7 @@ import GenericTable, {
   TableAction,
 } from "@/components/global/GenericTable";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 interface AppointmentsData {
   data: AppointmentData[];
@@ -32,6 +33,7 @@ export const Appointments = ({ token, ruc, onFetchError }: AppointmentsProps) =>
   const [pageSize, setPageSize] = useState(5);
   const [executed, setExecuted] = useState(false);
   const router = useRouter();
+  const t = useTranslations("Appointments");
 
   const {
     data: appointmentsResponse,
@@ -180,17 +182,17 @@ export const Appointments = ({ token, ruc, onFetchError }: AppointmentsProps) =>
     <section className="w-full px-6 mt-5 bg-white rounded-lg shadow-sm pb-5 min-h-[80vh]">
       <div className="text-center">
         <h3 className="text-3xl font-bold mt-2 text-purple-600">
-          Citas Agendadas
+          {t("appointmentTitle")}
         </h3>
         <p className="text-gray-500 mt-2 text-sm">
-          Consulta y agenda nuevas citas médicas para tus mascotas
+          {t("appointmentsDescription")}
         </p>
 
         <div className="flex gap-4 mt-4 justify-center flex-wrap">
           <Link href="/user-profile/appointment/register">
             <Button className="bg-pink-500 text-white flex items-center gap-2 hover:bg-pink-600">
               <Plus className="w-5 h-5" />
-              Agendar Cita
+              {t("addAppointmentBtn")}
             </Button>
           </Link>
         </div>
@@ -198,8 +200,6 @@ export const Appointments = ({ token, ruc, onFetchError }: AppointmentsProps) =>
       <div className="mt-10">
         {loading ? (
           <AppointmentsTableSkeleton />
-        ) : appointments.length === 0 ? (
-          <p className="mt-4 text-gray-500 text-center">No tienes citas agendadas</p>
         ) : (
           <GenericTable
             data={appointments}
