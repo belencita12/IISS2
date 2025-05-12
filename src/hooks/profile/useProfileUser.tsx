@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -66,7 +64,7 @@ export function useProfileUser(
     },
   });
 
-  const { data, loading, error, execute: fetchUser } = useFetch<IUserProfile>(
+  const { data, loading, error } = useFetch<IUserProfile>(
     `${AUTH_API}/me`,
     token,
     { immediate: true }
