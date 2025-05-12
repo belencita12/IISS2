@@ -5,6 +5,7 @@ import { PetsList } from "./PetLists";
 import { Appointments } from "./Appointments";
 import { User, Dog, Calendar } from "lucide-react";
 import { ProfileUser } from "./ProfileUser";
+import { useTranslations } from "next-intl";
 
 interface ProfileTabsProps {
   fullName: string;
@@ -27,6 +28,7 @@ export default function ProfileTabs({
     avatarSrc: initialAvatarSrc,
     ruc: ruc
   });
+  const t = useTranslations("ProfileTabs");
 
   const updateUserData = (newData: { fullName?: string; avatarSrc?: string; ruc?: string | null }) => {
     setUserData(prev => ({
@@ -57,21 +59,21 @@ export default function ProfileTabs({
             className={tabClasses("datos")}
           >
             <User className="w-4 h-4" />
-            Mis Datos
+            {t("myProfile")}
           </div>
           <div
             onClick={() => setSelected("mascotas")}
             className={tabClasses("mascotas")}
           >
             <Dog className="w-4 h-4" />
-            Mis Mascotas
+            {t("myPets")}
           </div>
           <div
             onClick={() => setSelected("citas")}
             className={tabClasses("citas")}
           >
             <Calendar className="w-4 h-4" />
-            Mis Citas
+            {t("myAppointments")}
           </div>
         </div>
       </div>

@@ -18,6 +18,7 @@ import ServiceSelected from "@/components/admin/appointment/register/ServiceSele
 import EmployeeSelect from "./EmployeeSelect";
 import EmployeeSelected from "@/components/admin/appointment/register/EmployeeSelected";
 import { AvailabilityPicker } from "@/components/admin/appointment/register/AvailabilityPicker";
+import { useTranslations } from "next-intl";
 
 type AppointmentFormProps = {
   token: string;
@@ -38,6 +39,7 @@ export const AppointmentForm = ({ token, clientId, userRole}: AppointmentFormPro
   });
 
   const router = useRouter();
+  const t = useTranslations("AppointmentForm");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeData | null>(null);
@@ -89,7 +91,7 @@ export const AppointmentForm = ({ token, clientId, userRole}: AppointmentFormPro
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Seleccionar Mascota</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t("selectPet")}</label>
           <PetSelect clientId={clientId} token={token}  onSelectPet={handleSelectPet} />
           <input type="hidden" {...register("petId")} />
           {errors.petId && <p className="text-red-500 text-sm mt-1">{errors.petId.message}</p>}
@@ -97,7 +99,7 @@ export const AppointmentForm = ({ token, clientId, userRole}: AppointmentFormPro
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Seleccionar Servicio</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t("selectService")}</label>
           <ServiceSelect token={token} userRole={userRole} onSelectService={handleSelectService} />
           <input type="hidden" {...register("serviceId")} />
           {errors.serviceId && <p className="text-red-500 text-sm mt-1">{errors.serviceId.message}</p>}
@@ -105,7 +107,7 @@ export const AppointmentForm = ({ token, clientId, userRole}: AppointmentFormPro
         </div>
 
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Seleccionar Empleado</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t("selectEmployee")}</label>
           <EmployeeSelect token={token}  onSelectEmployee={handleSelectEmployee} />
           <input type="hidden" {...register("employeesId")} />
           {errors.employeesId && <p className="text-red-500 text-sm mt-1">{errors.employeesId.message}</p>}
@@ -114,7 +116,7 @@ export const AppointmentForm = ({ token, clientId, userRole}: AppointmentFormPro
 
         <div className="md:col-span-2 flex flex-col md:flex-row gap-6">
           <div className="w-full">
-            <label className="block text-sm font-medium text-gray-700">Fecha</label>
+            <label className="block text-sm font-medium text-gray-700">{t("selectDate")}</label>
             <input
               type="date"
               {...register("designatedDate")}
@@ -145,7 +147,7 @@ export const AppointmentForm = ({ token, clientId, userRole}: AppointmentFormPro
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">Detalles</label>
+        <label className="block text-sm font-medium text-gray-700">{t("details")}</label>
         <textarea
           {...register("details")}
           className="w-full border border-gray-300 rounded-md p-2"
@@ -161,14 +163,14 @@ export const AppointmentForm = ({ token, clientId, userRole}: AppointmentFormPro
           onClick={() => router.push("/user-profile")}
           disabled={isSubmitting}
         >
-          Cancelar
+          {t("cancelBtn")}
         </Button>
         <Button
           type="submit"
           className="bg-black text-white hover:bg-gray-800"
           disabled={!selectedEmployee || !selectedService || !selectedPet || !formattedDate || isSubmitting}
         >
-          {isSubmitting ? "Registrando..." : "Registrar Cita"}
+          {isSubmitting ? "Agendando..." : "Agendar Cita"}
         </Button>
       </div>
     </form>

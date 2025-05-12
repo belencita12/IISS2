@@ -41,7 +41,7 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
     return (
       <div className="py-12 text-center">
         <div className="bg-red-50 text-red-600 px-4 py-3 rounded-lg inline-block">
-          <p className="font-medium">Error: {error.message}</p>
+          <p className="font-medium">{t("error")} {error.message}</p>
         </div>
       </div>
     )
@@ -51,7 +51,7 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
     return (
       <div className="py-12 text-center">
         <div className="bg-amber-50 text-amber-600 px-4 py-3 rounded-lg inline-block">
-          <p className="font-medium">No se encontraron datos del usuario</p>
+          <p className="font-medium">{t("notFound")}</p>
         </div>
       </div>
     )
@@ -104,7 +104,7 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
             <form onSubmit={handleSubmit} className="space-y-5" noValidate>
               <div className="space-y-4">
                 <FormField
-                  label="Nombre completo"
+                  label={t("nameLabel")}
                   icon={<User size={18} className="text-violet-500" />}
                   error={errors.fullName?.message}
                 >
@@ -116,7 +116,7 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
                 </FormField>
 
                 <FormField
-                  label="Email"
+                  label={t("emailLabel")}
                   icon={<Mail size={18} className="text-violet-500" />}
                   error={errors.email?.message}
                 >
@@ -128,7 +128,7 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
                 </FormField>
 
                 <FormField
-                  label="Teléfono"
+                  label={t("phoneLabel")}
                   icon={<Phone size={18} className="text-violet-500" />}
                   error={errors.phoneNumber?.message}
                 >
@@ -140,7 +140,7 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
                 </FormField>
 
                 <FormField
-                  label="Dirección"
+                  label={t("addressLabel")}
                   icon={<MapPin size={18} className="text-violet-500" />}
                   error={errors.adress?.message}
                 >
@@ -152,7 +152,7 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
                 </FormField>
 
                 <FormField
-                  label="RUC"
+                  label={t("rucLabel")}
                   icon={<Building size={18} className="text-violet-500" />}
                   error={errors.ruc?.message}
                 >
@@ -171,7 +171,7 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
                 className="px-4 py-2.5 rounded-lg border border-gray-300 hover:bg-white text-gray-700 font-medium bg-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
                 disabled={updateLoading}
               >
-                Cancelar
+                {t("cancelBtn")}
               </Button>
                 <Button
                   type="submit"
@@ -181,10 +181,10 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
                   {updateLoading ? (
                     <>
                       <Loader2 size={18} className="animate-spin mr-2" />
-                      Guardando...
+                      {t("saving")}
                     </>
                   ) : (
-                    "Guardar"
+                    t("saveBtn")
                   )}
                 </Button>
               </div>
@@ -199,19 +199,19 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
               <div className="space-y-4 bg-gray-50 rounded-xl p-5">
                 <InfoField
                   icon={<Phone size={18} className="text-violet-500" />}
-                  label="Teléfono"
+                  label={t("phoneLabel")}
                   value={userData.phoneNumber || "No especificado"}
                 />
                 <div className="border-t border-gray-200 pt-4"></div>
                 <InfoField
                   icon={<MapPin size={18} className="text-violet-500" />}
-                  label="Dirección"
+                  label={t("addressLabel")}
                   value={userData.adress || "No especificada"}
                 />
                 <div className="border-t border-gray-200 pt-4"></div>
                 <InfoField
                   icon={<Building size={18} className="text-violet-500" />}
-                  label="RUC"
+                  label={t("rucLabel")}
                   value={userData.ruc || "No especificado"}
                 />
               </div>

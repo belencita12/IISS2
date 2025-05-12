@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "@/lib/toast";
 import { ProductSkeleton } from "./skeleton/ProductSkeleton";
 import { Carousel } from "./Carousel";
+import { useTranslations } from "next-intl";
 
 interface RecommendedProductsProps {
   clientId: number;
@@ -25,6 +26,7 @@ export const RecommendedProducts = ({
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  const t = useTranslations("RecommendedProducts");
   useEffect(() => {
     const fetchRecommendations = async () => {
       try {
@@ -79,7 +81,7 @@ export const RecommendedProducts = ({
               title={product.name}
               price={`${product.price.toLocaleString()} Gs.`}
               image={product.image?.originalUrl ?? NotImageNicoPets.src}
-              ctaText="Ver detalles"
+              ctaText={t("ctaText")}
               ctaLink={`/user-profile/product/${product.id}`}
               tags={product.tags}
             />

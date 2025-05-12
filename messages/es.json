@@ -19,7 +19,71 @@
     "appointmentsDescription": "Consulta y agenda nuevas citas médicas para tus mascotas",
     "addAppointmentBtn": "Agendar cita"
   },
+  "AppointmentForm": {
+    "selectPet": "Seleccionar mascota",
+    "selectService": "Seleccionar servicio",
+    "selectEmployee": "Seleccionar empleado",
+    "selectDate": "Fecha de la cita",
+    "details": "Detalles de la cita",
+    "cancelBtn": "Cancelar"
+  },
   "ProfileUser": {
-    "editProfileBtn": "Editar perfil"
+    "editProfileBtn": "Editar perfil",
+    "error": "Error",
+    "notFound": "No se encontraron datos del usuario",
+    "phoneLabel": "Teléfono",
+    "addressLabel": "Dirección",
+    "rucLabel": "RUC",
+    "emailLabel": "Correo electrónico",
+    "nameLabel": "Nombre",
+    "cancelBtn": "Cancelar",
+    "saving": "Guardando...",
+    "saveBtn": "Guardar"
+  },
+  "RecommendedProducts": {
+    "ctaText": "Ver detalles"
+  },
+  "ProfileTabs": {
+    "myProfile": "Mis datos",
+    "myPets": "Mis mascotas",
+    "myAppointments": "Mis citas"
+  },
+
+  "Header": {
+    "heart": "Veterinaria cliente fiel",
+    "description": "Bienvenido a nuestro sistema de veterinaria"
+  },
+  "ProductCatalog": {
+    "productCatalog": "Catálogo de productos",
+    "updating": "Actualizando...",
+    "title": "Tienda NicoPets",
+    "selectedTags": "Etiquetas seleccionadas:",
+    "clearAll": "Limpiar todas",
+    "filters": "Filtros",
+    "clear": "Limpiar todo",
+    "category": "Categoría",
+    "price": "Precio",
+    "tags": "Etiquetas",
+    "seeDetails": "Ver detalles",
+    "notFoundProducts": "No se encontraron productos",
+    "notFoundFilteredProducts": "No hay productos que coincidan con los filtros seleccionados. Intenta modificar tus criterios de búsqueda.",
+    "clearAllFilters": "Limpiar todos los filtros"
+  },
+  "ProductDetail": {
+    "returnToProducts": "Volver a productos",
+    "tags": "Etiquetas",
+    "relatedProducts": "Productos relacionados",
+    "ctaText": "Ver detalles",
+    "gs": "Gs."
+  },
+  "ProductStockCard": {
+    "code": "Código",
+    "provider": "Proveedor",
+    "category": "Categoría",
+    "unitPrice": "Precio unitario",
+    "title": "La Mascota S.A.",
+    "gs": "Gs",
+    "cost": "Costo",
+    "stock": "Deposito"
   }
 }

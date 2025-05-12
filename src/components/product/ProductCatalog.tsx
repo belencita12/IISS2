@@ -16,6 +16,7 @@ import { ProductCatalogSkeleton } from "./ProductCatalogEsqueleton";
 import { SearchX, Filter, RefreshCw, X, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/lib/toast";
+import { useTranslations } from "next-intl";
 
 const ProductCatalog = ({ token }: { token: string | null }) => {
     const [products, setProducts] = useState<Product[]>([]);
@@ -24,6 +25,7 @@ const ProductCatalog = ({ token }: { token: string | null }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isFiltering, setIsFiltering] = useState(false);
+    const t = useTranslations("ProductCatalog");
 
     const [inputValues, setInputValues] = useState({
         category: "",
@@ -220,7 +222,7 @@ const ProductCatalog = ({ token }: { token: string | null }) => {
                         className="mx-auto"
                     >
                         <RefreshCw className="w-4 h-4 mr-2" />
-                        Reintentar
+                        {t("Reintentar")}
                     </Button>
                 </div>
             </div>
@@ -236,7 +238,7 @@ const ProductCatalog = ({ token }: { token: string | null }) => {
                         <div className="bg-white/90 rounded-full shadow-md py-2 px-4 flex items-center gap-2 border border-gray-100">
                             <RefreshCw className="w-4 h-4 text-blue-500 animate-spin" />
                             <p className="text-sm text-gray-600">
-                                Actualizando...
+                                {t("updating")}
                             </p>
                         </div>
                     </div>
@@ -244,7 +246,7 @@ const ProductCatalog = ({ token }: { token: string | null }) => {
             )}
 
             <div className="max-w-7xl mx-auto space-y-6">
-                <h1 className="text-3xl font-bold mb-4">Tienda NicoPets</h1>
+                <h1 className="text-3xl font-bold mb-4">{t("title")}</h1>
                 <div className="w-full mx-auto bg-gray-50 py-2">
                     <SearchBar onSearch={handleSearch} />
 
@@ -253,7 +255,7 @@ const ProductCatalog = ({ token }: { token: string | null }) => {
                             <div className="flex items-center gap-2 mb-2">
                                 <Tag className="h-4 w-4 text-blue-500" />
                                 <span className="text-sm font-medium text-gray-700">
-                                    Etiquetas seleccionadas:
+                                    {t("selectedTags")}
                                 </span>
                             </div>
                             <div className="flex flex-wrap gap-2">
@@ -279,7 +281,7 @@ const ProductCatalog = ({ token }: { token: string | null }) => {
                                         className="text-xs text-gray-500 hover:text-gray-700 hover:underline px-2 py-1"
                                         disabled={isFiltering}
                                     >
-                                        Limpiar todas
+                                        {t("clearAll")}
                                     </button>
                                 )}
                             </div>
@@ -291,7 +293,7 @@ const ProductCatalog = ({ token }: { token: string | null }) => {
                     <aside className="w-full lg:w-[30%] bg-white rounded-lg border shadow-sm p-5 space-y-5 h-fit max-h-screen overflow-auto">
                         <div className="flex items-center justify-between mb-2">
                             <h2 className="text-lg font-semibold mb-[10px]">
-                                Filtros
+                                {t("filters")}
                             </h2>
                             {hasActiveFilters && (
                                 <Button
@@ -301,18 +303,18 @@ const ProductCatalog = ({ token }: { token: string | null }) => {
                                     className="text-xs h-8 px-2 text-gray-500 hover:text-gray-700"
                                     disabled={isFiltering}
                                 >
-                                    Limpiar todo
+                                    {t("clear")}
                                 </Button>
                             )}
                         </div>
-                        <label>Categoría</label>
+                        <label>{t("category")}</label>
                         <CategoryFilter
                             category={inputValues.category}
                             onCategoryChange={handleCategoryChange}
                             onClearCategory={handleClearCategory}
                         />
                         <br />
-                        <label>Precio</label>
+                        <label>{t("price")}</label>
                         <NumericFilter
                             label=""
                             minValue={inputValues.minPrice}
@@ -326,7 +328,7 @@ const ProductCatalog = ({ token }: { token: string | null }) => {
 
                         <div>
                             <label className="block text-sm font-medium mb-2">
-                                Tags
+                                {t("tags")}
                             </label>
                             <TagFilter
                                 title="Etiqueta"
@@ -350,7 +352,7 @@ const ProductCatalog = ({ token }: { token: string | null }) => {
                                                 product.image?.originalUrl ??
                                                 NotImageNicoPets.src
                                             }
-                                            ctaText="Ver detalles"
+                                            ctaText={t("seeDetails")}
                                             ctaLink={`/user-profile/product/${product.id}`}
                                             tags={product.tags}
                                         />
@@ -361,12 +363,10 @@ const ProductCatalog = ({ token }: { token: string | null }) => {
                             <div className="flex flex-col items-center justify-center lg:w-[970px] bg-white border rounded-lg shadow-sm p-10 text-center min-h-[400px]">
                                 <SearchX className="w-16 h-16 text-gray-300 mb-4" />
                                 <h3 className="text-xl font-medium text-gray-700 mb-2">
-                                    No se encontraron productos
+                                    {t("notFoundProducts")}
                                 </h3>
                                 <p className="text-gray-500 max-w-md mb-6">
-                                    No hay productos que coincidan con los
-                                    filtros seleccionados. Intenta modificar tus
-                                    criterios de búsqueda.
+                                    {t("notFoundFilteredProducts")}
                                 </p>
                                 {hasActiveFilters && (
                                     <Button
@@ -374,7 +374,7 @@ const ProductCatalog = ({ token }: { token: string | null }) => {
                                         className="flex items-center"
                                     >
                                         <Filter className="w-4 h-4 mr-2" />
-                                        Limpiar todos los filtros
+                                        {t("clearAllFilters")}
                                     </Button>
                                 )}
                             </div>
