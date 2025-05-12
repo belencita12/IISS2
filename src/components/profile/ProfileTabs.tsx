@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Header } from "./Header";
 import { PetsList } from "./PetLists";
-import { Appointments } from "./Appointments";
+import { Appointments } from "./appointment/Appointments";
 import { User, Dog, Calendar } from "lucide-react";
 import { ProfileUser } from "./ProfileUser";
 
