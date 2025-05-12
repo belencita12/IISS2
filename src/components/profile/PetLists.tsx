@@ -5,7 +5,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getPetsByUserId } from "@/lib/pets/getPetsByUserId";
 import { PetData } from "@/lib/pets/IPet";
-import { toast } from "@/lib/toast";
 import Image from "next/image";
 import { List, Plus } from "lucide-react";
 import { RecommendedProducts } from "./RecommendedProducts";
@@ -16,9 +15,10 @@ import { useTranslations } from "next-intl";
 interface PetsListProps {
   clientId: number;
   token: string;
+  onFetchError?: (error: string) => void;
 }
 
-export const PetsList = ({ clientId, token }: PetsListProps) => {
+export const PetsList = ({ clientId, token, onFetchError }: PetsListProps) => {
   const [pets, setPets] = useState<PetData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const t = useTranslations("PetLists");
@@ -28,15 +28,16 @@ export const PetsList = ({ clientId, token }: PetsListProps) => {
       try {
         const fetchedPets = await getPetsByUserId(clientId, token);
         setPets(fetchedPets);
-      } catch {
-        toast("error", "Error al obtener mascotas");
+      } catch (error) {
+        const errorMessage = "Error al obtener mascotas";
+        onFetchError?.(errorMessage);
       } finally {
         setLoading(false);
       }
     };
 
     if (clientId && token) fetchPets();
-  }, [clientId, token]);
+  }, [clientId, token, onFetchError]);
 
   const calculateAge = (dateOfBirth: string): string => {
     if (!dateOfBirth) return "";

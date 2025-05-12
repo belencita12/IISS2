@@ -21,7 +21,6 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
     userData, 
     isEditing, 
     loading, 
-    error, 
     updateLoading, 
     previewImage, 
     imageError,
@@ -36,24 +35,10 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
   if (loading) {
     return <ProfileUserSkeleton />
   }
-  
-  if (error) {
-    return (
-      <div className="py-12 text-center">
-        <div className="bg-red-50 text-red-600 px-4 py-3 rounded-lg inline-block">
-          <p className="font-medium">Error: {error.message}</p>
-        </div>
-      </div>
-    )
-  }
 
   if (!userData) {
     return (
-      <div className="py-12 text-center">
-        <div className="bg-amber-50 text-amber-600 px-4 py-3 rounded-lg inline-block">
-          <p className="font-medium">No se encontraron datos del usuario</p>
-        </div>
-      </div>
+          <p className="mt-4 text-gray-500 text-center">No se encontraron datos del usuario</p>
     )
   }
 

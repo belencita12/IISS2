@@ -24,9 +24,10 @@ interface AppointmentsProps {
   clientId: number;
   token: string;
   ruc: string | null;
+  onFetchError?: (error: string) => void;
 }
 
-export const Appointments = ({ token, ruc }: AppointmentsProps) => {
+export const Appointments = ({ token, ruc, onFetchError }: AppointmentsProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [executed, setExecuted] = useState(false);
@@ -46,8 +47,17 @@ export const Appointments = ({ token, ruc }: AppointmentsProps) => {
     }
   }, [ruc, executed]);
 
+  useEffect(() => {
+    if (fetchError) {
+      onFetchError?.("Error al obtener citas");
+    }
+  }, [fetchError, onFetchError]);
+
   const fetchAppointments = (page: number) => {
-    if (!ruc) return;
+    if (!ruc) {
+      onFetchError?.("No se pudo obtener el RUC del cliente");
+      return;
+    }
     
     const url = new URL(APPOINTMENT_API);
     url.searchParams.append("clientRuc", ruc);
@@ -61,10 +71,6 @@ export const Appointments = ({ token, ruc }: AppointmentsProps) => {
   const handlePageChange = (page: number) => {
     fetchAppointments(page);
   };
-
-  const error = !ruc
-    ? "No se pudo obtener el RUC del cliente"
-    : fetchError?.message || null;
 
   const appointments = appointmentsResponse?.data || [];
   const totalItems = appointmentsResponse?.total || 0;
@@ -192,6 +198,8 @@ export const Appointments = ({ token, ruc }: AppointmentsProps) => {
       <div className="mt-10">
         {loading ? (
           <AppointmentsTableSkeleton />
+        ) : appointments.length === 0 ? (
+          <p className="mt-4 text-gray-500 text-center">No tienes citas agendadas</p>
         ) : (
           <GenericTable
             data={appointments}
