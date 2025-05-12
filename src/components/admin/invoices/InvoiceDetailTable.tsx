@@ -37,6 +37,11 @@ export default function InvoiceDetailTable({ details }: Props) {
       },
       className: "text-right min-w-[80px]",
     },
+    {
+      header: "Sub. Total",
+      accessor: (item) => formatNumber(item.quantity * item.unitCost),
+      className: "text-right min-w-[80px]",
+    },
   ];
 
   return (
