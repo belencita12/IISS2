@@ -1,32 +1,77 @@
 {
   "ContactSection": {
     "contact": "Contacto",
-    "email": "Correo electrónicoooo",
-    "phone": "Teléfonoooo"
+    "email": "Correo electrónico",
+    "phone": "Teléfono"
   },
+  "NavLinks": {
+    "home": "Inicio",
+    "products": "Productos",
+    "appointments": "Citas",
+    "profile": "Perfil"
+  },
+  "Button": {
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "edit": "Editar",
+    "add": "Agregar",
+    "delete": "Eliminar",
+    "confirm": "Confirmar",
+    "continue": "Continuar",
+    "schedule": "Agendar",
+    "saving": "Guardando...",
+    "loading": "Cargando...",
+    "seeMore": "Ver más",
+    "seeDetails": "Ver detalles",
+    "canceling": "Cancelando...",
+    "scheduleing": "Agendando..."
+  },
+  "Error": {
+    "error": "Error",
+    "notGetData": "No se pudo obtener la información",
+    "notGetRuc": "No se pudo obtener el RUC del cliente",
+    "notFound": "No se encontraron datos.",
+    "notFoundPets": "No se encontraron mascotas.",
+    "notFoundProducts": "No se encontraron productos.",
+    "notFoundAppointments": "No se encontraron citas.",
+    "noAsigned": "No asignado"
+  },
+
   "PetLists": {
     "pets": "Mascotas registradas",
     "petsDescription": "Administra la información de tus mascotas",
-    "addPetBtn": "Agregar mascota",
     "petListBtn": "Lista de mascotas",
-    "petNotFound": "No tienes mascotas registradas.",
     "vetProducts": "Productos veterinarios",
-    "exploreProducts": "Explora los productos disponibles",
-    "seeMore": "Ver más"
+    "exploreProducts": "Explora los productos disponibles"
   },
   "Appointments": {
     "appointmentTitle": "Citas agendadas",
     "appointmentsDescription": "Consulta y agenda nuevas citas médicas para tus mascotas",
     "addAppointmentBtn": "Agendar cita"
   },
+
   "AppointmentForm": {
     "selectPet": "Seleccionar mascota",
     "selectService": "Seleccionar servicio",
     "selectEmployee": "Seleccionar empleado",
     "selectDate": "Fecha de la cita",
-    "details": "Detalles de la cita",
-    "cancelBtn": "Cancelar"
+    "details": "Detalles de la cita"
   },
+  "AppointmentTable": {
+    "date": "Fecha",
+    "time": "Hora",
+    "pet": "Mascota",
+    "employee": "Empleado",
+    "service": "Servicio",
+    "status": "Estado",
+    "actions": "Acciones",
+    "details": "Detalles",
+    "pending": "Pendiente",
+    "completed": "Completada",
+    "canceled": "Cancelada",
+    "inProgress": "En progreso"
+  },
+  
   "ProfileUser": {
     "editProfileBtn": "Editar perfil",
     "error": "Error",
@@ -40,9 +85,7 @@
     "saving": "Guardando...",
     "saveBtn": "Guardar"
   },
-  "RecommendedProducts": {
-    "ctaText": "Ver detalles"
-  },
+
   "ProfileTabs": {
     "myProfile": "Mis datos",
     "myPets": "Mis mascotas",
@@ -84,6 +127,6 @@
     "title": "La Mascota S.A.",
     "gs": "Gs",
     "cost": "Costo",
-    "stock": "Deposito"
+    "stock": "Depósito"
   }
 }

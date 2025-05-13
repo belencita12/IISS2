@@ -40,6 +40,7 @@ export const AppointmentForm = ({ token, clientId, userRole}: AppointmentFormPro
 
   const router = useRouter();
   const t = useTranslations("AppointmentForm");
+  const b = useTranslations("Button");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeData | null>(null);
@@ -163,14 +164,14 @@ export const AppointmentForm = ({ token, clientId, userRole}: AppointmentFormPro
           onClick={() => router.push("/user-profile")}
           disabled={isSubmitting}
         >
-          {t("cancelBtn")}
+          {b("cancel")}
         </Button>
         <Button
           type="submit"
           className="bg-black text-white hover:bg-gray-800"
           disabled={!selectedEmployee || !selectedService || !selectedPet || !formattedDate || isSubmitting}
         >
-          {isSubmitting ? "Agendando..." : "Agendar Cita"}
+          {isSubmitting ? b("scheduleing") : b("schedule")}
         </Button>
       </div>
     </form>

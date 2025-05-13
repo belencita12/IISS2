@@ -16,7 +16,10 @@ interface ProfileUserProps {
 }
 
 export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProps) {
-  const t = useTranslations("ProfileUser")
+  const t = useTranslations("ProfileUser");
+  const b= useTranslations("Button");
+  const e= useTranslations("Error");
+
   const { 
     userData, 
     isEditing, 
@@ -51,7 +54,7 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
     return (
       <div className="py-12 text-center">
         <div className="bg-amber-50 text-amber-600 px-4 py-3 rounded-lg inline-block">
-          <p className="font-medium">{t("notFound")}</p>
+          <p className="font-medium">{e("notFound")}</p>
         </div>
       </div>
     )
@@ -171,7 +174,7 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
                 className="px-4 py-2.5 rounded-lg border border-gray-300 hover:bg-white text-gray-700 font-medium bg-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
                 disabled={updateLoading}
               >
-                {t("cancelBtn")}
+                {b("cancel")}
               </Button>
                 <Button
                   type="submit"
@@ -181,10 +184,10 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
                   {updateLoading ? (
                     <>
                       <Loader2 size={18} className="animate-spin mr-2" />
-                      {t("saving")}
+                      {b("saving")}
                     </>
                   ) : (
-                    t("saveBtn")
+                    b("save")
                   )}
                 </Button>
               </div>
@@ -221,7 +224,7 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
                 onClick={handleEdit}
                 className="bg-pink-500 text-white flex items-center gap-2 hover:bg-pink-600 px-5 py-2.5 rounded-lg font-medium transition-colors duration-200"
               >
-                {t("editProfileBtn")}
+                {b("edit")}
               </Button>
               </div>
             </>

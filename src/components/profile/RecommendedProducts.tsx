@@ -26,7 +26,7 @@ export const RecommendedProducts = ({
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  const t = useTranslations("RecommendedProducts");
+  const b = useTranslations("Button");
   useEffect(() => {
     const fetchRecommendations = async () => {
       try {
@@ -81,7 +81,7 @@ export const RecommendedProducts = ({
               title={product.name}
               price={`${product.price.toLocaleString()} Gs.`}
               image={product.image?.originalUrl ?? NotImageNicoPets.src}
-              ctaText={t("ctaText")}
+              ctaText={b("seeDetails")}
               ctaLink={`/user-profile/product/${product.id}`}
               tags={product.tags}
             />

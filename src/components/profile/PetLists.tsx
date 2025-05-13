@@ -22,6 +22,8 @@ export const PetsList = ({ clientId, token }: PetsListProps) => {
   const [pets, setPets] = useState<PetData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const t = useTranslations("PetLists");
+  const b = useTranslations("Button");
+  const e = useTranslations("Error");
 
   useEffect(() => {
     const fetchPets = async () => {
@@ -67,7 +69,7 @@ export const PetsList = ({ clientId, token }: PetsListProps) => {
           <Link href="/user-profile/pet/register">
             <Button className="bg-pink-500 text-white flex items-center gap-2 hover:bg-pink-600">
               <Plus className="w-5 h-5" />
-              {t("addPetBtn")}
+              {b("add")}
             </Button>
           </Link>
           <Link href="/user-profile/pet/list-pets">
@@ -81,7 +83,7 @@ export const PetsList = ({ clientId, token }: PetsListProps) => {
         {loading ? (
           <PetListsSkeleton />
         ) : pets.length === 0 ? (
-          <p className="mt-4 text-gray-500">{t("petNotFound")}</p>
+          <p className="mt-4 text-gray-500">{e("notFoundPets")}</p>
         ) : (
           <div className="mt-8 flex flex-wrap justify-center gap-2 md:gap-3">
             {pets.map((pet) => (
@@ -136,7 +138,7 @@ export const PetsList = ({ clientId, token }: PetsListProps) => {
           {t("exploreProducts")}
         </p>
         <Button className="bg-white text-pink-500 border border-pink-500 mt-3 hover:bg-pink-600 hover:text-white">
-          <Link href="/user-profile/product">{t("seeMore")}</Link>
+          <Link href="/user-profile/product">{b("seeMore")}</Link>
         </Button>
       </section>
 
