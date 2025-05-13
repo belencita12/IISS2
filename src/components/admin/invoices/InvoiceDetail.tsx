@@ -6,6 +6,8 @@ import InvoiceDetailCard from "@/components/admin/invoices/InvoiceDetailCard";
 import InvoiceDetailTable from "@/components/admin/invoices/InvoiceDetailTable";
 import { toast } from "@/lib/toast";
 import InvoiceDetailSkeleton from "./skeleton/InvoiceDetailSkeleton";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface Props {
   token: string;
@@ -13,7 +15,7 @@ interface Props {
 
 export default function InvoiceDetail({ token }: Props) {
   const params = useParams<{ id: string }>();
-  const invoiceId = params?.id;
+  const invoiceId = params?.id || "";
   const { invoice, invoiceDetails, loading, error } = useInvoiceDetail(
     invoiceId, 
     token
@@ -33,6 +35,16 @@ export default function InvoiceDetail({ token }: Props) {
       <h3 className="text-xl font-semibold text-black mb-3 mt-3">Detalle</h3>
       <div className="w-full">
         <InvoiceDetailTable details={invoiceDetails} />
+      </div>
+      <div className="flex justify-end mt-6">
+        <Link href="/dashboard/invoices">
+          <Button
+            variant="outline"
+            className="px-6 border-gray-200 border-solid"
+          >
+            Volver
+          </Button>
+        </Link>
       </div>
     </div>
   );
