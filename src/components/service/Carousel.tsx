@@ -1,21 +1,21 @@
-"use client";
-import { useState } from "react";
-import Image from "next/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+"use client"
+import { useState } from "react"
+import Image from "next/image"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 
 interface CarouselProps {
-  images: string[];
+  images: string[]
 }
 
 export default function Carousel({ images }: CarouselProps) {
-  const [index, setIndex] = useState(0);
-  const totalSlides = Math.ceil(images.length / 2);
+  const [index, setIndex] = useState(0)
+  const totalSlides = Math.ceil(images.length / 2)
 
-  const prevSlide = () => setIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
-  const nextSlide = () => setIndex((prev) => (prev + 1) % totalSlides);
+  const prevSlide = () => setIndex((prev) => (prev - 1 + totalSlides) % totalSlides)
+  const nextSlide = () => setIndex((prev) => (prev + 1) % totalSlides)
 
-  const firstImage = images[index * 2];
-  const secondImage = images[index * 2 + 1];
+  const firstImage = images[index * 2]
+  const secondImage = images[index * 2 + 1]
 
   return (
     <div className="relative w-full flex justify-center items-center py-4">
@@ -23,9 +23,9 @@ export default function Carousel({ images }: CarouselProps) {
         {/* Botón Izquierdo */}
         <button
           onClick={prevSlide}
-          className="absolute left-0 -translate-x-1/2 bg-gray-200 p-2 rounded-full shadow-md hover:bg-gray-300"
+          className="absolute left-0 -translate-x-1/2 bg-gray-200 p-2 rounded-full shadow-md hover:bg-gray-300 z-10"
         >
-          {<ChevronLeft className="w-6 h-6" />}
+          <ChevronLeft className="w-6 h-6 text-[#a855f7]" />
         </button>
 
         {/* Contenedor de Imágenes */}
@@ -33,24 +33,22 @@ export default function Carousel({ images }: CarouselProps) {
           {firstImage && (
             <div className="flex-1">
               <Image
-                src={firstImage}
-                alt="Imagen 1"
-                width={300}
-                height={200}
-                className="rounded-lg object-cover w-full h-full"
-                unoptimized
+                src={firstImage || "/placeholder.svg"}
+                alt="Imagen de servicio"
+                width={500}
+                height={300}
+                className="rounded-lg object-cover w-full h-64 md:h-80"
               />
             </div>
           )}
           {secondImage && (
             <div className="flex-1 hidden sm:block">
               <Image
-                src={secondImage}
-                alt="Imagen 2"
-                width={300}
-                height={200}
-                className="rounded-lg object-cover w-full h-full"
-                unoptimized
+                src={secondImage || "/placeholder.svg"}
+                alt="Imagen de servicio"
+                width={500}
+                height={300}
+                className="rounded-lg object-cover w-full h-64 md:h-80"
               />
             </div>
           )}
@@ -59,12 +57,11 @@ export default function Carousel({ images }: CarouselProps) {
         {/* Botón Derecho */}
         <button
           onClick={nextSlide}
-          className="absolute right-0 translate-x-1/2 bg-gray-200 p-2 rounded-full shadow-md hover:bg-gray-300"
+          className="absolute right-0 translate-x-1/2 bg-gray-200 p-2 rounded-full shadow-md hover:bg-gray-300 z-10"
         >
-        {<ChevronRight className="w-6 h-6" />}
+          <ChevronRight className="w-6 h-6 text-[#a855f7]" />
         </button>
       </div>
     </div>
-  );
+  )
 }
-
