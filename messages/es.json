@@ -34,7 +34,8 @@
     "notFoundPets": "No se encontraron mascotas.",
     "notFoundProducts": "No se encontraron productos.",
     "notFoundAppointments": "No se encontraron citas.",
-    "noAsigned": "No asignado"
+    "noAsigned": "No asignado",
+    "noDetails": "No hay detalles disponibles"
   },
 
   "PetLists": {
@@ -56,6 +57,23 @@
     "selectEmployee": "Seleccionar empleado",
     "selectDate": "Fecha de la cita",
     "details": "Detalles de la cita"
+  },
+  "AppointmentDetail": {
+    "appointmentDetails": "Detalles de la cita",
+    "pet": "Mascota",
+    "name": "Nombre",
+    "race": "Raza",
+    "owner": "Dueño",
+    "employee": "Encargado/s",
+    "service": "Servicio",
+    "date": "Fecha y hora designada",
+    "time": "Hora",
+    "status": "Estado",
+    "details": "Detalles",
+    "pending": "Pendiente",
+    "completed": "Completada",
+    "canceled": "Cancelada",
+    "inProgress": "En progreso"
   },
   "AppointmentTable": {
     "date": "Fecha",

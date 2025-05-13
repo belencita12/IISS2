@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { getAppointmentById } from '@/lib/appointment/getAppointmentById';
 import { AppointmentData } from '@/lib/appointment/IAppointment';
 import { formatDate, formatTimeUTC } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 interface AppointmentDetailsProps {
   token: string;
@@ -14,6 +15,9 @@ export default function AppointmentDetails({ token, appointmentId }: Appointment
   const [appointment, setAppointment] = useState<AppointmentData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const a = useTranslations('AppointmentDetail');
+  const b = useTranslations('Button');
+  const e = useTranslations('Error');
 
   useEffect(() => {
     const fetchAppointment = async () => {
@@ -22,7 +26,6 @@ export default function AppointmentDetails({ token, appointmentId }: Appointment
         setAppointment(data);
       } catch (err) {
         setError('Error al cargar los detalles de la cita');
-        console.error('Error fetching appointment:', err);
       } finally {
         setLoading(false);
       }
@@ -34,7 +37,7 @@ export default function AppointmentDetails({ token, appointmentId }: Appointment
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[200px]">
-        <div className="text-gray-600">Cargando...</div>
+        <div className="text-gray-600">{b("loading")}</div>
       </div>
     );
   }
@@ -50,58 +53,58 @@ export default function AppointmentDetails({ token, appointmentId }: Appointment
   if (!appointment) {
     return (
       <div className="text-center text-gray-600 p-4">
-        No se encontró la cita
+        {e("notFound")}
       </div>
     );
   }
 
   return (
     <div className="max-w-xl mx-auto p-6 bg-white rounded shadow">
-      <h2 className="text-2xl font-bold mb-6">Detalle de la cita</h2>
+      <h2 className="text-2xl font-bold mb-6">{a("appointmentDetails")}</h2>
       
       <div className="space-y-4">
         <div className="border-b pb-4">
-          <p className="font-semibold text-gray-700">Servicio</p>
+          <p className="font-semibold text-gray-700">{a("service")}</p>
           <p className="text-gray-600">{appointment.service}</p>
         </div>
 
         <div className="border-b pb-4">
-          <p className="font-semibold text-gray-700">Fecha designada</p>
+          <p className="font-semibold text-gray-700">{a("date")}</p>
           <p className="text-gray-600">
             {formatDate(appointment.designatedDate)}, {formatTimeUTC(appointment.designatedDate)}
           </p>
         </div>
 
         <div className="border-b pb-4">
-          <p className="font-semibold text-gray-700">Estado</p>
+          <p className="font-semibold text-gray-700">{a("status")}</p>
           <p className="text-gray-600">
             {{
-              PENDING: 'Pendiente',
-              IN_PROGRESS: 'En Progreso',
-              COMPLETED: 'Completado',
-              CANCELLED: 'Cancelado',
-            }[appointment.status] || 'Desconocido'}
+              PENDING: a("pending"),
+              IN_PROGRESS: a("inProgress"),
+              COMPLETED: a("completed"),
+              CANCELLED: a("canceled"),
+            }[appointment.status] || b("notFound")}
           </p>
         </div>
 
         <div className="border-b pb-4">
-          <p className="font-semibold text-gray-700">Detalles</p>
+          <p className="font-semibold text-gray-700">{a("details")}</p>
           <p className="text-gray-600">
-            {appointment.details ? appointment.details : 'Sin Detalles'}
+            {appointment.details ? appointment.details : e("noDetails")}
           </p>
         </div>
 
         <div className="border-b pb-4">
-          <p className="font-semibold text-gray-700 mb-2">Mascota</p>
+          <p className="font-semibold text-gray-700 mb-2">{a("pet")}</p>
           <div className="ml-4">
-            <p className="text-gray-600">Nombre: {appointment.pet.name}</p>
-            <p className="text-gray-600">Raza: {appointment.pet.race}</p>
-            <p className="text-gray-600">Dueño: {appointment.pet.owner.name}</p>
+            <p className="text-gray-600">{a("name")} {appointment.pet.name}</p>
+            <p className="text-gray-600">{a("race")} {appointment.pet.race}</p>
+            <p className="text-gray-600">{a("owner")} {appointment.pet.owner.name}</p>
           </div>
         </div>
 
         <div>
-          <p className="font-semibold text-gray-700 mb-2">Empleados encargados</p>
+          <p className="font-semibold text-gray-700 mb-2">{a("employee")}</p>
           <ul className="ml-4 space-y-1">
             {appointment.employees.map(emp => (
               <li key={emp.id} className="text-gray-600">
