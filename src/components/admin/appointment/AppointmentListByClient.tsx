@@ -17,6 +17,7 @@ import {
     completeAppointment,
 } from "@/lib/appointment/service";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
+import AppointmentListSkeleton from "./Skeleton/AppointmentListSkeleton";
 
 interface ClientAppointmentListProps {
     token: string;
@@ -127,7 +128,7 @@ const ClientAppointmentList = ({
     return (
         <div className="p-4 space-y-4">
             {isLoading ? (
-                <p className="text-center py-4">Cargando citas...</p>
+                <AppointmentListSkeleton/>
             ) : data?.length ? (
                 <div className="grid grid-cols-1 gap-4">
                     {data.map((appointment) => (

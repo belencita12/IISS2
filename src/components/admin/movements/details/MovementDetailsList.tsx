@@ -12,6 +12,7 @@ import { useState } from "react";
 import { revertMovement } from "@/lib/movements/revertMovement";
 import { toast } from "@/lib/toast";
 import { useRouter } from "next/navigation";
+import MovementDetailSkeleton from "../skeleton/MovementDetailSkeleton";
 
 interface Props {
   id: number;
@@ -24,7 +25,7 @@ export const MovementDetailsList = ({ id, token }: Props) => {
   const [isReverting, setIsReverting] = useState(false);
   const router = useRouter();
 
-  if (loading) return <p className="text-center mt-10">Cargando...</p>;
+  if (loading) return <MovementDetailSkeleton/>;
   if (error) return <p className="text-center text-red-500 mt-10">Error: {error}</p>;
   if (!movement) return <p className="text-center mt-10">No se encontró el movimiento.</p>;
 

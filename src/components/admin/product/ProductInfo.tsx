@@ -3,6 +3,7 @@
 import React from "react";
 import type { Product } from "@/lib/products/IProducts";
 import { getCategoryLabel } from "@/lib/products/utils/categoryLabel";
+import ProductDetailSkeleton from "./skeleton/ProductDetailSkeleton";
 
 interface ProductInfoProps {
   product: Product;
@@ -70,7 +71,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
             Cantidad
           </h3>
           <p className="text-right">
-            {isStockLoading ? "Cargando..." : product.quantity.toString()}
+            {isStockLoading ? <ProductDetailSkeleton/>: product.quantity.toString()}
           </p>
         </div>
         <div />

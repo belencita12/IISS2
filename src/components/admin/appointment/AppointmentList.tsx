@@ -18,6 +18,7 @@ import { completeAppointment, cancelAppointment } from "@/lib/appointment/servic
 import { Modal } from "@/components/global/Modal";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import AppointmentListSkeleton from "./Skeleton/AppointmentListSkeleton";
 
 interface AppointmentListProps {
   token: string;
@@ -132,7 +133,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
         </div>
 
       {isLoading ? (
-        <p className="text-center text-black">Cargando citas...</p>
+       <AppointmentListSkeleton />
       ) : (
         <div className="grid grid-cols-1 gap-4">
           {data?.length ? (
