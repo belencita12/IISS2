@@ -40,8 +40,8 @@ export function Navbar({ links }: NavbarProps) {
               src="/logo.png"
               alt="NicoPets logo"
               width={60}
-              height={60} 
-              className="-mt-2" 
+              height={60}
+              className="-mt-2"
               priority
             />
             <h1 className="text-lg font-semibold text-myPurple-focus mt-6">
@@ -51,7 +51,11 @@ export function Navbar({ links }: NavbarProps) {
         </div>
 
         {/* Links */}
-        <div className="flex-1 flex justify-center">
+        <div
+          className={`flex-1 flex ${
+            isAuthenticated ? "justify-center" : "justify-end"
+          }`}
+        >
           <nav className="hidden md:flex gap-8 items-center">
             {links.map((link) => {
               const isActive =
