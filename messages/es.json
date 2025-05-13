@@ -36,7 +36,13 @@
     "notFoundAppointments": "No se encontraron citas.",
     "noAsigned": "No asignado",
     "noDetails": "No hay detalles disponibles",
-    "notLoadingAppointments": "No se pudieron cargar las citas"
+    "notLoadingAppointments": "No se pudieron cargar las citas",
+    "noEmpty": "El campo no puede ser vacío",
+    "noUpdate": "No se puede actualizar",
+    "noSave": "Error al guardar los cambios"
+  },
+  "Vaccune": {
+    "vaccuneControlTitle": "Control de vacunas"
   },
 
   "PetLists": {
@@ -45,6 +51,15 @@
     "petListBtn": "Lista de mascotas",
     "vetProducts": "Productos veterinarios",
     "exploreProducts": "Explora los productos disponibles"
+  },
+  "PetDetail": {
+    "name": "Nombre",
+    "race": "Raza",
+    "weight": "Peso",
+    "specie": "Especie",
+    "sex": "Género",
+    "born": "Fecha de nacimiento"
+
   },
   "Appointments": {
     "appointmentTitle": "Citas agendadas",

@@ -11,6 +11,7 @@ import { formatDate } from "@/lib/utils";
 import AppointmentList from "@/components/appointment/AppointmentList";
 import { updatePet } from "@/lib/pets/updatePet";
 import UpdatePetImage from "@/components/pet/UpdatePetImage";
+import { useTranslations } from "next-intl";
 
 interface Props {
   token: string;
@@ -55,6 +56,11 @@ function calcularEdad(fechaNacimiento: string): string {
 }
 
 export default function PetDetails({ token }: Props) {
+  const b = useTranslations("Button");
+  const p = useTranslations("PetDetail");
+  const v = useTranslations("Vaccune");
+  const e = useTranslations("Error");
+
   const { id } = useParams();
   const [pet, setPet] = useState<PetData | null | undefined>(undefined);
 
@@ -87,19 +93,19 @@ export default function PetDetails({ token }: Props) {
         setPet(data);
         setEditedName(data?.name ?? "");
       })
-      .catch(() => {
-        toast("error", "Error al obtener la mascota.");
+      .catch((error: unknown) => {
+        toast("error", error instanceof Error ? error.message : e("error"));
         setPet(null);
       });
   }, [id, token]);
 
   const handleSave = async () => {
     if (!editedName.trim()) {
-      setError("El nombre no puede estar vacío.");
+      setError(e("noEmpty"));
       return;
     }
     if (!pet || pet.id === undefined) {
-      setError("No se puede actualizar, la mascota no tiene ID.");
+      setError(e("noUpdate"));
       return;
     }
     setIsSaving(true);
@@ -123,7 +129,7 @@ export default function PetDetails({ token }: Props) {
       if (error instanceof Error) {
         setError(error.message);
       } else {
-        setError("Error al guardar los cambios");
+        setError(e("noSave"));
       }
     } finally {
       setIsSaving(false);
@@ -133,7 +139,7 @@ export default function PetDetails({ token }: Props) {
   return (
     <div className="flex-col">
       {pet === undefined ? (
-        <p className="text-center text-gray-600">Cargando mascota...</p>
+        <p className="text-center text-gray-600">{b("loading")}</p>
       ) : pet === null ? (
         <></>
       ) : (
@@ -157,12 +163,12 @@ export default function PetDetails({ token }: Props) {
 
             <div className="flex-col justify-start text-white text-xs">
               {[
-                { label: "Nombre", name: "name" },
-                { label: "Fecha de Nacimiento", name: "dateOfBirth" },
-                { label: "Peso", name: "weight" },
-                { label: "Raza", name: "race" },
-                { label: "Especie", name: "species" },
-                { label: "Género", name: "sex" },
+                { label: p("name"), name: "name" },
+                { label: p("born"), name: "dateOfBirth" },
+                { label: p("weight"), name: "weight" },
+                { label: p("race"), name: "race" },
+                { label: p("specie"), name: "species" },
+                { label: p("sex"), name: "sex" },
               ].map(({ label, name }) => (
                 <div key={name} className="p-1 pb-3">
                   <p>{label}</p>
@@ -205,14 +211,14 @@ export default function PetDetails({ token }: Props) {
                         isSaving ? "cursor-not-allowed" : ""
                       }`}
                     >
-                      {isSaving ? "Guardando..." : "Guardar"}
+                      {isSaving ? b("saving") : b("save")}
                     </Button>
                     <Button
                       onClick={handleCancel}
                       className="p-1 pl-3 pr-3"
                       disabled={isSaving}
                     >
-                      Cancelar
+                      {b("cancel")}
                     </Button>
                   </>
                 ) : (
@@ -220,7 +226,7 @@ export default function PetDetails({ token }: Props) {
                     onClick={() => setIsEditingName(true)}
                     className="p-1 pl-3 pr-3"
                   >
-                    Editar
+                    {b("edit")}
                   </Button>
                 )}
               </div>
@@ -232,7 +238,7 @@ export default function PetDetails({ token }: Props) {
             {pet?.id && (
               <>
                 <h2 className="text-2xl font-bold mb-3 mt-10">
-                  Control de Vacunas
+                  {v("vaccuneControlTitle")}
                 </h2>
                 <PetVaccinationTable
                   Id={Number(id)}
