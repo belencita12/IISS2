@@ -3,7 +3,7 @@ import { Skeleton } from "../ui/skeleton"
 export default function NavbarSkeleton() {
   return (
     <header className="w-full shadow-sm px-8 py-4 bg-white border-b border-myPurple-disabled/30">
-      <div className="max-w-7xl mx-auto flex items-center justify-between h-full">
+      <div className="w-full flex items-center justify-between h-full">
         <div className="flex items-center gap-2">
           <Skeleton className="w-[60px] h-[60px] rounded" />
           <Skeleton className="h-6 w-24" />
