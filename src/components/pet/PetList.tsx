@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Card } from "../../components/global/Card";
 import { Button } from "@/components/ui/button";
-import { Grid, List, PawPrint, ArrowLeft } from "lucide-react";
+import { Grid, List, PawPrint } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { PetData } from "@/lib/pets/IPet";
 import { useRouter } from "next/navigation";
@@ -90,14 +90,6 @@ const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
               <PawPrint className="w-8 h-8 text-white" />
               <h1 className="text-3xl font-bold text-white">Mis Mascotas</h1>
             </div>
-            <Button
-              variant="ghost"
-              onClick={() => router.push("../user-profile")}
-              className="text-white hover:bg-white/20"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Volver al perfil
-            </Button>
           </div>
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-myPurple-secondary to-myPink-secondary opacity-30" />
