@@ -1,10 +1,10 @@
 import { Phone, Mail, Clock, MapPin } from "lucide-react"
 
-export default function Page() {
+export default function ContactPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Decorative header background */}
-      <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-r from-myPurple-primary to-myPink-primary opacity-90 z-0">
+      <div className="absolute top-0 left-0 right-0 h-80 -z-20 bg-gradient-to-r from-myPurple-primary to-myPink-primary opacity-90 ">
         <div className="absolute inset-0 bg-[url('/placeholder.svg?height=200&width=200')] bg-repeat opacity-10"></div>
         <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent"></div>
       </div>
@@ -68,7 +68,7 @@ export default function Page() {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1">Horario</h3>
-                  <p className="text-white/80">Lunes a Sábado, 9:00 AM - 7:00 PM</p>
+                  <p className="text-white/80">Lunes a Sábado, 8:00 AM - 7:00 PM</p>
                 </div>
               </div>
             </div>
@@ -110,92 +110,10 @@ export default function Page() {
                 </svg>
               </a>
             </div>
-          </div>
-
-          {/* Map Section */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 mb-12">
-            <h2 className="text-xl font-bold text-myPurple-focus mb-4">Nuestra Ubicación</h2>
-            <div className="aspect-video bg-gray-200 rounded-lg flex items-center justify-center">
-              <p className="text-gray-500">Mapa de ubicación</p>
-              {/* Aquí se puede integrar un mapa de Google Maps o similar */}
-            </div>
-          </div>
-
-          {/* Contact Form */}
-          <div className="bg-white rounded-2xl shadow-lg p-8 mb-12">
-            <h2 className="text-xl font-bold text-myPurple-focus mb-6">Envíenos un Mensaje</h2>
-            <form className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                    Nombre
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-myPurple-primary focus:border-myPurple-primary"
-                    placeholder="Su nombre"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-myPurple-primary focus:border-myPurple-primary"
-                    placeholder="Su email"
-                  />
-                </div>
-              </div>
-              <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
-                  Asunto
-                </label>
-                <input
-                  type="text"
-                  id="subject"
-                  name="subject"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-myPurple-primary focus:border-myPurple-primary"
-                  placeholder="Asunto de su mensaje"
-                />
-              </div>
-              <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                  Mensaje
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  rows={5}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-myPurple-primary focus:border-myPurple-primary"
-                  placeholder="Escriba su mensaje aquí"
-                ></textarea>
-              </div>
-              <div>
-                <button
-                  type="submit"
-                  className="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-myPurple-primary to-myPink-primary text-white font-medium rounded-md hover:from-myPurple-hover hover:to-myPink-hover transition-colors"
-                >
-                  Enviar Mensaje
-                </button>
-              </div>
-            </form>
-          </div>
+          </div> 
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-gray-50 pt-8 pb-8">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-gray-600 text-sm">
-            &copy; {new Date().getFullYear()} Veterinaria Nikopets. Todos los derechos reservados.
-          </p>
-        </div>
-      </footer>
     </div>
   )
 }
