@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import ContactSection from "@/components/aboutPage/ContactSection";
 import { Heart, Users, Clock } from "lucide-react";
 
 export default function About() {
