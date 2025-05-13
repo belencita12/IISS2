@@ -8,6 +8,7 @@ import MovementFilters from "./MovementFilters";
 import GenericPagination from "@/components/global/GenericPagination";
 import { useEffect } from "react";
 import { toast } from "@/lib/toast";
+import MovementListSkeleton from "./skeleton/MovementListSkeleton";
 
 
 interface Props {
@@ -48,7 +49,7 @@ export default function MovementListPage({ token }: Props) {
       </div>
 
       {isLoading ? (
-        <p className="text-center">Cargando movimientos...</p>
+         <MovementListSkeleton />
       ) : movements.length === 0 ? (
         <p className="text-center">No hay movimientos registrados.</p>
       ) : (

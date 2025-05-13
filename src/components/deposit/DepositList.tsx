@@ -11,6 +11,7 @@ import { getStocks } from "@/lib/stock/getStock";
 import { StockData } from "@/lib/stock/IStock";
 import { deleteStockById } from "@/lib/stock/deleteStockById";
 import GenericPagination from "../global/GenericPagination";
+import DepositListSkeleton from "./skeleton/DepositListSkeleton";
 
 interface DepositListProps {
   token?: string;
@@ -92,9 +93,7 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
       </div>
 
       {isLoading && (
-        <div className="space-y-4 flex justify-center items-center">
-          <LoaderCircleIcon className="lucide lucide-loader-circle animate-spin" />
-        </div>
+        <DepositListSkeleton/>
       )}
       {!isLoading && (
         <div className="space-y-4">

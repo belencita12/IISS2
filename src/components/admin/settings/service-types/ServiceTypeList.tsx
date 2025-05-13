@@ -8,9 +8,10 @@ import GenericTable, { Column } from "@/components/global/GenericTable";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import { toast } from "@/lib/toast";
 import { Eye, Pencil, Trash } from "lucide-react";
-import { ServiceTypeTableSkeleton } from "./ServiceTypeTableSkeleton";
+
 import { useServiceTypeList, ServiceType } from "@/hooks/service-types/useServiceTypeList";
 import { useServiceTypeApi } from "@/lib/service-types/service";
+import ServiceTypeTableSkeleton from "./Skeleton/ServiceTypeTableSkeleton";
 
 interface ServiceTypeListProps {
   token: string;

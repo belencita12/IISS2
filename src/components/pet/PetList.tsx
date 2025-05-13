@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Card } from "../../components/global/Card";
 import { Button } from "@/components/ui/button";
-import { Grid, List } from "lucide-react";
+import { Grid, List, PawPrint } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { PetData } from "@/lib/pets/IPet";
 import { useRouter } from "next/navigation";
@@ -82,11 +82,20 @@ const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
   }, [currentPage]);
 
   return (
-    <div className="flex-col">
-      <h1 className="bg-gray-500 w-full p-4 text-3xl font-bold mb-8 text-white px-16">
-        Mis Mascotas
-      </h1>
-      <div className="grid px-16 gap-6">
+    <div className="min-h-screen bg-gray-50/50">
+      <div className="relative bg-gradient-to-r from-myPurple-primary to-myPink-primary py-8 mb-8">
+        <div className="container mx-auto px-16">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <PawPrint className="w-8 h-8 text-white" />
+              <h1 className="text-3xl font-bold text-white">Mis Mascotas</h1>
+            </div>
+          </div>
+        </div>
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-myPurple-secondary to-myPink-secondary opacity-30" />
+      </div>
+
+      <div className="container mx-auto px-4 sm:px-16">
         <div className="flex flex-col justify-around items-start gap-6 md:gap-16 px-4 sm:flex-row mb-6">
           <div className="w-full">
             <SearchBar
@@ -96,28 +105,27 @@ const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
             />
           </div>
           <div className="w-auto flex gap-2 items-center justify-end">
-            <button
+            <Button
+              variant="ghost"
+              size={"default"}
               onClick={() => setIsGridView(true)}
               disabled={isLoading || isEmpty || isGridView}
+              className={`${isGridView ? 'bg-gray-100' : ''} hover:bg-gray-100 w-12 h-12 p-0 [&_svg]:!w-8 [&_svg]:!h-8`}
             >
-              <Grid
-                className={`w-9 h-9 ${
-                  isLoading || isEmpty || isGridView ? "text-gray-300" : ""
-                }`}
-              />
-            </button>
-            <button
+              <Grid className={isLoading || isEmpty || isGridView ? "text-gray-300" : "text-myPurple-primary"} />
+            </Button>
+            <Button
+              variant="ghost"
+              size={"default"}
               onClick={() => setIsGridView(false)}
               disabled={isLoading || isEmpty || !isGridView}
+              className={`${!isGridView ? 'bg-gray-100' : ''} hover:bg-gray-100 w-12 h-12 p-0 [&_svg]:!w-8 [&_svg]:!h-8`}
             >
-              <List
-                className={`w-9 h-9 ${
-                  isLoading || isEmpty || !isGridView ? "text-gray-300" : ""
-                }`}
-              />
-            </button>
+              <List className={isLoading || isEmpty || !isGridView ? "text-gray-300" : "text-myPurple-primary"} />
+            </Button>
           </div>
         </div>
+
         {isLoading ? (
           isGridView ? (
             <PetsGridSkeleton />
@@ -125,32 +133,35 @@ const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
             <PetsListSkeleton />
           )
         ) : isEmpty ? (
-          <div className="text-center my-8">No hay mascotas</div>
+          <div className="flex flex-col items-center justify-center py-16 text-gray-500">
+            <PawPrint className="w-16 h-16 mb-4 text-gray-300" />
+            <p className="text-lg font-medium">No hay mascotas registradas</p>
+            <p className="text-sm">Comienza agregando una nueva mascota</p>
+          </div>
         ) : isGridView ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 pb-10">
             {pets.map((pet) => (
               <Card
                 key={pet.id}
-                alt={
-                  `Imagen de un/a ${pet.species.name}` || "Imagen no encontrada"
-                }
                 title={pet.name}
+                description={`${pet.species.name} • ${pet.race.name} • ${pet.sex === "M" ? "Macho" : "Hembra"}`}
                 image={pet.profileImg?.originalUrl || IMAGE_NOT_FOUND}
-                bgColor="hover:bg-gray-50 transition h-full"
-                description={`${pet.species.name} - ${pet.race.name} - ${
-                  pet.sex === "M" ? "Macho" : "Hembra"
-                }`}
+                alt={`Imagen de un/a ${pet.species.name}`}
+                imagePosition="top"
+                layout="vertical"
+                bgColor="bg-white flex flex-col h-full"
+                textColor="text-gray-800"
+                imageWidth={400}
+                imageHeight={400}
               >
-                <Button
-                  className="w-full"
-                  size={"lg"}
-                  variant="outline"
-                  onClick={() => {
-                    router.push(`../pet/${pet.id}`);
-                  }}
-                >
-                  Ver detalles
-                </Button>
+                <div className="mt-auto pt-4">
+                  <Button
+                    className="w-full bg-gradient-to-r from-myPurple-primary to-myPink-primary hover:from-myPurple-hover hover:to-myPink-hover text-white"
+                    onClick={() => router.push(`../pet/${pet.id}`)}
+                  >
+                    Ver detalles
+                  </Button>
+                </div>
               </Card>
             ))}
           </div>
@@ -159,30 +170,30 @@ const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
             {pets.map((pet) => (
               <div
                 key={pet.id}
-                className="flex items-center md:mx-20 gap-4 p-4 border rounded-lg shadow-sm hover:bg-gray-100 transition"
+                className="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300"
               >
-                <Avatar className="w-16 h-16 overflow-hidden rounded-full">
+                <Avatar className="w-16 h-16 ring-2 ring-myPurple-primary/20">
                   <AvatarImage
-                    className="w-full h-full object-cover"
+                    className="object-cover"
                     src={pet.profileImg?.previewUrl || IMAGE_NOT_FOUND}
                     alt={pet.name || "Imagen no encontrada"}
                   />
-                  <AvatarFallback>{pet.name.charAt(0)}</AvatarFallback>
+                  <AvatarFallback className="bg-gradient-to-r from-myPurple-primary to-myPink-primary text-white">
+                    {pet.name.charAt(0)}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold">{pet.name}</h3>
+                  <h3 className="text-lg font-semibold text-gray-800">{pet.name}</h3>
                   <p className="text-gray-600">
-                    {pet.species.name} - {pet.race.name}
+                    {pet.species.name} • {pet.race.name}
                   </p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-myPurple-primary font-medium">
                     {pet.sex === "M" ? "Macho" : "Hembra"}
                   </p>
                 </div>
                 <Button
-                  onClick={() => {
-                    router.push(`../pet/${pet.id}`);
-                  }}
-                  variant="outline"
+                  onClick={() => router.push(`../pet/${pet.id}`)}
+                  className="bg-gradient-to-r from-myPurple-primary to-myPink-primary hover:from-myPurple-hover hover:to-myPink-hover text-white"
                 >
                   Ver detalles
                 </Button>
@@ -190,18 +201,19 @@ const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
             ))}
           </div>
         )}
+
+        {!isLoading && !isEmpty && (
+          <div className="py-8">
+            <GenericPagination
+              handlePreviousPage={handlePreviousPage}
+              handleNextPage={handleNextPage}
+              handlePageChange={setCurrentPage}
+              currentPage={currentPage}
+              totalPages={totalPages}
+            />
+          </div>
+        )}
       </div>
-      {!isLoading ? (
-        <GenericPagination
-          handlePreviousPage={handlePreviousPage}
-          handleNextPage={handleNextPage}
-          handlePageChange={setCurrentPage}
-          currentPage={currentPage}
-          totalPages={totalPages}
-        />
-      ) : (
-        ""
-      )}
     </div>
   );
 };

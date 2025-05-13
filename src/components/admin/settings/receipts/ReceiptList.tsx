@@ -4,7 +4,8 @@ import { useEffect, useState, ReactNode } from "react";
 import { getReceipts } from "@/lib/receipts/getReceipts";
 import { IReceipt, IReceiptResponse } from "@/lib/receipts/IReceipt";
 import GenericTable, { Column } from "@/components/global/GenericTable";
-import { Eye } from "lucide-react";
+import { Eye, Receipt } from "lucide-react";
+import ReceiptListSkeleton from "./skeleton/ReceiptListSkeleton";
 
 type ReceiptListProps = {
   token: string;
@@ -72,7 +73,7 @@ export default function ReceiptList({ token }: ReceiptListProps) {
     },
   ];
 
-  if (loading) return <div>Cargando...</div>;
+  if (loading) return <ReceiptListSkeleton />;
 
   return (
     <div>
