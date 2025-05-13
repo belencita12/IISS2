@@ -7,6 +7,7 @@ import { PurchaseData } from "@/lib/purchases/IPurchase";
 import { toast } from "@/lib/toast";
 import GenericPagination from "@/components/global/GenericPagination";
 import { usePurchaseDetail } from "@/hooks/purchases/usePurchaseDetail";
+import PurchaseDetailSkeleton from "./skeleton/PurchaseDetailSkeleton";
 
 interface PurchaseDetailProps {
   token: string;
@@ -46,7 +47,7 @@ const PurchaseDetail: React.FC<PurchaseDetailProps> = ({ token, purchaseInfo, in
     }
   };
 
-  if (loading) return <p className="text-center">Cargando detalles de la compra...</p>;
+  if (loading) return <PurchaseDetailSkeleton />;
   if (error) return <p>{error}</p>;
 
   return (

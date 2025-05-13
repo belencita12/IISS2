@@ -2,12 +2,12 @@
 
 import GenericTable, { Column } from "@/components/global/GenericTable";
 import { Eye } from "lucide-react";
-import PetsTableSkeleton from "../admin/pet/skeleton/PetsTableSkeleton";
 import { VaccineRecord } from "@/lib/vaccine-registry/IVaccineRegistry";
 import { useEffect, useState } from "react";
 import { getByPetId } from "@/lib/vaccine-registry/getByPetId";
 import { formatDate } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import PetVaccinationListSkeleton from "./skeleton/PetVaccinationTableSkeleton";
 
 export default function PetVaccinationTable({
   token,
@@ -104,7 +104,7 @@ export default function PetVaccinationTable({
       actionsTitle="Acciones"
       pagination={pagination}
       isLoading={isLoading}
-      skeleton={<PetsTableSkeleton />}
+      skeleton={<PetVaccinationListSkeleton />}
       onPageChange={(page) =>
         setPagination({ ...pagination, currentPage: page })
       }

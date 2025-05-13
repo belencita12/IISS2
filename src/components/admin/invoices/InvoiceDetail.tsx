@@ -5,6 +5,7 @@ import { useInvoiceDetail } from "@/hooks/invoices/useInvoiceDetail";
 import InvoiceDetailCard from "@/components/admin/invoices/InvoiceDetailCard";
 import InvoiceDetailTable from "@/components/admin/invoices/InvoiceDetailTable";
 import { toast } from "@/lib/toast";
+import InvoiceDetailSkeleton from "./skeleton/InvoiceDetailSkeleton";
 
 interface Props {
   token: string;
@@ -24,7 +25,7 @@ export default function InvoiceDetail({ token }: Props) {
     }
   }, [error]);
 
-  if (loading) return <p className="text-center">Cargando detalles de la factura...</p>;
+  if (loading) return <InvoiceDetailSkeleton/>;
 
   return (
     <div className="w-full px-0">
