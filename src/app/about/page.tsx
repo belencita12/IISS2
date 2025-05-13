@@ -182,7 +182,6 @@ export default function About() {
                         </li>
                     </ul>
                 </div>
-                <ContactSection />
             </div>
         </div>
     );
