@@ -7,6 +7,7 @@ import { getAppointmentByPetId } from "@/lib/appointment/getAppointmentByPetId";
 import { formatDate } from "@/lib/utils";
 import GenericTable, { Column, PaginationInfo, TableAction } from "@/components/global/GenericTable";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 interface AppointmentListProps {
   petId: number;
@@ -25,6 +26,11 @@ type AppointmentApiResponse = {
 
 export default function AppointmentList({ petId, token }: AppointmentListProps) {
   const router = useRouter();
+
+  const a= useTranslations("AppointmentTable");
+  const b= useTranslations("Button");
+  const e= useTranslations("Error");
+
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loadingAppointments, setLoadingAppointments] = useState(true);
   const [errorAppointments, setErrorAppointments] = useState<string | null>(null);
@@ -36,10 +42,10 @@ export default function AppointmentList({ petId, token }: AppointmentListProps) 
   });
 
   const estadoCitaEsp: Record<string, string> = {
-    COMPLETED: "Completado",
-    CANCELLED: "Cancelada",
-    PENDING: "Pendiente",
-    IN_PROGRESS: "En progreso",
+    COMPLETED: a("completed"),
+    CANCELLED: a("canceled"),
+    PENDING: a("pending"),
+    IN_PROGRESS: a("inProgress"),
   };
 
   const fetchAppointments = async (page = 1) => {
@@ -55,7 +61,7 @@ export default function AppointmentList({ petId, token }: AppointmentListProps) 
       }));
       setErrorAppointments(null);
     } catch (error) {
-      setErrorAppointments("No se pudieron cargar las citas");
+      setErrorAppointments(e("notLoadingAppointments"));
       setAppointments([]);
     } finally {
       setLoadingAppointments(false);
@@ -73,23 +79,23 @@ export default function AppointmentList({ petId, token }: AppointmentListProps) 
 
   const appointmentColumns: Column<Appointment>[] = [
     {
-      header: "Detalle",
+      header: a("details"),
       accessor: "details",
     },
     {
-      header: "Fecha",
+      header: a("date"),
       accessor: (a) => formatDate(a.designatedDate),
     },
     {
-      header: "Servicio",
+      header: a("service"),
       accessor: "service",
     },
     {
-      header: "Empleados",
-      accessor: (a) => a.employees?.map(e => e.name).join(", ") || "Sin asignar",
+      header: a("employee"),
+      accessor: (a) => a.employees?.map(e => e.name).join(", ") || e("noAsigned"),
     },
     {
-      header: "Estado",
+      header: a("status"),
       accessor: (a) => estadoCitaEsp[a.status] || a.status,
     },
   ];
@@ -100,7 +106,7 @@ export default function AppointmentList({ petId, token }: AppointmentListProps) 
       onClick: (appointment: Appointment) => {
         router.push(`/user-profile/appointment/${appointment.id}`);
       },
-      label: "Ver detalle",
+      label: b("seeDetails"),
     }
   ];
 
@@ -110,16 +116,16 @@ export default function AppointmentList({ petId, token }: AppointmentListProps) 
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-3">Citas</h2>
+      <h2 className="text-2xl font-bold mb-3">{a("appointmentTitle")}</h2>
       <GenericTable<Appointment>
         data={appointments}
         columns={appointmentColumns}
         actions={appointmentActions}
-        actionsTitle="Acciones"
+        actionsTitle={a("actions")}
         pagination={pagination}
         onPageChange={handlePageChange}
         isLoading={loadingAppointments}
-        emptyMessage="Sin citas registradas"
+        emptyMessage={e("notFoundAppointments")}
         className="mb-10"
       />
     </div>

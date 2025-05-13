@@ -35,7 +35,8 @@
     "notFoundProducts": "No se encontraron productos.",
     "notFoundAppointments": "No se encontraron citas.",
     "noAsigned": "No asignado",
-    "noDetails": "No hay detalles disponibles"
+    "noDetails": "No hay detalles disponibles",
+    "notLoadingAppointments": "No se pudieron cargar las citas"
   },
 
   "PetLists": {
@@ -76,6 +77,7 @@
     "inProgress": "En progreso"
   },
   "AppointmentTable": {
+    "appointmentTitle": "Citas agendadas",
     "date": "Fecha",
     "time": "Hora",
     "pet": "Mascota",
