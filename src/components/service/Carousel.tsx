@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react"
 import Image from "next/image"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface CarouselProps {
   images: string[]
@@ -24,8 +24,9 @@ export default function Carousel({ images }: CarouselProps) {
         <button
           onClick={prevSlide}
           className="absolute left-0 -translate-x-1/2 bg-gray-200 p-2 rounded-full shadow-md hover:bg-gray-300 z-10"
+          aria-label="Anterior imagen"
         >
-          <ChevronLeft className="w-6 h-6 text-[#a855f7]" />
+          <ChevronLeft className="w-6 h-6 text-myPurple-primary" />
         </button>
 
         {/* Contenedor de Imágenes */}
@@ -35,8 +36,8 @@ export default function Carousel({ images }: CarouselProps) {
               <Image
                 src={firstImage || "/placeholder.svg"}
                 alt="Imagen de servicio"
-                width={500}
-                height={300}
+                width={800}
+                height={600}
                 className="rounded-lg object-cover w-full h-64 md:h-80"
               />
             </div>
@@ -46,8 +47,8 @@ export default function Carousel({ images }: CarouselProps) {
               <Image
                 src={secondImage || "/placeholder.svg"}
                 alt="Imagen de servicio"
-                width={500}
-                height={300}
+                width={800}
+                height={600}
                 className="rounded-lg object-cover w-full h-64 md:h-80"
               />
             </div>
@@ -58,8 +59,9 @@ export default function Carousel({ images }: CarouselProps) {
         <button
           onClick={nextSlide}
           className="absolute right-0 translate-x-1/2 bg-gray-200 p-2 rounded-full shadow-md hover:bg-gray-300 z-10"
+          aria-label="Siguiente imagen"
         >
-          <ChevronRight className="w-6 h-6 text-[#a855f7]" />
+          <ChevronRight className="w-6 h-6 text-myPurple-primary" />
         </button>
       </div>
     </div>

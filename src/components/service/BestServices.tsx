@@ -30,10 +30,10 @@ export default function BestServices() {
   const [show, setShow] = useState(false)
 
   return (
-    <section className="bg-gray-100 p-6 rounded-lg shadow-md text-center">
+    <section className="bg-gray-50 p-6 rounded-lg shadow-md text-center">
       <Button
         onClick={() => setShow(!show)}
-        className="bg-[#ec4899] hover:bg-[#db2777] text-white px-4 py-2 rounded-lg transition"
+        className="bg-myPink-primary hover:bg-myPink-hover text-white px-4 py-2 rounded-lg transition"
       >
         {show ? "Ocultar servicios destacados" : "Mostrar servicios destacados"}
       </Button>
@@ -41,9 +41,9 @@ export default function BestServices() {
       {show && (
         <ul className="space-y-3 mt-4">
           {bestServices.map((service, index) => (
-            <li key={index} className="bg-white p-4 rounded-lg shadow">
-              <h3 className="text-lg font-semibold text-[#a855f7]">{service.title}</h3>
-              <p className="text-gray-600">{service.description}</p>
+            <li key={index} className="bg-white p-4 rounded-lg shadow transition-all duration-300 hover:shadow-md">
+              <h3 className="text-lg font-semibold text-myPurple-primary">{service.title}</h3>
+              <p className="text-gray-600 text-sm md:text-base">{service.description}</p>
             </li>
           ))}
         </ul>

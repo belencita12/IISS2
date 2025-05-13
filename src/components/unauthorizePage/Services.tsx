@@ -10,7 +10,7 @@ export default function Services() {
         <>
             <section className="flex items-center gap-5 py-5 bg-white">
                 <Image
-                    src="/image container.png"
+                    src="/nuestros-servicios.png"
                     alt="Service"
                     width={150}
                     height={150}
