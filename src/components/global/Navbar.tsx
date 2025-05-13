@@ -32,10 +32,10 @@ export function Navbar({ links }: NavbarProps) {
 
   return (
     <header className="w-full shadow-sm px-4 md:px-8 bg-white border-b border-myPurple-disabled/30">
-      <div className="w-full flex flex-wrap items-center justify-between h-full py-4">
+      <div className="w-full flex flex-wrap items-center justify-between h-full">
         {/* Logo */}
-        <div className="flex items-start gap-2 md:gap-3 min-w-fit">
-          <Link href="/" className="flex items-start gap-2 md:gap-3">
+        <div className="flex items-start gap-2 min-w-fit">
+          <Link href="/" className="flex items-start gap-2">
             <Image
               src="/logo.png"
               alt="NicoPets logo"
@@ -44,7 +44,7 @@ export function Navbar({ links }: NavbarProps) {
               className="-mt-2"
               priority
             />
-            <h1 className="hidden sm:block text-lg font-semibold text-myPurple-focus mt-6 whitespace-nowrap">
+            <h1 className="hidden sm:block text-lg font-semibold text-myPurple-focus mt-6">
               NicoPets
             </h1>
           </Link>
