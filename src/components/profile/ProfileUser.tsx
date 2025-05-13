@@ -7,6 +7,7 @@ import { useProfileUser } from "@/hooks/profile/useProfileUser"
 import { Loader2, Camera, User, Mail, Phone, MapPin, Building } from "lucide-react"
 import { ProfileUserSkeleton } from "./skeleton/ProfileUserSkeleton"
 import { Button } from "../ui/button"
+import { useTranslations } from "next-intl"
 
 interface ProfileUserProps {
   clientId: number
@@ -15,11 +16,11 @@ interface ProfileUserProps {
 }
 
 export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProps) {
+  const t = useTranslations("ProfileUser")
   const { 
     userData, 
     isEditing, 
     loading, 
-    error, 
     updateLoading, 
     previewImage, 
     imageError,
@@ -34,24 +35,10 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
   if (loading) {
     return <ProfileUserSkeleton />
   }
-  
-  if (error) {
-    return (
-      <div className="py-12 text-center">
-        <div className="bg-red-50 text-red-600 px-4 py-3 rounded-lg inline-block">
-          <p className="font-medium">Error: {error.message}</p>
-        </div>
-      </div>
-    )
-  }
 
   if (!userData) {
     return (
-      <div className="py-12 text-center">
-        <div className="bg-amber-50 text-amber-600 px-4 py-3 rounded-lg inline-block">
-          <p className="font-medium">No se encontraron datos del usuario</p>
-        </div>
-      </div>
+          <p className="mt-4 text-gray-500 text-center">No se encontraron datos del usuario</p>
     )
   }
 
@@ -178,7 +165,6 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
                 >
                   {updateLoading ? (
                     <>
-                      <Loader2 size={18} className="animate-spin mr-2" />
                       Guardando...
                     </>
                   ) : (
@@ -219,7 +205,7 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
                 onClick={handleEdit}
                 className="bg-pink-500 text-white flex items-center gap-2 hover:bg-pink-600 px-5 py-2.5 rounded-lg font-medium transition-colors duration-200"
               >
-                Editar perfil
+                {t("editProfileBtn")}
               </Button>
               </div>
             </>
