@@ -5,21 +5,17 @@ export default function InvoiceDetailSkeleton() {
   return (
     <div className="space-y-6 w-full">
       <Card className="w-full mt-6 overflow-hidden border-border/40 shadow-sm">
-        {/* Encabezado */}
         <div className="bg-muted/30 px-6 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center border-b">
           <Skeleton className="h-6 w-48" />
           <Skeleton className="h-4 w-32 mt-2 sm:mt-0" />
         </div>
 
         <CardContent className="p-0">
-          {/* Timbrado */}
           <div className="px-6 py-3 bg-muted/10 border-b">
             <Skeleton className="h-4 w-40" />
           </div>
 
-          {/* Contenido principal: Cliente + Pago */}
           <div className="px-6 py-6 grid grid-cols-1 sm:grid-cols-2 gap-y-10 gap-x-8">
-            {/* Información del Cliente */}
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <Skeleton className="h-4 w-4 rounded-full" />
@@ -38,7 +34,6 @@ export default function InvoiceDetailSkeleton() {
               </div>
             </div>
 
-            {/* Información de Pago */}
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <Skeleton className="h-4 w-4 rounded-full" />
