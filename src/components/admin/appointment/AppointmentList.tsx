@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "@/lib/toast";
 import {
   AppointmentData,
@@ -29,6 +29,8 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
     page: 1,
     clientRuc: undefined,
   });
+  const [filteredData, setFilteredData] = useState<AppointmentData[]>([]);
+  const [name, setName] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentData | null>(null);
   const [modalAction, setModalAction] = useState<"complete" | "cancel" | null>(null);
@@ -46,7 +48,6 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
     refresh,
   } = usePaginatedFetch<AppointmentData>(APPOINTMENT_API, token, {
     initialPage: 1,
-    size: 7,
     autoFetch: true,
     extraParams: {
       clientRuc: filters.clientRuc,
@@ -67,8 +68,17 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
   };
 
   const handleSearch = (value: string) => {
-    setFilters((prev) => ({ ...prev, clientRuc: value }));
-    search({ clientRuc: value });
+    console.log("Search value:", Number(value));
+    if(Number.isNaN(Number(value))) {
+      setFilters((prev) => ({ ...prev, size: 10000, clientRuc: undefined }));
+      search({ clientRuc: undefined, size: 10000 });
+      setName(value);
+      return;
+    }else{
+      setName("");
+      setFilters((prev) => ({ ...prev, size:16 , clientRuc: value }));
+      search({ clientRuc: value, size: 16 });
+    }
   };
 
   const openConfirmModal = (appointment: AppointmentData, action: "complete" | "cancel") => {
@@ -107,6 +117,16 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
 
   if (error) toast("error", error.message || "Error al cargar las citas");
 
+  useEffect(() => {
+    if(name === "") {
+      setFilteredData(data);
+      return;
+    }else{
+      setFilteredData(data.filter((item) => item.pet.owner.name.toLowerCase().includes(name.toLowerCase())));
+    }
+    console.log("Data fetched:", data.filter((item) => item.pet.owner.name.toLowerCase().includes(name.toLowerCase())));
+  }, [data]);
+
   return (
     <div className="p-4 mx-auto">
       <div className="max-w-8xl mx-auto p-4 space-y-6">
@@ -135,8 +155,8 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
         <p className="text-center text-black">Cargando citas...</p>
       ) : (
         <div className="grid grid-cols-1 gap-4">
-          {data?.length ? (
-            data.map((appointment) => (
+          {filteredData?.length ? (
+            filteredData.map((appointment) => (
               <AppointmentCard
                 key={appointment.id}
                 appointment={appointment}
