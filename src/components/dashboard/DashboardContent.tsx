@@ -5,6 +5,7 @@ import LineChart from "@/components/global/LineChart";
 import BarChart from "@/components/global/BarChart";
 import PieChart from "@/components/global/PieChart";
 import { useAdminDashboardStats } from "@/hooks/dashboard/useAdminDashboardStats";
+import DashboardContentSkeleton from "./skeleton/DashboardContentSkeleton";
 
 interface Props {
   token: string;
@@ -26,7 +27,7 @@ export default function DashboardContent({ token }: Props) {
   const groupedServiceData = groupTopNWithOthers(serviceDistribution, 6);
 
   if (loading) {
-    return <p className="text-center mt-10">Cargando estadísticas...</p>;
+    return <DashboardContentSkeleton />;
   }
 
   return (

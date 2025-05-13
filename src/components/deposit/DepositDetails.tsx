@@ -11,6 +11,7 @@ import { toast } from "@/lib/toast";
 import { getStockById } from "@/lib/stock/getStockById";
 import GenericPagination from "../global/GenericPagination";
 import StockDetailCard from "./StockDetailCard";
+import StockDetailCardskeleton from "./skeleton/StockDetailSkeleton";
 
 interface DepositDetailsProps {
   token: string;
@@ -146,7 +147,7 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
       </div>
 
       {isLoading ? (
-        <p className="text-center py-4">Cargando detalles del Depósito...</p>
+        <StockDetailCardskeleton />
       ) : products.length === 0 ? (
         <p className="text-center py-4">No hay información del Depósito disponible</p>
       ) : (

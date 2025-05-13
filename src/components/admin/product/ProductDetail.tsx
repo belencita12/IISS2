@@ -15,6 +15,7 @@ import { toast } from "@/lib/toast";
 import { useFetch } from "@/hooks/api/useFetch";
 import { PRODUCT_API } from "@/lib/urls";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
+import ProductDetailSkeleton from "./skeleton/ProductDetailSkeleton";
 
 interface ProductDetailProps {
   token: string;
@@ -72,7 +73,7 @@ export default function ProductDetail({ token }: ProductDetailProps) {
     setIsDeleteModalOpen(false);
   };
 
-  if (isLoading) return <div className="text-center mt-8">Cargando...</div>;
+  if (isLoading) return <ProductDetailSkeleton />;
   if (!product)
     return <div className="text-center mt-8">Producto no encontrado</div>;
 
