@@ -2,14 +2,18 @@ import { PaginationResponse } from "../types";
 import { TAG_API } from "../urls";
 import { Tag } from "./types";
 
-export const getAllTags = async (token: string, queryStr?: string) => {
-  const response = await fetch(`${TAG_API}?${queryStr}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+export const getAllTags = async (token?: string, queryStr?: string) => {
+  const headers: HeadersInit = token
+    ? { Authorization: `Bearer ${token}` }
+    : {};
+  const response = await fetch(`${TAG_API}?${queryStr}`, { headers });
+
   if (!response.ok) throw new Error("Error al obtener etiquetas");
+
   const data = await response.json();
   return data as PaginationResponse<Tag>;
 };
+
 
 export const registerTag = async (token: string, name: string) => {
   const response = await fetch(TAG_API, {

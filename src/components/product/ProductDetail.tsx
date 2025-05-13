@@ -14,7 +14,7 @@ import { Card } from "@/components/product/ProductCardCliente";
 import ProductDetailSkeleton from "@/components/product/ProductDetailSkeleton";
 
 interface Props {
-    token: string;
+    token?: string;
 }
 
 export default function ProductDetailPage({ token }: Props) {
@@ -26,7 +26,6 @@ export default function ProductDetailPage({ token }: Props) {
 
     useEffect(() => {
         const fetchProduct = async () => {
-            if (!token) return;
             if (!id || Array.isArray(id)) return notFound();
 
             try {
@@ -73,7 +72,7 @@ export default function ProductDetailPage({ token }: Props) {
                     <Button
                         variant="ghost"
                         className="flex items-center text-purple-600 hover:text-purple-900 pl-0"
-                        onClick={() => router.push("/shop/product")}
+                        onClick={() => router.push("/shop")}
                     >
                         <ChevronLeft className="h-4 w-4 mr-1" />
                         <span>Volver a productos</span>
