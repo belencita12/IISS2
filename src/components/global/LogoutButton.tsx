@@ -16,7 +16,7 @@ export default function LogoutButton() {
     <Button
       onClick={handleLogout}
       variant="default"
-      className="bg-myPink-primary hover:bg-myPink-hover text-white"
+      className="bg-myPink-secondary hover:bg-myPink-hover text-white"
       disabled={loading}
     >
       {loading ? "Cerrando sesión..." : "Cerrar sesión"}
