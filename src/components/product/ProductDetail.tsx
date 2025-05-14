@@ -15,7 +15,7 @@ import ProductDetailSkeleton from "@/components/product/ProductDetailSkeleton";
 import { useTranslations } from "next-intl";
 
 interface Props {
-    token: string;
+    token?: string;
 }
 
 export default function ProductDetailPage({ token }: Props) {
@@ -28,7 +28,6 @@ export default function ProductDetailPage({ token }: Props) {
 
     useEffect(() => {
         const fetchProduct = async () => {
-            if (!token) return;
             if (!id || Array.isArray(id)) return notFound();
 
             try {
@@ -75,7 +74,7 @@ export default function ProductDetailPage({ token }: Props) {
                     <Button
                         variant="ghost"
                         className="flex items-center text-purple-600 hover:text-purple-900 pl-0"
-                        onClick={() => router.push("/user-profile/product")}
+                        onClick={() => router.push("/shop")}
                     >
                         <ChevronLeft className="h-4 w-4 mr-1" />
                         <span>{t("returnToProducts")}</span>
@@ -160,7 +159,7 @@ export default function ProductDetailPage({ token }: Props) {
                                         price={`Gs. ${relatedProduct.price.toLocaleString()}`}
                                         alt={relatedProduct.name}
                                         ctaText={t("ctaText")}
-                                        ctaLink={`/user-profile/product/${relatedProduct.id}`}
+                                        ctaLink={`/shop/product/${relatedProduct.id}`}
                                         layout="vertical"
                                         imagePosition="top"
                                         showButton={true}

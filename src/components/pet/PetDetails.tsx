@@ -12,6 +12,8 @@ import AppointmentList from "@/components/appointment/AppointmentList";
 import { updatePet } from "@/lib/pets/updatePet";
 import UpdatePetImage from "@/components/pet/UpdatePetImage";
 import { useTranslations } from "next-intl";
+import PetDetailsSkeleton from "./skeleton/PetDetailsskeleton";
+
 
 interface Props {
   token: string;
@@ -139,7 +141,7 @@ export default function PetDetails({ token }: Props) {
   return (
     <div className="flex-col">
       {pet === undefined ? (
-        <p className="text-center text-gray-600">{b("loading")}</p>
+        <PetDetailsSkeleton />
       ) : pet === null ? (
         <></>
       ) : (

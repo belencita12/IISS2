@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/lib/toast";
 import { useTranslations } from "next-intl";
 
-const ProductCatalog = ({ token }: { token: string | null }) => {
+const ProductCatalog = ({ token }: { token?: string }) => {
     const [products, setProducts] = useState<Product[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -85,11 +85,6 @@ const ProductCatalog = ({ token }: { token: string | null }) => {
     }, [debouncedMinPrice, debouncedMaxPrice, debouncedName]);
 
     const fetchProducts = useCallback(async () => {
-        if (!token) {
-            setError("No hay token disponible.");
-            return;
-        }
-
         setIsFiltering(true);
         setError(null);
 
@@ -353,7 +348,8 @@ const ProductCatalog = ({ token }: { token: string | null }) => {
                                                 NotImageNicoPets.src
                                             }
                                             ctaText={t("seeDetails")}
-                                            ctaLink={`/user-profile/product/${product.id}`}
+                                            ctaLink={`/shop/product/${product.id}`}
+
                                             tags={product.tags}
                                         />
                                     ))}
