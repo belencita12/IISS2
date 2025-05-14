@@ -35,6 +35,7 @@
   },
   "Success": {
     "success": "Éxito",
+    "successAppointment": "Cita registrada correctamente",
     "successRegister": "{field} registrado correctamente",
     "successSave": "Los cambios se guardaron correctamente",
     "successDelete": "Eliminado correctamente",
@@ -44,9 +45,11 @@
   },
   "Error": {
     "error": "Error",
+    "errorRegister": "Error al registrar {field}",
     "notGetData": "No se pudo obtener la información",
     "notGetRuc": "No se pudo obtener el RUC del cliente",
     "notFound": "No se encontraron datos.",
+    "notFoundField": "No se encontraron {field}.",
     "notFoundPets": "No se encontraron mascotas.",
     "notFoundProducts": "No se encontraron productos.",
     "notFoundAppointments": "No se encontraron citas.",
@@ -107,7 +110,14 @@
     "selectService": "Seleccionar servicio",
     "selectEmployee": "Seleccionar empleado",
     "selectDate": "Fecha de la cita",
-    "details": "Detalles de la cita"
+    "details": "Detalles de la cita",
+    "selectHour": "Seleccionar horario de la cita",
+    "employeeSelected": "Empleado seleccionado",
+    "workPosition": "Puesto",
+    "owner": "Dueño",
+    "petSelected": "Mascota seleccionada",
+    "serviceSelected": "Servicio",
+    "price": "Precio"
   },
   "AppointmentDetail": {
     "titleCancel": "Motivo de cancelación",

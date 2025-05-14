@@ -5,6 +5,7 @@ import { getAvailability } from "@/lib/appointment/service";
 import { AvailabilitySlot } from "@/lib/appointment/IAppointment";
 import { toast } from "@/lib/toast";
 import { isToday, set, parseISO, addMinutes } from "date-fns";
+import { useTranslations } from "next-intl";
 
 type Props = {
   token: string;
@@ -24,6 +25,9 @@ export const AvailabilityPicker = ({
   const [slots, setSlots] = useState<AvailabilitySlot[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const a = useTranslations("AppointmentDetail");
+  const b = useTranslations("Button");
+  const e = useTranslations("Error");
 
   useEffect(() => {
     if (!employeeId || !date ) return;
@@ -34,7 +38,7 @@ export const AvailabilityPicker = ({
         const data = await getAvailability(token, employeeId, date);
         setSlots(data);
       } catch (error) {
-        toast("error", error instanceof Error ? error.message : "Error al cargar disponibilidad");
+        toast("error", error instanceof Error ? error.message : e("notFound"));
         setSlots([]);
       } finally {
         setLoading(false);
@@ -108,10 +112,10 @@ export const AvailabilityPicker = ({
 
   return (
     <div className="space-y-2">
-      <h3 className="text-sm font-medium text-gray-700">Seleccionar horario disponible</h3>
+      <h3 className="text-sm font-medium text-gray-700">{a("selectHour")}</h3>
 
       {loading ? (
-        <p className="text-gray-500">Cargando horarios...</p>
+        <p className="text-gray-500">{b("loading")}</p>
       ) : (
         <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
           {slots.map((slot, index) =>
