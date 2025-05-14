@@ -20,30 +20,36 @@ export function ServiceCard({
   ctaLink,
 }: IServiceCardProps) {
   return (
-    <div className="w-full bg-gray-200 p-3 sm:p-4">
-      <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-7">
-        {/* Imagen con altura fija */}
-        <div className="w-full md:w-[30%] flex-shrink-0">
-          <Image
-            src={image}
-            alt={alt}
-            width={340}
-            height={340}
-            className="w-full aspect-square object-cover rounded-lg"
-            priority
-          />
+    <div className="w-full bg-gray-100 p-3 sm:p-4">
+      {/* Layout: fila en lg, columna debajo */}
+      <div className="flex flex-col lg:flex-row items-center lg:items-start gap-4 lg:gap-7">
+        {/* Imagen */}
+        <div className="w-full lg:w-[30%] lg:min-w-[200px] flex-shrink-0 flex justify-center lg:justify-start">
+          <div className="w-full md:max-w-md lg:max-w-none h-40 sm:h-64 md:h-80 lg:h-96 relative">
+            <Image
+              src={image}
+              alt={alt}
+              fill
+              className="object-cover rounded-lg"
+              sizes="(max-width: 639px) 100vw, (max-width: 1023px) 40vw, 30vw"
+              priority
+            />
+          </div>
         </div>
 
-        {/* Texto + botón con altura adaptativa */}
-        <div className="w-full md:w-[70%] flex flex-col justify-center md:min-h-[300px] py-4 md:py-0">
-          <div className="flex flex-col gap-3 md:gap-4">
-            <div className="text-center md:text-left flex flex-col gap-1">
-              <h3 className="text-xl sm:text-2xl font-semibold text-myPurple-focus">{title}</h3>
-              <p className="mt-1 md:mt-2 text-gray-600 text-sm sm:text-base md:text-lg text-center md:text-justify">
+        {/* Texto + botón */}
+        <div className="w-full lg:w-[70%] flex flex-col justify-center lg:min-h-[384px] py-4 lg:py-0">
+          <div className="flex flex-col gap-3 lg:gap-4">
+            <div className="text-center lg:text-left flex flex-col gap-1">
+              <h3 className="text-xl sm:text-2xl font-semibold text-myPurple-focus">
+                {title}
+              </h3>
+              <p className="mt-1 lg:mt-2 text-gray-600 text-sm sm:text-base text-center lg:text-justify">
                 {description}
               </p>
             </div>
-            <div className="flex justify-center md:justify-start mt-2">
+
+            <div className="flex justify-center lg:justify-start mt-2">
               <Button>
                 <a
                   href={ctaLink}
