@@ -93,7 +93,16 @@ export const MovementDetailsList = ({ id, token }: Props) => {
         )}
       </Card>
 
-      <h2 className="text-xl font-semibold mb-2 text-gray-700">Productos</h2>
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-xl font-semibold text-gray-700">Productos</h2>
+        <Button
+          variant="outline"
+          onClick={() => router.push('/dashboard/movement')}
+          className="px-6 border-gray-200 border-solid"
+        >
+          Volver
+        </Button>
+      </div>
       <Separator className="mb-4" />
       <div className="space-y-6">
         {details.map((detail, idx) => (

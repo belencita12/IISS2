@@ -157,11 +157,11 @@ export default function ProviderList({ token }: { token: string }) {
         size="lg"
       >
         <div style={{ width: '600px', maxWidth: '100%' }}>
-          {/* Componente que muestra los detalles del proveedor, pasando el id y el token */}
           {selectedProviderId !== null && (
             <ProviderDetail
               token={token}
               providerId={selectedProviderId}
+              onClose={() => setSelectedProviderId(null)}
             />
           )}
         </div>
