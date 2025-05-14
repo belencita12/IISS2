@@ -51,11 +51,11 @@ const services = [
 
 export default function OurServices() {
   return (
-    <div className="w-full px-3 sm:px-[6%] space-y-4 sm:space-y-6 mt-4 sm:mt-6">
+    <div className="w-full space-y-4 sm:space-y-6 mt-4 sm:mt-6">
       {/* Sección principal con imagen y texto */}
       <div className="bg-white w-full">
-        <section className="w-full p-3 sm:p-4">
-          <div className="flex flex-col lg:flex-row items-center lg:items-start gap-4 lg:gap-7">
+        <section className="w-full px-0 sm:px-0"> {/* quitamos padding */}
+          <div className="flex flex-col lg:flex-row items-center lg:items-start gap-4 lg:gap-7 w-full px-3 sm:px-6"> {/* padding solo interno */}
             {/* Imagen */}
             <div className="w-full lg:w-[30%] lg:min-w-[200px] flex-shrink-0 flex justify-center lg:justify-start">
               <div className="w-full md:max-w-md lg:max-w-none">
@@ -74,14 +74,13 @@ export default function OurServices() {
 
             {/* Texto */}
             <div className="w-full lg:w-[70%] flex flex-col justify-center lg:min-h-[384px] py-4 lg:py-0">
-              <div className="flex flex-col gap-3 lg:gap-4">
+              <div className="flex flex-col gap-3 lg:gap-4 px-3 sm:px-6"> {/* padding en el texto */}
                 <div className="text-center lg:text-left flex flex-col gap-1">
                   <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-myPurple-focus">
                     Nuestros servicios
                   </h2>
                   <p className="mt-1 md:mt-2 text-gray-600 text-sm sm:text-base md:text-lg text-center lg:text-justify">
-                    Explora nuestros servicios y dale a tu mascota el cuidado
-                    que se merece.
+                    Explora nuestros servicios y dale a tu mascota el cuidado que se merece.
                   </p>
                   <p className="text-sm sm:text-base md:text-lg font-bold">
                     ¡Tu tranquilidad y su felicidad son nuestra prioridad!
@@ -98,7 +97,7 @@ export default function OurServices() {
       </div>
 
       {/* Listado de servicios */}
-      <div className="space-y-4 sm:space-y-6 w-full">
+      <div className="space-y-4 sm:space-y-6 w-full px-3 sm:px-6">
         {services.map((service, index) => (
           <div key={index}>
             <ServiceCard

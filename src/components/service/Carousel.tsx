@@ -24,7 +24,7 @@ export default function Carousel({ images }: CarouselProps) {
         {/* Botón Izquierdo */}
         <button
           onClick={prevSlide}
-          className="absolute left-0 -translate-x-1/3 sm:-translate-x-1/2 bg-gray-200 p-1 sm:p-2 rounded-full shadow-md hover:bg-gray-300 z-10"
+          className="absolute left-0 -translate-x-2 sm:-translate-x-3 bg-gray-200 p-1 sm:p-2 rounded-full shadow-md hover:bg-gray-300 z-10"
           aria-label="Anterior imagen"
         >
           <ChevronLeft className="w-4 h-4 sm:w-6 sm:h-6 text-myPurple-primary" />
@@ -59,7 +59,7 @@ export default function Carousel({ images }: CarouselProps) {
         {/* Botón Derecho */}
         <button
           onClick={nextSlide}
-          className="absolute right-0 translate-x-1/3 sm:translate-x-1/2 bg-gray-200 p-1 sm:p-2 rounded-full shadow-md hover:bg-gray-300 z-10"
+          className="absolute right-0 translate-x-2 sm:translate-x-3 bg-gray-200 p-1 sm:p-2 rounded-full shadow-md hover:bg-gray-300 z-10"
           aria-label="Siguiente imagen"
         >
           <ChevronRight className="w-4 h-4 sm:w-6 sm:h-6 text-myPurple-primary" />
