@@ -104,24 +104,36 @@ export default function ProductDetail({ token }: ProductDetailProps) {
         </div>
       </div>
 
-      <div className="flex gap-4 justify-end mt-6">
-        <Button
-          variant="outline"
-          onClick={() => setIsDeleteModalOpen(true)}
-          className="px-6"
-        >
-          Eliminar
-        </Button>
+      <div className="grid grid-cols-3 mt-6">
+        <div></div>
+        <div className="flex justify-start mx-7">
+          <Button
+            variant="outline"
+            onClick={() => router.push('/dashboard/products')}
+            className="px-6 border-gray-200 border-solid"
+          >
+            Volver
+          </Button>
+        </div>
+        <div className="flex justify-end gap-4">
+          <Button
+            variant="outline"
+            onClick={() => setIsDeleteModalOpen(true)}
+            className="px-6"
+          >
+            Eliminar
+          </Button>
 
-        <Button
-          variant="outline"
-          onClick={() =>
-            router.push(`/dashboard/products/update/${product.id}`)
-          }
-          className="px-6"
-        >
-          Editar
-        </Button>
+          <Button
+            variant="outline"
+            onClick={() =>
+              router.push(`/dashboard/products/update/${product.id}`)
+            }
+            className="px-6"
+          >
+            Editar
+          </Button>
+        </div>
       </div>
 
       <hr className="my-8 border-t border-gray-200" />
