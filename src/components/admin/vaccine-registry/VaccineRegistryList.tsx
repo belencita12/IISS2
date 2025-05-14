@@ -14,6 +14,7 @@ import VaccineRegistryDateFilter from "./filters/VaccineRegistryDateFilter";
 import GenericPagination from "@/components/global/GenericPagination";
 import { getPetById } from "@/lib/pets/getPetById";
 import { formatDate } from "@/lib/utils";
+import VaccineRegistryListSkeleton from "./skeleton/VaccineRegistryListSkeleton";
 
 interface Props {
   token: string;
@@ -120,7 +121,7 @@ export default function VaccineRegistryList({ token }: Props) {
       </div>
 
       {(loading || pendingUpdate) && !initialized ? (
-        <p className="text-gray-500 text-center py-8">Cargando registros...</p>
+        <VaccineRegistryListSkeleton />
       ) : (
         <GenericTable
           data={registries}

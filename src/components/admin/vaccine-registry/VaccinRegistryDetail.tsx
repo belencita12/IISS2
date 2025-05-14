@@ -4,6 +4,7 @@ import { notFound, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useVaccineRegistryDetail } from "@/hooks/vaccine-registry/useVaccineRegistryDetail";
 import { formatDate } from "@/lib/utils";
+import VaccineRegistryDetailSkeleton from "./skeleton/VaccineRegistryDetailSkeleton";
 
 interface Props {
   id: number;
@@ -17,7 +18,7 @@ export const VaccineRegistryDetail = ({ id, token }: Props) => {
     token
   );
 
-  if (loading) return <p className="text-center mt-10">Cargando...</p>;
+  if (loading) return <VaccineRegistryDetailSkeleton/>
   if (error || !registry) return notFound();
 
   return (
