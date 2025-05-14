@@ -23,7 +23,7 @@ export default async function Page({
     const resolvedParams = await params;
     const employeeId = Number(resolvedParams.id);
 
-    if (isNaN(employeeId)) return notFound();
+    if (isNaN(employeeId) || !Number.isSafeInteger(employeeId)) return notFound();
 
     const session = await getServerSession(authOptions);
     const token = session?.user?.token || "";
