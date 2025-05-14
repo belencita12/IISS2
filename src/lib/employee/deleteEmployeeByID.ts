@@ -9,10 +9,6 @@ export const deleteEmployeeByID = async (token: string, id: number): Promise<boo
                 "Content-Type": "application/json",
             },
         });
-
-        if (response.status === 404) {
-            return null;
-        }
         
 
         if (!response.ok) {
