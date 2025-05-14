@@ -15,6 +15,7 @@
     "save": "Guardar",
     "edit": "Editar",
     "add": "Agregar",
+    "finish": "Finalizar",
     "register": "Registrar",
     "registering":"Registrando...",
     "delete": "Eliminar",
@@ -28,7 +29,18 @@
     "canceling": "Cancelando...",
     "scheduleing": "Agendando...",
     "change": "Cambiar",
-    "upload": "Subir"
+    "upload": "Subir",
+    "male": "Macho",
+    "female": "Hembra"
+  },
+  "Success": {
+    "success": "Éxito",
+    "successRegister": "{field} registrado correctamente",
+    "successSave": "Los cambios se guardaron correctamente",
+    "successDelete": "Eliminado correctamente",
+    "successUpdate": "Actualizado correctamente",
+    "successSchedule": "Cita agendada correctamente",
+    "successCancel": "Cita cancelada correctamente"
   },
   "Error": {
     "error": "Error",
@@ -40,14 +52,18 @@
     "notFoundAppointments": "No se encontraron citas.",
     "noAsigned": "No asignado",
     "noDetails": "No hay detalles disponibles",
+    "noSpecified": "No especificado",
     "notLoadingAppointments": "No se pudieron cargar las citas",
     "noEmpty": "El campo no puede ser vacío",
-    "noUpdate": "No se puede actualizar",
-    "noSave": "Error al guardar los cambios"
+    "noUpdate": "Ocurrió un error al actualizar los datos",
+    "noSave": "Error al guardar los cambios",
+    "authError": "Error, debes estar autenticado para acceder a esta sección"
   },
   "Placeholder": {
     "name": "Ingrese el nombre",
-    "select": "Seleccionar"
+    "select": "Seleccionar",
+    "getBy": "Buscar por {field}",
+    "reason": "Ingrese el motivo"
   },
   "Vaccune": {
     "vaccuneControlTitle": "Control de vacunas"
@@ -78,7 +94,7 @@
     "specie": "Especie",
     "sex": "Género",
     "born": "Fecha de nacimiento",
-    "selectFirst": "Debes seleccioanr una especie primero"
+    "selectFirst": "Debes seleccionar una especie primero"
   },
   "Appointments": {
     "appointmentTitle": "Citas agendadas",
@@ -94,6 +110,10 @@
     "details": "Detalles de la cita"
   },
   "AppointmentDetail": {
+    "titleCancel": "Motivo de cancelación",
+    "finishDescription": "¿Estás seguro de que deseas finalizar la cita?",
+    "titleFinish": "Confirmar finalización",
+    "title": "Citas",
     "appointmentDetails": "Detalles de la cita",
     "pet": "Mascota",
     "name": "Nombre",

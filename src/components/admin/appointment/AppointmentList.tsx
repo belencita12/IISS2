@@ -19,6 +19,7 @@ import { Modal } from "@/components/global/Modal";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import AppointmentListSkeleton from "./Skeleton/AppointmentListSkeleton";
+import { useTranslations } from "next-intl";
 
 interface AppointmentListProps {
   token: string;
@@ -38,6 +39,10 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [cancelDescription, setCancelDescription] = useState("");
+  const a = useTranslations("AppointmentDetail");
+  const b = useTranslations("Button");
+  const e = useTranslations("Error");
+  const p= useTranslations("Placeholder");
 
   const {
     data,
@@ -69,7 +74,6 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
   };
 
   const handleSearch = (value: string) => {
-    console.log("Search value:", Number(value));
     if(Number.isNaN(Number(value))) {
       setFilters((prev) => ({ ...prev, size: 10000, clientRuc: undefined }));
       search({ clientRuc: undefined, size: 10000 });
@@ -105,7 +109,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
       toast("success", `Cita ${modalAction === "complete" ? "finalizada" : "cancelada"} con éxito`);
       refresh();
     } catch (error) {
-      toast("error", "Ocurrió un error al actualizar la cita");
+      toast("error", e("noUpdate"));
     } finally {
       setIsProcessing(false);
       setIsModalOpen(false);
@@ -116,7 +120,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
     }
   };
 
-  if (error) toast("error", error.message || "Error al cargar las citas");
+  if (error) toast("error", error.message || e("notFound"));
 
   useEffect(() => {
     if(name === "") {
@@ -125,14 +129,13 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
     }else{
       setFilteredData(data.filter((item) => item.pet.owner.name.toLowerCase().includes(name.toLowerCase())));
     }
-    console.log("Data fetched:", data.filter((item) => item.pet.owner.name.toLowerCase().includes(name.toLowerCase())));
   }, [data]);
 
   return (
     <div className="p-4 mx-auto">
       <div className="max-w-8xl mx-auto p-4 space-y-6">
         <SearchBar
-          placeholder="Buscar por RUC del cliente"
+          placeholder={p("getBy", {field: "RUC"})}
           onSearch={handleSearch}
         />
         <div className="flex flex-col md:flex-row gap-4">
@@ -146,9 +149,9 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
       </div>
       
       <div className="flex justify-between items-center mb-4">
-            <h2 className="text-3xl font-bold">Citas</h2>
+            <h2 className="text-3xl font-bold">{a("title")}</h2>
             <Button variant="outline" className="px-6" onClick={() => router.push("/dashboard/appointment/register")}>
-                    Agendar
+                    {b("schedule")}
             </Button>
         </div>
 
@@ -169,7 +172,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
               />
             ))
           ) : (
-            <p>No se encontraron citas.</p>
+            <p>{e("notFoundAppointments")}</p>
           )}
         </div>
       )}
@@ -187,10 +190,10 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onConfirm={handleConfirmAction}
-          title="Confirmar Finalización"
-          message="¿Estás seguro de que quieres finalizar esta cita?"
-          confirmText="Confirmar"
-          cancelText="Cancelar"
+          title={a("titleFinish")}
+          message={a("finishDescription")}
+          confirmText={b("confirm")}
+          cancelText={b("cancel")}
           isLoading={isProcessing}
         />
       )}
@@ -199,12 +202,12 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
         <Modal
           isOpen={cancelModalOpen}
           onClose={() => setCancelModalOpen(false)}
-          title="Motivo de cancelación"
+          title={a("titleCancel")}
           size="md"
         >
           <textarea
             className="w-full h-32 p-2 border border-gray-300 rounded"
-            placeholder="Escribe una razón para cancelar la cita"
+            placeholder={p("reason")}
             value={cancelDescription}
             onChange={(e) => setCancelDescription(e.target.value)}
           />
@@ -214,14 +217,14 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
               onClick={() => setCancelModalOpen(false)}
               disabled={isProcessing}
             >
-              Cancelar
+              {b("cancel")}
             </Button>
             <Button
               className="bg-red-600 text-white px-4 py-2 rounded border hover:bg-red-700"
               onClick={handleConfirmAction}
               disabled={isProcessing || !cancelDescription.trim()}
             >
-              {isProcessing ? "Cancelando..." : "Confirmar"}
+              {isProcessing ? b("canceling") : b("confirm")}
             </Button>
           </div>
         </Modal>

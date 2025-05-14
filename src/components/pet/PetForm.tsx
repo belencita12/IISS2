@@ -52,6 +52,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
     const b= useTranslations("Button");
     const p= useTranslations("PetForm");
     const ph= useTranslations("Placeholder");
+    const s = useTranslations("Success");
 
     const [species, setSpecies] = useState<Species[]>([]);
     const [races, setRaces] = useState<Race[]>([]);
@@ -114,7 +115,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
     };
     const onSubmit = async (data: PetFormValues) => {
         if (!clientId || !token) {
-            toast("error", "Debes estar autenticado para registrar una mascota.");
+            toast("error", e("authError"));
             return;
         }
         const formData = new FormData();
@@ -131,7 +132,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
         setIsSubmitting(true);
         try {
             await registerPet(formData, token);
-            toast("success", "Mascota registrada con éxito!", {
+            toast("success", s("successRegister", { field: "Mascota" }), {
                 duration: 2000,
                 onAutoClose: () => {router.push('/user-profile');},
                 onDismiss: () => router.push('/user-profile'),
@@ -271,7 +272,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                                     variant={watch('gender') === "F" ? "default" : "outline"}
                                     onClick={() => setValue('gender', "F")}
                                 >
-                                    Hembra
+                                    {b("female")}
                                 </Button>
                                 <Button
                                     id="genderMale"
@@ -279,7 +280,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                                     variant={watch('gender') === "M" ? "default" : "outline"}
                                     onClick={() => setValue('gender', "M")}
                                 >
-                                    Macho
+                                    {b("male")}
                                 </Button>
                             </div>
                             {errors.gender && <p className="text-red-500">{errors.gender.message}</p>}
@@ -290,13 +291,13 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                                 variant="outline"
                                 onClick={() => router.push('/user-profile')}
                             >
-                                Cancelar
+                                {b("cancel")}
                             </Button>
                             <Button
                                 type="submit"
                                 disabled={isSubmitting}
                             >
-                                {isSubmitting ? "Registrando..." : "Registrar Mascota"}
+                                {isSubmitting ? b("registering"): b("register")}
                             </Button>
                         </div>
                     </form>

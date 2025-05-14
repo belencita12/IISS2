@@ -133,7 +133,7 @@ export const PetsList = ({ clientId, token, onFetchError }: PetsListProps) => {
           {t("exploreProducts")}
         </p>
         <Button className="bg-white text-pink-500 border border-pink-500 mt-3 hover:bg-pink-600 hover:text-white">
-          <Link href="/shop">{t("seeMore")}</Link>
+          <Link href="/shop">{b("seeMore")}</Link>
         </Button>
       </section>
 
