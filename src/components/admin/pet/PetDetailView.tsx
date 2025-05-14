@@ -6,6 +6,8 @@ import PetVaccinationTable from "@/components/pet/PetVaccinationTable";
 import AddToHistoryButton from "@/components/admin/vaccine-registry/AddToHistoryButton";
 import { PetData } from "@/lib/pets/IPet";
 import VisitList from "./VisitList";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 //import { VisitList } from "@/components/pet/"; // si lo vas a usar
 
 interface Props {
@@ -15,6 +17,8 @@ interface Props {
 }
 
 export default function PetDetailView({ token, pet, clientId }: Props) {
+  const router = useRouter();
+
   if (!pet.id) {
     return <p className="text-center mt-10">ID de mascota no válido.</p>;
   }
@@ -61,7 +65,16 @@ export default function PetDetailView({ token, pet, clientId }: Props) {
           <h2 className="text-2xl font-semibold text-gray-800">
             Historial de vacunación
           </h2>
-          <AddToHistoryButton />
+          <div className="flex gap-3">
+            <Button 
+              variant="outline" 
+              className="border-black border-solid"
+              onClick={() => router.back()}
+            >
+              Volver
+            </Button>
+            <AddToHistoryButton />
+          </div>
         </div>
         <PetVaccinationTable Id={clientId} token={token} petId={pet.id} />
       </section>

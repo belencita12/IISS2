@@ -39,7 +39,7 @@ export default function CustomerSearch({
   const [isCommandOpen, setIsCommandOpen] = useState(false);
   const [customers, setCustomers] = useState<ClientData[]>([]);
 
-    const debouncedSearch = useDebounce(searchTerm, 300);
+    const debouncedSearch = useDebounce(searchTerm, 500);
   
     const { data, get, loading } = useFetch<CustomerResponse>("", token);
   
@@ -48,6 +48,7 @@ export default function CustomerSearch({
         get(undefined, `${CLIENT_API}?query=${encodeURIComponent(debouncedSearch)}&page=1&size=5`);
         setIsCommandOpen(true);
       } else {
+        setCustomers([]);
         setIsCommandOpen(false);
       }
     }, [debouncedSearch]);

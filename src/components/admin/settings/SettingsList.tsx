@@ -64,8 +64,8 @@ export function SettingsList() {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {settingsOptions.map((option) => (
         <Link href={option.link} key={option.name}>
-          <div className="h-full bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden">
-            <div className="p-6">
+          <div className="h-full bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden flex flex-col">
+            <div className="p-6 flex-grow">
               <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-emerald-50 to-emerald-100 text-3xl">
                 {option.icon}
               </div>
@@ -76,7 +76,7 @@ export function SettingsList() {
                 {option.description}
               </p>
             </div>
-            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100">
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 mt-auto">
               <div className="text-sm text-emerald-600 text-center font-medium hover:text-emerald-700 transition-colors duration-200">
                 Configurar
               </div>

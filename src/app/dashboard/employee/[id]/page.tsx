@@ -14,6 +14,8 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default async function Page({
     params,
@@ -36,7 +38,7 @@ export default async function Page({
 
     return (
         <div className="container py-8 h-full">
-            <Card className="mb-8 shadow-md w-full">
+            <Card className="mb-8 shadow-md  w-full relative">
                 <CardHeader className="pb-0">
                     <h1 className="text-3xl font-bold tracking-tight">
                         Perfil de Empleado
@@ -120,8 +122,6 @@ export default async function Page({
                                     </div>
                                 </div>
 
-                                
-
                                 {employee.adress && (
                                     <div className="flex items-center gap-2">
                                         <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-gray-600">
@@ -148,6 +148,16 @@ export default async function Page({
                                 )}
                             </div>
                         </div>
+                    </div>
+                    <div className="absolute bottom-4 right-12">
+                        <Link href="/dashboard/employee">
+                            <Button
+                                variant="outline"
+                                className="px-6 border-gray-200 border-solid"
+                            >
+                                Volver
+                            </Button>
+                        </Link>
                     </div>
                 </CardContent>
             </Card>

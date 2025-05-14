@@ -9,6 +9,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import ClientAppointmentList from "@/components/admin/appointment/AppointmentListByClient"; // ✅ asegúrate de que el path sea correcto
 
+
 export default async function ClientDetails(
     { params }: { params: Promise<{ id: string }> }
 ) {
@@ -25,16 +26,24 @@ export default async function ClientDetails(
 
     return (
         <>
+
             <ClientProfileSection {...client} />
 
             <section className="mx-auto mt-10 px-1 md:px-24">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-xl">Mascotas</h2>
-                    <Link href={`/dashboard/clients/${id}/pet/register`}>
-                        <Button variant="outline" className="border-black border-solid">
-                            Agregar
-                        </Button>
-                    </Link>
+                    <div className="flex gap-3">
+                        <Link href="/dashboard/clients">
+                            <Button variant="outline" className="border-black border-solid">
+                                Volver
+                            </Button>
+                        </Link>
+                        <Link href={`/dashboard/clients/${id}/pet/register`}>
+                            <Button variant="outline" className="border-black border-solid">
+                                Agregar
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
                 <PaginatedPetsTable token={token} id={clientId} />
             </section>
