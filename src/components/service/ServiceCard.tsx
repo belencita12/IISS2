@@ -44,7 +44,7 @@ export function ServiceCard({
               <h3 className="text-xl sm:text-2xl font-semibold text-myPurple-focus">
                 {title}
               </h3>
-              <p className="mt-1 lg:mt-2 text-gray-600 text-sm sm:text-base text-center lg:text-justify">
+              <p className="mt-1 lg:mt-2 text-sm sm:text-base text-center lg:text-justify">
                 {description}
               </p>
             </div>

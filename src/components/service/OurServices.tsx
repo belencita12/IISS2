@@ -79,7 +79,7 @@ export default function OurServices() {
                   <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-myPurple-focus">
                     Nuestros servicios
                   </h2>
-                  <p className="mt-1 md:mt-2 text-gray-600 text-sm sm:text-base md:text-lg text-center lg:text-justify">
+                  <p className="mt-1 md:mt-2 text-sm sm:text-base md:text-lg text-center lg:text-justify">
                     Explora nuestros servicios y dale a tu mascota el cuidado que se merece.
                   </p>
                   <p className="text-sm sm:text-base md:text-lg font-bold">

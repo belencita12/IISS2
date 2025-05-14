@@ -44,16 +44,16 @@ export default function BestServices() {
 
       {show && (
         <div className="mt-3 sm:mt-4 w-full flex justify-center lg:justify-start">
-          <ul className="space-y-2 sm:space-y-3 w-full max-w-xl">
+          <ul className="space-y-2 sm:space-y-3 w-full px-3 sm:px-0">
             {bestServices.map((service, index) => (
               <li
                 key={index}
-                className="bg-white p-3 sm:p-4 rounded-lg shadow text-center w-full"
+                className="bg-white p-3 sm:p-4 rounded-lg shadow w-full text-left"
               >
-                <h3 className="text-sm sm:text-base md:text-lg font-semibold text-myPurple-focus">
+                <h3 className="text-sm sm:text-base md:text-lg  text-center font-semibold text-myPurple-focus">
                   {service.title}
                 </h3>
-                <p className="text-xs sm:text-sm md:text-base text-gray-600">
+                <p className="text-xs sm:text-sm text-center md:text-base">
                   {service.description}
                 </p>
               </li>
