@@ -16,6 +16,7 @@ export default function NavbarSkeleton() {
             <Skeleton className="h-4 w-14" />
             <Skeleton className="h-4 w-18" />
             <Skeleton className="h-4 w-14" />
+            <Skeleton className="h-4 w-14" />
           </div>
         </div>
 

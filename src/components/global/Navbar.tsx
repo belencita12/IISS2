@@ -31,10 +31,10 @@ export function Navbar({ links }: NavbarProps) {
   if (isLoading) return <NavbarSkeleton />;
 
   return (
-    <header className="w-full shadow-sm px-8 bg-white border-b border-myPurple-disabled/30">
-      <div className="w-full flex items-center justify-between h-full">
+    <header className="w-full shadow-sm px-4 md:px-8 bg-white border-b border-myPurple-disabled/30">
+      <div className="w-full flex flex-wrap items-center justify-between h-full">
         {/* Logo */}
-        <div className="flex items-start gap-2">
+        <div className="flex items-start gap-2 min-w-fit">
           <Link href="/" className="flex items-start gap-2">
             <Image
               src="/logo.png"
@@ -44,7 +44,7 @@ export function Navbar({ links }: NavbarProps) {
               className="-mt-2"
               priority
             />
-            <h1 className="text-lg font-semibold text-myPurple-focus mt-6">
+            <h1 className="hidden sm:block text-lg font-semibold text-myPurple-focus mt-6">
               NicoPets
             </h1>
           </Link>
@@ -52,11 +52,11 @@ export function Navbar({ links }: NavbarProps) {
 
         {/* Links */}
         <div
-          className={`flex-1 flex ${
+          className={`hidden md:flex flex-1 ${
             isAuthenticated ? "justify-center" : "justify-end"
           }`}
         >
-          <nav className="hidden md:flex gap-8 items-center">
+          <nav className="flex flex-wrap gap-4 lg:gap-8 items-center">
             {links.map((link) => {
               const isActive =
                 pathname === link.href ||
@@ -96,11 +96,15 @@ export function Navbar({ links }: NavbarProps) {
         </div>
 
         {/* Logout */}
-        <div className="flex items-center gap-4">
-          {isAuthenticated && <LogoutButton />}
+        <div className="flex items-center gap-2 md:gap-4 ml-auto md:ml-0">
+          {isAuthenticated && (
+            <div className="hidden md:block">
+              <LogoutButton />
+            </div>
+          )}
           <Button
             variant="ghost"
-            className="md:hidden text-myPurple-primary hover:text-myPurple-hover hover:bg-myPurple-disabled/20"
+            className="md:hidden text-myPurple-primary hover:text-myPurple-hover hover:bg-myPurple-disabled/20 p-2"
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -110,12 +114,16 @@ export function Navbar({ links }: NavbarProps) {
 
       {/* Mobile Dropdown Menu */}
       {isOpen && (
-        <nav className="md:hidden flex flex-col gap-4 items-center bg-white py-4 border-t border-myPurple-disabled/30">
+        <nav className="md:hidden flex flex-col gap-4 items-center bg-white py-4 border-t border-myPurple-disabled/30 w-full">
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-myPurple-primary hover:text-myPurple-hover transition-colors duration-200 text-lg"
+              className={`transition-colors duration-200 text-lg ${
+                pathname === link.href || pathname.startsWith(link.href)
+                  ? "text-myPurple-hover font-semibold"
+                  : "text-myPurple-primary hover:text-myPurple-hover"
+              }`}
               onClick={() => setIsOpen(false)}
             >
               {link.label}
@@ -126,16 +134,19 @@ export function Navbar({ links }: NavbarProps) {
               <Link
                 key="user-profile"
                 href="/user-profile"
-                className={`transition-colors duration-200 ${
+                className={`transition-colors duration-200 text-lg ${
                   profileActive
-                    ? "text-myPurple-hover"
+                    ? "text-myPurple-hover font-semibold"
                     : "text-myPurple-primary hover:text-myPurple-hover"
                 }`}
+                onClick={() => setIsOpen(false)}
               >
                 Mi Perfil
               </Link>
-
-              <LogoutButton />
+              
+              <div className="mt-4 w-full flex justify-center">
+                <LogoutButton />
+              </div>
             </>
           )}
         </nav>
