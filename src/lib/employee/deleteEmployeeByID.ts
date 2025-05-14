@@ -10,6 +10,11 @@ export const deleteEmployeeByID = async (token: string, id: number): Promise<boo
             },
         });
 
+        if (response.status === 404) {
+            return null;
+        }
+        
+
         if (!response.ok) {
             const errorText = await response.text();
             console.error(`Error HTTP ${response.status}:`, errorText);
