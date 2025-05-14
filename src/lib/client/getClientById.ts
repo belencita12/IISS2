@@ -9,6 +9,10 @@ export const getClientById = async (clientId: number, token: string) => {
             headers: { Authorization: `Bearer ${token}` },
         });
 
+        if (response.status === 404) {
+            return null;
+        }
+
         if (!response.ok) {
             toast("error", "Error al obtener cliente.");
             return null;
