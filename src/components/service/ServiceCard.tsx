@@ -1,44 +1,61 @@
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
+import React from "react";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 interface IServiceCardProps {
-  title: string
-  description: string
-  image: string
-  alt: string
-  ctaText: string
-  ctaLink: string
+  title: string;
+  description: string;
+  image: string;
+  alt: string;
+  ctaText: string;
+  ctaLink: string;
 }
 
-export function ServiceCard({ title, description, image, alt, ctaText, ctaLink }: IServiceCardProps) {
+export function ServiceCard({
+  title,
+  description,
+  image,
+  alt,
+  ctaText,
+  ctaLink,
+}: IServiceCardProps) {
   return (
-    <div className="flex w-full flex-wrap md:flex-nowrap rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
-      {/* Imagen en la parte izq */}
-      <div className="w-full md:w-[30%] flex-shrink-0">
-        <Image
-          src={image || "/placeholder.svg?height=400&width=400"}
-          alt={alt}
-          width={400}
-          height={400}
-          className="w-full h-full object-cover aspect-square"
-        />
-      </div>
-
-      {/* Contenido de la tarjeta */}
-      <div className="bg-gray-50 p-6 flex flex-col justify-between w-full md:w-[70%]">
-        <div className="text-left flex flex-col gap-2 flex-1">
-          <h3 className="text-xl font-semibold text-myPurple-primary">{title}</h3>
-          <p className="mt-2 text-gray-600 text-sm md:text-base">{description}</p>
+    <div className="w-full bg-gray-200 p-3 sm:p-4">
+      <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-7">
+        {/* Imagen con altura fija */}
+        <div className="w-full md:w-[30%] flex-shrink-0">
+          <Image
+            src={image}
+            alt={alt}
+            width={340}
+            height={340}
+            className="w-full aspect-square object-cover rounded-lg"
+            priority
+          />
         </div>
-        <div className="flex w-full justify-end mt-4">
-          {/* Botón de llamada a la acción */}
-          <Button className="bg-myPurple-primary hover:bg-myPurple-hover">
-            <a href={ctaLink} className="inline-block text-white">
-              {ctaText}
-            </a>
-          </Button>
+
+        {/* Texto + botón con altura adaptativa */}
+        <div className="w-full md:w-[70%] flex flex-col justify-center md:min-h-[300px] py-4 md:py-0">
+          <div className="flex flex-col gap-3 md:gap-4">
+            <div className="text-center md:text-left flex flex-col gap-1">
+              <h3 className="text-xl sm:text-2xl font-semibold text-myPurple-focus">{title}</h3>
+              <p className="mt-1 md:mt-2 text-gray-600 text-sm sm:text-base md:text-lg text-center md:text-justify">
+                {description}
+              </p>
+            </div>
+            <div className="flex justify-center md:justify-start mt-2">
+              <Button>
+                <a
+                  href={ctaLink}
+                  className="inline-block text-white px-4 py-2 rounded hover:bg-black-600 transition"
+                >
+                  {ctaText}
+                </a>
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
