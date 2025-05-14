@@ -7,11 +7,9 @@ import { getAppointmentByPetId } from "@/lib/appointment/getAppointmentByPetId";
 import { formatDate } from "@/lib/utils";
 import GenericTable, { Column, PaginationInfo, TableAction } from "@/components/global/GenericTable";
 import { useRouter } from "next/navigation";
-<<<<<<< HEAD
 import { useTranslations } from "next-intl";
-=======
 import AppointmentListSkeleton from "./skeleton/AppointmentListSkeleton";
->>>>>>> f500aacd4d9428244ec3724220d1ed8edf0436e1
+
 
 interface AppointmentListProps {
   petId: number;
@@ -129,12 +127,8 @@ export default function AppointmentList({ petId, token }: AppointmentListProps) 
         pagination={pagination}
         onPageChange={handlePageChange}
         isLoading={loadingAppointments}
-<<<<<<< HEAD
         emptyMessage={e("notFoundAppointments")}
-=======
         skeleton={<AppointmentListSkeleton />}
-        emptyMessage="Sin citas registradas"
->>>>>>> f500aacd4d9428244ec3724220d1ed8edf0436e1
         className="mb-10"
       />
     </div>

@@ -14,6 +14,7 @@ import { getRacesBySpecies, getSpecies } from '@/lib/pets/getRacesAndSpecies';
 import { registerPet } from '@/lib/pets/registerPet';
 import { useRouter } from 'next/navigation';
 import Image from "next/image";
+import { useTranslations } from 'next-intl';
 
 const MAX_FILE_SIZE = 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -47,6 +48,11 @@ interface PetFormProps {
 }
 
 export default function PetForm({ clientId, token }: PetFormProps) {
+    const e = useTranslations("Error")
+    const b= useTranslations("Button");
+    const p= useTranslations("PetForm");
+    const ph= useTranslations("Placeholder");
+
     const [species, setSpecies] = useState<Species[]>([]);
     const [races, setRaces] = useState<Race[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -76,8 +82,8 @@ export default function PetForm({ clientId, token }: PetFormProps) {
             try {
                 const speciesData = await getSpecies(token);
                 setSpecies(speciesData);
-            } catch {
-                toast("error", "Error al obtener las especies.");
+            } catch(error:unknown) {
+                toast("error", error instanceof Error ? error.message : e("error"));
             }
         };
         fetchSpecies();
@@ -90,8 +96,8 @@ export default function PetForm({ clientId, token }: PetFormProps) {
         try {
             const racesData = await getRacesBySpecies(parseInt(speciesId), token);
             setRaces(racesData);
-        } catch {
-            toast("error", "Error al obtener las razas.");
+        } catch(error: unknown) {
+            toast("error", error instanceof Error ? error.message : e("error"));
         }
     };
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -130,8 +136,8 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                 onAutoClose: () => {router.push('/user-profile');},
                 onDismiss: () => router.push('/user-profile'),
             });
-        } catch {
-            toast("error", "Hubo un error al registrar la mascota.");
+        } catch (error: unknown) {
+            toast("error", error instanceof Error ? error.message : e("error"));
         } finally {
             setIsSubmitting(false);
         }
@@ -140,10 +146,10 @@ export default function PetForm({ clientId, token }: PetFormProps) {
         <div className="max-w-5xl mx-auto p-8">
             <div className="flex flex-col md:flex-row gap-16">
                 <div className="flex flex-col items-center space-y-4 w-80">
-                    <h1 className="text-3xl font-bold self-start">Registro de Mascota</h1>
-                    <p className="text-gray-600 self-start">Ingresa los datos de la mascota</p>
+                    <h1 className="text-3xl font-bold self-start">{p("petFormTitle")}</h1>
+                    <p className="text-gray-600 self-start">{p("description")}</p>
                     <div className="w-full flex flex-col items-center">
-                        <h3 className="text-sm font-semibold mb-2 text-gray-700">Imagen (Opcional)</h3>
+                        <h3 className="text-sm font-semibold mb-2 text-gray-700">{p("image")}</h3>
                         <div className="w-full flex flex-col items-center relative">
                             <Label className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-md text-sm font-medium text-center cursor-pointer">
                                 <Input
@@ -152,7 +158,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                                     onChange={handleImageChange}
                                     className="hidden"
                                 />
-                                {previewImage ? "Cambiar imagen" : "Subir imagen de la mascota"}
+                                {previewImage ? b("change") : b("upload")}
                             </Label>
                             {previewImage && (
                                 <div className="w-full mt-4">
@@ -179,16 +185,16 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                         className="space-y-4"
                     >
                         <div>
-                            <Label>Nombre</Label>
+                            <Label>{p("name")}</Label>
                             <Input
                                 id="petName"
                                 {...register('petName')}
-                                placeholder="Ej. Luna"
+                                placeholder={ph("name")}
                             />
                             {errors.petName && <p className="text-red-500">{errors.petName.message}</p>}
                         </div>
                         <div>
-                            <Label>Fecha de nacimiento</Label>
+                            <Label>{p("born")}</Label>
                             <Input
                                 id="birthDate"
                                 type="date"
@@ -198,7 +204,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                             {errors.birthDate && <p className="text-red-500">{errors.birthDate.message}</p>}
                         </div>
                         <div>
-                            <Label>Animal</Label>
+                            <Label>{p("specie")}</Label>
                             <Select
                                 onValueChange={(value) => {
                                     setValue('animalType', value);
@@ -206,7 +212,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                                 }}
                             >
                                 <SelectTrigger id="animalType">
-                                    <SelectValue placeholder="Seleccionar" />
+                                    <SelectValue placeholder={ph("select")} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {species.map((specie) => (
@@ -222,12 +228,12 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                             {errors.animalType && <p className="text-red-500">{errors.animalType.message}</p>}
                         </div>
                         <div>
-                            <Label>Raza</Label>
+                            <Label>{p("race")}</Label>
                             <Select
                                 onValueChange={(value) => setValue('breed', value)}
                             >
                                 <SelectTrigger id="breed">
-                                    <SelectValue placeholder={races.length > 0 ? "Seleccionar" : "Selecciona una especie primero"} />
+                                    <SelectValue placeholder={races.length > 0 ? ph("select") : p("selectFirst")} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {races.map((race) => (
@@ -243,7 +249,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                             {errors.breed && <p className="text-red-500">{errors.breed.message}</p>}
                         </div>
                         <div>
-                            <Label>Peso (kg)</Label>
+                            <Label>{p("weight")}</Label>
                             <Input
                                 id="weight"
                                 type="number"
@@ -257,7 +263,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                             {errors.weight && <p className="text-red-500">{errors.weight.message}</p>}
                         </div>
                         <div>
-                            <Label>Género</Label>
+                            <Label>{p("sex")}</Label>
                             <div className="flex gap-4">
                                 <Button
                                     id="genderFemale"
