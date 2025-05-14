@@ -17,6 +17,7 @@ import { toast } from "@/lib/toast";
 import { PetFilters } from "./PetsFilters";
 import { deletePet } from "@/lib/pets/deletePet";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
+import { Button } from "@/components/ui/button";
 
 interface ListPetsProps {
   token: string;
@@ -188,7 +189,15 @@ export default function ListPets({ token }: ListPetsProps) {
         selectedSpeciesId={selectedSpeciesId}
         selectedRaceId={selectedRaceId}
       />
-      <h1 className="text-2xl font-bold">Lista de Mascotas</h1>
+        <div className="flex justify-between mr-5">
+        <h1 className="text-2xl font-bold">Lista de Mascotas</h1>
+        <Button
+          variant="outline"
+          onClick={() => router.push("/dashboard/settings/pets/register")}
+        >
+          Registrar Mascota
+        </Button>
+      </div>
       <GenericTable<ListPetData>
         data={pets || []}
         columns={columns}
