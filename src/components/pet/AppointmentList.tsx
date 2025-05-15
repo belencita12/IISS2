@@ -88,12 +88,12 @@ export default function AppointmentList({
       className: "font-medium",
     },
     {
-      header: "Detalle",
-      accessor: (a) => a.details || "Sin detalles",
-    },
-    {
       header: "Servicio",
       accessor: "service",
+    },
+     {
+      header: "Detalle",
+      accessor: (a) => a.details || "Sin detalles",
     },
     {
       header: "Empleados",

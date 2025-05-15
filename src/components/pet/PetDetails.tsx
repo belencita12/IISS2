@@ -145,17 +145,16 @@ export default function PetDetails({ token }: Props) {
       ) : (
         <>
           <div className="relative">
-            {/* Header con gradiente */}
+            {/* Header*/}
             <div className="bg-gradient-to-r from-purple-600 to-pink-500 h-40 sm:h-48 shadow-md" />
 
-            {/* Botón Volver dentro del header */}
             <Button
               onClick={() => router.back()}
               variant="outline"
-              className="absolute top-4 left-4 z-10 bg-white/90 backdrop-blur-sm text-purple-600 hover:bg-white hover:text-pink-500 transition-all duration-300 shadow-sm border-purple-200 flex items-center gap-2 rounded-full px-4 py-2 font-medium"
+              className="absolute top-4 left-4 z-10 bg-white/90 backdrop-blur-sm text-purple-600 hover:bg-white hover:text-pink-500 transition-all duration-300 shadow-sm border-purple-200 flex items-center gap-2 rounded-full px-3 py-2 font-medium"
             >
               <ArrowLeft className="h-4 w-4" />
-              Volver
+              <span className="hidden sm:inline">Volver</span>
             </Button>
 
             {/* Tarjeta principal */}
@@ -293,25 +292,23 @@ export default function PetDetails({ token }: Props) {
               <Card className="border-none shadow-lg">
                 <CardContent className="p-4 sm:p-6">
                   <Tabs defaultValue="vacunas" value={activeSubTab} onValueChange={setActiveSubTab} className="w-full">
-                    <TabsList className="grid grid-cols-2 mb-6 bg-purple-50">
+                    <TabsList className="grid grid-cols-2 mb-6 bg-purple-50 rounded-md overflow-hidden">
                       <TabsTrigger
                         value="vacunas"
-                        className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
+                        className="bg-gray-200 text-gray-700 data-[state=active]:bg-purple-600 data-[state=active]:text-white"
                       >
                         Vacunas
                       </TabsTrigger>
                       <TabsTrigger
                         value="citas"
-                        className="data-[state=active]:bg-pink-500 data-[state=active]:text-white"
+                        className="bg-gray-200 text-gray-700 data-[state=active]:bg-pink-500 data-[state=active]:text-white"
                       >
                         Citas
                       </TabsTrigger>
                     </TabsList>
-
                     <TabsContent value="vacunas" className="mt-0">
                       <PetVaccinationTable Id={Number(id)} token={token} petId={pet.id} />
                     </TabsContent>
-
                     <TabsContent value="citas" className="mt-0">
                       <AppointmentList token={token} petId={pet.id} />
                     </TabsContent>
