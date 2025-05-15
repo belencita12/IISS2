@@ -13,7 +13,7 @@ import AppointmentList from "@/components/pet/AppointmentList"
 import { updatePet } from "@/lib/pets/updatePet"
 import UpdatePetImage from "@/components/pet/UpdatePetImage"
 import PetDetailsSkeleton from "./skeleton/PetDetailsskeleton"
-import { ArrowLeft, Calendar, CircleDot, Edit, PawPrintIcon as Paw, Scale } from "lucide-react"
+import { ArrowLeft, Calendar, CircleDot, Edit, PawPrintIcon as Paw, Scale, Weight } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -114,7 +114,7 @@ export default function PetDetails({ token }: Props) {
         {
           label: "Peso",
           value: `${pet.weight} kg`,
-          icon: <Scale className="h-4 w-4" />,
+          icon: <Weight className="h-4 w-4" />,
         },
         {
           label: "Raza",
