@@ -216,7 +216,7 @@ export default function PetDetails({ token }: Props) {
                                 variant="outline"
                                 size="sm"
                                 disabled={isSaving}
-                                className="w-full sm:w-auto border-purple-300 text-purple-700 hover:bg-purple-50"
+                                className="border-myPurple-tertiary text-myPurple-primary hover:bg-myPurple-disabled hover:text-myPurple-focus transition-all duration-200"
                               >
                                 Cancelar
                               </Button>
@@ -224,7 +224,7 @@ export default function PetDetails({ token }: Props) {
                                 onClick={handleSave}
                                 disabled={isSaving}
                                 size="sm"
-                                className="bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:from-purple-700 hover:to-pink-600 w-full sm:w-auto"
+                                className="bg-gradient-to-r from-myPurple-primary to-myPink-primary hover:from-myPurple-hover hover:to-myPink-hover text-white transition-all duration-200"
                               >
                                 {isSaving ? "Guardando..." : "Guardar"}
                               </Button>
