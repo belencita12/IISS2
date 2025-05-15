@@ -66,6 +66,12 @@
   },
   "Placeholder": {
     "name": "Ingrese el nombre",
+    "lastName": "Ingrese el apellido",
+    "email": "Ingrese el correo electrónico",
+    "phone": "Ingrese el número de teléfono",
+    "address": "Ingrese la dirección",
+    "ruc": "Ingrese el RUC",
+    "exampleEmail": "ejemplo@gmail.com",
     "select": "Seleccionar",
     "getBy": "Buscar por {field}",
     "reason": "Ingrese el motivo"
@@ -223,6 +229,16 @@
     "phone": "Teléfono",
     "ruc": "RUC",
     "address": "Dirección"
+  },
+  "ClientForm": {
+    "title": "Registro de cliente",
+    "name": "Nombre",
+    "lastName": "Apellido",
+    "email": "Correo electrónico",
+    "phone": "Teléfono",
+    "address": "Dirección",
+    "ruc": "RUC"
+
   },
   "ModalConfirmation":{
     "titleDelete": "Eliminar {field}"
