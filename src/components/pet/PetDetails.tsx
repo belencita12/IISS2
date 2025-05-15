@@ -162,7 +162,7 @@ export default function PetDetails({ token }: Props) {
               <Card className="mt-[-70px] sm:mt-[-80px] shadow-xl border-none overflow-visible">
                 <CardContent className="p-0">
                   <div className="flex flex-col md:flex-row">
-                    {/* Sección de imagen y nombre - centrada en móvil */}
+                    {/* Sección de imagen y nombre */}
                     <div className="w-full md:w-1/3 p-4 sm:p-6 flex flex-col items-center">
                       <div className="relative mb-4 mt-[-40px] sm:mt-[-50px] flex justify-center w-full">
                         <div className="rounded-full p-1.5 bg-white shadow-lg relative">
@@ -179,7 +179,7 @@ export default function PetDetails({ token }: Props) {
                           ) : (
                             <div className="rounded-full overflow-hidden w-[120px] h-[120px] sm:w-[180px] sm:h-[180px] md:w-[250px] md:h-[250px] ring-4 ring-purple-100">
                               <Image
-                                src={pet.profileImg?.originalUrl || "/placeholder.svg"}
+                                src={pet.profileImg?.originalUrl || "/NotImageNicoPets.png"}
                                 alt={pet.name}
                                 width={250}
                                 height={250}

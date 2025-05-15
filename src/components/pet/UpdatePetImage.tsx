@@ -34,7 +34,7 @@ export default function UpdatePetImage({
     previewUrl ||
     pet.profileImg?.originalUrl ||
     pet.profileImg?.previewUrl ||
-    "/placeholder.svg";
+    "/NotImageNicoPets.png";
 
   return (
     <div className="relative w-full h-full overflow-visible">
