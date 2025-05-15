@@ -60,7 +60,7 @@ export default function PetVaccinationTable({
     currentPage: 1,
     totalPages: 1,
     totalItems: 0,
-    pageSize: 4,
+    pageSize: 5,
   });
 
   useEffect(() => {
