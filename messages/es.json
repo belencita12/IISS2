@@ -38,13 +38,14 @@
     "successAppointment": "Cita registrada correctamente",
     "successRegister": "{field} registrado correctamente",
     "successSave": "Los cambios se guardaron correctamente",
-    "successDelete": "Eliminado correctamente",
+    "successDelete": "{field} eliminado correctamente",
     "successUpdate": "Actualizado correctamente",
     "successSchedule": "Cita agendada correctamente",
     "successCancel": "Cita cancelada correctamente"
   },
   "Error": {
     "error": "Error",
+    "errorLoad": "Error al cargar {field}",
     "errorRegister": "Error al registrar {field}",
     "notGetData": "No se pudo obtener la información",
     "notGetRuc": "No se pudo obtener el RUC del cliente",
@@ -58,6 +59,7 @@
     "noSpecified": "No especificado",
     "notLoadingAppointments": "No se pudieron cargar las citas",
     "noEmpty": "El campo no puede ser vacío",
+    "noDelete": "Error al eliminar {field}",
     "noUpdate": "Ocurrió un error al actualizar los datos",
     "noSave": "Error al guardar los cambios",
     "authError": "Error, debes estar autenticado para acceder a esta sección"
@@ -212,5 +214,17 @@
     "gs": "Gs",
     "cost": "Costo",
     "stock": "Depósito"
+  },
+  "ClientList": {
+    "title": "Clientes",
+    "modalConfirmation": "Eliminar cliente",
+    "fullName": "Nombre",
+    "email": "Email",
+    "phone": "Teléfono",
+    "ruc": "RUC",
+    "address": "Dirección"
+  },
+  "ModalConfirmation":{
+    "titleDelete": "Eliminar {field}"
   }
 }
