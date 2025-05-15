@@ -161,6 +161,7 @@ const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
                 textColor="text-gray-800"
                 imageWidth={400}
                 imageHeight={400}
+                imageClassName="h-64"
               >
                 <div className="mt-auto pt-4">
                   <Button
