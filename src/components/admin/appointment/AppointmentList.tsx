@@ -83,6 +83,19 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
   };
 
   const openConfirmModal = (appointment: AppointmentData, action: "complete" | "cancel") => {
+    if (action === "complete") {
+      const appointmentDate = new Date(appointment.designatedDate);
+      const currentDate = new Date();
+
+      // Set hours, minutes, seconds, and milliseconds to 0 for both dates to compare only the date part
+      appointmentDate.setHours(0, 0, 0, 0);
+      currentDate.setHours(0, 0, 0, 0);
+
+      if (appointmentDate > currentDate) {
+        toast("error", "No se puede finalizar una cita antes de su fecha programada.");
+        return;
+      }
+    }
     setSelectedAppointment(appointment);
     setModalAction(action);
     if (action === "cancel") {
