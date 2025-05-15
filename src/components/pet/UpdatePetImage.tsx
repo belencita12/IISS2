@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Pencil } from "lucide-react";
+import { Camera } from "lucide-react";
 import { PetData } from "@/lib/pets/IPet";
 
 interface UpdatePetImageProps {
@@ -39,45 +39,39 @@ export default function UpdatePetImage({
     previewUrl ||
     pet.profileImg?.originalUrl ||
     pet.profileImg?.previewUrl ||
-    null;
+    "/placeholder.svg";
 
   return (
-    <div className="flex-col justify-center items-center">
-      <div className="w-[250px] h-[250px] rounded-full overflow-hidden border-[3px] border-black flex justify-center items-center">
+    <div className="relative">
+      <div className="w-[230px] h-[230px] rounded-full overflow-hidden border-4 border-white shadow-md bg-white">
         {imageToShow ? (
           <Image
             src={imageToShow}
             alt={pet.name}
-            width={100}
-            height={100}
-            className="object-cover object-center w-full h-full"
+            width={128}
+            height={128}
+            className="object-cover w-full h-full"
           />
         ) : (
-          <div className="w-full h-full bg-gray-300 mx-auto flex items-center justify-center">
-            <span className="text-gray-500">Sin imagen</span>
+          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+            <span className="text-gray-500 text-sm">Sin imagen</span>
           </div>
         )}
       </div>
 
       {showEditButton && (
-        <div className="flex flex-col items-center mt-2 mb-2">
-          <Button
-            type="button"
-            disabled={disabled}
-            className="rounded-md p-2 shadow-md flex items-center gap-2 text-sm font-medium transition"
-            onClick={() => fileInputRef.current?.click()}
-            title="Cambiar foto de perfil"
-          >
-            <Pencil className="w-4 h-4 mr-1" />
-            Cambiar foto de perfil
-          </Button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handleImageChange}
-          />
+        <div className="relative">
+          <label className="absolute bottom-0 right-0 bg-myPurple-primary text-white p-2 rounded-full cursor-pointer shadow-md hover:bg-myPurple-hover transition-colors duration-200">
+            <Camera size={18} />
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              className="hidden"
+              onChange={handleImageChange}
+              disabled={disabled}
+            />
+          </label>
         </div>
       )}
     </div>
