@@ -1,77 +1,61 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { PetData } from "@/lib/pets/IPet";
-import { PET_API } from "@/lib/urls";
-import { useFetch } from "@/hooks/api";
+import { useEffect, useState } from "react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import type { PetData } from "@/lib/pets/IPet"
+import { PET_API } from "@/lib/urls"
+import { useFetch } from "@/hooks/api"
 
-type ClientPetSelectProps = {
-  clientId: number;
-  token: string;
-  onSelectPet: (pet: PetData) => void;
-};
+type PetSelectProps = {
+  clientId: number
+  token: string
+  onSelectPet: (pet: PetData) => void
+}
 
 type PetResponse = {
-  data: PetData[];
-};
+  data: PetData[]
+}
 
-export default function ClientPetSelect({
-  clientId,
-  token,
-  onSelectPet,
-}: ClientPetSelectProps) {
-  const [pets, setPets] = useState<PetData[]>([]);
-
-  const { data, get } = useFetch<PetResponse>("", token);
+export default function PetSelect({ clientId, token, onSelectPet }: PetSelectProps) {
+  const [pets, setPets] = useState<PetData[]>([])
+  const { data, get } = useFetch<PetResponse>("", token)
 
   useEffect(() => {
-    console.log("clientId:", clientId); 
     if (clientId) {
-      get(undefined, `${PET_API}?clientId=${clientId}&page=1&size=100`);
+      get(undefined, `${PET_API}?clientId=${clientId}&page=1&size=100`)
     }
-  }, [clientId]);
+  }, [clientId])
 
   useEffect(() => {
-    console.log("Pets fetched:", data);
     if (data?.data) {
-      setPets(data.data);
+      setPets(data.data)
     }
-  }, [data]);
+  }, [data])
 
   const handleSelect = (petId: string) => {
-    const selectedPet = pets.find((p) => p.id === Number(petId));
+    const selectedPet = pets.find((p) => p.id === Number(petId))
     if (selectedPet) {
-      onSelectPet(selectedPet);
+      onSelectPet(selectedPet)
     }
-  };
+  }
 
   return (
     <div className="space-y-2">
-      <div className="flex gap-2">
-        <Select onValueChange={handleSelect}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Selecciona una mascota" />
-          </SelectTrigger>
-          <SelectContent>
-            {pets.map((pet) => (
-              <SelectItem key={pet.id} value={String(pet.id)}>
-                <div>
-                  <p>{pet.name}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {pet.race.name}</p>
-                </div>
-              </SelectItem>
+      <Select onValueChange={handleSelect}>
+        <SelectTrigger className="w-full border-myPurple-tertiary focus:ring-myPurple-focus">
+          <SelectValue placeholder="Selecciona una mascota" />
+        </SelectTrigger>
+        <SelectContent>
+          {pets.map((pet) => (
+            <SelectItem key={pet.id} value={String(pet.id)}>
+              <div>
+                <p>{pet.name}</p>
+                <p className="text-sm text-muted-foreground">{pet.race.name}</p>
+              </div>
+            </SelectItem>
           ))}
         </SelectContent>
       </Select>
-      </div>
     </div>
-  );
+  )
 }
