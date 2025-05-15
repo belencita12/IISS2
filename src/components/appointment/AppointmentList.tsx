@@ -1,39 +1,36 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import { Eye } from "lucide-react";
-import { Appointment } from "@/lib/appointment/IAppointment";
-import { getAppointmentByPetId } from "@/lib/appointment/getAppointmentByPetId";
-import { formatDate } from "@/lib/utils";
-import GenericTable, { Column, PaginationInfo, TableAction } from "@/components/global/GenericTable";
-import { useRouter } from "next/navigation";
-import AppointmentListSkeleton from "./skeleton/AppointmentListSkeleton";
+import { useEffect, useState } from "react"
+import { Eye } from "lucide-react"
+import type { Appointment } from "@/lib/appointment/IAppointment"
+import { getAppointmentByPetId } from "@/lib/appointment/getAppointmentByPetId"
+import { formatDate } from "@/lib/utils"
+import GenericTable, { type Column, type PaginationInfo, type TableAction } from "@/components/global/GenericTable"
+import { useRouter } from "next/navigation"
+import AppointmentListSkeleton from "./skeleton/AppointmentListSkeleton"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 
 interface AppointmentListProps {
-  petId: number;
-  token: string;
+  petId: number
+  token: string
 }
 
-type AppointmentApiResponse = {
-  data: Appointment[];
-  total: number;
-  size: number;
-  prev: boolean;
-  next: boolean;
-  currentPage: number;
-  totalPages: number;
-};
-
-export default function AppointmentList({ petId, token }: AppointmentListProps) {
+export default function AppointmentList({
+  petId,
+  token,
+}: AppointmentListProps) {
   const router = useRouter();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loadingAppointments, setLoadingAppointments] = useState(true);
-  const [errorAppointments, setErrorAppointments] = useState<string | null>(null);
+  const [errorAppointments, setErrorAppointments] = useState<string | null>(
+    null
+  );
   const [pagination, setPagination] = useState<PaginationInfo>({
     currentPage: 1,
     totalPages: 1,
     totalItems: 0,
-    pageSize: 100,
+    pageSize: 5,
   });
 
   const estadoCitaEsp: Record<string, string> = {
@@ -43,13 +40,25 @@ export default function AppointmentList({ petId, token }: AppointmentListProps) 
     IN_PROGRESS: "En progreso",
   };
 
+  const estadoColorMap: Record<string, string> = {
+    COMPLETED: "bg-green-100 text-green-800 border-green-200",
+    CANCELLED: "bg-red-100 text-red-800 border-red-200",
+    PENDING: "bg-yellow-100 text-yellow-800 border-yellow-200",
+    IN_PROGRESS: "bg-blue-100 text-blue-800 border-blue-200",
+  };
+
   const fetchAppointments = async (page = 1) => {
     if (!petId || !token) return;
     setLoadingAppointments(true);
     try {
-      const data = await getAppointmentByPetId(petId, token, page, pagination.pageSize);
+      const data = await getAppointmentByPetId(
+        petId,
+        token,
+        page,
+        pagination.pageSize
+      );
       setAppointments(data);
-      setPagination(prev => ({
+      setPagination((prev) => ({
         ...prev,
         currentPage: page,
         totalItems: data.length,
@@ -74,24 +83,34 @@ export default function AppointmentList({ petId, token }: AppointmentListProps) 
 
   const appointmentColumns: Column<Appointment>[] = [
     {
-      header: "Detalle",
-      accessor: "details",
-    },
-    {
       header: "Fecha",
       accessor: (a) => formatDate(a.designatedDate),
+      className: "font-medium",
     },
     {
       header: "Servicio",
-      accessor: "service",
+      accessor: (a) => a.services.map(service => service.name).join(", "),
+    },
+     {
+      header: "Detalle",
+      accessor: (a) => a.details || "Sin detalles",
     },
     {
-      header: "Empleados",
-      accessor: (a) => a.employees?.map(e => e.name).join(", ") || "Sin asignar",
+      header: "Empleado",
+      accessor: (a) => a.employee?.name || "Sin asignar",
     },
     {
       header: "Estado",
-      accessor: (a) => estadoCitaEsp[a.status] || a.status,
+      accessor: (a) => (
+        <Badge
+          className={`border ${
+            estadoColorMap[a.status] ||
+            "bg-gray-100 text-gray-800 border-gray-200"
+          } hover:bg-none hover:text-inherit hover:shadow-none hover:border-inherit pointer-events-none`}
+        >
+          {estadoCitaEsp[a.status] || a.status}
+        </Badge>
+      ),
     },
   ];
 
@@ -102,7 +121,7 @@ export default function AppointmentList({ petId, token }: AppointmentListProps) 
         router.push(`/user-profile/appointment/${appointment.id}`);
       },
       label: "Ver detalle",
-    }
+    },
   ];
 
   if (errorAppointments) {
@@ -110,20 +129,21 @@ export default function AppointmentList({ petId, token }: AppointmentListProps) 
   }
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-3">Citas</h2>
-      <GenericTable<Appointment>
-        data={appointments}
-        columns={appointmentColumns}
-        actions={appointmentActions}
-        actionsTitle="Acciones"
-        pagination={pagination}
-        onPageChange={handlePageChange}
-        isLoading={loadingAppointments}
-        skeleton={<AppointmentListSkeleton />}
-        emptyMessage="Sin citas registradas"
-        className="mb-10"
-      />
-    </div>
+    <Card className="border-none shadow-md">
+      <CardContent className="p-4">
+        <GenericTable<Appointment>
+          data={appointments}
+          columns={appointmentColumns}
+          actions={appointmentActions}
+          actionsTitle="Acciones"
+          pagination={pagination}
+          onPageChange={handlePageChange}
+          isLoading={loadingAppointments}
+          skeleton={<AppointmentListSkeleton />}
+          emptyMessage="Sin citas registradas"
+          className="mb-0"
+        />
+      </CardContent>
+    </Card>
   );
 }

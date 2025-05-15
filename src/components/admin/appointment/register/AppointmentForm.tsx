@@ -33,6 +33,9 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
     watch,
   } = useForm<AppointmentRegister>({
     resolver: zodResolver(appointmentSchema),
+    defaultValues: {
+      serviceIds: [], // Initialize as empty array for multiple services
+    }
   });
 
   const router = useRouter();
@@ -61,14 +64,15 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
 
   const handleSelectEmployee = (employee: EmployeeData) => {
     if (employee.id) {
-      setValue("employeesId", [employee.id]);
+      setValue("employeeId", employee.id); // Updated to single employeeId
       setSelectedEmployee(employee);
     }
   };
 
   const handleSelectService = (service: ServiceType) => {
     if (service.id) {
-      setValue("serviceId", service.id);
+      // Add service ID to the serviceIds array
+      setValue("serviceIds", [service.id]);
       setSelectedService(service);
     }
   };
@@ -97,16 +101,16 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Seleccionar Servicio</label>
           <ServiceSelect token={token} onSelectService={handleSelectService} />
-          <input type="hidden" {...register("serviceId")} />
-          {errors.serviceId && <p className="text-red-500 text-sm mt-1">{errors.serviceId.message}</p>}
+          <input type="hidden" {...register("serviceIds")} />
+          {errors.serviceIds && <p className="text-red-500 text-sm mt-1">{errors.serviceIds.message}</p>}
           {selectedService && <ServiceSelected service={selectedService} />}
         </div>
 
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-1">Seleccionar Empleado</label>
           <EmployeeSelect token={token} onSelectEmployee={handleSelectEmployee} />
-          <input type="hidden" {...register("employeesId")} />
-          {errors.employeesId && <p className="text-red-500 text-sm mt-1">{errors.employeesId.message}</p>}
+          <input type="hidden" {...register("employeeId")} />
+          {errors.employeeId && <p className="text-red-500 text-sm mt-1">{errors.employeeId.message}</p>}
           {selectedEmployee && <EmployeeSelected employee={selectedEmployee} />}
         </div>
 

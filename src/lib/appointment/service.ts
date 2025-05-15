@@ -20,8 +20,6 @@ export const getAppointments = async (token: string, queryParamsStr?: string) =>
 };
 
 
-
-
 export const completeAppointment = async (id: number, token: string) => {
   const res = await fetch(`${APPOINTMENT_API}/complete/${id}`, {
     method: "PATCH",

@@ -106,7 +106,7 @@ export const Appointments = ({ token, ruc, onFetchError }: AppointmentsProps) =>
       accessor: (app) => (
         <div className="flex items-center gap-3">
           <div>
-            <p className="font-medium">{app.service}</p>
+            <p className="font-medium">{app.services.map(s => s.name).join(", ")}</p>
           </div>
         </div>
       ),
@@ -116,15 +116,8 @@ export const Appointments = ({ token, ruc, onFetchError }: AppointmentsProps) =>
       accessor: (app) => (
         <div className="flex items-center gap-2">
           <div>
-            {app.employees && app.employees.length > 0 ? (
-              app.employees.map((emp, i) => (
-                <p
-                  key={emp.id}
-                  className={i > 0 ? "font-medium" : "font-medium"}
-                >
-                  {emp.name}
-                </p>
-              ))
+            {app.employee ? (
+              <p className="font-medium">{app.employee.name}</p>
             ) : (
               <p className="text-sm text-gray-500">No asignado</p>
             )}

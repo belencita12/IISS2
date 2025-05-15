@@ -1,23 +1,22 @@
-import {z} from "zod";
-import { AppointmentRegister } from "./IAppointment"; 
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 
-export const appointmentSchema: z.ZodType<AppointmentRegister> = z.object({
-    designatedDate: z.string().min(1, "Fecha es obligatoria"),
-    designatedTime: z.string().min(1, "Hora es obligatoria"),
-    details: z.string().optional(),
-    serviceId: z
-        .number({
-        required_error: "Servicio es obligatorio",
-        })
-        .min(1, "Servicio es obligatorio"),
-    petId: z
-        .number({
-        required_error: "Mascota es obligatoria",
-        })
-        .min(1, "Mascota es obligatoria"),
-    employeesId: z
-        .array(z.number())
-        .nonempty("Debes seleccionar al menos un empleado"),
-    });
-    
-
+// Updated appointment schema to match the new backend structure
+export const appointmentSchema = z.object({
+  designatedDate: z.string({
+    required_error: "La fecha es requerida",
+  }),
+  designatedTime: z.string({
+    required_error: "La hora es requerida",
+  }),
+  details: z.string().optional(),
+  serviceIds: z.array(z.number()).min(1, "Debe seleccionar al menos un servicio"),
+  petId: z.number({
+    required_error: "Debe seleccionar una mascota",
+    invalid_type_error: "ID de mascota inválido",
+  }),
+  employeeId: z.number({
+    required_error: "Debe seleccionar un empleado",
+    invalid_type_error: "ID de empleado inválido",
+  }),
+});
