@@ -13,7 +13,6 @@ import GenericPagination from "../global/GenericPagination";
 import PetsGridSkeleton from "./skeleton/PetsGridSkeleton";
 import PetsListSkeleton from "./skeleton/PetsListSkeleton";
 import NotImageNicoPets from "../../../public/NotImageNicoPets.png";
-import Link from "next/link";
 
 // componente para la lista de mascotas
 const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
@@ -87,12 +86,13 @@ const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
         <div className="container mx-auto px-16">
           <div className="flex flex-col gap-4">
             <div>
-              <Link href="/dashboard/clients">
-                <Button className="bg-myPurple-primary text-white border-2 border-white flex items-center gap-2 hover:bg-myPurple-hover">
-                  <ChevronLeft className="w-4 h-4" />
-                  Volver
-                </Button>
-              </Link>
+              <Button 
+                className="bg-myPurple-primary text-white border-2 border-white flex items-center gap-2 hover:bg-myPurple-hover"
+                onClick={() => router.back()}
+              >
+                <ChevronLeft className="w-4 h-4" />
+                Volver
+              </Button>
             </div>
             <div className="flex items-center gap-3">
               <PawPrint className="w-8 h-8 text-white" />
