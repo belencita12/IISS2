@@ -162,9 +162,9 @@ export default function PetDetails({ token }: Props) {
               <Card className="mt-[-70px] sm:mt-[-80px] shadow-xl border-none overflow-visible">
                 <CardContent className="p-0">
                   <div className="flex flex-col md:flex-row">
-                    {/* Sección de imagen y nombre */}
+                    {/* Sección de imagen y nombre - centrada en móvil */}
                     <div className="w-full md:w-1/3 p-4 sm:p-6 flex flex-col items-center">
-                      <div className="relative mb-4 mt-[-40px] sm:mt-[-50px]">
+                      <div className="relative mb-4 mt-[-40px] sm:mt-[-50px] flex justify-center w-full">
                         <div className="rounded-full p-1.5 bg-white shadow-lg relative">
                           {isEditingName ? (
                             <div className="w-[120px] h-[120px] sm:w-[180px] sm:h-[180px] md:w-[250px] md:h-[250px]">
@@ -257,22 +257,24 @@ export default function PetDetails({ token }: Props) {
                       </AnimatePresence>
                     </div>
 
-                    {/* Sección de información */}
+                    {/* Sección de información - centrada en móvil */}
                     <div className="w-full md:w-2/3 p-4 sm:p-6">
                       <Tabs defaultValue="info" value={activeTab} onValueChange={setActiveTab} className="w-full">
                         <TabsContent value="info" className="mt-0">
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mx-auto max-w-md md:max-w-none">
                             {petInfoItems.map((item, index) => (
                               <Card
                                 key={index}
                                 className="border border-purple-100 shadow-sm hover:shadow-md transition-shadow"
                               >
                                 <CardContent className="p-4">
-                                  <div className="flex items-center gap-2 mb-1 text-purple-600">
+                                  <div className="flex items-center justify-center md:justify-start gap-2 mb-1 text-purple-600">
                                     {item.icon}
                                     <span className="text-sm font-medium">{item.label}</span>
                                   </div>
-                                  <p className="text-base sm:text-lg font-semibold text-gray-800">{item.value}</p>
+                                  <p className="text-base sm:text-lg font-semibold text-gray-800 text-center md:text-left">
+                                    {item.value}
+                                  </p>
                                 </CardContent>
                               </Card>
                             ))}
@@ -297,7 +299,7 @@ export default function PetDetails({ token }: Props) {
                         value="vacunas"
                         className="bg-gray-200 text-gray-700 data-[state=active]:bg-purple-600 data-[state=active]:text-white"
                       >
-                        Vacunas
+                        Control de Vacunas
                       </TabsTrigger>
                       <TabsTrigger
                         value="citas"
