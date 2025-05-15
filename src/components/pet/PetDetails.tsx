@@ -226,7 +226,7 @@ export default function PetDetails({ token }: Props) {
                                 size="sm"
                                 className="bg-gradient-to-r from-myPurple-primary to-myPink-primary hover:from-myPurple-hover hover:to-myPink-hover text-white transition-all duration-200"
                               >
-                                {isSaving ? "Guardando..." : "Guardar"}
+                                {isSaving ? "Editando..." : "Editar"}
                               </Button>
                             </div>
                           </motion.div>
