@@ -1,4 +1,4 @@
-import AppointmentDetails from "@/components/appointment/AppointmentDetails";
+import AppointmentDetails from "@/components/profile/appointment/AppointmentDetails";
 import authOptions from "@/lib/auth/options";
 import { getServerSession } from "next-auth/next";
 import { redirect, notFound } from "next/navigation";
