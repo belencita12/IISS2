@@ -27,10 +27,9 @@ import { getRacesBySpecies, getSpecies } from "@/lib/pets/getRacesAndSpecies";
 import { registerPet } from "@/lib/pets/registerPet";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { image } from "@/lib/schemas";
 import { PawPrint, Upload, Info, Calendar, Weight } from "lucide-react";
-
-const MAX_FILE_SIZE = 1024 * 1024;
-const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+import { mapToFormData } from "@/lib/utils";
 
 const petFormSchema = z.object({
   petName: z.string().min(1, "El nombre es obligatorio"),
@@ -38,57 +37,42 @@ const petFormSchema = z.object({
   breed: z.string().min(1, "La raza es obligatoria"),
   animalType: z.string().min(1, "Debes seleccionar un tipo de animal"),
   gender: z.string().min(1, "Debes seleccionar un género"),
-  weight: z
-    .union([z.string(), z.number()])
-    .refine(
-      (val) => !isNaN(parseFloat(String(val))) && parseFloat(String(val)) > 0,
-      {
-        message: "El peso debe ser un número válido mayor a 0",
-      }
-    )
-    .transform((val) => parseFloat(String(val))),
-  imageFile: z
-    .instanceof(File)
-    .refine((file) => ALLOWED_IMAGE_TYPES.includes(file.type), {
-      message: "Solo se permiten imágenes en formato JPG, PNG o WEBP",
-    })
-    .refine((file) => file.size <= MAX_FILE_SIZE, {
-      message: "La imagen no debe superar 1MB",
-    })
-    .optional(),
+  weight: z.coerce
+    .number()
+    .positive("El peso debe ser un número mayor a 0")
+    .min(0.1, "El peso debe ser al menos 0.1 kg"),
+  imageFile: image(),
 });
-
 type PetFormValues = z.infer<typeof petFormSchema>;
 interface PetFormProps {
   clientId?: number;
-  token?: string;
+  token: string;
 }
 
 export default function PetForm({ clientId, token }: PetFormProps) {
   const [species, setSpecies] = useState<Species[]>([]);
   const [races, setRaces] = useState<Race[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const router = useRouter();
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useForm<PetFormValues>({
-    resolver: zodResolver(petFormSchema),
-    defaultValues: {
-      petName: "",
-      birthDate: "",
-      breed: "",
-      animalType: "",
-      gender: "",
-      imageFile: undefined,
-    },
-  });
-
+ const {
+     register,
+     handleSubmit,
+     watch,
+     setValue,
+     reset,
+      formState: { errors, isSubmitting },
+   } = useForm<PetFormValues>({
+     resolver: zodResolver(petFormSchema),
+     defaultValues: {
+       petName: "",
+       birthDate: "",
+       breed: "",
+       animalType: "",
+       gender: "",
+       imageFile: undefined,
+     },
+   });
   useEffect(() => {
     if (!token) return;
     const fetchSpecies = async () => {
@@ -125,35 +109,20 @@ export default function PetForm({ clientId, token }: PetFormProps) {
     reader.onload = (e) => setPreviewImage(e.target?.result as string);
     reader.readAsDataURL(file);
   };
-
-  const onSubmit = async (data: PetFormValues) => {
-    if (!clientId || !token) {
-      toast("error", "Debes estar autenticado para registrar una mascota.");
-      return;
-    }
-    const formData = new FormData();
-    Object.entries({
-      name: data.petName,
-      clientId: clientId.toString(),
-      speciesId: data.animalType,
-      raceId: data.breed,
-      weight: data.weight.toString(),
-      sex: data.gender,
-      dateOfBirth: new Date(data.birthDate).toISOString(),
-    }).forEach(([key, value]) => formData.append(key, value));
-    if (data.imageFile) formData.append("profileImg", data.imageFile);
-    setIsSubmitting(true);
+ const onSubmit = async (data: PetFormValues) => {
+    const formData = mapToFormData({
+      ...data,
+      clientId: String(clientId),
+      dateOfBirth: new Date(data.birthDate),
+    });
     try {
       await registerPet(formData, token);
-      toast("success", "Mascota registrada con éxito!", {
-        duration: 2000,
-        onAutoClose: () => router.push("/user-profile"),
-        onDismiss: () => router.push("/user-profile"),
-      });
+      reset();
+      toast("success", "Mascota registrada con éxito!")
+      router.push(`user-profile`)
+     
     } catch {
       toast("error", "Hubo un error al registrar la mascota.");
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
