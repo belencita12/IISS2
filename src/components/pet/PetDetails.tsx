@@ -246,10 +246,9 @@ export default function PetDetails({ token }: Props) {
                             <Button
                               onClick={() => setIsEditingName(true)}
                               variant="ghost"
-                              size="sm"
-                              className="bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:from-purple-700 hover:to-pink-600 hover:text-white sm:text-base"
+                              className="px-3 py-1 h-auto text-xs bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:from-purple-700 hover:to-pink-600 hover:text-white"
                             >
-                              <Edit className="h-4 w-4 mr-1" />
+                              <Edit className="h-3 w-3 mr-1" />
                               Editar
                             </Button>
                           </motion.div>
