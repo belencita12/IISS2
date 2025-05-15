@@ -25,7 +25,7 @@ export const AvailabilityPicker = ({
   const [slots, setSlots] = useState<AvailabilitySlot[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
-  const a = useTranslations("AppointmentDetail");
+  const a = useTranslations("AppointmentForm");
   const b = useTranslations("Button");
   const e = useTranslations("Error");
 

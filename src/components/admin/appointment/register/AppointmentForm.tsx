@@ -171,7 +171,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
           className="bg-black text-white hover:bg-gray-800"
           disabled={!selectedEmployee || !selectedService || !selectedPet || !formattedDate || isSubmitting}
         >
-          {isSubmitting ? b("registering") : b("register")}
+          {isSubmitting ? b("scheduleing") : b("schedule")}
         </Button>
       </div>
     </form>
