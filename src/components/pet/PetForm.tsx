@@ -1,43 +1,30 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { toast } from "@/lib/toast";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Race, Species } from "@/lib/pets/IPet";
-import { getRacesBySpecies, getSpecies } from "@/lib/pets/getRacesAndSpecies";
-import { registerPet } from "@/lib/pets/registerPet";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
+'use client';
+import { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { toast } from '@/lib/toast';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Race, Species } from '@/lib/pets/IPet';
+import { getRacesBySpecies, getSpecies } from '@/lib/pets/getRacesAndSpecies';
+import { registerPet } from '@/lib/pets/registerPet';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { image } from "@/lib/schemas";
-import { PawPrint, Upload, Info, Calendar, Weight } from "lucide-react";
-import { mapToFormData } from "@/lib/utils";
+import { PawPrint, Upload, Info, Calendar, Weight } from 'lucide-react';
+import { blockExtraKeysNumber } from "@/lib/utils";
 
 const petFormSchema = z.object({
-  petName: z.string().min(1, "El nombre es obligatorio"),
-  birthDate: z.string().min(1, "La fecha de nacimiento es obligatoria"),
-  breed: z.string().min(1, "La raza es obligatoria"),
-  animalType: z.string().min(1, "Debes seleccionar un tipo de animal"),
-  gender: z.string().min(1, "Debes seleccionar un género"),
-  weight: z.coerce
+  petName: z.string().min(1, 'El nombre es obligatorio'),
+  birthDate: z.string().min(1, 'La fecha de nacimiento es obligatoria'),
+  breed: z.string().min(1, 'La raza es obligatoria'),
+  animalType: z.string().min(1, 'Debes seleccionar un tipo de animal'),
+  gender: z.string().min(1, 'Debes seleccionar un género'),
+   weight: z.coerce
     .number()
     .positive("El peso debe ser un número mayor a 0")
     .min(0.1, "El peso debe ser al menos 0.1 kg"),
@@ -46,33 +33,33 @@ const petFormSchema = z.object({
 type PetFormValues = z.infer<typeof petFormSchema>;
 interface PetFormProps {
   clientId?: number;
-  token: string;
+  token?: string;
 }
 
 export default function PetForm({ clientId, token }: PetFormProps) {
   const [species, setSpecies] = useState<Species[]>([]);
   const [races, setRaces] = useState<Race[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const router = useRouter();
-
- const {
-     register,
-     handleSubmit,
-     watch,
-     setValue,
-     reset,
-      formState: { errors, isSubmitting },
-   } = useForm<PetFormValues>({
-     resolver: zodResolver(petFormSchema),
-     defaultValues: {
-       petName: "",
-       birthDate: "",
-       breed: "",
-       animalType: "",
-       gender: "",
-       imageFile: undefined,
-     },
-   });
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<PetFormValues>({
+    resolver: zodResolver(petFormSchema),
+    defaultValues: {
+      petName: "",
+      birthDate: "",
+      breed: "",
+      animalType: "",
+      gender: "",
+      imageFile: undefined,
+    },
+  });
   useEffect(() => {
     if (!token) return;
     const fetchSpecies = async () => {
@@ -104,36 +91,47 @@ export default function PetForm({ clientId, token }: PetFormProps) {
       setValue("imageFile", undefined);
       return;
     }
-    setValue("imageFile", file);
+    setValue("imageFile", file, { shouldValidate: true });
     const reader = new FileReader();
     reader.onload = (e) => setPreviewImage(e.target?.result as string);
     reader.readAsDataURL(file);
   };
- const onSubmit = async (data: PetFormValues) => {
-    const formData = mapToFormData({
-      ...data,
-      clientId: String(clientId),
-      dateOfBirth: new Date(data.birthDate),
-    });
+
+  const onSubmit = async (data: PetFormValues) => {
+    if (!clientId || !token) {
+      toast("error", "Debes estar autenticado para registrar una mascota.");
+      return;
+    }
+    const formData = new FormData();
+    Object.entries({
+      name: data.petName,
+      clientId: clientId.toString(),
+      speciesId: data.animalType,
+      raceId: data.breed,
+      weight: data.weight.toString(),
+      sex: data.gender,
+      dateOfBirth: new Date(data.birthDate).toISOString(),
+    }).forEach(([key, value]) => formData.append(key, value));
+    if (data.imageFile) formData.append("profileImg", data.imageFile);
+    setIsSubmitting(true);
     try {
       await registerPet(formData, token);
       reset();
-      toast("success", "Mascota registrada con éxito!")
-      router.push(`user-profile`)
-     
+      toast("success", "Mascota registrada con éxito!");
+      router.push(`/user-profile`);
     } catch {
       toast("error", "Hubo un error al registrar la mascota.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
-
   return (
     <div className="max-w-6xl mx-auto p-6 md:p-8">
-      <div className="absolute inset-0 from-myPurple-disabled/20 to-myPink-disabled/10 pointer-events-none" />
       <CardHeader className="relative pb-2">
-        <CardTitle className="text-3xl font-bold text-myPurple-focus">
+        <CardTitle className="text-3xl font-bold text-myPurple-focus p-2">
           Registro de Mascota
         </CardTitle>
-        <CardDescription className="text-myPurple-focus/70 ml-6">
+        <CardDescription className="text-myPurple-focus/70 ml-6 p-2">
           Ingresa los datos de la mascota
         </CardDescription>
       </CardHeader>
@@ -141,7 +139,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
         <div className="flex flex-col md:flex-row gap-8 md:gap-12">
           <div className="w-full md:w-1/3 flex flex-col items-center space-y-4">
             <div className="w-full flex flex-col items-center space-y-4">
-              <div className="relative w-full max-w-xs aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-myPink-disabled to-myPurple-disabled border-2 border-dashed border-myPurple-secondary flex items-center justify-center">
+              <div className="relative w-full  w-50 h-60 aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-myPink-disabled to-myPurple-disabled border-2 border-dashed border-myPurple-secondary flex items-center justify-center">
                 {previewImage ? (
                   <Image
                     src={previewImage}
@@ -186,7 +184,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
               )}
             </div>
           </div>
-          <div className="w-full md:w-2/3">
+          <div className="w-full md:w-2/3 mt-2">
             <form
               id="petForm"
               onSubmit={handleSubmit(onSubmit)}
@@ -235,7 +233,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                   </Label>
                   <Select
                     onValueChange={(value) => {
-                      setValue("animalType", value);
+                      setValue("animalType", value, { shouldValidate: true });
                       handleSpeciesChange(value);
                     }}
                   >
@@ -267,7 +265,11 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                     <PawPrint className="w-4 h-4 mr-2 text-myPurple-primary" />
                     Raza
                   </Label>
-                  <Select onValueChange={(value) => setValue("breed", value)}>
+                  <Select
+                    onValueChange={(value) =>
+                      setValue("breed", value, { shouldValidate: true })
+                    }
+                  >
                     <SelectTrigger
                       id="breed"
                       className="border-myPurple-tertiary focus:ring-myPurple-primary"
@@ -275,7 +277,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                       <SelectValue
                         placeholder={
                           races.length > 0
-                            ? "Seleccionar"
+                            ? "Seleccionar raza"
                             : "Selecciona una especie primero"
                         }
                       />
@@ -304,9 +306,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                     type="number"
                     step={0.1}
                     min="0"
-                    onKeyDown={(e) => {
-                      if (e.key === "-" || e.key === "e") e.preventDefault();
-                    }}
+                    onKeyDown={blockExtraKeysNumber}
                     {...register("weight")}
                     className="border-myPurple-tertiary focus-visible:ring-myPurple-primary"
                   />
@@ -325,7 +325,9 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                       id="genderFemale"
                       type="button"
                       variant={watch("gender") === "F" ? "default" : "outline"}
-                      onClick={() => setValue("gender", "F")}
+                      onClick={() =>
+                        setValue("gender", "F", { shouldValidate: true })
+                      }
                       className={
                         watch("gender") === "F"
                           ? "bg-myPink-primary hover:bg-myPink-hover text-white w-full transition-all duration-200"
@@ -338,7 +340,9 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                       id="genderMale"
                       type="button"
                       variant={watch("gender") === "M" ? "default" : "outline"}
-                      onClick={() => setValue("gender", "M")}
+                      onClick={() =>
+                        setValue("gender", "M", { shouldValidate: true })
+                      }
                       className={
                         watch("gender") === "M"
                           ? "bg-myPurple-primary hover:bg-myPurple-hover text-white w-full transition-all duration-200"
@@ -363,6 +367,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
         <Button
           type="button"
           variant="outline"
+          disabled={isSubmitting}
           onClick={() => router.push("/user-profile")}
           className="border-myPurple-tertiary text-myPurple-primary hover:bg-myPurple-disabled hover:text-myPurple-focus transition-all duration-200"
         >
