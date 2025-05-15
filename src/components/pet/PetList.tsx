@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Card } from "../../components/global/Card";
 import { Button } from "@/components/ui/button";
-import { Grid, List, PawPrint } from "lucide-react";
+import { Grid, List, PawPrint, ChevronLeft } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { PetData } from "@/lib/pets/IPet";
 import { useRouter } from "next/navigation";
@@ -12,8 +12,8 @@ import SearchBar from "../global/SearchBar";
 import GenericPagination from "../global/GenericPagination";
 import PetsGridSkeleton from "./skeleton/PetsGridSkeleton";
 import PetsListSkeleton from "./skeleton/PetsListSkeleton";
-
-const IMAGE_NOT_FOUND = "/imagen-mascota/default.jpg";
+import NotImageNicoPets from "../../../public/NotImageNicoPets.png";
+import Link from "next/link";
 
 // componente para la lista de mascotas
 const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
@@ -85,7 +85,15 @@ const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
     <div className="min-h-screen bg-gray-50/50">
       <div className="relative bg-gradient-to-r from-myPurple-primary to-myPink-primary py-8 mb-8">
         <div className="container mx-auto px-16">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-4">
+            <div>
+              <Link href="/dashboard/clients">
+                <Button className="bg-myPurple-primary text-white border-2 border-white flex items-center gap-2 hover:bg-myPurple-hover">
+                  <ChevronLeft className="w-4 h-4" />
+                  Volver
+                </Button>
+              </Link>
+            </div>
             <div className="flex items-center gap-3">
               <PawPrint className="w-8 h-8 text-white" />
               <h1 className="text-3xl font-bold text-white">Mis Mascotas</h1>
@@ -145,7 +153,7 @@ const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
                 key={pet.id}
                 title={pet.name}
                 description={`${pet.species.name} • ${pet.race.name} • ${pet.sex === "M" ? "Macho" : "Hembra"}`}
-                image={pet.profileImg?.originalUrl || IMAGE_NOT_FOUND}
+                image={pet.profileImg?.originalUrl || NotImageNicoPets.src}
                 alt={`Imagen de un/a ${pet.species.name}`}
                 imagePosition="top"
                 layout="vertical"
@@ -175,7 +183,7 @@ const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
                 <Avatar className="w-16 h-16 ring-2 ring-myPurple-primary/20">
                   <AvatarImage
                     className="object-cover"
-                    src={pet.profileImg?.previewUrl || IMAGE_NOT_FOUND}
+                    src={pet.profileImg?.previewUrl || NotImageNicoPets.src}
                     alt={pet.name || "Imagen no encontrada"}
                   />
                   <AvatarFallback className="bg-gradient-to-r from-myPurple-primary to-myPink-primary text-white">
