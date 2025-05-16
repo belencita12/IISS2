@@ -274,6 +274,7 @@
   },
   "ProductForm": {
     "title": "Registro de producto",
+    "titleEdit": "Editar producto",
     "name": "Nombre",
     "description": "Descripción",
     "cost": "Costo",
