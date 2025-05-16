@@ -48,9 +48,6 @@ export default function ServiceSelect({ token, userRole, onSelectService }: Serv
             <SelectItem key={service.id} value={String(service.id)}>
               <div>
                 <p>{service.name}</p>
-                <p className="text-sm text-muted-foreground">
-                  {service.durationMin} min {service.price && `- $${service.price}`}
-                </p>
               </div>
             </SelectItem>
           ))}
