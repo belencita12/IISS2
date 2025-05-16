@@ -73,7 +73,7 @@ export default function RegisterClientForm({ token }: RegisterClientFormProps) {
       if ('error' in response) {
         toast("error", response.error || e("errorField", {field : "cliente"}));
       } else {
-        toast("success", s("successRegister", {field : "cliente"})); 
+        toast("success", s("successRegister", {field : "Cliente"})); 
         router.push("/dashboard/clients"); 
       }
     } catch (error) {

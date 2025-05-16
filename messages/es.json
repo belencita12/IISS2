@@ -40,6 +40,7 @@
     "successSave": "Los cambios se guardaron correctamente",
     "successDelete": "{field} eliminado correctamente",
     "successUpdate": "Actualizado correctamente",
+    "successEdit": "{field} actualizado correctamente",
     "successSchedule": "Cita agendada correctamente",
     "successCancel": "Cita cancelada correctamente"
   },
@@ -64,6 +65,17 @@
     "noSave": "Error al guardar los cambios",
     "authError": "Error, debes estar autenticado para acceder a esta sección"
   },
+  "Filters":{
+    "fromDate": "Fecha desde",
+    "toDate": "Fecha hasta",
+    "statusAppointment": "Estado de la cita",
+    "all": "Todos",
+    "pending": "Pendiente",
+    "cancelled": "Cancelada",
+    "finished": "Finalizada",
+    "errorDate": "La fecha hasta no puede ser menor que la fecha desde."
+
+  },
   "Placeholder": {
     "name": "Ingrese el nombre",
     "lastName": "Ingrese el apellido",
@@ -79,6 +91,13 @@
   "Vaccune": {
     "vaccuneControlTitle": "Control de vacunas"
   },
+  "VaccuneTable": {
+    "date": "Fecha",
+    "details": "Detalles de la vacuna",
+    "expectedDate": "Fecha prevista",
+    "dosis": "Dosis",
+    "actions": "Acciones"
+  },
 
   "PetLists": {
     "pets": "Mascotas registradas",
@@ -92,8 +111,13 @@
     "race": "Raza",
     "weight": "Peso",
     "specie": "Especie",
-    "sex": "Género",
-    "born": "Fecha de nacimiento"
+    "age": "Edad",
+    "sex": "Sexo",
+    "born": "Fecha de nacimiento",
+    "male": "Macho",
+    "female": "Hembra",
+    "vaccuneHistory": "Historial de vacunas",
+    "visit": "Visitas realizadas"
   },
   "PetForm":{
     "petFormTitle": "Registro de Mascota",
@@ -161,10 +185,12 @@
     "pending": "Pendiente",
     "completed": "Completada",
     "canceled": "Cancelada",
-    "inProgress": "En progreso"
+    "inProgress": "En progreso",
+    "noVisits": "No hay visitas registradas"
   },
   
   "ProfileUser": {
+    "title": "Perfil de Cliente",
     "editProfileBtn": "Editar perfil",
     "error": "Error",
     "notFound": "No se encontraron datos del usuario",
@@ -232,6 +258,7 @@
   },
   "ClientForm": {
     "title": "Registro de cliente",
+    "edit": "Editar cliente",
     "name": "Nombre",
     "lastName": "Apellido",
     "email": "Correo electrónico",
@@ -241,6 +268,11 @@
 
   },
   "ModalConfirmation":{
-    "titleDelete": "Eliminar {field}"
+    "titleDelete": "Eliminar {field}",
+    "titleFinish": "Finalizar {field}",
+    "confirmDelete": "¿Estás seguro de que deseas eliminar la {field}?",
+    "confirmFinish": "¿Estás seguro de que deseas finalizar la {field}?",
+    "motivo": "Motivo de cancelación",
+    "reason": "Ingrese el motivo"
   }
 }

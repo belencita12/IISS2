@@ -17,6 +17,7 @@ import { Modal } from "@/components/global/Modal";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { toast } from "@/lib/toast";
+import { useTranslations } from "next-intl";
 
 interface VisitListProps {
   token: string;
@@ -38,6 +39,11 @@ export default function VisitList({ token, petId }: VisitListProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [cancelDescription, setCancelDescription] = useState("");
+
+  const a = useTranslations("AppointmentTable");
+  const e = useTranslations("Error");
+  const b = useTranslations("Button");
+  const m = useTranslations("ModalConfirmation");
 
   const {
     data: appointments,
@@ -87,8 +93,8 @@ export default function VisitList({ token, petId }: VisitListProps) {
       }
       toast("success", `Cita ${modalAction === "complete" ? "finalizada" : "cancelada"} con éxito`);
       refresh();
-    } catch (error) {
-      toast("error", "Ocurrió un error al actualizar la cita");
+    } catch (error:unknown) {
+      toast("error", error instanceof Error ? error.message : e("errorLoad", {field: "cita"}));
     } finally {
       setIsProcessing(false);
       setIsModalOpen(false);
@@ -115,13 +121,13 @@ export default function VisitList({ token, petId }: VisitListProps) {
       {loading ? (
         <div className="flex justify-center items-center py-8">
           <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
-          <span className="ml-2 text-gray-600">Cargando visitas...</span>
+          <span className="ml-2 text-gray-600">{b("loading")}</span>
         </div>
       ) : error ? (
-        <p className="text-center text-red-500">Error al cargar visitas.</p>
+        <p className="text-center text-red-500">{e("errorLoad", {field: "citas"})}</p>
       ) : appointments.length === 0 ? (
         <p className="text-center text-gray-600">
-          Esta mascota aún no tiene visitas registradas.
+          {a("noVisits")}
         </p>
       ) : (
         <div className="space-y-4">
@@ -155,10 +161,10 @@ export default function VisitList({ token, petId }: VisitListProps) {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onConfirm={handleConfirmAction}
-          title="Confirmar Finalización"
-          message="¿Estás seguro de que quieres finalizar esta cita?"
-          confirmText="Confirmar"
-          cancelText="Cancelar"
+          title={m("titleFinish", {field: "cita"})}
+          message={m("confirmFinish", {field: "cita"})}
+          confirmText={b("confirm")}
+          cancelText={b("cancel")}
           isLoading={isProcessing}
         />
       )}
@@ -168,12 +174,12 @@ export default function VisitList({ token, petId }: VisitListProps) {
         <Modal
           isOpen={cancelModalOpen}
           onClose={() => setCancelModalOpen(false)}
-          title="Motivo de cancelación"
+          title={m("motivo")}
           size="md"
         >
           <textarea
             className="w-full h-32 p-2 border border-gray-300 rounded"
-            placeholder="Escribe una razón para cancelar la cita"
+            placeholder={m("reason")}
             value={cancelDescription}
             onChange={(e) => setCancelDescription(e.target.value)}
           />
@@ -183,14 +189,14 @@ export default function VisitList({ token, petId }: VisitListProps) {
               onClick={() => setCancelModalOpen(false)}
               disabled={isProcessing}
             >
-              Cancelar
+              {b("cancel")}
             </Button>
             <Button
               className="bg-red-600 text-white px-4 py-2 rounded border hover:bg-red-700"
               onClick={handleConfirmAction}
               disabled={isProcessing || !cancelDescription.trim()}
             >
-              {isProcessing ? "Cancelando..." : "Confirmar"}
+              {isProcessing ? b("canceling") : b("confirm")}
             </Button>
           </div>
         </Modal>
