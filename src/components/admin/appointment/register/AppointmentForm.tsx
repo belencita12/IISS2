@@ -1,4 +1,4 @@
-"use client";
+"use client"; 
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -34,7 +34,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
   } = useForm<AppointmentRegister>({
     resolver: zodResolver(appointmentSchema),
     defaultValues: {
-      serviceIds: [], // Initialize as empty array for multiple services
+      serviceIds: [], // Initialize with empty array for multiple services
     }
   });
 
@@ -42,11 +42,12 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeData | null>(null);
-  const [selectedService, setSelectedService] = useState<ServiceType | null>(null);
+  const [selectedServices, setSelectedServices] = useState<ServiceType[]>([]); // Changed to array for multiple services
   const [selectedPet, setSelectedPet] = useState<PetData | null>(null);
 
   const selectedDate = watch("designatedDate");
   const formattedDate = typeof selectedDate === "string" && selectedDate.trim() !== "" ? selectedDate.trim() : null;
+  const selectedServiceIds = watch("serviceIds"); // Watch the serviceIds array
 
   const onSubmit = async (data: AppointmentRegister) => {
     setIsSubmitting(true);
@@ -64,16 +65,20 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
 
   const handleSelectEmployee = (employee: EmployeeData) => {
     if (employee.id) {
-      setValue("employeeId", employee.id); // Updated to single employeeId
+      setValue("employeeId", employee.id); // Updated to match schema
       setSelectedEmployee(employee);
     }
   };
 
-  const handleSelectService = (service: ServiceType) => {
-    if (service.id) {
-      // Add service ID to the serviceIds array
-      setValue("serviceIds", [service.id]);
-      setSelectedService(service);
+  // Updated to handle multiple services
+  const handleSelectServices = (services: ServiceType[]) => {
+    if (services.length > 0) {
+      const serviceIds = services.map(service => service.id).filter(id => id !== undefined) as number[];
+      setValue("serviceIds", serviceIds);
+      setSelectedServices(services);
+    } else {
+      setValue("serviceIds", []);
+      setSelectedServices([]);
     }
   };
 
@@ -82,6 +87,11 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
       setValue("petId", pet.id);
       setSelectedPet(pet);
     }
+  };
+
+  // Calculate total duration for availability
+  const getTotalServiceDuration = () => {
+    return selectedServices.reduce((total, service) => total + (service.durationMin || 0), 0);
   };
 
   return (
@@ -99,11 +109,21 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Seleccionar Servicio</label>
-          <ServiceSelect token={token} onSelectService={handleSelectService} />
-          <input type="hidden" {...register("serviceIds")} />
+          <label className="block text-sm font-medium text-gray-700 mb-1">Seleccionar Servicios</label>
+          <ServiceSelect 
+            token={token} 
+            onSelectServices={handleSelectServices} 
+            selectedServices={selectedServices}
+          />
+          {/* Hidden input is not needed as we'll set serviceIds directly */}
           {errors.serviceIds && <p className="text-red-500 text-sm mt-1">{errors.serviceIds.message}</p>}
-          {selectedService && <ServiceSelected service={selectedService} />}
+          {selectedServices.length > 0 && (
+            <div className="mt-2">
+              {selectedServices.map(service => (
+                <ServiceSelected key={service.id} service={service} />
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="md:col-span-2">
@@ -128,12 +148,12 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
             )}
 
             <div className="w-full mt-4">
-              {selectedEmployee && formattedDate && selectedService && (
+              {selectedEmployee && formattedDate && selectedServices.length > 0 && (
                 <AvailabilityPicker
                   token={token}
                   employeeId={String(selectedEmployee.id)}
                   date={formattedDate}
-                  serviceDuration={selectedService?.durationMin || 0}
+                  serviceDuration={getTotalServiceDuration()} // Use total duration of all services
                   onSelectTime={(time) => setValue("designatedTime", time)}
                 />
               )}
@@ -168,7 +188,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
         <Button
           type="submit"
           className="bg-black text-white hover:bg-gray-800"
-          disabled={!selectedEmployee || !selectedService || !selectedPet || !formattedDate || isSubmitting}
+          disabled={!selectedEmployee || selectedServices.length === 0 || !selectedPet || !formattedDate || isSubmitting}
         >
           {isSubmitting ? "Registrando..." : "Registrar Cita"}
         </Button>
