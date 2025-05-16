@@ -7,12 +7,12 @@ type EmployeeSelectedProps = {
 
 export default function EmployeeSelected({ employee }: EmployeeSelectedProps) {
   return (
-    <div className="mt-2 p-4 border border-myPurple-tertiary/50 rounded-lg bg-slate-50 text-black text-sm flex items-start gap-3">
-      <div className="bg-myPurple-secondary/20 p-2 rounded-full">
-        <User className="h-5 w-5 text-myPurple-primary" />
+    <div className="flex items-center p-3">
+      <div className="bg-white p-2 rounded-full mr-3">
+        <User className="h-5 w-5 text-myPurple-secondary" />
       </div>
       <div>
-        <p className="font-medium text-base text-myPurple-focus">{employee.fullName}</p>
+        <p className="font-medium text-myPurple-focus">{employee.fullName}</p>
         <p className="text-gray-600">{employee.position.name}</p>
       </div>
     </div>
