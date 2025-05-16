@@ -11,6 +11,7 @@
     "profile": "Perfil"
   },
   "Button": {
+    "select": "Seleccionar",
     "cancel": "Cancelar",
     "save": "Guardar",
     "edit": "Editar",
@@ -29,7 +30,7 @@
     "canceling": "Cancelando...",
     "scheduleing": "Agendando...",
     "change": "Cambiar",
-    "upload": "Subir",
+    "upload": "Cargar",
     "male": "Macho",
     "female": "Hembra"
   },
@@ -48,6 +49,8 @@
     "error": "Error",
     "errorLoad": "Error al cargar {field}",
     "errorRegister": "Error al registrar {field}",
+    "errorGet": "Error al obtener {field}",
+    "errorUpdate": "Error al actualizar {field}",
     "notGetData": "No se pudo obtener la información",
     "notGetRuc": "No se pudo obtener el RUC del cliente",
     "notFound": "No se encontraron datos.",
@@ -63,6 +66,8 @@
     "noDelete": "Error al eliminar {field}",
     "noUpdate": "Ocurrió un error al actualizar los datos",
     "noSave": "Error al guardar los cambios",
+    "noImage": "Sin imagen",
+    "empty": "Faltan datos",
     "authError": "Error, debes estar autenticado para acceder a esta sección"
   },
   "Filters":{
@@ -116,11 +121,13 @@
     "born": "Fecha de nacimiento",
     "male": "Macho",
     "female": "Hembra",
+    "actions": "Acciones",
     "vaccuneHistory": "Historial de vacunas",
     "visit": "Visitas realizadas"
   },
   "PetForm":{
     "petFormTitle": "Registro de Mascota",
+    "editPetFormTitle": "Editar mascota",
     "description": "Ingrese los datos de la mascota",
     "image": "Imagen (Opcional)",
     "name": "Nombre",
@@ -129,7 +136,9 @@
     "specie": "Especie",
     "sex": "Género",
     "born": "Fecha de nacimiento",
-    "selectFirst": "Debes seleccionar una especie primero"
+    "selectFirst": "Debes seleccionar una especie primero",
+    "male": "Macho",
+    "female": "Hembra"
   },
   "Appointments": {
     "appointmentTitle": "Citas agendadas",
