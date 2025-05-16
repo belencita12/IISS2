@@ -12,6 +12,7 @@
   },
   "Button": {
     "select": "Seleccionar",
+    "actions": "Acciones",
     "cancel": "Cancelar",
     "save": "Guardar",
     "edit": "Editar",
@@ -91,7 +92,11 @@
     "exampleEmail": "ejemplo@gmail.com",
     "select": "Seleccionar",
     "getBy": "Buscar por {field}",
-    "reason": "Ingrese el motivo"
+    "reason": "Ingrese el motivo",
+    "description": "Ingrese una descripción",
+    "cost": "Ingrese el costo",
+    "price": "Ingrese el precio",
+    "iva": "Ingrese el IVA"
   },
   "Vaccune": {
     "vaccuneControlTitle": "Control de vacunas"
@@ -241,18 +246,20 @@
   },
   "ProductDetail": {
     "returnToProducts": "Volver a productos",
-    "tags": "Etiquetas",
+    "tags": "Etiqueta/s",
     "relatedProducts": "Productos relacionados",
     "ctaText": "Ver detalles",
     "gs": "Gs.",
     "code": "Código",
+    "description": "Descripción",
     "provider": "Proveedor",
     "category": "Categoría",
     "price": "Precio",
     "title": "La Mascota S.A.",
     "cost": "Costo",
     "stock": "Depósito",
-    "quantity": "Cantidad"
+    "quantity": "Cantidad",
+    "quantityDeposit": "Cantidad por depósitos"
     
   },
   "ProductStockCard": {
@@ -264,6 +271,24 @@
     "gs": "Gs",
     "cost": "Costo",
     "stock": "Depósito"
+  },
+  "ProductForm": {
+    "title": "Registro de producto",
+    "name": "Nombre",
+    "description": "Descripción",
+    "cost": "Costo",
+    "price": "Precio",
+    "iva": "IVA",
+    "category": "Categoría",
+    "provider": "Proveedor",
+    "tags": "Etiqueta/s",
+    "image": "Imagen"
+  },
+  "StockList": {
+    "name": "Nombre del depósito",
+    "address": "Dirección",
+    "quantity": "Cantidad",
+    "empty": "Producto no disponible en ninguna sucursal."
   },
   "ClientList": {
     "title": "Clientes",
@@ -288,6 +313,7 @@
   "ModalConfirmation":{
     "titleDelete": "Eliminar {field}",
     "titleFinish": "Finalizar {field}",
+    "deleteMessage": "¿Estás seguro de que deseas eliminar {field}?",
     "confirmDelete": "¿Estás seguro de que deseas eliminar la {field}?",
     "confirmFinish": "¿Estás seguro de que deseas finalizar la {field}?",
     "motivo": "Motivo de cancelación",

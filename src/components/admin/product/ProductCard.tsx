@@ -57,7 +57,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
               <p className="font-medium truncate">{product.code || "-"}</p>
             </div>
             <div className="flex flex-col truncate">
-              <span className="text-gray-600">{p("cost")}:</span>
+              <span className="text-gray-600">{p("price")}:</span>
               <p className="font-medium truncate">
                 {product.price.toLocaleString()} {p("gs")}
               </p>
@@ -69,7 +69,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
               </div>
             )}
             <div className="flex flex-col truncate">
-              <span className="text-gray-600">{p("price")}:</span>
+              <span className="text-gray-600">{p("cost")}:</span>
               <p className="font-medium truncate">
                 {product.cost?.toLocaleString() || "-"} {p("gs")}
               </p>

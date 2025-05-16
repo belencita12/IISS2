@@ -36,6 +36,7 @@ export default function ProductDetail({ token }: ProductDetailProps) {
   const m = useTranslations("ModalConfirmation");
   const e = useTranslations("Error");
   const s = useTranslations("Success");
+  const p = useTranslations("ProductDetail");
 
   const { delete: deleteReq, loading: isDelLoading } = useFetch<void, null>(
     PRODUCT_API,
@@ -134,7 +135,7 @@ export default function ProductDetail({ token }: ProductDetailProps) {
 
       <div className="mt-8">
         <h3 className="text-2xl font-semibold text-center mb-4">
-          Cantidad por Depósitos
+          {p("quantityDeposit")}
         </h3>
         <StockList
           stockDetails={stockDetails}
@@ -149,7 +150,7 @@ export default function ProductDetail({ token }: ProductDetailProps) {
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
         title={m("titleDelete", {field: "producto"})}
-        message={`¿Seguro que quieres eliminar el producto ${product.name}?`}
+        message={m("deleteMessage", {field: product.name})}
         confirmText={b("delete")}
         cancelText={b("cancel")}
         variant="danger"
