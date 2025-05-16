@@ -16,6 +16,7 @@ import { useFetch } from "@/hooks/api/useFetch";
 import { PRODUCT_API } from "@/lib/urls";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import ProductDetailSkeleton from "./skeleton/ProductDetailSkeleton";
+import { useTranslations } from "next-intl";
 
 interface ProductDetailProps {
   token: string;
@@ -29,6 +30,12 @@ export default function ProductDetail({ token }: ProductDetailProps) {
   const [stocks, setStocks] = useState<StockData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+
+  const b = useTranslations("Button");
+  const m = useTranslations("ModalConfirmation");
+  const e = useTranslations("Error");
+  const s = useTranslations("Success");
 
   const { delete: deleteReq, loading: isDelLoading } = useFetch<void, null>(
     PRODUCT_API,
@@ -51,9 +58,8 @@ export default function ProductDetail({ token }: ProductDetailProps) {
         setProduct(productData);
         setStockDetails(stockResponse.data);
         setStocks(stocksResponse.data);
-      } catch (err) {
-        toast("error", "No se pudo cargar la información del producto");
-        console.error(err);
+      } catch (err: unknown) {
+        toast("error", err instanceof Error ? err.message : e("noGetData"));
       } finally {
         setIsLoading(false);
       }
@@ -65,9 +71,9 @@ export default function ProductDetail({ token }: ProductDetailProps) {
     if (!id) return;
     const { ok, error } = await deleteReq(null, `${PRODUCT_API}/${id}`);
     if (!ok) {
-      toast("error", error?.message || "Error al eliminar el producto");
+      toast("error", error?.message || e("noDelete", {field: "producto"}));
     } else {
-      toast("success", "Producto eliminado correctamente");
+      toast("success", s("successDelete", {field: "Producto"}));
       router.back();
     }
     setIsDeleteModalOpen(false);
@@ -75,7 +81,7 @@ export default function ProductDetail({ token }: ProductDetailProps) {
 
   if (isLoading) return <ProductDetailSkeleton />;
   if (!product)
-    return <div className="text-center mt-8">Producto no encontrado</div>;
+    return <div className="text-center mt-8">{e("notFound")}</div>;
 
   // URL por defecto si no hay imagen
   const defaultImageSrc = "/NotImageNicoPets.png";
@@ -110,7 +116,7 @@ export default function ProductDetail({ token }: ProductDetailProps) {
           onClick={() => setIsDeleteModalOpen(true)}
           className="px-6"
         >
-          Eliminar
+          {b("delete")}
         </Button>
 
         <Button
@@ -120,7 +126,7 @@ export default function ProductDetail({ token }: ProductDetailProps) {
           }
           className="px-6"
         >
-          Editar
+          {b("edit")}
         </Button>
       </div>
 
@@ -142,10 +148,10 @@ export default function ProductDetail({ token }: ProductDetailProps) {
         isLoading={isDelLoading}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
-        title="Eliminar"
+        title={m("titleDelete", {field: "producto"})}
         message={`¿Seguro que quieres eliminar el producto ${product.name}?`}
-        confirmText="Eliminar"
-        cancelText="Cancelar"
+        confirmText={b("delete")}
+        cancelText={b("cancel")}
         variant="danger"
       />
     </div>

@@ -244,7 +244,16 @@
     "tags": "Etiquetas",
     "relatedProducts": "Productos relacionados",
     "ctaText": "Ver detalles",
-    "gs": "Gs."
+    "gs": "Gs.",
+    "code": "Código",
+    "provider": "Proveedor",
+    "category": "Categoría",
+    "price": "Precio",
+    "title": "La Mascota S.A.",
+    "cost": "Costo",
+    "stock": "Depósito",
+    "quantity": "Cantidad"
+    
   },
   "ProductStockCard": {
     "code": "Código",
