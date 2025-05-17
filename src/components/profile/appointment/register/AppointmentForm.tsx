@@ -147,28 +147,28 @@ export const AppointmentForm = ({ token, clientId, userRole }: AppointmentFormPr
               </div>
             </div>
 
-            {/* Sección de Veterinario */}
-            <div className="bg-white p-4 rounded-lg border border-myPurple-tertiary/30 shadow-sm">
-              <div className="flex items-center gap-2 text-myPurple-focus border-b border-myPurple-tertiary/30 pb-2 mb-3">
-                <Stethoscope className="w-5 h-5" />
-                <h3 className="font-medium">Empleado</h3>
-              </div>
-              <div>
-                <EmployeeSelect token={token} onSelectEmployee={handleSelectEmployee} />
-                <input type="hidden" {...register("employeesId")} />
-                {errors.employeesId && <p className="text-myPink-focus text-sm mt-1">{errors.employeesId.message}</p>}
-                {selectedEmployee && <EmployeeSelected employee={selectedEmployee} />}
-              </div>
-            </div>
-
-            {/* Sección de Fecha y Hora */}
-            <div className="bg-white p-4 rounded-lg border border-myPurple-tertiary/30 shadow-sm">
-              <div className="flex items-center gap-2 text-myPurple-focus border-b border-myPurple-tertiary/30 pb-2 mb-3">
-                <Calendar className="w-5 h-5" />
-                <h3 className="font-medium">Fecha y Hora</h3>
+            {/* Sección de Empleado y Fecha en la misma fila */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Sección de Veterinario */}
+              <div className="bg-white p-4 rounded-lg border border-myPurple-tertiary/30 shadow-sm">
+                <div className="flex items-center gap-2 text-myPurple-focus border-b border-myPurple-tertiary/30 pb-2 mb-3">
+                  <Stethoscope className="w-5 h-5" />
+                  <h3 className="font-medium">Empleado</h3>
+                </div>
+                <div>
+                  <EmployeeSelect token={token} onSelectEmployee={handleSelectEmployee} />
+                  <input type="hidden" {...register("employeesId")} />
+                  {errors.employeesId && <p className="text-myPink-focus text-sm mt-1">{errors.employeesId.message}</p>}
+                  {selectedEmployee && <EmployeeSelected employee={selectedEmployee} />}
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Sección de Fecha */}
+              <div className="bg-white p-4 rounded-lg border border-myPurple-tertiary/30 shadow-sm">
+                <div className="flex items-center gap-2 text-myPurple-focus border-b border-myPurple-tertiary/30 pb-2 mb-3">
+                  <Calendar className="w-5 h-5" />
+                  <h3 className="font-medium">Fecha</h3>
+                </div>
                 <div>
                   <input
                     type="date"
@@ -180,24 +180,24 @@ export const AppointmentForm = ({ token, clientId, userRole }: AppointmentFormPr
                     <p className="text-myPink-focus text-sm mt-1">{errors.designatedDate.message}</p>
                   )}
                 </div>
+              </div>
+            </div>
 
+            {/* Sección de Horario (aparece solo cuando hay empleado y fecha seleccionados) */}
+            {selectedEmployee && formattedDate && (
+              <div className="bg-white p-4 rounded-lg border border-myPurple-tertiary/30 shadow-sm">
+                <div className="flex items-center gap-2 text-myPurple-focus border-b border-myPurple-tertiary/30 pb-2 mb-3">
+                  <Clock className="w-5 h-5" />
+                  <h3 className="font-medium">Horario Disponible</h3>
+                </div>
                 <div>
-                  {selectedEmployee && formattedDate && (
-                    <div>
-                      <label className="block text-sm font-medium text-myPurple-focus mb-2 flex items-center">
-                        <Clock className="w-4 h-4 mr-2 text-myPurple-primary" />
-                        Seleccionar Horario
-                      </label>
-                      <AvailabilityPicker
-                        token={token}
-                        employeeId={String(selectedEmployee.id)}
-                        date={formattedDate}
-                        serviceDuration={selectedService?.durationMin || 0}
-                        onSelectTime={handleSelectTime}
-                      />
-                    </div>
-                  )}
-
+                  <AvailabilityPicker
+                    token={token}
+                    employeeId={String(selectedEmployee.id)}
+                    date={formattedDate}
+                    serviceDuration={selectedService?.durationMin || 0}
+                    onSelectTime={handleSelectTime}
+                  />
                   {shouldShowTimeError && (
                     <p className="text-myPink-focus text-sm mt-1">
                       {errors.designatedTime?.message || "Seleccione un horario"}
@@ -205,7 +205,7 @@ export const AppointmentForm = ({ token, clientId, userRole }: AppointmentFormPr
                   )}
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Sección de Detalles */}
             <div className="bg-white p-4 rounded-lg border border-myPurple-tertiary/30 shadow-sm">
