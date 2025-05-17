@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import authOptions from "@/lib/auth/options";
 import { redirect } from "next/navigation";
-import { AppointmentForm } from "@/components/profile/appointment/register/AppointmentForm";
+import { AppointmentForm } from "@/components/appointment/register/AppointmentForm";
 
 export default async function AppointmentsPage() {
   const session = await getServerSession(authOptions);
