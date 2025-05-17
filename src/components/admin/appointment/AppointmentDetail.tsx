@@ -1,250 +1,324 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useFetch } from "@/hooks/api/useFetch";
-import { AppointmentData, AppointmentStatus } from "@/lib/appointment/IAppointment";
-import { APPOINTMENT_API } from "@/lib/urls";
-import { toast } from "@/lib/toast";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import { completeAppointment, cancelAppointment } from "@/lib/appointment/service";
-import { ConfirmationModal } from "@/components/global/Confirmation-modal";
-import { Modal } from "@/components/global/Modal";
-import { formatDate } from "@/lib/utils";
+"use client"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { Calendar, Clock, MapPin, CheckCircle, Printer, Edit, X, FileText } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
+import { Avatar } from "@/components/ui/avatar"
+import { Skeleton } from "@/components/ui/skeleton"
+import { useFetch } from "@/hooks/api/useFetch"
+import type { AppointmentData } from "@/lib/appointment/IAppointment"
+import { APPOINTMENT_API } from "@/lib/urls"
+import { toast } from "@/lib/toast"
+import { completeAppointment, cancelAppointment } from "@/lib/appointment/service"
+import { ConfirmationModal } from "@/components/global/Confirmation-modal"
+import { Modal } from "@/components/global/Modal"
+import { formatDate, formatTimeUTC } from "@/lib/utils"; 
 
 const statusColors = {
-  PENDING: "bg-yellow-100 text-yellow-800 border-yellow-300",
-  IN_PROGRESS: "bg-blue-100 text-blue-800 border-blue-300",
-  COMPLETED: "bg-green-100 text-green-800 border-green-300",
-  CANCELLED: "bg-red-100 text-red-800 border-red-300",
-};
+  PENDING: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100",
+  IN_PROGRESS: "bg-blue-100 text-blue-800 hover:bg-blue-100",
+  COMPLETED: "bg-green-100 text-green-800 hover:bg-green-100",
+  CANCELLED: "bg-red-100 text-red-800 hover:bg-red-100",
+}
 
 const statusLabels = {
   PENDING: "Pendiente",
-  IN_PROGRESS: "En Progreso",
+  IN_PROGRESS: "Confirmada",
   COMPLETED: "Completada",
   CANCELLED: "Cancelada",
-};
+}
 
 interface AppointmentDetailProps {
-  token: string | null;
-  appointmentId: string;
+  token: string | null
+  appointmentId: string
 }
 
 const AppointmentDetail = ({ token, appointmentId }: AppointmentDetailProps) => {
-  const router = useRouter();
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [cancelModalOpen, setCancelModalOpen] = useState(false);
-  const [cancelDescription, setCancelDescription] = useState("");
-  const [modalAction, setModalAction] = useState<"complete" | "cancel" | null>(null);
+  const router = useRouter()
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [cancelModalOpen, setCancelModalOpen] = useState(false)
+  const [cancelDescription, setCancelDescription] = useState("")
+  const [modalAction, setModalAction] = useState<"complete" | "cancel" | null>(null)
 
   const {
     data: appointment,
     loading,
     error,
     execute: fetchAppointment,
-  } = useFetch<AppointmentData>(
-    `${APPOINTMENT_API}/${appointmentId}`,
-    token,
-    { immediate: true }
-  );
+  } = useFetch<AppointmentData>(`${APPOINTMENT_API}/${appointmentId}`, token, { immediate: true })
 
   useEffect(() => {
     if (error) {
-      toast("error", error.message || "Error al cargar la cita");
+      toast("error", error.message || "Error al cargar la cita")
     }
-  }, [error]);
+  }, [error])
 
   const openConfirmModal = (action: "complete" | "cancel") => {
     if (action === "complete" && appointment) {
-      const appointmentDate = new Date(appointment.designatedDate);
-      const currentDate = new Date();
+      const appointmentDate = new Date(appointment.designatedDate)
+      const currentDate = new Date()
 
       // Set hours, minutes, seconds, and milliseconds to 0 for both dates to compare only the date part
-      appointmentDate.setHours(0, 0, 0, 0);
-      currentDate.setHours(0, 0, 0, 0);
+      appointmentDate.setHours(0, 0, 0, 0)
+      currentDate.setHours(0, 0, 0, 0)
 
       if (appointmentDate > currentDate) {
-        toast("error", "No se puede finalizar una cita antes de su fecha programada.");
-        return;
+        toast("error", "No se puede finalizar una cita antes de su fecha programada.")
+        return
       }
     }
-    setModalAction(action);
+    setModalAction(action)
     if (action === "cancel") {
-      setCancelModalOpen(true);
+      setCancelModalOpen(true)
     } else {
-      setIsModalOpen(true);
+      setIsModalOpen(true)
     }
-  };
+  }
 
   const handleConfirmAction = async () => {
-    if (!appointment || !modalAction) return;
+    if (!appointment || !modalAction) return
 
     try {
-      setIsProcessing(true);
+      setIsProcessing(true)
       if (modalAction === "complete") {
-        await completeAppointment(appointment.id, token || "");
+        await completeAppointment(appointment.id, token || "")
       } else {
-        await cancelAppointment(appointment.id, token || "", cancelDescription);
+        await cancelAppointment(appointment.id, token || "", cancelDescription)
       }
-      toast("success", `Cita ${modalAction === "complete" ? "finalizada" : "cancelada"} con éxito`);
-      fetchAppointment();
+      toast("success", `Cita ${modalAction === "complete" ? "finalizada" : "cancelada"} con éxito`)
+      fetchAppointment()
     } catch (error) {
-      toast("error", "Ocurrió un error al actualizar la cita");
+      toast("error", "Ocurrió un error al actualizar la cita")
     } finally {
-      setIsProcessing(false);
-      setIsModalOpen(false);
-      setCancelModalOpen(false);
-      setModalAction(null);
-      setCancelDescription("");
+      setIsProcessing(false)
+      setIsModalOpen(false)
+      setCancelModalOpen(false)
+      setModalAction(null)
+      setCancelDescription("")
     }
-  };
+  }
 
-  const canBeCompleted = appointment?.status === "PENDING" || appointment?.status === "IN_PROGRESS";
-  const canBeCancelled = appointment?.status === "PENDING";
+  const canBeCompleted = appointment?.status === "PENDING" || appointment?.status === "IN_PROGRESS"
+  const canBeCancelled = appointment?.status === "PENDING"
 
   if (loading) {
-    return <AppointmentDetailSkeleton />;
+    return <AppointmentDetailSkeleton />
   }
 
   if (!appointment && !loading) {
     return (
       <div className="text-center py-10">
         <h2 className="text-2xl font-semibold mb-4">Cita no encontrada</h2>
-        <Button onClick={() => router.push("/dashboard/appointment")}>
-          Volver a citas
-        </Button>
+        <Button onClick={() => router.push("/dashboard/appointment")}>Volver a citas</Button>
       </div>
-    );
+    )
   }
 
+  // Format date for display
+  const formattedDate = appointment?.designatedDate ? new Date(appointment.designatedDate) : null
+  const dateOptions: Intl.DateTimeFormatOptions = { weekday: "long", day: "numeric", month: "long", year: "numeric" }
+  const displayDate = formattedDate ? formattedDate.toLocaleDateString("es-ES", dateOptions) : ""
+
+  // Format time
+  const timeOptions: Intl.DateTimeFormatOptions = { hour: "2-digit", minute: "2-digit", hour12: false }
+  const displayTime = formattedDate ? formattedDate.toLocaleTimeString("es-ES", timeOptions) : ""
+
   return (
-    <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Detalle de la Cita</h1>
-        <div className="flex space-x-2">
-          <Button 
-            variant="outline" 
-            onClick={() => router.push("/dashboard/appointment")}
-          >
-            Volver
-          </Button>
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className="space-y-4">
-          <div>
-            <h2 className="text-xl font-semibold">Información General</h2>
-            <div className="mt-2 space-y-2">
-              <div className="flex flex-col">
-                <span className="text-sm text-gray-500">ID de Cita</span>
-                <span>{appointment?.id}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-sm text-gray-500">Estado</span>
-                <Badge className={`${statusColors[appointment?.status || "PENDING"]} w-fit`}>
-                  {statusLabels[appointment?.status || "PENDING"]}
-                </Badge>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-sm text-gray-500">Fecha Designada</span>
-                <span>{formatDate(appointment?.designatedDate || "")}</span>
-              </div>
-              {appointment?.completedDate && (
-                <div className="flex flex-col">
-                  <span className="text-sm text-gray-500">Fecha de Finalización</span>
-                  <span>{formatDate(appointment?.completedDate)}</span>
-                </div>
-              )}
-              <div className="flex flex-col">
-                <span className="text-sm text-gray-500">Servicio</span>
-                <span>{appointment?.service}</span>
-              </div>
-            </div>
-          </div>
-          
-          <div>
-            <h2 className="text-xl font-semibold">Detalles</h2>
-            <p className="mt-2 text-gray-700">
-              {appointment?.details || "Sin detalles adicionales"}
-            </p>
-          </div>
-        </div>
-        
-        <div className="space-y-4">
-          <div>
-            <h2 className="text-xl font-semibold">Datos de la Mascota</h2>
-            <div className="mt-2 space-y-2">
-              <div className="flex flex-col">
-                <span className="text-sm text-gray-500">Nombre</span>
-                <span>{appointment?.pet.name}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-sm text-gray-500">Raza</span>
-                <span>{appointment?.pet.race}</span>
-              </div>
-            </div>
-          </div>
-          
-          <div>
-            <h2 className="text-xl font-semibold">Datos del Dueño</h2>
-            <div className="mt-2 space-y-2">
-              <div className="flex flex-col">
-                <span className="text-sm text-gray-500">ID</span>
-                <span>{appointment?.pet.owner.id}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-sm text-gray-500">Nombre</span>
-                <span>{appointment?.pet.owner.name}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">Empleados Asignados</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {appointment?.employees && appointment.employees.length > 0 ? (
-            appointment.employees.map((employee) => (
-              <div key={employee.id} className="bg-gray-50 p-3 rounded-md">
-                <p className="font-medium">{employee.name}</p>
-                <p className="text-sm text-gray-500">ID: {employee.id}</p>
-              </div>
-            ))
-          ) : (
-            <p>No hay empleados asignados</p>
-          )}
-        </div>
-      </div>
-      
-      <div className="border-t pt-6 flex justify-end space-x-3">
-        {canBeCompleted && (
-          <Button 
-            variant="default" 
-            onClick={() => openConfirmModal("complete")}
-            disabled={isProcessing}
-          >
-            Finalizar Cita
-          </Button>
-        )}
-        
-        {canBeCancelled && (
-          <Button 
-            variant="destructive" 
-            onClick={() => openConfirmModal("cancel")}
-            disabled={isProcessing}
-          >
-            Cancelar Cita
-          </Button>
-        )}
+    <div className="max-w-6xl mx-auto">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">Detalle de la Cita</h1>
       </div>
 
-      {/* Complete Confirmation Modal */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Main appointment information */}
+        <div className="md:col-span-2">
+          <div className="border rounded-lg p-6 mb-6">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h2 className="text-xl font-bold">{appointment?.service || "Consulta de rutina y vacunación"}</h2>
+                <p className="text-sm text-muted-foreground">Información general de la cita</p>
+              </div>
+              <Badge className={statusColors[appointment?.status || "PENDING"]}>
+                {statusLabels[appointment?.status || "PENDING"]}
+              </Badge>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex items-start gap-3">
+                <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
+                <div>
+                  <p className="font-medium">Fecha designada</p>
+                  <p className="text-muted-foreground">{displayDate}</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <Clock className="h-5 w-5 text-muted-foreground mt-0.5" />
+                <div>
+                  <p className="font-medium">Hora</p>
+                  <p className="text-muted-foreground">{displayTime}</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
+                <div>
+                  <p className="font-medium">Ubicación</p>
+                  <p className="text-muted-foreground">Consultorio 3</p>
+                </div>
+              </div>
+            </div>
+
+            <Separator className="my-6" />
+
+            <div>
+              <h3 className="font-medium mb-2">Notas</h3>
+              <p className="text-sm text-muted-foreground">
+                {appointment?.details ||
+                  "Revisar estado general y aplicar vacuna antirrábica anual. El paciente mostró síntomas de alergia en la última visita."}
+              </p>
+            </div>
+          </div>
+
+          <div className="border rounded-lg p-6 mb-6">
+            <h2 className="text-xl font-bold mb-4">Datos de la Mascota</h2>
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <p className="text-sm text-muted-foreground">Nombre</p>
+                <p className="font-medium">{appointment?.pet.name || "Max"}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Especie</p>
+                <p className="font-medium">Perro</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Raza</p>
+                <p className="font-medium">{appointment?.pet.race || "Labrador Retriever"}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Edad</p>
+                <p className="font-medium">3 años</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Peso</p>
+                <p className="font-medium">28.5 kg</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Sexo</p>
+                <p className="font-medium">Macho</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="border rounded-lg p-6">
+            <h2 className="text-xl font-bold mb-4">Datos del Propietario</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex items-start gap-3">
+                <div>
+                  <p className="text-sm text-muted-foreground">Nombre</p>
+                  <p className="font-medium">{appointment?.pet.owner.name}</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div>
+                  <p className="text-sm text-muted-foreground">Teléfono</p>
+                  <p className="font-medium"></p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div>
+                  <p className="text-sm text-muted-foreground">Email</p>
+                  <p className="font-medium"></p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div>
+                  <p className="text-sm text-muted-foreground">Dirección</p>
+                  <p className="font-medium"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Sidebar */}
+        <div className="space-y-6">
+          <div className="border rounded-lg p-6">
+            <h2 className="text-xl font-bold mb-4">Personal Asignado</h2>
+            <p className="text-sm text-muted-foreground mb-4">Empleados encargados de la cita</p>
+
+            <div className="space-y-4">
+              {appointment?.employees && appointment.employees.length > 0 ? (
+                appointment.employees.map((employee) => (
+                  <div key={employee.id} className="flex items-center gap-3">
+                    <Avatar>
+                      <div className="w-10 h-10 rounded-full bg-gray-200" />
+                    </Avatar>
+                    <div>
+                      <p className="font-medium">{employee.name}</p>
+                      <p className="text-sm text-muted-foreground">
+                       
+                      </p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <>
+                  <div className="flex items-center gap-3">
+                    <Avatar>
+                      <div className="w-10 h-10 rounded-full bg-gray-200" />
+                    </Avatar>
+                    <div>
+                      <p className="font-medium">Dra. Laura Martinez</p>
+                      <p className="text-sm text-muted-foreground">Veterinaria</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Avatar>
+                      <div className="w-10 h-10 rounded-full bg-gray-200" />
+                    </Avatar>
+                    <div>
+                      <p className="font-medium">Juan Pérez</p>
+                      <p className="text-sm text-muted-foreground">Asistente</p>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+
+          <div className="border rounded-lg p-6">
+            <h2 className="text-xl font-bold mb-4">Historial de la Cita</h2>
+            <div className="relative pl-6 space-y-6">
+              <div className="relative">
+                <div className="absolute left-[-24px] top-1 w-4 h-4 rounded-full bg-green-500"></div>
+                <p className="font-medium">Cita creada</p>
+                <p className="text-sm text-muted-foreground flex justify-between">
+                  <span>10/5/2025</span>
+                  <span>Recepción</span>
+                </p>
+              </div>
+
+              <div className="relative">
+                <div className="absolute left-[-24px] top-1 w-4 h-4 rounded-full bg-green-500"></div>
+                <p className="font-medium">Confirmada por teléfono</p>
+                <p className="text-sm text-muted-foreground flex justify-between">
+                  <span>12/5/2025</span>
+                  <span>Juan Pérez</span>
+                </p>
+              </div>
+
+              <div className="absolute left-[-22px] top-0 bottom-0 w-0.5 bg-gray-200"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Complete Confirmation Modal 
       <ConfirmationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -256,13 +330,8 @@ const AppointmentDetail = ({ token, appointmentId }: AppointmentDetailProps) => 
         isLoading={isProcessing}
       />
 
-      {/* Cancel Modal with description */}
-      <Modal
-        isOpen={cancelModalOpen}
-        onClose={() => setCancelModalOpen(false)}
-        title="Motivo de cancelación"
-        size="md"
-      >
+
+      <Modal isOpen={cancelModalOpen} onClose={() => setCancelModalOpen(false)} title="Motivo de cancelación" size="md">
         <textarea
           className="w-full h-32 p-2 border border-gray-300 rounded"
           placeholder="Escribe una razón para cancelar la cita"
@@ -270,11 +339,7 @@ const AppointmentDetail = ({ token, appointmentId }: AppointmentDetailProps) => 
           onChange={(e) => setCancelDescription(e.target.value)}
         />
         <div className="flex justify-end mt-4 gap-2">
-          <Button
-            variant="outline"
-            onClick={() => setCancelModalOpen(false)}
-            disabled={isProcessing}
-          >
+          <Button variant="outline" onClick={() => setCancelModalOpen(false)} disabled={isProcessing}>
             Cancelar
           </Button>
           <Button
@@ -285,71 +350,138 @@ const AppointmentDetail = ({ token, appointmentId }: AppointmentDetailProps) => 
             {isProcessing ? "Cancelando..." : "Confirmar"}
           </Button>
         </div>
-      </Modal>
+      </Modal>*/}
     </div>
-  );
-};
+  )
+}
 
 const AppointmentDetailSkeleton = () => {
   return (
-    <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
-      <div className="flex justify-between items-center mb-6">
-        <Skeleton className="h-10 w-64" />
-        <Skeleton className="h-10 w-24" />
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className="space-y-4">
-          <div>
-            <Skeleton className="h-8 w-48 mb-4" />
-            <div className="mt-2 space-y-4">
-              <Skeleton className="h-6 w-full" />
-              <Skeleton className="h-6 w-full" />
-              <Skeleton className="h-6 w-full" />
-              <Skeleton className="h-6 w-full" />
-            </div>
-          </div>
-          
-          <div>
-            <Skeleton className="h-8 w-48 mb-4" />
-            <Skeleton className="h-20 w-full" />
-          </div>
-        </div>
-        
-        <div className="space-y-4">
-          <div>
-            <Skeleton className="h-8 w-48 mb-4" />
-            <div className="mt-2 space-y-4">
-              <Skeleton className="h-6 w-full" />
-              <Skeleton className="h-6 w-full" />
-            </div>
-          </div>
-          
-          <div>
-            <Skeleton className="h-8 w-48 mb-4" />
-            <div className="mt-2 space-y-4">
-              <Skeleton className="h-6 w-full" />
-              <Skeleton className="h-6 w-full" />
-            </div>
-          </div>
+    <div className="max-w-6xl mx-auto">
+      <div className="flex justify-between items-center mb-4">
+        <Skeleton className="h-8 w-64" />
+        <div className="flex gap-2">
+          <Skeleton className="h-9 w-28" />
+          <Skeleton className="h-9 w-24" />
+          <Skeleton className="h-9 w-28" />
         </div>
       </div>
-      
-      <div className="mb-6">
-        <Skeleton className="h-8 w-48 mb-4" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          <Skeleton className="h-20 w-full" />
-          <Skeleton className="h-20 w-full" />
-          <Skeleton className="h-20 w-full" />
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="md:col-span-2">
+          <div className="border rounded-lg p-6 mb-6">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <Skeleton className="h-7 w-64 mb-2" />
+                <Skeleton className="h-4 w-48" />
+              </div>
+              <Skeleton className="h-6 w-24" />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="flex items-start gap-3">
+                <Skeleton className="h-5 w-5" />
+                <div className="w-full">
+                  <Skeleton className="h-5 w-32 mb-1" />
+                  <Skeleton className="h-4 w-full" />
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Skeleton className="h-5 w-5" />
+                <div className="w-full">
+                  <Skeleton className="h-5 w-32 mb-1" />
+                  <Skeleton className="h-4 w-full" />
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Skeleton className="h-5 w-5" />
+                <div className="w-full">
+                  <Skeleton className="h-5 w-32 mb-1" />
+                  <Skeleton className="h-4 w-full" />
+                </div>
+              </div>
+            </div>
+
+            <Skeleton className="h-px w-full my-6" />
+
+            <div>
+              <Skeleton className="h-5 w-24 mb-2" />
+              <Skeleton className="h-16 w-full" />
+            </div>
+          </div>
+
+          <div className="border rounded-lg p-6 mb-6">
+            <Skeleton className="h-7 w-48 mb-4" />
+            <div className="grid grid-cols-2 gap-6">
+              {[...Array(6)].map((_, i) => (
+                <div key={i}>
+                  <Skeleton className="h-4 w-24 mb-1" />
+                  <Skeleton className="h-5 w-32" />
+                </div>
+              ))}
+            </div>
+            <div className="mt-4">
+              <Skeleton className="h-9 w-40" />
+            </div>
+          </div>
+
+          <div className="border rounded-lg p-6">
+            <Skeleton className="h-7 w-48 mb-4" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <div className="w-full">
+                    <Skeleton className="h-4 w-24 mb-1" />
+                    <Skeleton className="h-5 w-48" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
-      
-      <div className="border-t pt-6 flex justify-end space-x-3">
-        <Skeleton className="h-10 w-32" />
-        <Skeleton className="h-10 w-32" />
+
+        <div className="space-y-6">
+          <div className="border rounded-lg p-6">
+            <Skeleton className="h-7 w-48 mb-2" />
+            <Skeleton className="h-4 w-64 mb-4" />
+
+            <div className="space-y-4">
+              {[...Array(2)].map((_, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <Skeleton className="h-10 w-10 rounded-full" />
+                  <div>
+                    <Skeleton className="h-5 w-40 mb-1" />
+                    <Skeleton className="h-4 w-24" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="border rounded-lg p-6">
+            <Skeleton className="h-7 w-48 mb-4" />
+            <div className="space-y-6 pl-6">
+              {[...Array(2)].map((_, i) => (
+                <div key={i} className="relative">
+                  <Skeleton className="h-5 w-40 mb-1" />
+                  <Skeleton className="h-4 w-full" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="border rounded-lg p-6">
+            <Skeleton className="h-7 w-32 mb-4" />
+            <div className="space-y-2">
+              {[...Array(4)].map((_, i) => (
+                <Skeleton key={i} className="h-12 w-full" />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AppointmentDetail;
+export default AppointmentDetail
