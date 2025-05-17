@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
 
 const vaccineManufacturerSchema = z.object({
   name: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
@@ -23,6 +24,9 @@ export default function VaccineManufacturerForm({ initialData, token }: VaccineM
   const router = useRouter();
   const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
   
+  const m = useTranslations("ManufacturerTable");
+  const b = useTranslations("Button");
+  const ph= useTranslations("Placeholder");
   const {
     register,
     handleSubmit,
@@ -73,7 +77,6 @@ export default function VaccineManufacturerForm({ initialData, token }: VaccineM
         router.push("/dashboard/vaccine/manufacturer");
       }
     } catch (error) {
-      console.error(error);
       setErrorMessage(
         error instanceof Error ? error.message : "Ocurrió un error inesperado"
       );
@@ -87,17 +90,17 @@ export default function VaccineManufacturerForm({ initialData, token }: VaccineM
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-md p-6 border rounded-lg shadow-md bg-white">
       <div className="text-left space-y-2">
-        <label className="block text-sm font-medium">Nombre</label>
-        <Input {...register("name")} placeholder="Nombre del fabricante" className="p-2 border rounded-md w-full" />
+        <label className="block text-sm font-medium">{m("name")}</label>
+        <Input {...register("name")} placeholder={ph("name")} className="p-2 border rounded-md w-full" />
         {errors.name && <p className="text-red-500 text-xs">{errors.name.message}</p>}
       </div>
       {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
       <div className="flex space-x-4">
         <Button type="submit" disabled={loading} className="px-4 py-2">
-          {loading ? "Guardando..." : initialData?.id ? "Actualizar" : "Crear"}
+          {loading ? b("saving") : initialData?.id ? b("save") : b("add")}
         </Button>
         <Button type="button" disabled={loading} onClick={() => router.back()} className="px-4 py-2 bg-gray-500 hover:bg-gray-600">
-          Cancelar
+          {b("cancel")}
         </Button>
       </div>
     </form>

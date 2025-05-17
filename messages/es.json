@@ -133,7 +133,10 @@
     "price": "Precio",
     "name": "Nombre",
     "iva": "IVA",
-    "quantity": "Cantidad"
+    "quantity": "Cantidad",
+    "vaccineAsociated": "Vacunas asociadas",
+    "emptyMessage": "No hay vacunas registradas para este fabricante"
+
   },
   "VaccineForm": {
     "titleRegister": "Agregar vacuna",
@@ -149,7 +152,10 @@
     "provider": "Proveedor",
     "image": "Imagen (Opcional)"
   },
-  
+  "ManufacturerTable": {
+    "titleManufacturers": "Fabricantes de vacunas",
+    "name": "Nombre"
+  },
 
   "PetLists": {
     "pets": "Mascotas registradas",

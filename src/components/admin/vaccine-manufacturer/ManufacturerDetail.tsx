@@ -2,8 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import { useManufacturerDetail } from "@/hooks/vaccine-manufacturer/useManufacturerDetail";
-import { Button } from "@/components/ui/button";
 import { Eye } from "lucide-react";
+import GenericTable, {
+  Column,
+  TableAction,
+} from  "@/components/global/GenericTable";
+import VaccineTableSkeleton from "../vaccine/skeleton/VaccineTableSkeleton";
+import { useTranslations } from "next-intl";
 
 interface Props {
   id: number;
@@ -14,45 +19,56 @@ export default function ManufacturerDetail({ id, token }: Props) {
   const router = useRouter();
   const { manufacturer, vaccines, loading } = useManufacturerDetail(id, token);
 
+  const v = useTranslations("VaccineDetail");
+  const b = useTranslations("Button");
+  const e = useTranslations("Error");
+
+
   const handleView = (id: number) => router.push(`/dashboard/vaccine/${id}`);
 
-  if (loading) return <p className="text-center mt-10">Cargando...</p>;
-  if (!manufacturer) return <p>No se encontró el fabricante.</p>;
+  //if (loading) return <p className="text-center mt-10">{b("loading")}</p>;
+  if (!manufacturer) return <p>{e("notFound")}</p>;
+
+  // Columnas para la tabla
+  const columns: Column<(typeof vaccines)[number]>[] = [
+    {
+      header: v("name"),
+      accessor: "name",
+    },
+    {
+      header: v("specie"),
+      accessor: (item) => item.species?.name ?? "—",
+    },
+    {
+      header: v("price"),
+      accessor: (item) =>
+        item.product?.price
+          ? `Gs. ${item.product.price.toLocaleString("es-PY")}`
+          : "—",
+    },
+  ];
+
+  // Acciones
+  const actions: TableAction<(typeof vaccines)[number]>[] = [
+    {
+      icon: <Eye className="w-4 h-4" />,
+      onClick: (item) => handleView(item.id),
+      label: b("seeDetails"),
+    },
+  ];
 
   return (
     <div className="p-4 space-y-6">
-      <h1 className="text-3xl font-bold">Fabricante: {manufacturer.name}</h1>
-      <h2 className="text-xl font-semibold">Vacunas asociadas</h2>
-      <div className="bg-white rounded shadow p-4">
-        {vaccines.length === 0 ? (
-          <p>No hay vacunas registradas para este fabricante.</p>
-        ) : (
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b">
-                <th className="py-2">Nombre</th>
-                <th>Especie</th>
-                <th>Precio</th>
-                <th className="text-right">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {vaccines.map((vac) => (
-                <tr key={vac.id} className="border-b hover:bg-gray-50">
-                  <td className="py-2">{vac.name}</td>
-                  <td>{vac.species? vac.species.name : "—"}</td>
-                  <td>Gs. {vac.product?.price?.toLocaleString("es-PY")}</td>
-                  <td className="text-right space-x-2">
-                    <Button size="sm" variant="outline" onClick={() => handleView(vac.id)}>
-                      <Eye className="w-4 h-4" />
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      <h1 className="text-3xl font-bold">{v("manufacturer")}: {manufacturer.name}</h1>
+      <h2 className="text-xl font-semibold">{v("vaccineAsociated")}</h2>
+        <GenericTable
+          data={vaccines}
+          columns={columns}
+          actions={actions}
+          emptyMessage={v("emptyMessage")}
+          skeleton={<VaccineTableSkeleton />}
+          isLoading={loading}
+        />
     </div>
   );
 }
