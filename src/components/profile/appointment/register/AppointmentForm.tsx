@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState } from "react"
@@ -17,6 +18,7 @@ import ServiceSelect from "./ServiceSelect"
 import ServiceSelected from "./ServiceSelected"
 import EmployeeSelect from "./EmployeeSelect"
 import EmployeeSelected from "./EmployeeSelected"
+import DateSelected from "./DateSelected"
 import { AvailabilityPicker } from "./AvailabilityPicker"
 import { Calendar, Clock, FileText, PawPrint, Stethoscope, User } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -179,6 +181,7 @@ export const AppointmentForm = ({ token, clientId, userRole }: AppointmentFormPr
                   {errors.designatedDate && (
                     <p className="text-myPink-focus text-sm mt-1">{errors.designatedDate.message}</p>
                   )}
+                  {formattedDate && <DateSelected date={formattedDate} time={selectedTime || undefined} />}
                 </div>
               </div>
             </div>
