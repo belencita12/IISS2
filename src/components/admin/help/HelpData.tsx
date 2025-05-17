@@ -2,26 +2,24 @@
 
 import { useState } from "react";
 import Head from "next/head";
-import { Search } from "lucide-react";
+import { Search, CircleHelpIcon, X } from "lucide-react";
 import ClientAppointmentHelp from "./ClientApoimentHelp";
 import InventoryHelp from "./InventoryHelp";
 import FinancialHelp from "./FinancialHelp";
 import DashboardHelp from "./DashboardHelp";
-import { CircleHelpIcon } from "lucide-react";
 
 export default function HelpData() {
   const [activeSection, setActiveSection] = useState("dashboard");
+  const [inputValue, setInputValue] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const [expandedQuestions, setExpandedQuestions] = useState<
-    Record<string, boolean>
-  >({});
+  const handleSearch = () => {
+    setSearchTerm(inputValue.trim());
+  };
 
-  const toggleQuestion = (id: string) => {
-    setExpandedQuestions((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
+  const clearSearch = () => {
+    setInputValue("");
+    setSearchTerm("");
   };
 
   return (
@@ -51,15 +49,27 @@ export default function HelpData() {
             <input
               type="text"
               placeholder="Buscar ayuda..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="border rounded py-2 pl-10 pr-4 w-full"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              className="border rounded py-2 pl-10 pr-10 w-full"
             />
             <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
               <Search size={18} className="text-gray-400" />
             </div>
+            {inputValue && (
+              <button
+                onClick={clearSearch}
+                title="Borrar búsqueda"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-black"
+              >
+                <X size={18} />
+              </button>
+            )}
           </div>
-          <button className="bg-black text-white px-4 py-2 rounded ml-2">
+          <button
+            onClick={handleSearch}
+            className="bg-black text-white px-4 py-2 rounded ml-2"
+          >
             Buscar
           </button>
         </div>
@@ -68,7 +78,7 @@ export default function HelpData() {
           <button
             onClick={() => setActiveSection("dashboard")}
             className={`flex-1 text-center py-2 rounded-lg text-sm transition font-medium ${
-              activeSection === "dashboard"
+              searchTerm === "" && activeSection === "dashboard"
                 ? "bg-white text-black shadow-sm"
                 : "text-gray-500 hover:bg-gray-200"
             }`}
@@ -78,7 +88,7 @@ export default function HelpData() {
           <button
             onClick={() => setActiveSection("clientes")}
             className={`flex-1 text-center py-2 rounded-lg text-sm transition font-medium ${
-              activeSection === "clientes"
+              searchTerm === "" && activeSection === "clientes"
                 ? "bg-white text-black shadow-sm"
                 : "text-gray-500 hover:bg-gray-200"
             }`}
@@ -88,7 +98,7 @@ export default function HelpData() {
           <button
             onClick={() => setActiveSection("inventario")}
             className={`flex-1 text-center py-2 rounded-lg text-sm transition font-medium ${
-              activeSection === "inventario"
+              searchTerm === "" && activeSection === "inventario"
                 ? "bg-white text-black shadow-sm"
                 : "text-gray-500 hover:bg-gray-200"
             }`}
@@ -98,7 +108,7 @@ export default function HelpData() {
           <button
             onClick={() => setActiveSection("finanzas")}
             className={`flex-1 text-center py-2 rounded-lg text-sm transition font-medium ${
-              activeSection === "finanzas"
+              searchTerm === "" && activeSection === "finanzas"
                 ? "bg-white text-black shadow-sm"
                 : "text-gray-500 hover:bg-gray-200"
             }`}
@@ -107,10 +117,25 @@ export default function HelpData() {
           </button>
         </div>
 
-        {activeSection === "dashboard" && <DashboardHelp searchTerm={searchTerm} />}
-        {activeSection === "clientes" && <ClientAppointmentHelp  searchTerm={searchTerm} />}
-        {activeSection === "inventario" && <InventoryHelp searchTerm={searchTerm} />}
-        {activeSection === "finanzas" && <FinancialHelp  searchTerm={searchTerm} />}
+        {searchTerm ? (
+          <div className="space-y-6">
+            <DashboardHelp searchTerm={searchTerm} />
+            <ClientAppointmentHelp searchTerm={searchTerm} />
+            <InventoryHelp searchTerm={searchTerm} />
+            <FinancialHelp searchTerm={searchTerm} />
+          </div>
+        ) : (
+          <>
+            {activeSection === "dashboard" && <DashboardHelp searchTerm={""} />}
+            {activeSection === "clientes" && (
+              <ClientAppointmentHelp searchTerm={""} />
+            )}
+            {activeSection === "inventario" && (
+              <InventoryHelp searchTerm={""} />
+            )}
+            {activeSection === "finanzas" && <FinancialHelp searchTerm={""} />}
+          </>
+        )}
       </main>
     </div>
   );

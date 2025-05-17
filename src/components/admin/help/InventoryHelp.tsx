@@ -6,19 +6,19 @@ const productQuestions = [
     id: "productos1",
     question: "¿Cómo añado un nuevo producto al inventario?",
     answer:
-      "Ve a la sección de Inventario > Productos y haz clic en 'Agregar producto'.",
+      "Ve al menú lateral y selecciona 'Productos'. Luego, haz clic en el botón 'Agregar' para registrar un nuevo producto completando el formulario.",
   },
   {
     id: "productos2",
     question: "¿Cómo actualizo el precio de un producto?",
     answer:
-      "Selecciona el producto y edita el campo de precio en los detalles del mismo.",
+      "En la sección de Productos, haz clic en el ícono de 'ver'(ojo) para ver el detalle del producto. Dentro del detalle, presiona 'Editar' y modifica el precio en el campo correspondiente. Guarda los cambios para actualizarlos.",
   },
   {
     id: "productos3",
-    question: "¿Cómo configuro alertas de stock bajo?",
+    question: "¿Cómo elimino un producto?",
     answer:
-      "En el formulario del producto, establece el umbral de alerta de stock.",
+      "Accede al detalle del producto haciendo clic en el ícono de 'ver'(ojo). Luego, presiona el botón 'Eliminar' y confirma la acción para remover el producto del sistema.",
   },
 ];
 
@@ -27,19 +27,19 @@ const vaccineQuestions = [
     id: "vacunas1",
     question: "¿Cómo registro una vacunación?",
     answer:
-      "Dirígete al perfil de la mascota, haz clic en 'Registrar vacunación' y completa los datos.",
+      "Ingresa al perfil de la mascota, haz clic en 'Agregar al historial' en la sección de vacunación y completa los campos requeridos.",
   },
   {
     id: "vacunas2",
     question: "¿Cómo veo el calendario de vacunación de una mascota?",
     answer:
-      "Dentro del perfil de la mascota, accede a la sección de Vacunas > Calendario.",
+      "Dentro del perfil de la mascota, dirígete a la sección 'Historial de vacunación' y haz clic en el ícono de 'ver'(ojo) para ver los detalles de cada aplicación.",
   },
   {
     id: "vacunas3",
     question: "¿Cómo configuro recordatorios de vacunación?",
     answer:
-      "Desde el calendario de vacunas, activa la opción de 'Recordatorio automático'.",
+      "Al registrar una nueva vacunación, puedes indicar la fecha de la aplicación actual y la fecha estimada para la próxima dosis utilizando el calendario disponible.",
   },
 ];
 
@@ -47,19 +47,20 @@ const warehouseQuestions = [
   {
     id: "depositos1",
     question: "¿Cómo creo un nuevo depósito?",
-    answer: "Ve a la sección de Depósitos y haz clic en 'Nuevo depósito'.",
+    answer:
+      "Ve a la sección 'Depósitos' desde el menú lateral y haz clic en el botón 'Registrar Depósito'. Completa el formulario con la información requerida.",
   },
   {
     id: "depositos2",
-    question: "¿Cómo transfiero productos entre depósitos?",
+    question: "¿Cómo edito o elimino un depósito existente?",
     answer:
-      "En el menú de movimientos, selecciona 'Transferencia' e indica los depósitos origen y destino.",
+      "En la lista de depósitos, localiza el que deseas modificar. Usa el ícono de lápiz para editar sus datos o el ícono de papelera para eliminarlo definitivamente.",
   },
   {
     id: "depositos3",
-    question: "¿Cómo veo el inventario por depósito?",
+    question: "¿Puedo buscar depósitos por nombre?",
     answer:
-      "Filtra la vista de inventario por el depósito deseado en la sección correspondiente.",
+      "Sí. En la parte superior de la sección 'Depósitos' encontrarás una barra de búsqueda donde puedes escribir el nombre del depósito que deseas encontrar.",
   },
 ];
 
@@ -68,19 +69,19 @@ const movementQuestions = [
     id: "movimientos1",
     question: "¿Cómo registro una entrada de inventario?",
     answer:
-      "En la sección de Movimientos, haz clic en 'Nueva entrada' y completa el formulario.",
+      "Ve a la sección 'Movimientos' y haz clic en 'Registrar Movimiento'. Selecciona el tipo 'Ingreso', deja el campo de depósito de origen vacío, y completa los demás campos del formulario.",
   },
   {
     id: "movimientos2",
     question: "¿Cómo registro una salida de inventario?",
     answer:
-      "Selecciona 'Nueva salida' en la sección de Movimientos e ingresa los detalles.",
+      "En 'Movimientos', haz clic en 'Registrar Movimiento'. Elige el tipo 'Egreso', deja vacío el campo de depósito de destino, y completa el resto de los datos.",
   },
   {
     id: "movimientos3",
-    question: "¿Cómo corrijo un error en un movimiento?",
+    question: "¿Cómo transfiero productos entre depósitos?",
     answer:
-      "Localiza el movimiento en el historial y haz clic en 'Editar' para corregirlo.",
+      "Desde la sección 'Movimientos', selecciona 'Registrar Movimiento'. Escoge el tipo 'Transferencia', luego selecciona tanto el depósito de origen como el de destino, y llena el resto del formulario.",
   },
 ];
 
@@ -89,8 +90,8 @@ function normalize(text: string | undefined | null): string {
   return text
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // quitar tildes
-    .replace(/[¿¡?!.,]/g, "")        // quitar signos
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[¿¡?!.,]/g, "")
     .trim();
 }
 
@@ -128,8 +129,12 @@ export default function InventoryHelp({ searchTerm }: { searchTerm: string }) {
     },
   ].filter((card) => card.questions.length > 0);
 
+  const isSingle = cards.length === 1;
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div
+      className={`grid ${isSingle ? "" : "grid-cols-1 md:grid-cols-2"} gap-6`}
+    >
       {cards.map((card, idx) => (
         <HelpCard
           key={idx}
@@ -137,6 +142,7 @@ export default function InventoryHelp({ searchTerm }: { searchTerm: string }) {
           title={card.title}
           description={card.description}
           questions={card.questions}
+          isSingle={isSingle}
         />
       ))}
     </div>

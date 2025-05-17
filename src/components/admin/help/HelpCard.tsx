@@ -10,11 +10,12 @@ import {
 } from "@radix-ui/react-accordion";
 import { ChevronDown } from "lucide-react";
 
-interface HelpCardProps {
+export interface HelpCardProps {
   icon: ReactNode;
   title: string;
   description: string;
   questions: { id: string; question: string; answer: string }[];
+  isSingle?: boolean;
 }
 
 export default function HelpCard({
@@ -22,11 +23,16 @@ export default function HelpCard({
   title,
   description,
   questions,
+  isSingle = false,
 }: HelpCardProps) {
   const [openItem, setOpenItem] = useState<string | undefined>(undefined);
 
   return (
-    <div className="border rounded-lg p-6 bg-white shadow-sm">
+    <div
+      className={`border rounded-lg bg-white shadow-sm ${
+        isSingle ? "p-8 text-lg" : "p-6"
+      }`}
+    >
       <div className="flex items-center mb-2">
         <div className="mr-2">{icon}</div>
         <h2 className="text-xl font-bold">{title}</h2>

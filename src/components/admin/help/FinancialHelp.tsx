@@ -12,19 +12,19 @@ export const financialQuestions = {
       id: "compras1",
       question: "¿Cómo registro una nueva compra?",
       answer:
-        "Ve a la sección de Compras y haz clic en 'Nueva compra'. Luego selecciona al proveedor e ingresa los productos.",
+        "En la sección 'Compras', haz clic en 'Registrar compra'. Luego selecciona el proveedor, el depósito e ingresa los productos correspondientes.",
     },
     {
       id: "compras2",
-      question: "¿Cómo registro el pago de una compra?",
+      question: "¿Dónde puedo ver el listado de compras?",
       answer:
-        "Dentro de la compra registrada, haz clic en 'Registrar pago' e ingresa el monto y método de pago.",
+        "El listado de compras se encuentra en la vista principal de la sección 'Compras', donde se muestran los detalles de cada operación registrada.",
     },
     {
       id: "compras3",
-      question: "¿Cómo gestiono devoluciones a proveedores?",
+      question: "¿Cómo visualizo el detalle de una compra?",
       answer:
-        "Selecciona la compra original y utiliza la opción 'Devolver productos' para registrar la devolución.",
+        "Haz clic sobre la compra deseada en el listado para acceder a su detalle completo.",
     },
   ],
   ventas: [
@@ -32,39 +32,51 @@ export const financialQuestions = {
       id: "ventas1",
       question: "¿Cómo creo una nueva venta?",
       answer:
-        "Dirígete a la sección de Ventas y haz clic en 'Nueva venta'. Agrega los productos, cliente y método de pago.",
+        "Accede a la opción 'Crear Venta' desde el menú lateral. Primero selecciona un depósito, luego elige la condición de venta, busca un cliente, selecciona los productos disponibles, define el método de pago, ingresa el monto y haz clic en 'Finalizar Venta'.",
     },
     {
       id: "ventas2",
-      question: "¿Cómo aplico descuentos o promociones?",
+      question: "¿Por qué no puedo agregar productos a la venta?",
       answer:
-        "Durante la venta, puedes aplicar descuentos desde el panel derecho antes de finalizar.",
+        "Debes seleccionar un depósito antes de agregar productos. Solo así se cargarán los productos disponibles en ese depósito.",
     },
     {
       id: "ventas3",
-      question: "¿Cómo gestiono devoluciones de clientes?",
+      question: "¿Qué métodos de pago puedo utilizar y cómo los agrego?",
       answer:
-        "En el historial de ventas, selecciona la venta y usa 'Registrar devolución' para actualizar el stock.",
+        "Puedes utilizar Pago Móvil, Efectivo, Transferencia Bancaria, Tarjeta de Débito o Crédito. Selecciona el método, ingresa el monto y haz clic en 'Agregar'. Puedes combinar varios métodos si es necesario.",
+    },
+    {
+      id: "ventas4",
+      question: "¿Cómo verifico el total de la venta antes de finalizar?",
+      answer:
+        "El total de la venta se actualiza automáticamente en el panel derecho 'Resumen de Venta' a medida que agregas productos y métodos de pago.",
+    },
+    {
+      id: "ventas5",
+      question: "¿Puedo realizar ventas a crédito?",
+      answer:
+        "Sí. En el campo 'Condición de Venta', selecciona la opción 'Crédito' si está habilitada. Asegúrate de tener los permisos necesarios para operar con esta modalidad.",
     },
   ],
   facturas: [
     {
       id: "facturas1",
-      question: "¿Cómo imprimo o envío una factura?",
+      question: "¿Cómo consulto una factura específica?",
       answer:
-        "Desde el detalle de la venta, haz clic en 'Imprimir factura' o 'Enviar por correo'.",
+        "Utiliza los filtros disponibles (como RUC, monto mínimo/máximo, o rango de fechas) para ubicar la factura deseada. Luego haz clic en el ícono de 'ver' (ojo) en la columna de acciones.",
     },
     {
       id: "facturas2",
-      question: "¿Cómo anulo una factura?",
+      question: "¿Cómo sé si una factura está pagada?",
       answer:
-        "Ubica la factura en el historial y selecciona 'Anular factura'. Debes indicar un motivo.",
+        "En la columna 'Pagado', puedes verificar si el monto abonado coincide con el total de la factura. Si ambos valores son iguales, la factura está saldada.",
     },
     {
       id: "facturas3",
-      question: "¿Cómo genero reportes de ventas?",
+      question: "¿Dónde puedo ver todas las facturas?",
       answer:
-        "Ve a la sección de Reportes y selecciona el rango de fechas deseado para exportar el resumen.",
+        "En la sección 'Facturas', tienes acceso al listado completo de facturas emitidas. Puedes filtrarlas por fecha, cliente o estado de pago.",
     },
   ],
   empleados: [
@@ -72,19 +84,25 @@ export const financialQuestions = {
       id: "empleados1",
       question: "¿Cómo registro un nuevo empleado?",
       answer:
-        "Accede a la sección de Empleados y haz clic en 'Nuevo empleado'. Completa los datos personales y de acceso.",
+        "Haz clic en el botón 'Agregar' en la parte superior derecha de la sección 'Empleados'. Completa los campos requeridos como nombre, correo, RUC y cargo.",
     },
     {
       id: "empleados2",
-      question: "¿Cómo asigno permisos a los usuarios?",
+      question: "¿Cómo edito los datos de un empleado?",
       answer:
-        "Dentro del perfil del usuario, selecciona los roles y permisos correspondientes.",
+        "En el listado de empleados, haz clic en el ícono de lápiz en la columna de acciones del empleado que deseas modificar. Realiza los cambios y guarda la información.",
     },
     {
       id: "empleados3",
-      question: "¿Cómo registro la asistencia de los empleados?",
+      question: "¿Cómo elimino a un empleado?",
       answer:
-        "Usa el módulo de Asistencia para marcar entradas y salidas diarias del personal.",
+        "Haz clic en el ícono de papelera correspondiente al empleado que deseas eliminar. Se te pedirá confirmación antes de realizar la acción.",
+    },
+    {
+      id: "empleados4",
+      question: "¿Cómo accedo a las citas programadas de un empleado?",
+      answer:
+        "Haz clic en el ícono de 'ver' (ojo) para ingresar al perfil del empleado. Allí podrás ver la lista de citas en las que está asignado.",
     },
   ],
 };
@@ -98,8 +116,8 @@ function normalize(text: string | undefined | null): string {
   return text
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // quitar tildes
-    .replace(/[¿¡?!.,]/g, "")        // quitar signos
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[¿¡?!.,]/g, "")
     .trim();
 }
 
@@ -137,8 +155,12 @@ export default function FinancialHelp({ searchTerm }: FinancialHelpProps) {
     },
   ].filter((card) => card.questions.length > 0);
 
+  const isSingle = cards.length === 1;
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div
+      className={`grid ${isSingle ? "" : "grid-cols-1 md:grid-cols-2"} gap-6`}
+    >
       {cards.map((card, idx) => (
         <HelpCard
           key={idx}
@@ -146,6 +168,7 @@ export default function FinancialHelp({ searchTerm }: FinancialHelpProps) {
           title={card.title}
           description={card.description}
           questions={card.questions}
+          isSingle={false}
         />
       ))}
     </div>

@@ -4,21 +4,28 @@ import { HomeIcon } from "lucide-react";
 const dashboardQuestions = [
   {
     id: "dashboard1",
-    question: "¿Qué información muestra el panel principal?",
+    question: "¿Qué datos generales muestra el dashboard?",
     answer:
-      "El panel principal muestra métricas clave como citas del día, ingresos recientes y alertas importantes.",
+      "El dashboard muestra el total facturado, la cantidad de facturas emitidas y el número de citas agendadas.",
   },
   {
     id: "dashboard2",
-    question: "¿Cómo personalizo los widgets del dashboard?",
+    question:
+      "¿Qué información contiene el gráfico de 'Distribución por tipo de factura'?",
     answer:
-      "Haz clic en el ícono de configuración del dashboard para seleccionar qué widgets mostrar.",
+      "Muestra la cantidad de facturas emitidas según el tipo: contado o crédito.",
   },
   {
     id: "dashboard3",
-    question: "¿Puedo ver un resumen mensual desde el dashboard?",
+    question: "¿Qué representa el gráfico de ingresos mensuales?",
     answer:
-      "Sí, en la parte superior puedes cambiar el rango de fechas para ver datos mensuales o personalizados.",
+      "Este gráfico muestra los ingresos obtenidos por mes, permitiendo visualizar la evolución del monto facturado a lo largo del tiempo.",
+  },
+  {
+    id: "dashboard4",
+    question: "¿Qué indica el gráfico de 'Citas por mes'?",
+    answer:
+      "Refleja la cantidad de citas agendadas en cada mes, facilitando el seguimiento de la actividad mensual.",
   },
 ];
 
@@ -27,15 +34,11 @@ function normalize(text: string | undefined | null): string {
   return text
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // quitar tildes
+    .replace(/[\u0300-\u036f]/g, "")
     .trim();
 }
 
-export default function DashboardHelp({
-  searchTerm,
-}: {
-  searchTerm: string;
-}) {
+export default function DashboardHelp({ searchTerm }: { searchTerm: string }) {
   const normalizedSearch = normalize(searchTerm);
 
   const filter = (q: { question: string; answer: string }) =>
@@ -46,13 +49,18 @@ export default function DashboardHelp({
 
   if (filteredQuestions.length === 0) return null;
 
+  const isSingle = filteredQuestions.length > 0;
+
   return (
-    <div>
+    <div
+      className={`grid ${isSingle ? "" : "grid-cols-1 md:grid-cols-2"} gap-6`}
+    >
       <HelpCard
-        icon={< HomeIcon />}
+        icon={<HomeIcon />}
         title="Dashboard"
         description="Vista general del sistema y métricas clave"
         questions={filteredQuestions}
+        isSingle={isSingle}
       />
     </div>
   );
