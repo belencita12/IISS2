@@ -157,7 +157,7 @@ export const AvailabilityPicker = ({
                 onClick={() => handleSelect(slot.time)}
                 className={`p-2 rounded-md border text-sm transition-all duration-200 ${
                   selectedTime === slot.time
-                    ? "bg-gradient-to-r from-myPurple-primary to-myPink-primary text-white border-myPurple-primary shadow-md"
+                    ? "bg-myPurple-tertiary text-black border-myPurple-tertiary shadow-md"
                     : "bg-white border-myPurple-tertiary text-myPurple-focus hover:bg-myPurple-disabled hover:shadow-sm"
                 }`}
               >

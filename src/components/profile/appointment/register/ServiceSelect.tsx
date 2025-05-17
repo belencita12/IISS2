@@ -56,7 +56,7 @@ export default function ServiceSelect({
     <div className="space-y-2">
       <div className="flex gap-2">
         <Select onValueChange={handleSelect}>
-          <SelectTrigger className="w-full border-myPurple-tertiary focus:ring-myPurple-primary focus:border-myPurple-primary transition-all duration-200">
+          <SelectTrigger className="w-full h-11 border-myPurple-tertiary focus:ring-myPurple-primary focus:border-myPurple-primary transition-all duration-200">
             {selectedServiceName ? (
               <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-start">
                 {selectedServiceName}

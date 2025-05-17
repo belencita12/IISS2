@@ -209,7 +209,7 @@ export const AppointmentForm = ({ token, clientId, userRole }: AppointmentFormPr
 
             {/* Sección de Detalles */}
             <div className="bg-white p-4 rounded-lg border border-myPurple-tertiary/30 shadow-sm">
-              <div className="flex items-center gap-2 text-myPurple-primary border-b border-myPurple-tertiary/30 pb-2 mb-3">
+              <div className="flex items-center gap-2 text-myPurple-focus border-b border-myPurple-tertiary/30 pb-2 mb-3">
                 <FileText className="w-5 h-5" />
                 <h3 className="font-medium">Detalles de la Cita</h3>
               </div>
