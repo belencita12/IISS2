@@ -20,7 +20,7 @@ export default function TermsAndConditions() {
             </h1>
             <div className="flex items-center justify-center gap-2 text-white">
               <span>Última actualización:</span>
-              <span className="bg-myPurple-disabled text-myPurple-focus px-3 py-1 rounded-full text-sm font-medium">
+              <span className="flex items-center justify-center gap-2 text-white">
                 {new Date().toLocaleDateString()}
               </span>
             </div>
