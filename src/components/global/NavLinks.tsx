@@ -35,7 +35,7 @@ const linksUser = [
     href: "/dashboard/settings",
     icon: SettingsIcon,
   },
-  { name: "Ayuda", href: "/dashboard/ayuda", icon: CircleHelpIcon },
+  { name: "Ayuda", href: "/dashboard/help", icon: CircleHelpIcon },
 ];
 
 export default function NavLinks() {
