@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import authOptions from "@/lib/auth/options";
 import { redirect } from "next/navigation";
-import { AppointmentForm } from "@/components/profile/appointment/register/AppointmentForm";
+import { AppointmentForm } from "@/components/appointment/register/AppointmentForm";
 
 export default async function AppointmentsPage() {
   const session = await getServerSession(authOptions);
@@ -19,8 +19,7 @@ export default async function AppointmentsPage() {
   }
 
   return (
-    <div className="max-w-screen-2xl justify-center items-center flex flex-col p-4">
-      <h1 className="text-3xl font-bold mt-6">Agendar Cita</h1>
+    <div>
       <AppointmentForm token={token} clientId={userId} userRole={userRole} />
     </div>
   );
