@@ -1,26 +1,22 @@
-import type { ServiceType } from "@/lib/appointment/IAppointment"
-import { Stethoscope } from "lucide-react"
+import type { ServiceType } from "@/lib/appointment/IAppointment";
 
 type ServiceSelectedProps = {
-  service: ServiceType
-}
+  service: ServiceType;
+};
 
 export default function ServiceSelected({ service }: ServiceSelectedProps) {
   return (
-    <div className="flex items-center p-3">
-      <div className="bg-white p-2 rounded-full mr-3">
-        <Stethoscope className="h-5 w-5 text-myPink-primary" />
-      </div>
-      <div>
-        <p className="font-medium text-myPink-focus">Servicio: {service.name}</p>
-        <div className="flex gap-3 text-gray-600 text-sm"> Precio:
-          {service.price && (
-            <span className="flex items-center">
-              {service.price.toLocaleString()} Gs.
-            </span>
-          )}
+    <div className="mt-3 p-4 rounded-md bg-gray-100 border border-gray-200 text-myPurple-focus text-sm shadow-sm">
+      <div className="flex items-start gap-3">
+        <div>
+          <p className="text-myPurple-focus/70 mt-1">
+            Servicio: {service.name}
+          </p>
+          <p className="text-myPurple-focus/70 mt-1">
+            Precio: {service.price.toLocaleString()} Gs.
+          </p>
         </div>
       </div>
     </div>
-  )
+  );
 }

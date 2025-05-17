@@ -1,20 +1,22 @@
-import type { PetData } from "@/lib/pets/IPet"
-import { PawPrint } from "lucide-react"
+import type { PetData } from "@/lib/pets/IPet";
 
 type PetSelectedProps = {
-  pet: PetData
-}
+  pet: PetData;
+};
 
 export default function PetSelected({ pet }: PetSelectedProps) {
   return (
-    <div className="flex items-center p-3">
-      <div className="bg-white p-2 rounded-full mr-3">
-        <PawPrint className="h-5 w-5 text-myPurple-primary" />
-      </div>
-      <div>
-        <p className="font-medium text-myPurple-focus">{pet.name}</p>
-        <p className="text-gray-600">Raza: {pet.race.name}</p>
+    <div className="mt-3 p-4 rounded-md bg-gray-100 border border-gray-200 text-myPurple-focus text-sm shadow-sm">
+      <div className="flex items-start gap-3">
+        <div>
+          <p className="text-myPurple-focus/70 mt-1">
+            Mascota: {pet.name}
+          </p>
+          <p className="text-myPurple-focus/70 mt-1">
+            Raza: {pet.race.name}
+          </p>
+        </div>
       </div>
     </div>
-  )
+  );
 }

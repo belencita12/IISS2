@@ -1,20 +1,22 @@
-import type { EmployeeData } from "@/lib/employee/IEmployee"
-import { User } from "lucide-react"
+import type { EmployeeData } from "@/lib/employee/IEmployee";
 
 type EmployeeSelectedProps = {
-  employee: EmployeeData
-}
+  employee: EmployeeData;
+};
 
 export default function EmployeeSelected({ employee }: EmployeeSelectedProps) {
   return (
-    <div className="flex items-center p-3">
-      <div className="bg-white p-2 rounded-full mr-3">
-        <User className="h-5 w-5 text-myPurple-secondary" />
-      </div>
-      <div>
-        <p className="font-medium text-myPurple-focus">{employee.fullName}</p>
-        <p className="text-gray-600">{employee.position.name}</p>
+    <div className="mt-3 p-4 rounded-md bg-gray-100 border border-gray-200 text-myPurple-focus text-sm shadow-sm">
+      <div className="flex items-start gap-3">
+        <div>
+          <p className="text-myPurple-focus/70 mt-1">
+            Empleado: {employee.fullName}
+          </p>
+          <p className="text-myPurple-focus/70 mt-1">
+            Puesto: {employee.position.name}
+          </p>
+        </div>
       </div>
     </div>
-  )
+  );
 }
