@@ -9,6 +9,7 @@ import { useProductTag } from "@/hooks/product/useProductTag";
 import GenericPagination from "@/components/global/GenericPagination";
 import ProductListSkeleton from "./skeleton/ProductListSkeleton";
 import { Product } from "@/lib/products/IProducts";
+import { useTranslations } from "next-intl";
 
 interface ProductListProps {
   token: string;
@@ -16,6 +17,10 @@ interface ProductListProps {
 
 export default function ProductListPage({ token }: ProductListProps) {
   const router = useRouter();
+
+  const b = useTranslations("Button");
+  const p = useTranslations("ProductDetail");
+  const e = useTranslations("Error");
 
   // Hook para filtrado normal
   const {
@@ -144,20 +149,20 @@ export default function ProductListPage({ token }: ProductListProps) {
         />
       </div>
       <div className="mt-8 mb-6 flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Productos</h1>
+        <h1 className="text-2xl font-bold">{p("titleProducts")}</h1>
         <Button
           variant="outline"
           onClick={() => router.push(`/dashboard/products/register`)}
           className="px-6"
         >
-          Agregar
+          {b("add")}
         </Button>
       </div>
 
       {loading ? (
         <ProductListSkeleton />
       ) : displayedProducts.length === 0 ? (
-        <p className="text-center py-4">No hay productos disponibles</p>
+        <p className="text-center py-4">{e("notFoundField", {field: "productos"})}</p>
       ) : (
         <div className="flex flex-wrap justify-between gap-y-4">
           {displayedProducts.map((product) => (

@@ -14,9 +14,11 @@
     "select": "Seleccionar",
     "actions": "Acciones",
     "cancel": "Cancelar",
+    "toReturn": "Volver",
     "save": "Guardar",
     "edit": "Editar",
     "add": "Agregar",
+    "adding": "Agregando...",
     "finish": "Finalizar",
     "register": "Registrar",
     "registering":"Registrando...",
@@ -69,9 +71,12 @@
     "noSave": "Error al guardar los cambios",
     "noImage": "Sin imagen",
     "empty": "Faltan datos",
-    "authError": "Error, debes estar autenticado para acceder a esta sección"
+    "authError": "Error, debes estar autenticado para acceder a esta sección",
+    "numericMin": "No puede ser menor al mínimo"
   },
   "Filters":{
+    "from": "Deste",
+    "to": "Hasta",
     "fromDate": "Fecha desde",
     "toDate": "Fecha hasta",
     "statusAppointment": "Estado de la cita",
@@ -79,7 +84,14 @@
     "pending": "Pendiente",
     "cancelled": "Cancelada",
     "finished": "Finalizada",
-    "errorDate": "La fecha hasta no puede ser menor que la fecha desde."
+    "errorDate": "La fecha hasta no puede ser menor que la fecha desde.",
+    "category": "Categoría",
+    "none": "Ninguno",
+    "Vaccine": "Vacuna",
+    "service": "Servicio",
+    "product": "Producto",
+    "tag": "Etiqueta",
+    "vaccine": "Vacuna"
 
   },
   "Placeholder": {
@@ -106,8 +118,38 @@
     "details": "Detalles de la vacuna",
     "expectedDate": "Fecha prevista",
     "dosis": "Dosis",
-    "actions": "Acciones"
+    "actions": "Acciones",
+    "name": "Nombre",
+    "manufacturer": "Fabricante",
+    "specie": "Especie",
+    "manufacturersVaccine": "Fabricantes de vacunas",
+    "vaccineTitle": "Vacunas",
+    "emptyMessage": "No hay vacunas registradas"
   },
+  "VaccineDetail": {
+    "manufacturer": "Fabricante",
+    "specie": "Especie",
+    "cost": "Costo",
+    "price": "Precio",
+    "name": "Nombre",
+    "iva": "IVA",
+    "quantity": "Cantidad"
+  },
+  "VaccineForm": {
+    "titleRegister": "Agregar vacuna",
+    "titleEdit": "Editar vacuna",
+    "manufacturer": "Fabricante",
+    "specie": "Especie",
+    "cost": "Costo",
+    "price": "Precio",
+    "name": "Nombre",
+    "iva": "IVA",
+    "quantity": "Cantidad",
+    "description": "Descripción",
+    "provider": "Proveedor",
+    "image": "Imagen (Opcional)"
+  },
+  
 
   "PetLists": {
     "pets": "Mascotas registradas",
@@ -245,6 +287,7 @@
     "clearAllFilters": "Limpiar todos los filtros"
   },
   "ProductDetail": {
+    "titleProducts": "Productos",
     "returnToProducts": "Volver a productos",
     "tags": "Etiqueta/s",
     "relatedProducts": "Productos relacionados",
