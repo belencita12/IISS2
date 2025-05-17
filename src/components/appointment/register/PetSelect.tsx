@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PetData } from "@/lib/pets/IPet";
+import type { PetData } from "@/lib/pets/IPet";
 import { PET_API } from "@/lib/urls";
 import { useFetch } from "@/hooks/api";
 
@@ -28,18 +28,17 @@ export default function ClientPetSelect({
   onSelectPet,
 }: ClientPetSelectProps) {
   const [pets, setPets] = useState<PetData[]>([]);
+  const [selectedPetName, setSelectedPetName] = useState<string>("");
 
   const { data, get } = useFetch<PetResponse>("", token);
 
   useEffect(() => {
-    console.log("clientId:", clientId); 
     if (clientId) {
       get(undefined, `${PET_API}?clientId=${clientId}&page=1&size=100`);
     }
   }, [clientId]);
 
   useEffect(() => {
-    console.log("Pets fetched:", data);
     if (data?.data) {
       setPets(data.data);
     }
@@ -48,6 +47,7 @@ export default function ClientPetSelect({
   const handleSelect = (petId: string) => {
     const selectedPet = pets.find((p) => p.id === Number(petId));
     if (selectedPet) {
+      setSelectedPetName(selectedPet.name);
       onSelectPet(selectedPet);
     }
   };
@@ -56,21 +56,32 @@ export default function ClientPetSelect({
     <div className="space-y-2">
       <div className="flex gap-2">
         <Select onValueChange={handleSelect}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Selecciona una mascota" />
+          <SelectTrigger className="w-full h-11 border-myPurple-tertiary focus:ring-myPurple-primary focus:border-myPurple-primary transition-all duration-200">
+            {selectedPetName ? (
+              <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-start flex items-center">
+                {selectedPetName}
+              </div>
+            ) : (
+              <SelectValue placeholder="Selecciona una mascota" />
+            )}
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="border-myPurple-tertiary">
             {pets.map((pet) => (
-              <SelectItem key={pet.id} value={String(pet.id)}>
-                <div>
-                  <p>{pet.name}</p>
+              <SelectItem
+                key={pet.id}
+                value={String(pet.id)}
+                className="focus:bg-myPurple-disabled/50"
+              >
+                <div className="flex flex-col py-1">
+                  <p className="font-medium">{pet.name}</p>
                   <p className="text-sm text-muted-foreground">
-                    {pet.race.name}</p>
+                    {pet.race.name}
+                  </p>
                 </div>
               </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );

@@ -2,8 +2,7 @@
 
 import { useRef } from "react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { Pencil } from "lucide-react";
+import { Camera } from "lucide-react";
 import { PetData } from "@/lib/pets/IPet";
 
 interface UpdatePetImageProps {
@@ -24,61 +23,43 @@ export default function UpdatePetImage({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
+    if (!e.target.files?.length) return;
     const file = e.target.files[0];
-
     const reader = new FileReader();
-    reader.onload = () => {
-      const url = reader.result as string;
-      onSelectImage(file, url);
-    };
+    reader.onload = () => onSelectImage(file, reader.result as string);
     reader.readAsDataURL(file);
   };
 
-  const imageToShow =
+  const src =
     previewUrl ||
     pet.profileImg?.originalUrl ||
     pet.profileImg?.previewUrl ||
-    null;
+    "/NotImageNicoPets.png";
 
   return (
-    <div className="flex-col justify-center items-center">
-      <div className="w-[250px] h-[250px] rounded-full overflow-hidden border-[3px] border-black flex justify-center items-center">
-        {imageToShow ? (
-          <Image
-            src={imageToShow}
-            alt={pet.name}
-            width={100}
-            height={100}
-            className="object-cover object-center w-full h-full"
-          />
-        ) : (
-          <div className="w-full h-full bg-gray-300 mx-auto flex items-center justify-center">
-            <span className="text-gray-500">Sin imagen</span>
-          </div>
-        )}
+    <div className="relative w-full h-full overflow-visible">
+      <div className="rounded-full overflow-hidden border-4 border-white shadow-md bg-white w-full h-full">
+        <Image
+          src={src}
+          alt={pet.name}
+          width={250}
+          height={250}
+          className="object-cover w-full h-full"
+        />
       </div>
 
       {showEditButton && (
-        <div className="flex flex-col items-center mt-2 mb-2">
-          <Button
-            type="button"
-            disabled={disabled}
-            className="rounded-md p-2 shadow-md flex items-center gap-2 text-sm font-medium transition"
-            onClick={() => fileInputRef.current?.click()}
-            title="Cambiar foto de perfil"
-          >
-            <Pencil className="w-4 h-4 mr-1" />
-            Cambiar foto de perfil
-          </Button>
+        <label className="absolute bottom-2 right-2 z-10 block bg-myPurple-primary text-white p-2 rounded-full cursor-pointer shadow-md hover:bg-myPurple-hover transition-colors">
+          <Camera size={18} />
           <input
             ref={fileInputRef}
             type="file"
             accept="image/*"
             className="hidden"
             onChange={handleImageChange}
+            disabled={disabled}
           />
-        </div>
+        </label>
       )}
     </div>
   );

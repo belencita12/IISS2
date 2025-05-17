@@ -5,6 +5,7 @@ import { toast } from "@/lib/toast";
 import {
   AppointmentData,
   AppointmentQueryParams,
+  AppointmentStatus,
 } from "@/lib/appointment/IAppointment";
 import { APPOINTMENT_API } from "@/lib/urls";
 import { usePaginatedFetch } from "@/hooks/api/usePaginatedFetch";
@@ -28,10 +29,11 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
   const router = useRouter();
   const [filters, setFilters] = useState<AppointmentQueryParams>({
     page: 1,
-    clientRuc: undefined,
+    search: undefined,
+    fromDesignatedDate: undefined,
+    toDesignatedDate: undefined,
+    status: undefined,
   });
-  const [filteredData, setFilteredData] = useState<AppointmentData[]>([]);
-  const [name, setName] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentData | null>(null);
   const [modalAction, setModalAction] = useState<"complete" | "cancel" | null>(null);
@@ -51,7 +53,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
     initialPage: 1,
     autoFetch: true,
     extraParams: {
-      clientRuc: filters.clientRuc,
+      search: filters.search,
       fromDesignatedDate: filters.fromDesignatedDate,
       toDesignatedDate: filters.toDesignatedDate,
       status: filters.status,
@@ -69,20 +71,24 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
   };
 
   const handleSearch = (value: string) => {
-    console.log("Search value:", Number(value));
-    if(Number.isNaN(Number(value))) {
-      setFilters((prev) => ({ ...prev, size: 10000, clientRuc: undefined }));
-      search({ clientRuc: undefined, size: 10000 });
-      setName(value);
-      return;
-    }else{
-      setName("");
-      setFilters((prev) => ({ ...prev, size:16 , clientRuc: value }));
-      search({ clientRuc: value, size: 16 });
-    }
+    setFilters((prev) => ({ ...prev, search: value }));
+    search({ search: value });
   };
 
   const openConfirmModal = (appointment: AppointmentData, action: "complete" | "cancel") => {
+    if (action === "complete") {
+      const appointmentDate = new Date(appointment.designatedDate);
+      const currentDate = new Date();
+
+      // Set hours, minutes, seconds, and milliseconds to 0 for both dates to compare only the date part
+      appointmentDate.setHours(0, 0, 0, 0);
+      currentDate.setHours(0, 0, 0, 0);
+
+      if (appointmentDate > currentDate) {
+        toast("error", "No se puede finalizar una cita antes de su fecha programada.");
+        return;
+      }
+    }
     setSelectedAppointment(appointment);
     setModalAction(action);
     if (action === "cancel") {
@@ -118,21 +124,11 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
 
   if (error) toast("error", error.message || "Error al cargar las citas");
 
-  useEffect(() => {
-    if(name === "") {
-      setFilteredData(data);
-      return;
-    }else{
-      setFilteredData(data.filter((item) => item.pet.owner.name.toLowerCase().includes(name.toLowerCase())));
-    }
-    console.log("Data fetched:", data.filter((item) => item.pet.owner.name.toLowerCase().includes(name.toLowerCase())));
-  }, [data]);
-
   return (
     <div className="p-4 mx-auto">
       <div className="max-w-8xl mx-auto p-4 space-y-6">
         <SearchBar
-          placeholder="Buscar por RUC del cliente"
+          placeholder="Buscar por nombre o RUC del cliente"
           onSearch={handleSearch}
         />
         <div className="flex flex-col md:flex-row gap-4">
@@ -140,24 +136,24 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
             <AppointmentDateFilter filters={filters} setFilters={handleFilterChange} />
           </div>
           <div className="flex-1">
-              <AppointmentStatusFilter filters={filters} setFilters={handleFilterChange} />
+            <AppointmentStatusFilter filters={filters} setFilters={handleFilterChange} />
           </div>
         </div>
       </div>
       
       <div className="flex justify-between items-center mb-4">
-            <h2 className="text-3xl font-bold">Citas</h2>
-            <Button variant="outline" className="px-6" onClick={() => router.push("/dashboard/appointment/register")}>
-                    Agendar
-            </Button>
-        </div>
+        <h2 className="text-3xl font-bold">Citas</h2>
+        <Button variant="outline" className="px-6" onClick={() => router.push("/dashboard/appointment/register")}>
+          Agendar
+        </Button>
+      </div>
 
       {isLoading ? (
-       <AppointmentListSkeleton />
+        <AppointmentListSkeleton />
       ) : (
         <div className="grid grid-cols-1 gap-4">
-          {filteredData?.length ? (
-            filteredData.map((appointment) => (
+          {data?.length ? (
+            data.map((appointment) => (
               <AppointmentCard
                 key={appointment.id}
                 appointment={appointment}

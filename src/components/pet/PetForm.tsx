@@ -1,5 +1,4 @@
 'use client';
-
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -9,293 +8,380 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Race, Species } from '@/lib/pets/IPet';
 import { getRacesBySpecies, getSpecies } from '@/lib/pets/getRacesAndSpecies';
 import { registerPet } from '@/lib/pets/registerPet';
 import { useRouter } from 'next/navigation';
-import Image from "next/image";
-
-const MAX_FILE_SIZE = 1024 * 1024;
-const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+import Image from 'next/image';
+import { image } from "@/lib/schemas";
+import { PawPrint, Upload, Info, Calendar, Weight } from 'lucide-react';
+import { blockExtraKeysNumber } from "@/lib/utils";
 
 const petFormSchema = z.object({
-    petName: z.string().min(1, 'El nombre es obligatorio'),
-    birthDate: z.string().min(1, 'La fecha de nacimiento es obligatoria'),
-    breed: z.string().min(1, 'La raza es obligatoria'),
-    animalType: z.string().min(1, 'Debes seleccionar un tipo de animal'),
-    gender: z.string().min(1, 'Debes seleccionar un género'),
-    weight: z.union([z.string(), z.number()])
-        .refine((val) => !isNaN(parseFloat(String(val))) && parseFloat(String(val)) > 0, {
-            message: 'El peso debe ser un número válido mayor a 0',
-        })
-        .transform((val) => parseFloat(String(val))),
-    imageFile: z
-        .instanceof(File)
-        .refine((file) => ALLOWED_IMAGE_TYPES.includes(file.type), {
-            message: 'Solo se permiten imágenes en formato JPG, PNG o WEBP',
-        })
-        .refine((file) => file.size <= MAX_FILE_SIZE, {
-            message: 'La imagen no debe superar 1MB',
-        })
-        .optional(),
+  petName: z.string().min(1, 'El nombre es obligatorio'),
+  birthDate: z.string().min(1, 'La fecha de nacimiento es obligatoria'),
+  breed: z.string().min(1, 'La raza es obligatoria'),
+  animalType: z.string().min(1, 'Debes seleccionar un tipo de animal'),
+  gender: z.string().min(1, 'Debes seleccionar un género'),
+   weight: z.coerce
+    .number()
+    .positive("El peso debe ser un número mayor a 0")
+    .min(0.1, "El peso debe ser al menos 0.1 kg"),
+  imageFile: image(),
 });
-
 type PetFormValues = z.infer<typeof petFormSchema>;
 interface PetFormProps {
-    clientId?: number;
-    token?: string;
+  clientId?: number;
+  token?: string;
 }
 
 export default function PetForm({ clientId, token }: PetFormProps) {
-    const [species, setSpecies] = useState<Species[]>([]);
-    const [races, setRaces] = useState<Race[]>([]);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const router = useRouter();
-    const [previewImage, setPreviewImage] = useState<string | null>(null);
-    const {
-        register,
-        handleSubmit,
-        watch,
-        setValue,
-        formState: { errors },
-    } = useForm<PetFormValues>({
-        resolver: zodResolver(petFormSchema),
-        defaultValues: {
-            petName: '',
-            birthDate: '',
-            breed: '',
-            animalType: '',
-            gender: '',
-            imageFile: undefined
-        },
-    });
-    //Obtiene las especies
-    useEffect(() => {
-        if (!token) return;
-        const fetchSpecies = async () => {
-            try {
-                const speciesData = await getSpecies(token);
-                setSpecies(speciesData);
-            } catch {
-                toast("error", "Error al obtener las especies.");
-            }
-        };
-        fetchSpecies();
-    }, [token]);
+  const [species, setSpecies] = useState<Species[]>([]);
+  const [races, setRaces] = useState<Race[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<PetFormValues>({
+    resolver: zodResolver(petFormSchema),
+    defaultValues: {
+      petName: "",
+      birthDate: "",
+      breed: "",
+      animalType: "",
+      gender: "",
+      imageFile: undefined,
+    },
+  });
+  useEffect(() => {
+    if (!token) return;
+    const fetchSpecies = async () => {
+      try {
+        const speciesData = await getSpecies(token);
+        setSpecies(speciesData);
+      } catch {
+        toast("error", "Error al obtener las especies.");
+      }
+    };
+    fetchSpecies();
+  }, [token]);
 
-    //Obtiene las razas a partir de las especies
-    const handleSpeciesChange = async (speciesId: string) => {
-        setRaces([]);
-        if (!speciesId || !token) return;
-        try {
-            const racesData = await getRacesBySpecies(parseInt(speciesId), token);
-            setRaces(racesData);
-        } catch {
-            toast("error", "Error al obtener las razas.");
-        }
-    };
-    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setPreviewImage(null);
-        const file = event.target.files?.[0];
-        if (!file) {
-            setValue('imageFile', undefined);
-            return;
-        }
-        setValue('imageFile', file);
-        const reader = new FileReader();
-        reader.onload = (e) => setPreviewImage(e.target?.result as string);
-        reader.readAsDataURL(file)
-    };
-    const onSubmit = async (data: PetFormValues) => {
-        if (!clientId || !token) {
-            toast("error", "Debes estar autenticado para registrar una mascota.");
-            return;
-        }
-        const formData = new FormData();
-        Object.entries({
-            name: data.petName,
-            clientId: clientId.toString(),
-            speciesId: data.animalType,
-            raceId: data.breed,
-            weight: data.weight.toString(),
-            sex: data.gender,
-            dateOfBirth: new Date(data.birthDate).toISOString(),
-        }).forEach(([key, value]) => formData.append(key, value));
-        if (data.imageFile) formData.append("profileImg", data.imageFile);
-        setIsSubmitting(true);
-        try {
-            await registerPet(formData, token);
-            toast("success", "Mascota registrada con éxito!", {
-                duration: 2000,
-                onAutoClose: () => {router.push('/user-profile');},
-                onDismiss: () => router.push('/user-profile'),
-            });
-        } catch {
-            toast("error", "Hubo un error al registrar la mascota.");
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-    return (
-        <div className="max-w-5xl mx-auto p-8">
-            <div className="flex flex-col md:flex-row gap-16">
-                <div className="flex flex-col items-center space-y-4 w-80">
-                    <h1 className="text-3xl font-bold self-start">Registro de Mascota</h1>
-                    <p className="text-gray-600 self-start">Ingresa los datos de la mascota</p>
-                    <div className="w-full flex flex-col items-center">
-                        <h3 className="text-sm font-semibold mb-2 text-gray-700">Imagen (Opcional)</h3>
-                        <div className="w-full flex flex-col items-center relative">
-                            <Label className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-md text-sm font-medium text-center cursor-pointer">
-                                <Input
-                                    type="file"
-                                    accept="image/jpeg, image/png, image/webp"
-                                    onChange={handleImageChange}
-                                    className="hidden"
-                                />
-                                {previewImage ? "Cambiar imagen" : "Subir imagen de la mascota"}
-                            </Label>
-                            {previewImage && (
-                                <div className="w-full mt-4">
-                                    <Image
-                                        src={previewImage}
-                                        className="w-full h-auto rounded-md"
-                                        alt="Vista previa de la mascota"
-                                        width={96}
-                                        height={96}
-                                        priority
-                                    />
-                                </div>
-                            )}
-                            {errors.imageFile && (
-                                <p className="text-red-500 text-sm mt-2">{errors.imageFile.message}</p>
-                            )}
-                        </div>
-                    </div>
-                </div>
-                <div className="md:w-2/3 w-80">
-                    <form
-                        id="petForm"
-                        onSubmit={handleSubmit(onSubmit)}
-                        className="space-y-4"
-                    >
-                        <div>
-                            <Label>Nombre</Label>
-                            <Input
-                                id="petName"
-                                {...register('petName')}
-                                placeholder="Ej. Luna"
-                            />
-                            {errors.petName && <p className="text-red-500">{errors.petName.message}</p>}
-                        </div>
-                        <div>
-                            <Label>Fecha de nacimiento</Label>
-                            <Input
-                                id="birthDate"
-                                type="date"
-                                {...register('birthDate')}
-                                max={new Date().toISOString().split("T")[0]}
-                            />
-                            {errors.birthDate && <p className="text-red-500">{errors.birthDate.message}</p>}
-                        </div>
-                        <div>
-                            <Label>Animal</Label>
-                            <Select
-                                onValueChange={(value) => {
-                                    setValue('animalType', value);
-                                    handleSpeciesChange(value);
-                                }}
-                            >
-                                <SelectTrigger id="animalType">
-                                    <SelectValue placeholder="Seleccionar" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {species.map((specie) => (
-                                        <SelectItem
-                                            key={specie.id}
-                                            value={specie.id.toString()}
-                                        >
-                                            {specie.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            {errors.animalType && <p className="text-red-500">{errors.animalType.message}</p>}
-                        </div>
-                        <div>
-                            <Label>Raza</Label>
-                            <Select
-                                onValueChange={(value) => setValue('breed', value)}
-                            >
-                                <SelectTrigger id="breed">
-                                    <SelectValue placeholder={races.length > 0 ? "Seleccionar" : "Selecciona una especie primero"} />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {races.map((race) => (
-                                        <SelectItem
-                                            key={race.id}
-                                            value={race.id.toString()}
-                                        >
-                                            {race.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            {errors.breed && <p className="text-red-500">{errors.breed.message}</p>}
-                        </div>
-                        <div>
-                            <Label>Peso (kg)</Label>
-                            <Input
-                                id="weight"
-                                type="number"
-                                step={0.1}
-                                min="0"
-                                onKeyDown={(e) => {
-                                    if (e.key === "-" || e.key === "e") e.preventDefault();
-                                }}
-                                {...register('weight')}
-                            />
-                            {errors.weight && <p className="text-red-500">{errors.weight.message}</p>}
-                        </div>
-                        <div>
-                            <Label>Género</Label>
-                            <div className="flex gap-4">
-                                <Button
-                                    id="genderFemale"
-                                    type="button"
-                                    variant={watch('gender') === "F" ? "default" : "outline"}
-                                    onClick={() => setValue('gender', "F")}
-                                >
-                                    Hembra
-                                </Button>
-                                <Button
-                                    id="genderMale"
-                                    type="button"
-                                    variant={watch('gender') === "M" ? "default" : "outline"}
-                                    onClick={() => setValue('gender', "M")}
-                                >
-                                    Macho
-                                </Button>
-                            </div>
-                            {errors.gender && <p className="text-red-500">{errors.gender.message}</p>}
-                        </div>
-                        <div className="flex justify-start gap-4 mt-8">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => router.push('/user-profile')}
-                            >
-                                Cancelar
-                            </Button>
-                            <Button
-                                type="submit"
-                                disabled={isSubmitting}
-                            >
-                                {isSubmitting ? "Registrando..." : "Registrar Mascota"}
-                            </Button>
-                        </div>
-                    </form>
-                </div>
+  const handleSpeciesChange = async (speciesId: string) => {
+    setRaces([]);
+    if (!speciesId || !token) return;
+    try {
+      const racesData = await getRacesBySpecies(parseInt(speciesId), token);
+      setRaces(racesData);
+    } catch {
+      toast("error", "Error al obtener las razas.");
+    }
+  };
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPreviewImage(null);
+    const file = event.target.files?.[0];
+    if (!file) {
+      setValue("imageFile", undefined);
+      return;
+    }
+    setValue("imageFile", file, { shouldValidate: true });
+    const reader = new FileReader();
+    reader.onload = (e) => setPreviewImage(e.target?.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  const onSubmit = async (data: PetFormValues) => {
+    if (!clientId || !token) {
+      toast("error", "Debes estar autenticado para registrar una mascota.");
+      return;
+    }
+    const formData = new FormData();
+    Object.entries({
+      name: data.petName,
+      clientId: clientId.toString(),
+      speciesId: data.animalType,
+      raceId: data.breed,
+      weight: data.weight.toString(),
+      sex: data.gender,
+      dateOfBirth: new Date(data.birthDate).toISOString(),
+    }).forEach(([key, value]) => formData.append(key, value));
+    if (data.imageFile) formData.append("profileImg", data.imageFile);
+    setIsSubmitting(true);
+    try {
+      await registerPet(formData, token);
+      reset();
+      toast("success", "Mascota registrada con éxito!");
+      router.push(`/user-profile`);
+    } catch {
+      toast("error", "Hubo un error al registrar la mascota.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  return (
+    <div className="max-w-6xl mx-auto p-6 md:p-8">
+      <CardHeader className="relative pb-2">
+        <CardTitle className="text-3xl font-bold text-myPurple-focus p-2">
+          Registro de Mascota
+        </CardTitle>
+        <CardDescription className="text-myPurple-focus/70 ml-6 p-2">
+          Ingresa los datos de la mascota
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="relative">
+        <div className="flex flex-col md:flex-row gap-8 md:gap-12">
+          <div className="w-full md:w-1/3 flex flex-col items-center space-y-4">
+            <div className="w-full flex flex-col items-center space-y-4">
+              <div className="relative w-full  w-50 h-60 aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-myPink-disabled to-myPurple-disabled border-2 border-dashed border-myPurple-secondary flex items-center justify-center">
+                {previewImage ? (
+                  <Image
+                    src={previewImage}
+                    className="w-full h-full object-cover"
+                    alt="Vista previa de la mascota"
+                    fill
+                    priority
+                  />
+                ) : (
+                  <div className="text-center p-6">
+                    <PawPrint className="w-16 h-16 mx-auto mb-2 text-myPurple-primary" />
+                    <p className="text-myPurple-focus font-medium">
+                      Imagen de tu mascota
+                    </p>
+                    <p className="text-sm text-myPurple-focus/70 mt-1">
+                      Opcional
+                    </p>
+                  </div>
+                )}
+              </div>
+              <Button
+                variant="outline"
+                className="w-full max-w-xs border-myPurple-secondary text-myPurple-primary hover:bg-myPurple-disabled hover:text-myPurple-focus transition-all duration-200"
+                onClick={() =>
+                  document.getElementById("pet-image-upload")?.click()
+                }
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                {previewImage ? "Cambiar imagen" : "Subir imagen"}
+                <Input
+                  id="pet-image-upload"
+                  type="file"
+                  accept="image/jpeg, image/png, image/webp"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </Button>
+              {errors.imageFile && (
+                <p className="text-myPink-focus text-sm">
+                  {errors.imageFile.message}
+                </p>
+              )}
             </div>
+          </div>
+          <div className="w-full md:w-2/3 mt-2">
+            <form
+              id="petForm"
+              onSubmit={handleSubmit(onSubmit)}
+              className="space-y-5"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="space-y-2">
+                  <Label className="flex items-center text-myPurple-focus">
+                    <Info className="w-4 h-4 mr-2 text-myPurple-primary" />
+                    Nombre
+                  </Label>
+                  <Input
+                    id="petName"
+                    {...register("petName")}
+                    placeholder="Ej. Luna"
+                    className="border-myPurple-tertiary focus-visible:ring-myPurple-primary"
+                  />
+                  {errors.petName && (
+                    <p className="text-myPink-focus text-sm">
+                      {errors.petName.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label className="flex items-center text-myPurple-focus">
+                    <Calendar className="w-4 h-4 mr-2 text-myPurple-primary" />
+                    Fecha de nacimiento
+                  </Label>
+                  <Input
+                    id="birthDate"
+                    type="date"
+                    {...register("birthDate")}
+                    max={new Date().toISOString().split("T")[0]}
+                    className="border-myPurple-tertiary focus-visible:ring-myPurple-primary"
+                  />
+                  {errors.birthDate && (
+                    <p className="text-myPink-focus text-sm">
+                      {errors.birthDate.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label className="flex items-center text-myPurple-focus">
+                    <PawPrint className="w-4 h-4 mr-2 text-myPurple-primary" />
+                    Animal
+                  </Label>
+                  <Select
+                    onValueChange={(value) => {
+                      setValue("animalType", value, { shouldValidate: true });
+                      handleSpeciesChange(value);
+                    }}
+                  >
+                    <SelectTrigger
+                      id="animalType"
+                      className="border-myPurple-tertiary focus:ring-myPurple-primary"
+                    >
+                      <SelectValue placeholder="Seleccionar" />
+                    </SelectTrigger>
+                    <SelectContent className="border-myPurple-tertiary">
+                      {species.map((specie) => (
+                        <SelectItem
+                          key={specie.id}
+                          value={specie.id.toString()}
+                        >
+                          {specie.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {errors.animalType && (
+                    <p className="text-myPink-focus text-sm">
+                      {errors.animalType.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label className="flex items-center text-myPurple-focus">
+                    <PawPrint className="w-4 h-4 mr-2 text-myPurple-primary" />
+                    Raza
+                  </Label>
+                  <Select
+                    onValueChange={(value) =>
+                      setValue("breed", value, { shouldValidate: true })
+                    }
+                  >
+                    <SelectTrigger
+                      id="breed"
+                      className="border-myPurple-tertiary focus:ring-myPurple-primary"
+                    >
+                      <SelectValue
+                        placeholder={
+                          races.length > 0
+                            ? "Seleccionar raza"
+                            : "Selecciona una especie primero"
+                        }
+                      />
+                    </SelectTrigger>
+                    <SelectContent className="border-myPurple-tertiary">
+                      {races.map((race) => (
+                        <SelectItem key={race.id} value={race.id.toString()}>
+                          {race.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {errors.breed && (
+                    <p className="text-myPink-focus text-sm">
+                      {errors.breed.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label className="flex items-center text-myPurple-focus">
+                    <Weight className="w-4 h-4 mr-2 text-myPurple-primary" />
+                    Peso (kg)
+                  </Label>
+                  <Input
+                    id="weight"
+                    type="number"
+                    step={0.1}
+                    min="0"
+                    onKeyDown={blockExtraKeysNumber}
+                    {...register("weight")}
+                    className="border-myPurple-tertiary focus-visible:ring-myPurple-primary"
+                  />
+                  {errors.weight && (
+                    <p className="text-myPink-focus text-sm">
+                      {errors.weight.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label className="flex items-center text-myPurple-focus">
+                    Género
+                  </Label>
+                  <div className="flex gap-4">
+                    <Button
+                      id="genderFemale"
+                      type="button"
+                      variant={watch("gender") === "F" ? "default" : "outline"}
+                      onClick={() =>
+                        setValue("gender", "F", { shouldValidate: true })
+                      }
+                      className={
+                        watch("gender") === "F"
+                          ? "bg-myPink-primary hover:bg-myPink-hover text-white w-full transition-all duration-200"
+                          : "border-myPink-tertiary text-myPink-primary hover:bg-myPink-disabled hover:text-myPink-focus w-full transition-all duration-200"
+                      }
+                    >
+                      Hembra
+                    </Button>
+                    <Button
+                      id="genderMale"
+                      type="button"
+                      variant={watch("gender") === "M" ? "default" : "outline"}
+                      onClick={() =>
+                        setValue("gender", "M", { shouldValidate: true })
+                      }
+                      className={
+                        watch("gender") === "M"
+                          ? "bg-myPurple-primary hover:bg-myPurple-hover text-white w-full transition-all duration-200"
+                          : "border-myPurple-tertiary text-myPurple-primary hover:bg-myPurple-disabled hover:text-myPurple-focus w-full transition-all duration-200"
+                      }
+                    >
+                      Macho
+                    </Button>
+                  </div>
+                  {errors.gender && (
+                    <p className="text-myPink-focus text-sm">
+                      {errors.gender.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </form>
+          </div>
         </div>
-    );
+      </CardContent>
+      <CardFooter className="relative flex justify-end gap-4 pt-4 border-t border-myPurple-tertiary/50">
+        <Button
+          type="button"
+          variant="outline"
+          disabled={isSubmitting}
+          onClick={() => router.push("/user-profile")}
+          className="border-myPurple-tertiary text-myPurple-primary hover:bg-myPurple-disabled hover:text-myPurple-focus transition-all duration-200"
+        >
+          Cancelar
+        </Button>
+        <Button
+          type="submit"
+          form="petForm"
+          disabled={isSubmitting}
+          className="bg-gradient-to-r from-myPurple-primary to-myPink-primary hover:from-myPurple-hover hover:to-myPink-hover text-white transition-all duration-200"
+        >
+          {isSubmitting ? "Registrando..." : "Registrar Mascota"}
+        </Button>
+      </CardFooter>
+    </div>
+  );
 }
