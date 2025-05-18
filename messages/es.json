@@ -335,11 +335,13 @@
     "image": "Imagen"
   },
   "StockList": {
+    "title":"Depósitos",
     "name": "Nombre del depósito",
     "address": "Dirección",
     "quantity": "Cantidad",
     "empty": "Producto no disponible en ninguna sucursal."
   },
+
   "ClientList": {
     "title": "Clientes",
     "modalConfirmation": "Eliminar cliente",
