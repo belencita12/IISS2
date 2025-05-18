@@ -1,7 +1,7 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Calendar, Clock, MapPin, CheckCircle, Printer, Edit, X, FileText } from "lucide-react"
+import { Calendar, Clock, MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
@@ -11,10 +11,7 @@ import { useFetch } from "@/hooks/api/useFetch"
 import type { AppointmentData } from "@/lib/appointment/IAppointment"
 import { APPOINTMENT_API } from "@/lib/urls"
 import { toast } from "@/lib/toast"
-import { completeAppointment, cancelAppointment } from "@/lib/appointment/service"
-import { ConfirmationModal } from "@/components/global/Confirmation-modal"
-import { Modal } from "@/components/global/Modal"
-import { formatDate, formatTimeUTC } from "@/lib/utils"; 
+import { formatDate, formatTimeUTC } from "@/lib/utils"
 
 const statusColors = {
   PENDING: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100",
@@ -37,17 +34,11 @@ interface AppointmentDetailProps {
 
 const AppointmentDetail = ({ token, appointmentId }: AppointmentDetailProps) => {
   const router = useRouter()
-  const [isProcessing, setIsProcessing] = useState(false)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [cancelModalOpen, setCancelModalOpen] = useState(false)
-  const [cancelDescription, setCancelDescription] = useState("")
-  const [modalAction, setModalAction] = useState<"complete" | "cancel" | null>(null)
 
   const {
     data: appointment,
     loading,
     error,
-    execute: fetchAppointment,
   } = useFetch<AppointmentData>(`${APPOINTMENT_API}/${appointmentId}`, token, { immediate: true })
 
   useEffect(() => {
@@ -55,54 +46,6 @@ const AppointmentDetail = ({ token, appointmentId }: AppointmentDetailProps) => 
       toast("error", error.message || "Error al cargar la cita")
     }
   }, [error])
-
-  const openConfirmModal = (action: "complete" | "cancel") => {
-    if (action === "complete" && appointment) {
-      const appointmentDate = new Date(appointment.designatedDate)
-      const currentDate = new Date()
-
-      // Set hours, minutes, seconds, and milliseconds to 0 for both dates to compare only the date part
-      appointmentDate.setHours(0, 0, 0, 0)
-      currentDate.setHours(0, 0, 0, 0)
-
-      if (appointmentDate > currentDate) {
-        toast("error", "No se puede finalizar una cita antes de su fecha programada.")
-        return
-      }
-    }
-    setModalAction(action)
-    if (action === "cancel") {
-      setCancelModalOpen(true)
-    } else {
-      setIsModalOpen(true)
-    }
-  }
-
-  const handleConfirmAction = async () => {
-    if (!appointment || !modalAction) return
-
-    try {
-      setIsProcessing(true)
-      if (modalAction === "complete") {
-        await completeAppointment(appointment.id, token || "")
-      } else {
-        await cancelAppointment(appointment.id, token || "", cancelDescription)
-      }
-      toast("success", `Cita ${modalAction === "complete" ? "finalizada" : "cancelada"} con éxito`)
-      fetchAppointment()
-    } catch (error) {
-      toast("error", "Ocurrió un error al actualizar la cita")
-    } finally {
-      setIsProcessing(false)
-      setIsModalOpen(false)
-      setCancelModalOpen(false)
-      setModalAction(null)
-      setCancelDescription("")
-    }
-  }
-
-  const canBeCompleted = appointment?.status === "PENDING" || appointment?.status === "IN_PROGRESS"
-  const canBeCancelled = appointment?.status === "PENDING"
 
   if (loading) {
     return <AppointmentDetailSkeleton />
@@ -117,14 +60,9 @@ const AppointmentDetail = ({ token, appointmentId }: AppointmentDetailProps) => 
     )
   }
 
-  // Format date for display
-  const formattedDate = appointment?.designatedDate ? new Date(appointment.designatedDate) : null
-  const dateOptions: Intl.DateTimeFormatOptions = { weekday: "long", day: "numeric", month: "long", year: "numeric" }
-  const displayDate = formattedDate ? formattedDate.toLocaleDateString("es-ES", dateOptions) : ""
-
-  // Format time
-  const timeOptions: Intl.DateTimeFormatOptions = { hour: "2-digit", minute: "2-digit", hour12: false }
-  const displayTime = formattedDate ? formattedDate.toLocaleTimeString("es-ES", timeOptions) : ""
+  // Format date and time using utils functions
+  const displayDate = appointment?.designatedDate ? formatDate(appointment.designatedDate) : ""
+  const displayTime = appointment?.designatedDate ? formatTimeUTC(appointment.designatedDate) : ""
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -188,15 +126,15 @@ const AppointmentDetail = ({ token, appointmentId }: AppointmentDetailProps) => 
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <p className="text-sm text-muted-foreground">Nombre</p>
-                <p className="font-medium">{appointment?.pet.name || "Max"}</p>
+                <p className="font-medium">{appointment?.pet.name || "Sin nombre"}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Especie</p>
-                <p className="font-medium">Perro</p>
+                <p className="font-medium">{appointment?.pet.race || "Sin especie"}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Raza</p>
-                <p className="font-medium">{appointment?.pet.race || "Labrador Retriever"}</p>
+                <p className="font-medium">{appointment?.pet.race || "Sin raza"}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Edad</p>
