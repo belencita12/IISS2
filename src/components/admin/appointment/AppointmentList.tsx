@@ -20,6 +20,7 @@ import { Modal } from "@/components/global/Modal";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import AppointmentListSkeleton from "./Skeleton/AppointmentListSkeleton";
+import useDebounce from "@/hooks/useDebounce";
 
 interface AppointmentListProps {
   token: string;
@@ -40,6 +41,8 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [cancelDescription, setCancelDescription] = useState("");
+  const [searchValue, setSearchValue] = useState("");
+  const debouncedSearchValue = useDebounce(searchValue, 500); // 500ms de delay
 
   const {
     data,
@@ -60,6 +63,12 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
     },
   });
 
+  useEffect(() => {
+    if (debouncedSearchValue !== undefined) {
+      search({ search: debouncedSearchValue });
+    }
+  }, [debouncedSearchValue]);
+
   const handleFilterChange = (updatedFilters: AppointmentQueryParams) => {
     const { page, size, ...safeFilters } = updatedFilters;
     setFilters((prev) => ({
@@ -71,8 +80,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
   };
 
   const handleSearch = (value: string) => {
-    setFilters((prev) => ({ ...prev, search: value }));
-    search({ search: value });
+    setSearchValue(value);
   };
 
   const openConfirmModal = (appointment: AppointmentData, action: "complete" | "cancel") => {
