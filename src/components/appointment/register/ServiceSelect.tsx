@@ -82,6 +82,7 @@ export default function ServiceSelect({
     setSelectedService(service);
     onSelectService(service);
     setOpen(false);
+    setSearchQuery("");
   };
 
   return (
@@ -98,10 +99,10 @@ export default function ServiceSelect({
             >
               {selectedService ? (
                 <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-start">
-                  {selectedService.name}
+                  Selecciona otro servicio
                 </div>
               ) : (
-                <span>Selecciona un servicio</span>
+                <span>Selecciona al menos un servicio</span>
               )}
               <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
