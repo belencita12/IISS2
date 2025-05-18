@@ -6,7 +6,7 @@ import AppointmentDetail from "@/components/admin/appointment/AppointmentDetail"
 export default async function AppointmentDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const session = await getServerSession(authOptions);
 
@@ -14,11 +14,13 @@ export default async function AppointmentDetailPage({
     redirect("/login");
   }
 
+  // Await the params promise to get the actual parameters
+  const { id } = await params;
   const token = session?.user?.token || null;
 
   return (
     <div className="container mx-auto p-4">
-      <AppointmentDetail token={token} appointmentId={params.id} />
+      <AppointmentDetail token={token} appointmentId={id} />
     </div>
   );
 }

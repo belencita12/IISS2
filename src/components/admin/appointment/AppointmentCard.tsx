@@ -43,7 +43,10 @@ const AppointmentCard = ({
     >
       <div className="flex flex-col gap-2">
         <h3 className="font-bold text-lg">
-          Servicio de {appointment.service ?? "Servicio no especificado"}
+          Servicio de{" "}
+          {appointment.services?.length
+            ? appointment.services.map((s) => s.name).join(", ")
+            : "Servicio no especificado"}
         </h3>
         <p>Dueño: {appointment.pet?.owner?.name ?? "Dueño desconocido"}</p>
         <p>Animal: {appointment.pet?.race ?? "Especie no especificada"}</p>

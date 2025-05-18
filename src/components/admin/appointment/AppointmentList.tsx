@@ -19,7 +19,7 @@ import { completeAppointment, cancelAppointment } from "@/lib/appointment/servic
 import { Modal } from "@/components/global/Modal";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import AppointmentListSkeleton from "./Skeleton/AppointmentListSkeleton";
+import AppointmentListSkeleton from "./skeleton/AppointmentListSkeleton";
 
 interface AppointmentListProps {
   token: string;
