@@ -1,4 +1,3 @@
-import App from "next/app";
 import { BaseQueryParams } from "../types";
 
 export interface AppointmentEmployee {
