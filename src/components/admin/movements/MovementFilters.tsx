@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { getStocks } from "@/lib/stock/getStock";
 import { StockData } from "@/lib/stock/IStock";
 import {toast} from "@/lib/toast"
+import { useTranslations } from "next-intl";
 
 interface Props {
   token: string;
@@ -32,11 +33,15 @@ export default function MovementFilters({ token, filters, setFilters }: Props) {
 
   const [stocks, setStocks] = useState<StockData[]>([]);
 
+  const f = useTranslations("Filters");
+  const ph = useTranslations("Placeholder");
+  const e = useTranslations("Error");
+
   useEffect(() => {
     getStocks({ page: 1 }, token)
       .then((res) => setStocks(res.data))
       .catch((err) => {
-        const message = err?.message || "No se pudieron obtener los depositos";
+        const message = err?.message || e("notGetData");
         toast("error", message);
       });
   }, [token]);
@@ -47,7 +52,7 @@ export default function MovementFilters({ token, filters, setFilters }: Props) {
       <div className="flex flex-col md:flex-row items-center gap-4">
         <div className="w-full md:w-1/2">
           <SearchBar
-            placeholder="Ingrese el RUC del encargado"
+            placeholder={ph("getBy", {field: "ruc del encargado"})}
             defaultQuery={filters.managerRuc ?? ""}
             onSearch={(value) => handleChange("managerRuc", value)}
             debounceDelay={300}
@@ -56,7 +61,7 @@ export default function MovementFilters({ token, filters, setFilters }: Props) {
 
         <div className="w-full md:w-1/2">
           <SearchBar
-            placeholder="Buscar por nombre de producto"
+            placeholder={ph("getBy", {field: "nombre del producto"})}
             defaultQuery={filters.productName ?? ""}
             onSearch={(value) => handleChange("productName", value)}
             debounceDelay={300}
@@ -66,7 +71,7 @@ export default function MovementFilters({ token, filters, setFilters }: Props) {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <Label>Origen</Label>
+          <Label>{f("origin")}</Label>
           <Select
             value={
               filters.originStockId !== undefined
@@ -81,10 +86,10 @@ export default function MovementFilters({ token, filters, setFilters }: Props) {
             }
           >
             <SelectTrigger>
-              <SelectValue placeholder="Seleccione Origen" />
+              <SelectValue placeholder={ph("select")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">Todos</SelectItem>
+              <SelectItem value="ALL">{f("all")}</SelectItem>
               {stocks
                 .filter((s) => s.id !== undefined)
                 .map((s) => (
@@ -97,7 +102,7 @@ export default function MovementFilters({ token, filters, setFilters }: Props) {
         </div>
 
         <div>
-          <Label>Destino</Label>
+          <Label>{f("destination")}</Label>
           <Select
             value={
               filters.destinationStockId !== undefined
@@ -112,10 +117,10 @@ export default function MovementFilters({ token, filters, setFilters }: Props) {
             }
           >
             <SelectTrigger>
-              <SelectValue placeholder="Seleccione Destino" />
+              <SelectValue placeholder={ph("select")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">Todos</SelectItem>
+              <SelectItem value="ALL">{f("all")}</SelectItem>
               {stocks
                 .filter((s) => s.id !== undefined)
                 .map((s) => (
@@ -128,7 +133,7 @@ export default function MovementFilters({ token, filters, setFilters }: Props) {
         </div>
 
         <div>
-          <Label>Tipo</Label>
+          <Label>{f("type")}</Label>
           <Select
             value={filters.type ?? "ALL"}
             onValueChange={(value) =>
@@ -136,13 +141,13 @@ export default function MovementFilters({ token, filters, setFilters }: Props) {
             }
           >
             <SelectTrigger>
-              <SelectValue placeholder="Seleccione tipo" />
+              <SelectValue placeholder={ph("select")}/>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">Todos</SelectItem>
-              <SelectItem value="INBOUND">Entrante</SelectItem>
-              <SelectItem value="OUTBOUND">Saliente</SelectItem>
-              <SelectItem value="TRANSFER">Transferencia</SelectItem>
+              <SelectItem value="ALL">{f("all")}</SelectItem>
+              <SelectItem value="INBOUND">{ph("inbound")}</SelectItem>
+              <SelectItem value="OUTBOUND">{ph("outbound")}</SelectItem>
+              <SelectItem value="TRANSFER">{ph("transfer")}</SelectItem>
             </SelectContent>
           </Select>
         </div>

@@ -91,7 +91,10 @@
     "service": "Servicio",
     "product": "Producto",
     "tag": "Etiqueta",
-    "vaccine": "Vacuna"
+    "vaccine": "Vacuna",
+    "origin": "Origen",
+    "destination": "Destino",
+    "type": "Tipo"
 
   },
   "Placeholder": {
@@ -108,7 +111,10 @@
     "description": "Ingrese una descripción",
     "cost": "Ingrese el costo",
     "price": "Ingrese el precio",
-    "iva": "Ingrese el IVA"
+    "iva": "Ingrese el IVA",
+    "inbound": "Entrante",
+    "outbound": "Saliente",
+    "transfer": "Transferencia"
   },
   "Vaccune": {
     "vaccuneControlTitle": "Control de vacunas"
@@ -193,6 +199,15 @@
     "male": "Macho",
     "female": "Hembra"
   },
+  "MovementDetail":{
+    "title": "Movimientos",
+    "typeInbound": "Movimiento entrante",
+    "typeOutbound": "Movimiento saliente",
+    "typeTransfer": "Transferencia entre depósitos",
+    "origin": "Depósito origen",
+    "destination": "Depósito destino"
+  },
+
   "Appointments": {
     "appointmentTitle": "Citas agendadas",
     "appointmentsDescription": "Consulta y agenda nuevas citas médicas para tus mascotas",
@@ -308,7 +323,8 @@
     "cost": "Costo",
     "stock": "Depósito",
     "quantity": "Cantidad",
-    "quantityDeposit": "Cantidad por depósitos"
+    "quantityDeposit": "Cantidad por depósitos",
+    "name": "Nombre"
     
   },
   "ProductStockCard": {
@@ -336,10 +352,16 @@
   },
   "StockList": {
     "title":"Depósitos",
+    "titleEdit": "Editar depósito",
+    "titleRegister": "Registrar depósito",
     "name": "Nombre del depósito",
     "address": "Dirección",
     "quantity": "Cantidad",
     "empty": "Producto no disponible en ninguna sucursal."
+  },
+  "StockDetail": {
+    "title": "Depósito",
+    "productStock": "Productos en depósito"
   },
 
   "ClientList": {
