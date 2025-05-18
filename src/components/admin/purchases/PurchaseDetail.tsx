@@ -8,6 +8,7 @@ import { toast } from "@/lib/toast";
 import GenericPagination from "@/components/global/GenericPagination";
 import { usePurchaseDetail } from "@/hooks/purchases/usePurchaseDetail";
 import PurchaseDetailSkeleton from "./skeleton/PurchaseDetailSkeleton";
+import { useTranslations } from "next-intl";
 
 interface PurchaseDetailProps {
   token: string;

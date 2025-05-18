@@ -4,6 +4,7 @@ import SearchBar from "@/components/global/SearchBar";
 import GenericTable, { Column, TableAction } from "@/components/global/GenericTable";
 import { EmployeeData } from "@/lib/employee/IEmployee";  // Asegúrate de tener esta interfaz
 import EmployeeTableSkeleton from "@/components/employee/skeleton/EmployeeTableSkeleton";
+import { useTranslations } from "next-intl";
 
 type MovementEmployeeSearchProps = {
   searchEmployees: EmployeeData[];
@@ -23,17 +24,21 @@ export default function MovementEmployeeSearch({
   hasSearched = false,
 }: MovementEmployeeSearchProps) {
 
+  const em = useTranslations("EmployeeTable");
+  const p = useTranslations("Placeholder");
+  const e = useTranslations("Error");
+
   const columns: Column<EmployeeData>[] = [
-    { header: "Nombre", accessor: "fullName" },
-    { header: "RUC", accessor: "ruc" },
+    { header: em("name"), accessor: "fullName" },
+    { header: em("ruc"), accessor: "ruc" },
   ];
 
   const actions: TableAction<EmployeeData>[] = [
     {
-      label: "Seleccionar",
+      label: p("select"),
       icon: (
         <div className="px-4 py-2 border border-black bg-white text-black rounded-md">
-          Seleccionar
+          {p("select")}
         </div>
       ),
       onClick: (employee) => {
@@ -48,7 +53,7 @@ export default function MovementEmployeeSearch({
       <SearchBar
         onSearch={onSearch}
         debounceDelay={400}
-        placeholder="Buscar por nombre o RUC del empleado..."
+        placeholder={p("getBy", {field: "nombre o ruc del empleado"})}
       />
       {isLoading ? (
         <EmployeeTableSkeleton />
@@ -64,7 +69,7 @@ export default function MovementEmployeeSearch({
       ) : (
         hasSearched &&
         !isLoading && (
-          <p className="text-center mt-4">No se encontró el empleado.</p>
+          <p className="text-center mt-4">{e("notFound")}</p>
         )
       )}
     </div>

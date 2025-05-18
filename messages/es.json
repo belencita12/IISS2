@@ -11,6 +11,7 @@
     "profile": "Perfil"
   },
   "Button": {
+    "update": "Actualizar",
     "select": "Seleccionar",
     "actions": "Acciones",
     "cancel": "Cancelar",
@@ -35,10 +36,13 @@
     "change": "Cambiar",
     "upload": "Cargar",
     "male": "Macho",
-    "female": "Hembra"
+    "female": "Hembra",
+    "revert": "Revertir",
+    "reversing": "Revirtiendo..."
   },
   "Success": {
     "success": "Éxito",
+    "successRevert": "{field} revertido correctamente",
     "successAppointment": "Cita registrada correctamente",
     "successRegister": "{field} registrado correctamente",
     "successSave": "Los cambios se guardaron correctamente",
@@ -50,11 +54,13 @@
   },
   "Error": {
     "error": "Error",
+    "errorRevert": "Error al revertir {field}",
     "errorLoad": "Error al cargar {field}",
     "errorRegister": "Error al registrar {field}",
     "errorGet": "Error al obtener {field}",
     "errorUpdate": "Error al actualizar {field}",
     "notGetData": "No se pudo obtener la información",
+    "noSelect": "No se seleccionó {field}",
     "notGetRuc": "No se pudo obtener el RUC del cliente",
     "notFound": "No se encontraron datos.",
     "notFoundField": "No se encontraron {field}.",
@@ -79,6 +85,7 @@
     "to": "Hasta",
     "fromDate": "Fecha desde",
     "toDate": "Fecha hasta",
+    "select": "Seleccionar",
     "statusAppointment": "Estado de la cita",
     "all": "Todos",
     "pending": "Pendiente",
@@ -94,7 +101,11 @@
     "vaccine": "Vacuna",
     "origin": "Origen",
     "destination": "Destino",
-    "type": "Tipo"
+    "type": "Tipo",
+    "provider": "Proveedor",
+    "stock": "Depósito",
+    "minTotal": "Total mínimo",
+    "maxTotal": "Total máximo"
 
   },
   "Placeholder": {
@@ -114,7 +125,13 @@
     "iva": "Ingrese el IVA",
     "inbound": "Entrante",
     "outbound": "Saliente",
-    "transfer": "Transferencia"
+    "transfer": "Transferencia",
+    "minAmount": "Ej: 100.000",
+    "maxAmount": "Ej: 1.000.000"
+  },
+  "EmployeeTable": {
+    "name": "Nombre",
+    "ruc": "RUC"
   },
   "Vaccune": {
     "vaccuneControlTitle": "Control de vacunas"
@@ -200,12 +217,31 @@
     "female": "Hembra"
   },
   "MovementDetail":{
+    "products": "Productos",
     "title": "Movimientos",
     "typeInbound": "Movimiento entrante",
     "typeOutbound": "Movimiento saliente",
     "typeTransfer": "Transferencia entre depósitos",
     "origin": "Depósito origen",
-    "destination": "Depósito destino"
+    "destination": "Depósito destino",
+    "employee": "Encargado",
+    "description": "Descripción",
+    "inbound": "Ingreso",
+    "outbound": "Egreso",
+    "transfer": "Transferencia",
+    "movementOf": "Movimiento de"
+  },
+  "MovementForm": {
+    "title": "Registrar movimiento",
+    "date": "Fecha",
+    "typeOfMovement": "Tipo de movimiento",
+    "inbound": "Ingreso",
+    "outbound": "Egreso",
+    "transfer": "Transferencia",
+    "description": "Descripción",
+    "selectEmployee": "Seleccionar empleado",
+    "products": "Productos del movimiento",
+    "productSelected": "Productos seleccionados"
   },
 
   "Appointments": {
@@ -285,6 +321,12 @@
     "myProfile": "Mis datos",
     "myPets": "Mis mascotas",
     "myAppointments": "Mis citas"
+  },
+  "PurchaseDetail": {
+    "totalCost": "Costo total",
+    "totalCostIva": "Costo total IVA",
+    "stock": "Depósito",
+    "title": "Compras"
   },
 
   "Header": {
@@ -387,9 +429,12 @@
   "ModalConfirmation":{
     "titleDelete": "Eliminar {field}",
     "titleFinish": "Finalizar {field}",
+    "titleRevert": "Revertir {field}",
+    "titleUpdate": "Actualizar {field}",
     "deleteMessage": "¿Estás seguro de que deseas eliminar {field}?",
     "confirmDelete": "¿Estás seguro de que deseas eliminar la {field}?",
     "confirmFinish": "¿Estás seguro de que deseas finalizar la {field}?",
+    "confirmRevert": "¿Estás seguro de que deseas revertir {field}?",
     "motivo": "Motivo de cancelación",
     "reason": "Ingrese el motivo"
   }
