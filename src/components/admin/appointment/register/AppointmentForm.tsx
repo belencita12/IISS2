@@ -58,6 +58,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
 
   const onSubmit = async (data: AppointmentRegister) => {
     setIsSubmitting(true);
+    console.log("Data to submit:", data);
     try {
       await createAppointment(token, data);
       toast("success", "Cita registrada con éxito");
