@@ -37,7 +37,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { z } from "zod";
 
 type AppointmentFormProps = {
   token: string;
