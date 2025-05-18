@@ -33,13 +33,11 @@ export const EmployeeCard = ({
             </div>
           </div>
         ) : appointment?.employee ? (
-          <div className="flex items-center gap-4 p-4 bg-muted/30 rounded-lg">
-            <div className="relative w-10 h-10 rounded-full bg-gray-100 overflow-hidden">
+          <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-4 p-4 bg-muted/30 rounded-lg">
+            <div className="relative w-10 h-10 rounded-full bg-gray-100 overflow-hidden mx-auto sm:mx-0">
               {employeeDetails?.image?.originalUrl ? (
                 <Image
-                  src={
-                    employeeDetails.image.originalUrl || "/NotImageNicoPets.png"
-                  }
+                  src={employeeDetails.image.originalUrl || "/NotImageNicoPets.png"}
                   alt={`Foto de ${employeeDetails.fullName}`}
                   fill
                   className="object-cover"
