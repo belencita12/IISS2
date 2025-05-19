@@ -4,16 +4,18 @@ import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Race, Species } from "@/lib/pets/IPet";
 import { getSpecies, getRacesBySpecies } from "@/lib/pets/getRacesAndSpecies";
-import { getRaces } from "@/lib/pets/getRaces";
+import { getAllRaces } from "@/lib/pets/getRaces";
 import { deleteRaceByID } from "@/lib/pets/deleteRaceByID";
 import SearchBar from "@/components/global/SearchBar";
-import { Pencil, Trash } from "lucide-react";
+import { Pencil, Trash, Undo2 } from "lucide-react";
 import { toast } from "@/lib/toast";
 import GenericTable, { Column, TableAction, PaginationInfo } from "@/components/global/GenericTable";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import { Modal } from "@/components/global/Modal";
 import RaceTableSkeleton from "./skeleton/RaceTableSkeleton";
 import { RaceForm } from "./register/RaceForm";
+import { useFetch } from "@/hooks/api";
+import { RACE_API } from "@/lib/urls";
 
 interface RaceListProps {
     token: string | null;
@@ -31,6 +33,9 @@ export default function RaceList({ token }: RaceListProps) {
     const [loading, setLoading] = useState(false);
     const [species, setSpecies] = useState<Species[]>([]);
     const [selectedSpecies, setSelectedSpecies] = useState<number | null>(null);
+    const [showDeleted, setShowDeleted] = useState(false);
+    const [isRestoring, setIsRestoring] = useState(false);
+    const [searchQuery, setSearchQuery] = useState<string>("");
     
 
     useEffect(() => {
@@ -41,24 +46,34 @@ export default function RaceList({ token }: RaceListProps) {
         }
     }, [token, species.length]);
 
-    const loadRaces = useCallback(async (page = 1, query = "") => {
+    const loadRaces = useCallback(async (pageSize = pagination.pageSize, page = 1, query = "", includeDeleted = showDeleted) => {
         if (!token) return;
         setLoading(true);
         try {
             const racesData = selectedSpecies !== null
-                ? await getRacesBySpecies(selectedSpecies, token)
-                : await getRaces(token);
+                ? await getRacesBySpecies(selectedSpecies, token, includeDeleted)
+                : await getAllRaces(token, `page=${page}&size=${pageSize}&includeDeleted=${includeDeleted.toString()}`);
 
-            const filteredRaces = query
+            // Verifica si racesData es un objeto y tiene la propiedad data
+            const filteredRaces = Array.isArray(racesData)
+            ? query
                 ? racesData.filter((race: Race) => race.name.toLowerCase().includes(query.toLowerCase()))
-                : racesData;
+                : racesData
+            : query
+                ? racesData.data.filter((race: Race) => race.name.toLowerCase().includes(query.toLowerCase()))
+                : racesData.data;
+
+            console.log("Raza: ", racesData)
+
+            const totalItems = Array.isArray(racesData) ? racesData.length : racesData.data.length;
+            const totalPages = Math.ceil(totalItems / pagination.pageSize);
 
             setRaces(filteredRaces);
             setPagination(prev => ({
                 ...prev,
                 currentPage: page,
-                totalItems: filteredRaces.length,
-                totalPages: Math.ceil(filteredRaces.length / prev.pageSize),
+                totalItems: totalItems,
+                totalPages: totalPages,
             }));
         } catch (error: unknown) {
             toast("error", error instanceof Error ? error.message : "Error inesperado");
@@ -67,8 +82,13 @@ export default function RaceList({ token }: RaceListProps) {
         }
     }, [token, selectedSpecies]);
 
+    const { patch: restoreRace} = useFetch<Race, null>(
+       "",
+        token
+    );
+
     useEffect(() => {
-        if (token) loadRaces(pagination.currentPage);
+        if (token) loadRaces(pagination.pageSize, pagination.currentPage);
     }, [token, pagination.currentPage, loadRaces]);
 
     const confirmDelete = (race: Race) => {
@@ -82,7 +102,7 @@ export default function RaceList({ token }: RaceListProps) {
         const success = await deleteRaceByID(token || "", selectedRace.id);
         if (success) {
             toast("success", "Raza eliminada correctamente.");
-            loadRaces(pagination.currentPage);
+            loadRaces(pagination.pageSize, pagination.currentPage, "", showDeleted);
         } else {
             toast("error", "No se pudo eliminar la raza.");
         }
@@ -91,10 +111,18 @@ export default function RaceList({ token }: RaceListProps) {
         setSelectedRace(null);
     };
 
-    const handleSearch = (query: string) => loadRaces(1, query);
+    const handleSearch = (query: string) => {
+        setSearchQuery(query);
+        loadRaces(pagination.pageSize, 1, query, showDeleted);
+    };
     const handlePageChange = (page: number) => setPagination(prev => ({ ...prev, currentPage: page }));
     const handleSpeciesChange = (event: React.ChangeEvent<HTMLSelectElement>) =>
         setSelectedSpecies(Number(event.target.value) || null);
+
+    const toggleDeletedRaces = () => {
+        setShowDeleted(!showDeleted);
+        loadRaces(pagination.pageSize, 1, searchQuery, !showDeleted);
+    };
 
     const openRaceModal = () => {
         setEditingRace(null);
@@ -108,11 +136,26 @@ export default function RaceList({ token }: RaceListProps) {
     const closeRaceModal = (shouldRefresh = true) => {
         setIsRaceModalOpen(false);
         if (shouldRefresh) {
-            loadRaces(pagination.currentPage);
+            loadRaces(pagination.pageSize, pagination.currentPage);
         }
     };
     
     
+    const handleRestore = async (race: Race) => {
+        setIsRestoring(true);
+        const { ok, error } = await restoreRace(null, `${RACE_API}/restore/${race.id}`);
+
+        if (!ok) {
+            toast("error", error?.message || "Error al restaurar la raza");
+            setIsRestoring(false);
+            return;
+        }
+
+        toast("success", "Raza restaurada con éxito");
+        loadRaces(pagination.pageSize, pagination.currentPage, "", showDeleted);
+        setIsRestoring(false);
+    };
+
     const columns: Column<Race>[] = [
         { header: "Nombre", accessor: "name" },
         {
@@ -122,8 +165,18 @@ export default function RaceList({ token }: RaceListProps) {
     ];
 
     const actions: TableAction<Race>[] = [
-        { icon: <Pencil className="w-4 h-4" />, onClick: openEditRaceModal, label: "Editar" },
-        { icon: <Trash className="w-4 h-4" />, onClick: confirmDelete, label: "Eliminar" },
+        ...(showDeleted ? [{
+            icon: <Undo2 className={`w-4 h-4 ${isRestoring ? 'opacity-50' : ''}`} />,
+            label: isRestoring ? "Restaurando..." : "Restaurar",
+            onClick: (race: Race) => {
+                if (!isRestoring) {
+                    handleRestore(race);
+                }
+            },
+        }] : [
+            { icon: <Pencil className="w-4 h-4" />, onClick: openEditRaceModal, label: "Editar" },
+            { icon: <Trash className="w-4 h-4" />, onClick: confirmDelete, label: "Eliminar" },
+        ]),
     ];
 
     return (
@@ -144,10 +197,19 @@ export default function RaceList({ token }: RaceListProps) {
                 </div>
             </div>
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-3xl font-bold">Razas</h2>
-                <Button variant="outline" className="px-6" onClick={openRaceModal}>
-                    Agregar
-                </Button>
+                <h2 className="text-3xl font-bold">{showDeleted ? "Razas eliminadas" : "Razas"}</h2>
+                <div className="flex gap-2">
+                    <Button 
+                        variant={showDeleted ? "secondary" : "outline"}
+                        onClick={toggleDeletedRaces}
+                        disabled={isRestoring}
+                    >
+                        {showDeleted ? "Ver activos" : "Ver eliminados"}
+                    </Button>
+                    <Button variant="default" className="px-6" disabled={isRestoring} onClick={openRaceModal}>
+                        Agregar
+                    </Button>
+                </div>
             </div>
 
             <GenericTable
@@ -167,7 +229,7 @@ export default function RaceList({ token }: RaceListProps) {
                     isOpen={isRaceModalOpen} 
                     onClose={() => setIsRaceModalOpen(false)} 
                     onSuccess={() => {
-                        loadRaces(pagination.currentPage);
+                        loadRaces(pagination.pageSize, pagination.currentPage);
                     }}
                     initialData={editingRace}
                     />
