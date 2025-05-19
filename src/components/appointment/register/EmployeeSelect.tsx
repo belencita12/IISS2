@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Check, ChevronDown, Loader2 } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -146,7 +146,6 @@ export default function EmployeeSelect({
 
             {isLoading || isSearching ? (
               <div className="py-6 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
-                <Loader2 className="h-4 w-4 animate-spin" />
                 {isSearching ? "Buscando..." : "Cargando empleados..."}
               </div>
             ) : (

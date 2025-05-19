@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { UserPlus, Check, ChevronDown, Loader2 } from "lucide-react";
+import { UserPlus, Check, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -144,7 +144,6 @@ export default function ServiceSelect({
 
               {(isLoading || isSearching) ? (
                 <div className="py-6 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
-                  <Loader2 className="h-4 w-4 animate-spin" />
                   {isSearching ? "Buscando..." : "Cargando servicios..."}
                 </div>
               ) : (
