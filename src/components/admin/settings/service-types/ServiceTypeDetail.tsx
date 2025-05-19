@@ -121,16 +121,6 @@ export default function ServiceTypeDetail({data }: ServiceTypeDetailProps) {
           </div>
         </div>
       </div>
-
-      <div className="flex justify-center mt-6">
-        <Button
-          variant="outline"
-          onClick={() => router.back()}
-          className="px-6"
-        >
-          Volver
-        </Button>
-      </div>
     </div>
   );
 } 

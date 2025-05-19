@@ -26,6 +26,13 @@ export default async function ClientDetails(
 
     return (
         <>
+            <div className="mx-auto px-1 md:px-24 mb-6 mt-6">
+                <Link href="/dashboard/clients">
+                    <Button variant="outline" className="border-black border-solid">
+                        Volver 
+                    </Button>
+                </Link>
+            </div>
 
             <ClientProfileSection {...client} />
 
@@ -33,11 +40,6 @@ export default async function ClientDetails(
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-xl">Mascotas</h2>
                     <div className="flex gap-3">
-                        <Link href="/dashboard/clients">
-                            <Button variant="outline" className="border-black border-solid">
-                                Volver
-                            </Button>
-                        </Link>
                         <Link href={`/dashboard/clients/${id}/pet/register`}>
                             <Button variant="outline" className="border-black border-solid">
                                 Agregar
