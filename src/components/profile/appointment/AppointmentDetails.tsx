@@ -57,13 +57,32 @@ export default function AppointmentDetails({ token, appointmentId }: Appointment
       </div>
     )
   }
-
+  
   return (
     <div className="max-w-3xl mx-auto p-4 bg-white rounded-lg shadow-lg border border-myPurple-tertiary/30 animate-fade-in">
       <h2 className="text-3xl font-bold text-center text-myPurple-focus mb-6">Detalle de la Cita</h2>
 
       <div className="space-y-5">
-        <DetailSection title="Servicio" value={appointment.service} />
+        
+        <div className="border-b border-myPurple-tertiary/30 pb-3">
+          <p className="text-myPink-focus font-semibold mb-2">{`${(appointment.service || (appointment.services?.length !== undefined? appointment.services.length === 1 : false) )? "Servicio" : "Servicios"}`}</p>
+          <ul className="ml-2 space-y-2">
+            {appointment.services ? appointment.services.map((serv) => (
+              <li key={serv.id} className="flex items-center text-myPurple-primary text-sm">
+                <span className="w-2 h-2 rounded-full bg-myPink-tertiary mr-2"></span>
+                {serv.name}
+              </li>
+            )) : appointment.service ? 
+            (<li className="flex items-center text-myPurple-primary text-sm">
+                <span className="w-2 h-2 rounded-full bg-myPink-tertiary mr-2"></span>
+                {appointment.service}
+              </li>)  
+            : 
+            (
+              <li className="text-myPurple-primary text-sm">No hay Servicios </li>
+            )}
+          </ul>
+        </div>
         <DetailSection
           title="Fecha Designada"
           value={`${formatDate(appointment.designatedDate)}, ${formatTimeUTC(appointment.designatedDate)}`}
@@ -95,12 +114,20 @@ export default function AppointmentDetails({ token, appointmentId }: Appointment
         <div>
           <p className="text-myPink-focus font-semibold mb-2">Empleados encargados</p>
           <ul className="ml-2 space-y-2">
-            {appointment.employees.map((emp) => (
+            {appointment.employees ? appointment.employees.map((emp) => (
               <li key={emp.id} className="flex items-center text-myPurple-primary text-sm">
                 <span className="w-2 h-2 rounded-full bg-myPink-tertiary mr-2"></span>
                 {emp.name}
               </li>
-            ))}
+            )) : appointment.employee ? 
+            (<li className="flex items-center text-myPurple-primary text-sm">
+                <span className="w-2 h-2 rounded-full bg-myPink-tertiary mr-2"></span>
+                {appointment.employee.name}
+              </li>)  
+            : 
+            (
+              <li className="text-myPurple-primary text-sm">No hay empleados asignados</li>
+            )}
           </ul>
         </div>
         <div className="flex justify-center mt-8">
