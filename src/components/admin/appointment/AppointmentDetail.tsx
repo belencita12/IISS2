@@ -73,7 +73,6 @@ export const AppointmentDetail = ({ token, appointmentId }: AppointmentDetailPro
         <AppointmentInfoCard appointment={appointment} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Intercambiamos posiciones: propietario donde estaba mascota */}
           <OwnerInfoCard
             appointment={appointment}
             ownerDetails={ownerDetails}
@@ -82,7 +81,6 @@ export const AppointmentDetail = ({ token, appointmentId }: AppointmentDetailPro
           />
           
           <div className="grid grid-cols-1 gap-6">
-            {/* Mascota y empleado en la columna derecha */}
             <PetInfoCard 
               appointment={appointment} 
               petDetails={petDetails} 
