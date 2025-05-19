@@ -73,6 +73,7 @@ export interface AppointmentData {
     };
   }
 
+
 export interface AppointmentRegister {
     designatedDate: string;
     designatedTime: string;
