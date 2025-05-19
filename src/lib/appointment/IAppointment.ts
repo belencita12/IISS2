@@ -61,22 +61,11 @@ export interface AppointmentData {
       name: string;
     };
   };
-  status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "CANCELED";
+  status: AppointmentStatus;
   employee: {
     id: number;
     name: string;
   };
-}
-
-
-export interface AppointmentQueryParams extends BaseQueryParams {
-    clientRuc?: string;
-    employeeRuc?: string;
-    petId?: number;
-    serviceId?: number;
-    fromDesignatedDate?: string;
-    toDesignatedDate?: string;
-    status?: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELED' ;
 }
 
 export interface AppointmentRegister {
