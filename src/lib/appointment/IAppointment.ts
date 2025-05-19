@@ -1,50 +1,47 @@
 import { BaseQueryParams } from "../types";
 
 export interface AppointmentEmployee {
-  id: number;
-  name: string;
-}
+    id: number;
+    name: string;
+  }
 
-export interface AppointmentService {
-  id: number;
-  name: string;
-}
-
-export interface AppointmentPet {
-  id: number;
-  name: string;
-  race: string;
-  owner: AppointmentPetOwner;
-}
-
-export interface Appointment {
-  id: number;
-  designatedDate: string;
-  completedDate?: string | null;
-  details: string;
-  services: AppointmentService[];
-  pet: AppointmentPet;
-  status: AppointmentStatus;
-  employee: AppointmentEmployee;
-}
+  export interface AppointmentPet {
+    id: number;
+    name: string;
+    race: string;
+    owner: AppointmentPetOwner;
+  }
+  
+  export interface Appointment {
+    id: number;
+    designatedDate: string;
+    completedDate?: string | null;
+    details: string;
+    service: string;
+    pet: AppointmentPet;
+    status: AppointmentStatus;
+    employees: AppointmentEmployee[];
+  }
 
 export interface AppointmentPetOwner {
   id: number;
   name: string;
 }
-
+  
+  
 export type AppointmentStatus = "PENDING" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
 
 export interface AppointmentQueryParams extends BaseQueryParams {
-  clientRuc?: string;
-  employeeRuc?: string;
-  petId?: number;
-  serviceId?: number;
-  fromDesignatedDate?: string;
-  toDesignatedDate?: string;
-  status?: AppointmentStatus;
-  search?: string;
+    clientRuc?: string;
+    employeeRuc?: string;
+    petId?: number;
+    serviceId?: number;
+    fromDesignatedDate?: string;
+    toDesignatedDate?: string;
+    status?: AppointmentStatus;
+    search?: string;
 }
+
 
 export interface AppointmentData {
     id: number;
@@ -105,7 +102,7 @@ export interface AppointmentRegister {
     }
   }
 
-export interface AvailabilitySlot {
-  time: string;
-  isOcuppy: boolean;
-}
+  export interface AvailabilitySlot {
+    time: string;
+    isOcuppy: boolean;
+  }

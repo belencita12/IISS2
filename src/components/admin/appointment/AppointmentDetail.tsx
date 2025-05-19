@@ -9,7 +9,7 @@ import { AppointmentInfoCard } from "@/components/admin/appointment/details/Appo
 import { PetInfoCard } from "@/components/admin/appointment/details/PetInfoCard"
 import { OwnerInfoCard } from "@/components/admin/appointment/details/OwnerInfoCard"
 import { EmployeeInfoCard } from "@/components/admin/appointment/details/EmployeeInfoCard"
-import type { Appointment } from "@/lib/appointment/IAppointment"
+import type { AppointmentData } from "@/lib/appointment/IAppointment"
 import type { EmployeeData } from "@/lib/employee/IEmployee"
 import type { PetData } from "@/lib/pets/IPet"
 import type { IUserProfile } from "@/lib/client/IUserProfile"
@@ -33,7 +33,7 @@ export const AppointmentDetail = ({ token, appointmentId }: AppointmentDetailPro
     employeeDetails,
     employeeLoading,
   } = useAppointmentDetail(token, appointmentId) as {
-    appointment: Appointment | null
+    appointment: AppointmentData | null
     appointmentLoading: boolean
     petDetails: PetData | null
     petLoading: boolean

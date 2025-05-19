@@ -3,7 +3,7 @@ import type React from "react"
 import { Phone, MapPin, Briefcase, UserCircle, Mail } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Image from "next/image"
-import type { Appointment } from "@/lib/appointment/IAppointment"
+import type { AppointmentData } from "@/lib/appointment/IAppointment"
 import type { IUserProfile } from "@/lib/client/IUserProfile"
 import type { PetData } from "@/lib/pets/IPet"
 import { OwnerInfoCardSkeleton } from "../Skeleton/OwnerInfoCardSkeleton"
@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator"
 import NotImageNicoPets from "../../../../../public/NotImageNicoPets.png";
 
 interface OwnerDetailsCardProps {
-  appointment: Appointment | null
+  appointment: AppointmentData | null
   ownerDetails: IUserProfile | null
   ownerLoading: boolean
   petDetails: PetData | null

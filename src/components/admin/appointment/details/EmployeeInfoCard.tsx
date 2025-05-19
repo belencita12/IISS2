@@ -4,12 +4,12 @@ import { User } from "lucide-react"
 import { Card, CardHeader, CardTitle } from "@/components/ui/card"
 import Image from "next/image"
 import type { EmployeeData } from "@/lib/employee/IEmployee"
-import type { Appointment } from "@/lib/appointment/IAppointment"
+import type { AppointmentData } from "@/lib/appointment/IAppointment"
 import { EmployeeInfoCardSkeleton } from "../Skeleton/EmployeeInfoCardSkeleton"
 import NotImageNicoPets from "../../../../../public/NotImageNicoPets.png";
 
 interface EmployeeCardProps {
-  appointment: Appointment | null
+  appointment: AppointmentData | null
   employeeDetails: EmployeeData | null
   employeeLoading: boolean
 }

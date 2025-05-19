@@ -5,10 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { formatDate, formatTimeUTC } from "@/lib/utils"
 import { StatusBadge } from "@/components/admin/appointment/StatusBadge"
-import type { Appointment } from "@/lib/appointment/IAppointment"
+import type { AppointmentData } from "@/lib/appointment/IAppointment"
 
 interface AppointmentInfoCardProps {
-  appointment: Appointment | null
+  appointment: AppointmentData | null
 }
 
 export const AppointmentInfoCard = ({ appointment }: AppointmentInfoCardProps) => {

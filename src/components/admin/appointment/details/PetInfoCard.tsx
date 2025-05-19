@@ -4,13 +4,13 @@ import { PawPrint, Calendar, Weight, CircleDot, Info } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { calcularEdad } from "@/lib/utils"
 import Image from "next/image"
-import type { Appointment } from "@/lib/appointment/IAppointment"
+import type { AppointmentData } from "@/lib/appointment/IAppointment"
 import type { PetData } from "@/lib/pets/IPet"
 import { PetInfoCardSkeleton } from "../Skeleton/PetInfoCardSkeleton"
 import NotImageNicoPets from "../../../../../public/NotImageNicoPets.png"
 
 interface PetDetailsCardProps {
-  appointment: Appointment | null
+  appointment: AppointmentData | null
   petDetails: PetData | null
   petLoading: boolean
 }
