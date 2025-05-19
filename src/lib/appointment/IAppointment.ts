@@ -13,26 +13,30 @@ export interface AppointmentQueryParams extends BaseQueryParams {
 
 
 export interface AppointmentData {
+  id: number;
+  designatedDate: string;
+  completedDate?: string; 
+  details: string;
+  services: {
     id: number;
-    designatedDate: string;
-    completedDate: string;
-    details: string;
-    service: string; 
-    pet: {
+    name: string;
+  }[];
+  pet: {
+    id: number;
+    name: string;
+    race: string;
+    owner: {
       id: number;
       name: string;
-      race: string;
-      owner: {
-        id: number;
-        name: string;
-      };
     };
-    status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "CANCELED";
-    employees: {
-      id: number;
-      name: string;
-    }[];
-  }
+  };
+  status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "CANCELED";
+  employee: {
+    id: number;
+    name: string;
+  };
+}
+
 
 export interface AppointmentQueryParams extends BaseQueryParams {
     clientRuc?: string;
