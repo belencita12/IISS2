@@ -89,10 +89,10 @@ export const AppointmentInfoCard = ({ appointment }: AppointmentInfoCardProps) =
         <div>
           <h3 className="text-sm font-medium mb-2 flex items-center gap-2">
             <Info className="h-4 w-4 text-primary" />
-            Notas adicionales
+            Detalles
           </h3>
           <div className="bg-muted/60 rounded-lg p-3 text-sm break-words">
-            {appointment?.details || "Sin notas adicionales"}
+            {appointment?.details || "Sin detalles"}
           </div>
         </div>
       </CardContent>

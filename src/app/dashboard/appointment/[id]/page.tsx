@@ -14,7 +14,6 @@ export default async function AppointmentDetailPage({
     redirect("/login");
   }
 
-  // Await the params promise to get the actual parameters
   const { id } = await params;
   const token = session?.user?.token || null;
 
