@@ -15,6 +15,7 @@ import { toast } from "@/lib/toast";
 import { getWorkPosition } from "@/lib/employee/getWorkPosition";
 import { EmployeeData } from "@/lib/employee/IEmployee";
 import FormSelect, { SelectOptions } from "@/components/global/FormSelect";
+import { useTranslations } from "next-intl";
 
 const MAX_FILE_SIZE = 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -60,6 +61,11 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
   const [positions, setPositions] = useState<Position[]>([]);
   const [formSubmitting, setFormSubmitting] = useState(false);
 
+  const e = useTranslations("EmployeeTable");
+  const s = useTranslations("Success");
+  const b = useTranslations("Button");
+  const ph = useTranslations("Placeholder");
+
   const {
     register,
     handleSubmit,
@@ -96,7 +102,11 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
         setValue("phoneNumber", data.phoneNumber || "");
         if (data.image?.previewUrl) setPreviewImage(data.image?.originalUrl || null);
       })
-      .catch(() => toast("error", "No se pudo cargar el empleado"))
+      .catch((error: unknown) => {
+        if (error instanceof Error) {
+          toast("error", error.message);
+        }
+      })
       .finally(() => setIsLoading(false));
   }, [employeeId, token, setValue]);
 
@@ -105,7 +115,11 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
     setPositionsLoading(true);
     getWorkPosition(token)
       .then((data) => setPositions(data))
-      .catch(() => toast("error", "No se pudieron cargar los puestos"))
+      .catch((error) => {
+        if (error instanceof Error) {}
+          toast("error", error.message);
+        }
+      )
       .finally(() => setPositionsLoading(false));
   }, [token]);
 
@@ -152,11 +166,12 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
     try {
       const response = await updateEmployee(employeeId, formData);
       if(response.ok){
-        toast("success", "Empleado actualizado correctamente");
+        toast("success", s("successEdit", {field: "Empleado"}));
         router.push(`/dashboard/employee/${employeeId}`);
       }
-    } catch (e) {
-      toast("error", "Error al actualizar el empleado");
+    } catch (e : unknown) {
+      if (e instanceof Error){
+        toast("error", e.message)};
     } finally {
       setFormSubmitting(false);
     }
@@ -172,12 +187,51 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
 
   return (
     <div className="mx-auto p-4" style={{ maxWidth: "70vw" }}>
-      <h1 className="text-3xl font-bold mb-6">Actualizar Empleado</h1>
+      <h1 className="text-3xl font-bold mb-6">{e("titleUpdate")}</h1>
       {!ready ? (
-        <div className="text-center">Cargando...</div>
+        <div className="text-center">{b("loading")}</div>
       ) : (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 flex flex-col items-center w-full">
-          {/* Imagen de perfil */}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 flex flex-col w-full">
+          <div className="w-full">
+            <FormSelect
+              label="Puesto"
+              name="positionId"
+              id="positionId"
+              options={positionOptions}
+              placeholder={ph("select")}
+              error={errors.positionId?.message}
+              onChange={(value) => setValue("positionId", value, {shouldValidate: true})}
+              register={register("positionId")}
+              defaultValue={watch("positionId")}
+              disabled={positions.length === 0 || formSubmitting}
+            />
+          </div>
+          <div className="w-full">
+            <Label>{e("name")}</Label>
+            <Input {...register("name")} placeholder={ph("name")} disabled={formSubmitting}/>
+            {errors.name && <p className="text-red-500">{errors.name.message}</p>}
+          </div>
+          <div className="w-full">
+            <Label>{e("email")}</Label>
+            <Input {...register("email")} placeholder={ph("email")} disabled={formSubmitting}/>
+            {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+          </div>
+          <div className="w-full">
+            <Label>{e("ruc")}</Label>
+            <Input {...register("ruc")} placeholder={ph("ruc")} disabled={formSubmitting}/>
+            {errors.ruc && <p className="text-red-500">{errors.ruc.message}</p>}
+          </div>
+          <div className="w-full">
+            <Label>{e("address")}</Label>
+            <Input {...register("address")} placeholder={ph("address")} disabled={formSubmitting}/>
+            {errors.address && <p className="text-red-500">{errors.address.message}</p>}
+          </div>
+          <div className="w-full">
+            <Label>{e("phone")}</Label>
+            <Input {...register("phoneNumber")} placeholder={ph("phone")} disabled={formSubmitting}/>
+            {errors.phoneNumber && <p className="text-red-500">{errors.phoneNumber.message}</p>}
+          </div>
+                    {/* Imagen de perfil */}
           <div className="flex flex-col items-center">
             {previewImage && (
               <Image
@@ -193,59 +247,19 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
               <p className="text-red-500">{errors.profileImage.message as string}</p>
             )}
           </div>
-
-          <div className="w-full">
-            <FormSelect
-              label="Puesto"
-              name="positionId"
-              id="positionId"
-              options={positionOptions}
-              placeholder="Selecciona un puesto"
-              error={errors.positionId?.message}
-              onChange={(value) => setValue("positionId", value, {shouldValidate: true})}
-              register={register("positionId")}
-              defaultValue={watch("positionId")}
-              disabled={positions.length === 0 || formSubmitting}
-            />
-          </div>
-          <div className="w-full">
-            <Label>Nombre</Label>
-            <Input {...register("name")} placeholder="Nombre completo" disabled={formSubmitting}/>
-            {errors.name && <p className="text-red-500">{errors.name.message}</p>}
-          </div>
-          <div className="w-full">
-            <Label>Email</Label>
-            <Input {...register("email")} placeholder="Correo electrónico" disabled={formSubmitting}/>
-            {errors.email && <p className="text-red-500">{errors.email.message}</p>}
-          </div>
-          <div className="w-full">
-            <Label>RUC</Label>
-            <Input {...register("ruc")} placeholder="Ej: 12345678-0" disabled={formSubmitting}/>
-            {errors.ruc && <p className="text-red-500">{errors.ruc.message}</p>}
-          </div>
-          <div className="w-full">
-            <Label>Dirección</Label>
-            <Input {...register("address")} placeholder="Dirección" disabled={formSubmitting}/>
-            {errors.address && <p className="text-red-500">{errors.address.message}</p>}
-          </div>
-          <div className="w-full">
-            <Label>Teléfono</Label>
-            <Input {...register("phoneNumber")} placeholder="Teléfono" disabled={formSubmitting}/>
-            {errors.phoneNumber && <p className="text-red-500">{errors.phoneNumber.message}</p>}
-          </div>
           {/* Botones */}
-          <div className="w-full flex justify-start gap-2 mt-4">
+          <div className="flex justify-end gap-4">
             <Button
               type="button"
               variant="outline"
               onClick={() => router.push("/dashboard/employee")}
               disabled={formSubmitting}
             >
-              Cancelar
+              {b("cancel")}
             </Button>
             <Button type="submit"
               disabled={formSubmitting}>
-              {formSubmitting ? "Actualizando" : "Actualizar Empleado"}
+              {formSubmitting ? b("updating") : b("update")}
             </Button>
           </div>
         </form>

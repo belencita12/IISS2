@@ -12,6 +12,7 @@
   },
   "Button": {
     "update": "Actualizar",
+    "updating": "Actualizando...",
     "select": "Seleccionar",
     "actions": "Acciones",
     "cancel": "Cancelar",
@@ -55,6 +56,7 @@
   },
   "Error": {
     "error": "Error",
+    "invalidID": "ID inválido",
     "errorRevert": "Error al revertir {field}",
     "errorLoad": "Error al cargar {field}",
     "errorRegister": "Error al registrar {field}",
@@ -132,7 +134,16 @@
   },
   "EmployeeTable": {
     "name": "Nombre",
-    "ruc": "RUC"
+    "ruc": "RUC",
+    "email": "Email",
+    "position": "Puesto",
+    "title": "Empleados",
+    "emptyMessage": "No se encontraron empleados.",
+    "phone": "Teléfono",
+    "image": "Foto del empleado (Opcional)",
+    "titleRegister": "Registro de Empleado",
+    "titleUpdate": "Actualizar empleado",
+    "address": "Dirección"
   },
   "Vaccune": {
     "vaccuneControlTitle": "Control de vacunas"
@@ -459,6 +470,7 @@
     "titleRevert": "Revertir {field}",
     "titleUpdate": "Actualizar {field}",
     "deleteMessage": "¿Estás seguro de que deseas eliminar {field}?",
+    "deleteMessagePerson": "¿Estás seguro de que deseas eliminar a {field}?",
     "confirmDelete": "¿Estás seguro de que deseas eliminar la {field}?",
     "confirmFinish": "¿Estás seguro de que deseas finalizar la {field}?",
     "confirmRevert": "¿Estás seguro de que deseas revertir {field}?",
