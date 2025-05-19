@@ -64,6 +64,7 @@
     "errorUpdate": "Error al actualizar {field}",
     "notGetData": "No se pudo obtener la información",
     "noSelect": "No se seleccionó {field}",
+    "noAvailabilityHour": "No hay horarios disponibles para esta fecha",
     "notGetRuc": "No se pudo obtener el RUC del cliente",
     "notFound": "No se encontraron datos.",
     "notFoundField": "No se encontraron {field}.",
@@ -271,12 +272,16 @@
     "selectDate": "Fecha de la cita",
     "details": "Detalles de la cita",
     "selectHour": "Seleccionar horario de la cita",
-    "employeeSelected": "Empleado seleccionado",
+    "employeeSelected": "Empleado",
     "workPosition": "Puesto",
     "owner": "Dueño",
-    "petSelected": "Mascota seleccionada",
+    "petSelected": "Mascota",
+    "race": "Raza",
     "serviceSelected": "Servicio",
-    "price": "Precio"
+    "price": "Precio",
+    "title": "Agendar cita",
+    "descriptionClient": "Ingresa los datos para agendar tu cita veterinaria",
+    "availabilityHour": "Horario disponible"
   },
   "AppointmentDetail": {
     "titleCancel": "Motivo de cancelación",

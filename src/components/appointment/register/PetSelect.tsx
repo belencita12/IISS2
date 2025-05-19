@@ -11,6 +11,7 @@ import {
 import type { PetData } from "@/lib/pets/IPet";
 import { PET_API } from "@/lib/urls";
 import { useFetch } from "@/hooks/api";
+import { useTranslations } from "next-intl";
 
 type ClientPetSelectProps = {
   clientId: number;
@@ -31,6 +32,8 @@ export default function ClientPetSelect({
   const [selectedPetName, setSelectedPetName] = useState<string>("");
 
   const { data, get } = useFetch<PetResponse>("", token);
+
+  const ph = useTranslations("Placeholder");
 
   useEffect(() => {
     if (clientId) {
@@ -62,7 +65,7 @@ export default function ClientPetSelect({
                 {selectedPetName}
               </div>
             ) : (
-              <SelectValue placeholder="Selecciona una mascota" />
+              <SelectValue placeholder={ph("select")} />
             )}
           </SelectTrigger>
           <SelectContent className="border-myPurple-tertiary">

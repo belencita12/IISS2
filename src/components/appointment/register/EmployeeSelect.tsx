@@ -11,6 +11,7 @@ import {
 import type { EmployeeData } from "@/lib/employee/IEmployee";
 import { EMPLOYEE_API } from "@/lib/urls";
 import { useFetch } from "@/hooks/api";
+import { useTranslations } from "next-intl";
 
 type EmployeeSelectProps = {
   token: string;
@@ -29,6 +30,8 @@ export default function EmployeeSelect({
   const [selectedEmployeeName, setSelectedEmployeeName] = useState<string>("");
 
   const { data, get } = useFetch<EmployeeResponse>("", token);
+
+  const ph = useTranslations("Placeholder");
 
   useEffect(() => {
     get(undefined, `${EMPLOYEE_API}?page=1&size=100`);
@@ -62,7 +65,7 @@ export default function EmployeeSelect({
               {selectedEmployeeName}
             </div>
           ) : (
-            <SelectValue placeholder="Selecciona a un empleado" />
+            <SelectValue placeholder={ph("select")} />
           )}
         </SelectTrigger>
         <SelectContent className="border-myPurple-tertiary">

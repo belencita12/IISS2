@@ -13,6 +13,7 @@ import {
 import type { ServiceType } from "@/lib/appointment/IAppointment";
 import { SERVICE_TYPE } from "@/lib/urls";
 import { useFetch } from "@/hooks/api";
+import { useTranslations } from "next-intl";
 
 type ServiceSelectProps = {
   onSelectService: (service: ServiceType) => void;
@@ -33,6 +34,8 @@ export default function ServiceSelect({
   const [selectedServiceName, setSelectedServiceName] = useState<string>("");
 
   const { data, get } = useFetch<ServiceResponse>("", token);
+
+  const ph = useTranslations("Placeholder");
 
   useEffect(() => {
     get(undefined, `${SERVICE_TYPE}?page=1&size=100`);
@@ -62,7 +65,7 @@ export default function ServiceSelect({
                 {selectedServiceName}
               </div>
             ) : (
-              <SelectValue placeholder="Selecciona un servicio" />
+              <SelectValue placeholder={ph("select")} />
             )}
           </SelectTrigger>
           <SelectContent className="border-myPurple-tertiary">
