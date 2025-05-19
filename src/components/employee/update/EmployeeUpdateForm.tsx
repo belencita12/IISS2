@@ -88,7 +88,7 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
     getEmployeeByID(token, employeeId)
       .then((data) => {
         setEmployee(data);
-        setValue("name", data?.fullName || "");
+         setValue("name", data?.fullName || "");
         setValue("email", data?.email || "");
         setValue("address", data?.adress || "");
         setValue("ruc", data?.ruc || "");

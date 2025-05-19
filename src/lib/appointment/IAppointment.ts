@@ -1,4 +1,3 @@
-import App from "next/app";
 import { BaseQueryParams } from "../types";
 
 export interface AppointmentEmployee {
@@ -70,13 +69,13 @@ export interface AppointmentRegister {
     designatedDate: string;
     designatedTime: string;
     details?: string;
-    serviceId: number; 
+    serviceIds: number[];
     petId: number;
-    employeesId: number[];
+    employeeId: number;
   }
 
   export interface ServiceType{
-    id?: number,
+    id: number,
     slug: string,
     name: string,
     description: string,
