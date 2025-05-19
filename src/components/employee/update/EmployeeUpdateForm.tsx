@@ -94,13 +94,13 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
     getEmployeeByID(token, employeeId)
       .then((data) => {
         setEmployee(data);
-        setValue("name", data.fullName || "");
-        setValue("email", data.email || "");
-        setValue("address", data.adress || "");
-        setValue("ruc", data.ruc || "");
-        setValue("positionId", data.position?.id?.toString() || "");
-        setValue("phoneNumber", data.phoneNumber || "");
-        if (data.image?.previewUrl) setPreviewImage(data.image?.originalUrl || null);
+         setValue("name", data?.fullName || "");
+        setValue("email", data?.email || "");
+        setValue("address", data?.adress || "");
+        setValue("ruc", data?.ruc || "");
+        setValue("positionId", data?.position?.id?.toString() || "");
+        setValue("phoneNumber", data?.phoneNumber || "");
+        if (data?.image?.previewUrl) setPreviewImage(data?.image?.originalUrl || null);
       })
       .catch((error: unknown) => {
         if (error instanceof Error) {

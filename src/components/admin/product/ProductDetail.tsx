@@ -112,6 +112,16 @@ export default function ProductDetail({ token }: ProductDetailProps) {
       </div>
 
       <div className="flex gap-4 justify-end mt-6">
+        <div></div>
+        <div className="flex justify-start mx-7">
+          <Button
+            variant="outline"
+            onClick={() => router.push('/dashboard/products')}
+            className="px-6 border-gray-200 border-solid"
+          >
+            {b("toReturn")}
+          </Button>
+        </div>
         <Button
           variant="outline"
           onClick={() => setIsDeleteModalOpen(true)}

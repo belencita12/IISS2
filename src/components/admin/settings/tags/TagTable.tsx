@@ -4,7 +4,7 @@ import GenericTable, {
   TableAction,
 } from "@/components/global/GenericTable";
 import { Tag } from "@/lib/tags/types";
-import { Pencil, Trash } from "lucide-react";
+import { Pencil, Trash, Undo2 } from "lucide-react";
 import React from "react";
 import TagTableSkeleton from "./TagTableSkeleton";
 
@@ -15,21 +15,19 @@ export type TagTableProps = Omit<
   token: string;
   handleEdit: (tag: Tag) => void;
   handleDel: (tag: Tag) => void;
+  handleRestore?: (tag: Tag) => void;
+  isRestoring?: boolean;
 };
 
-const TagTable = ({ handleEdit, handleDel, ...props }: TagTableProps) => {
-  const actions: TableAction<Tag>[] = [
-    {
-      icon: <Pencil className="w-4 h-4" />,
-      onClick: handleEdit,
-      label: "Editar",
-    },
-    {
-      icon: <Trash className="w-4 h-4" />,
-      onClick: handleDel,
-      label: "Eliminar",
-    },
-  ];
+const TagTable = ({
+  handleEdit,
+  handleDel,
+  handleRestore,
+  isRestoring,
+  isLoading,
+  ...props
+}: TagTableProps) => {
+  if (isLoading) return <TagTableSkeleton />;
 
   const columns: Column<Tag>[] = [
     {
@@ -38,15 +36,39 @@ const TagTable = ({ handleEdit, handleDel, ...props }: TagTableProps) => {
     },
   ];
 
+  const actions: TableAction<Tag>[] = [
+    ...(handleRestore
+      ? [
+          {
+            icon: <Undo2 className={`w-4 h-4 ${isRestoring ? 'opacity-50' : ''}`} />,
+            label: isRestoring ? "Restaurando..." : "Restaurar",
+            onClick: (tag: Tag) => {
+              if (!isRestoring && handleRestore) {
+                handleRestore(tag);
+              }
+            },
+          },
+        ]
+      : [
+          {
+            icon: <Pencil className="w-4 h-4" />,
+            label: "Editar",
+            onClick: handleEdit,
+          },
+          {
+            icon: <Trash className="w-4 h-4" />,
+            label: "Eliminar",
+            onClick: handleDel,
+          },
+        ]),
+  ];
+
   return (
-    <>
-      <GenericTable
-        {...props}
-        skeleton={<TagTableSkeleton />}
-        columns={columns}
-        actions={actions}
-      />
-    </>
+    <GenericTable
+      {...props}
+      columns={columns}
+      actions={actions}
+    />
   );
 };
 

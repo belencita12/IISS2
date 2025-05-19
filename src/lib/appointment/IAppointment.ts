@@ -40,6 +40,7 @@ export interface AppointmentQueryParams extends BaseQueryParams {
     fromDesignatedDate?: string;
     toDesignatedDate?: string;
     status?: AppointmentStatus;
+    search?: string;
 }
 
 

@@ -20,7 +20,7 @@ export default function TermsAndConditions() {
             </h1>
             <div className="flex items-center justify-center gap-2 text-white">
               <span>Última actualización:</span>
-              <span className="bg-myPurple-disabled text-myPurple-focus px-3 py-1 rounded-full text-sm font-medium">
+              <span className="flex items-center justify-center gap-2 text-white">
                 {new Date().toLocaleDateString()}
               </span>
             </div>
@@ -99,7 +99,7 @@ const termsData = [
     content: (
       <>
         <p className="mb-4">
-          Nikopets ofrece servicios de atención veterinaria para mascotas. Nuestros servicios incluyen pero no se
+          NicoPets ofrece servicios de atención veterinaria para mascotas. Nuestros servicios incluyen pero no se
           limitan a:
         </p>
         <ul className="list-disc pl-6 space-y-2">
@@ -118,7 +118,7 @@ const termsData = [
     content: (
       <>
         <p className="mb-4">
-          Las citas deben ser programadas con anticipación, excepto en casos de emergencia. Nikopets se reserva el
+          Las citas deben ser programadas con anticipación, excepto en casos de emergencia. NicoPets se reserva el
           derecho de priorizar la atención según la gravedad de los casos.
         </p>
         <p>
@@ -166,7 +166,7 @@ const termsData = [
     title: "Consentimiento para Tratamiento",
     content: (
       <p>
-        Al solicitar nuestros servicios, el propietario de la mascota otorga consentimiento para que Nikopets realice
+        Al solicitar nuestros servicios, el propietario de la mascota otorga consentimiento para que NicoPets realice
         los procedimientos diagnósticos y terapéuticos necesarios para el cuidado de su mascota. En casos de
         procedimientos que impliquen riesgos significativos, se solicitará un consentimiento específico por escrito.
       </p>
@@ -176,7 +176,7 @@ const termsData = [
     title: "Confidencialidad y Privacidad",
     content: (
       <p>
-        Nikopets se compromete a mantener la confidencialidad de la información médica de las mascotas y la información
+        NicoPets se compromete a mantener la confidencialidad de la información médica de las mascotas y la información
         personal de sus propietarios. No compartiremos esta información con terceros sin su consentimiento, excepto
         cuando sea requerido por ley o para proteger la salud pública.
       </p>
@@ -186,7 +186,7 @@ const termsData = [
     title: "Limitación de Responsabilidad",
     content: (
       <p>
-        Aunque nos esforzamos por proporcionar el mejor cuidado posible, Nikopets no puede garantizar resultados
+        Aunque nos esforzamos por proporcionar el mejor cuidado posible, NicoPets no puede garantizar resultados
         específicos de los tratamientos. No seremos responsables por daños indirectos, incidentales o consecuentes
         relacionados con nuestros servicios. Nuestra responsabilidad se limita al costo de los servicios prestados.
       </p>
@@ -196,7 +196,7 @@ const termsData = [
     title: "Modificaciones a los Términos",
     content: (
       <p>
-        Nikopets se reserva el derecho de modificar estos términos y condiciones en cualquier momento. Las
+        NicoPets se reserva el derecho de modificar estos términos y condiciones en cualquier momento. Las
         modificaciones entrarán en vigor inmediatamente después de su publicación. El uso continuado de nuestros
         servicios después de tales modificaciones constituirá su aceptación de los nuevos términos.
       </p>
@@ -206,7 +206,7 @@ const termsData = [
     title: "Ley Aplicable",
     content: (
       <p>
-        Estos términos y condiciones se rigen por las leyes del país/estado donde Nikopets opera, sin consideración a
+        Estos términos y condiciones se rigen por las leyes del país/estado donde NicoPets opera, sin consideración a
         conflictos de principios legales.
       </p>
     ),

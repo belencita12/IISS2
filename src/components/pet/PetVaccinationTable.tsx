@@ -50,13 +50,6 @@ export default function PetVaccinationTable({
   ];
 
   const actions = [
-   /* { COMENTADO PARA IMPLEMENTAR MÁS ADELANTE
-        CAMPANA NOTIFICACION DE RECORDATORIO ACTIVA O DESACTIVADA
-
-      icon: <Bell className="w-4 h-4" />,
-      onClick: onReminder,
-      label: "Recordatorio",
-    }, */
     {
       icon: <Eye className="w-4 h-4" />,
       onClick: (vac: VaccineRecord) => {
@@ -74,7 +67,7 @@ export default function PetVaccinationTable({
     currentPage: 1,
     totalPages: 1,
     totalItems: 0,
-    pageSize: 4,
+    pageSize: 5,
   });
 
   useEffect(() => {

@@ -7,6 +7,9 @@ import AddToHistoryButton from "@/components/admin/vaccine-registry/AddToHistory
 import { PetData } from "@/lib/pets/IPet";
 import VisitList from "./VisitList";
 import { useTranslations } from "next-intl";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+//import { VisitList } from "@/components/pet/"; // si lo vas a usar
 
 interface Props {
   token: string;
@@ -17,6 +20,9 @@ interface Props {
 export default function PetDetailView({ token, pet, clientId }: Props) {
 const p = useTranslations("PetDetail");
 const e = useTranslations("Error");
+const b = useTranslations("Button");
+
+  const router = useRouter();
 
   if (!pet.id) {
     return <p className="text-center mt-10">{e("noGetData")}</p>;
@@ -64,7 +70,16 @@ const e = useTranslations("Error");
           <h2 className="text-2xl font-semibold text-gray-800">
             {p("vaccuneHistory")}
           </h2>
-          <AddToHistoryButton />
+          <div className="flex gap-3">
+            <Button 
+              variant="outline" 
+              className="border-black border-solid"
+              onClick={() => router.back()}
+            >
+              {b("toReturn")}
+            </Button>
+            <AddToHistoryButton />
+          </div>
         </div>
         <PetVaccinationTable Id={clientId} token={token} petId={pet.id} />
       </section>

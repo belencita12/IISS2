@@ -3,13 +3,15 @@ import { Phone, Building2, Loader2 } from "lucide-react";
 import { Provider } from "@/lib/provider/IProvider";
 import { PROVIDER_API } from "@/lib/urls";
 import { useFetch } from "@/hooks/api"; // Importamos nuestro nuevo hook
+import { Button } from "@/components/ui/button";
 
 interface ProviderDetailProps {
   token: string;
   providerId: number;
+  onClose: () => void;
 }
 
-export const ProviderDetail: React.FC<ProviderDetailProps> = ({ token, providerId }) => {
+export const ProviderDetail: React.FC<ProviderDetailProps> = ({ token, providerId, onClose }) => {
   // Utilizamos nuestro hook para obtener los datos del proveedor
   const { data: provider, loading: isLoading, error } = useFetch<Provider>(
     `${PROVIDER_API}/${providerId}`,
@@ -74,6 +76,15 @@ export const ProviderDetail: React.FC<ProviderDetailProps> = ({ token, providerI
           </div>
         )
       )}
+      <div className="flex justify-center mt-6">
+        <Button
+          variant="outline"
+          className="px-6 border-gray-200 border-solid"
+          onClick={onClose}
+        >
+          Volver
+        </Button>
+      </div>
     </div>
   );
 };

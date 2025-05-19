@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import PurchaseDetailCard from "@/components/admin/purchases/detailCard/PurchaseProductCard";
 import PurchaseProviderCard from "@/components/admin/purchases/detailCard/PurchaseProviderCard";
 import { PurchaseData } from "@/lib/purchases/IPurchase";
@@ -9,6 +9,7 @@ import GenericPagination from "@/components/global/GenericPagination";
 import { usePurchaseDetail } from "@/hooks/purchases/usePurchaseDetail";
 import PurchaseDetailSkeleton from "./skeleton/PurchaseDetailSkeleton";
 import { useTranslations } from "next-intl";
+import { Button } from "@/components/ui/button";
 
 interface PurchaseDetailProps {
   token: string;
@@ -18,6 +19,7 @@ interface PurchaseDetailProps {
 
 const PurchaseDetail: React.FC<PurchaseDetailProps> = ({ token, purchaseInfo, initialPage = 1 }) => {
   const { id } = useParams();
+  const router = useRouter();
   const [page, setPage] = useState<number>(initialPage);
   const [toastShown, setToastShown] = useState<boolean>(false);
   
@@ -25,6 +27,7 @@ const PurchaseDetail: React.FC<PurchaseDetailProps> = ({ token, purchaseInfo, in
 
   const p = useTranslations("PurchaseDetail");
   const e = useTranslations("Error");
+  const b = useTranslations("Button");
 
   useEffect(() => {
     if (!loading && !toastShown && (!purchaseDetails || purchaseDetails.length === 0)) {
@@ -60,12 +63,23 @@ const PurchaseDetail: React.FC<PurchaseDetailProps> = ({ token, purchaseInfo, in
         <>
           <h1 className="text-3xl font-bold text-center mt-4 mb-2">{p("titleDetail")}</h1>
           {/* Muestra los datos del proveedor que realizó la compra y datos resumidos de la compra */}
-          <PurchaseProviderCard 
-            providerName={purchaseInfo?.provider?.businessName}
-            total={purchaseInfo?.total}
-            ivaTotal={purchaseInfo?.ivaTotal}
-            date={purchaseInfo?.date}
-          />
+          <div className="relative">
+            <PurchaseProviderCard 
+              providerName={purchaseInfo?.provider?.businessName}
+              total={purchaseInfo?.total}
+              ivaTotal={purchaseInfo?.ivaTotal}
+              date={purchaseInfo?.date}
+            />
+            <div className="absolute bottom-4 right-4">
+              <Button
+                variant="outline"
+                onClick={() => router.push('/dashboard/purchases')}
+                className="px-6 border-gray-200 border-solid"
+              >
+                {b("toReturn")}
+              </Button>
+            </div>
+          </div>
         </>
       )}
       

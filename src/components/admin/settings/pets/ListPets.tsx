@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Eye, Pencil, Trash } from "lucide-react";
+import { Eye, FileText, Pencil, Trash } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePaginatedFetch } from "@/hooks/api";
 import { PET_API } from "@/lib/urls";
@@ -17,6 +17,10 @@ import { toast } from "@/lib/toast";
 import { PetFilters } from "./PetsFilters";
 import { deletePet } from "@/lib/pets/deletePet";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
+import { Button } from "@/components/ui/button";
+import { getPetReport } from "@/lib/pets/getPetReport";
+import ExportButton from "@/components/global/ExportButton";
+import { downloadFromBlob } from "@/lib/utils";
 
 interface ListPetsProps {
   token: string;
@@ -31,7 +35,10 @@ export default function ListPets({ token }: ListPetsProps) {
   );
   const [selectedRaceId, setSelectedRaceId] = useState<number | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isGettingReport, setIsGettingReport] = useState(false);
   const [petToDelete, setPetToDelete] = useState<ListPetData | null>(null);
+  const [from, setFrom] = useState<string | undefined>();
+  const [to, setTo] = useState<string | undefined>();
 
   const {
     data: pets,
@@ -52,6 +59,47 @@ export default function ListPets({ token }: ListPetsProps) {
     }
   }, [error]);
 
+  const handleSetFromDate = (from: string | undefined) => {
+    setFrom(from);
+    search({
+      name: searchQuery,
+      clientName: clientSearchQuery,
+      to: to ? new Date(to).toISOString() : undefined,
+      from: from ? new Date(from).toISOString() : undefined,
+      ...(selectedSpeciesId ? { speciesId: selectedSpeciesId } : {}),
+      ...(selectedRaceId ? { raceId: selectedRaceId } : {}),
+    });
+  };
+
+  const handleSetToDate = (to: string | undefined) => {
+    setTo(to);
+    search({
+      name: searchQuery,
+      clientName: clientSearchQuery,
+      from: from ? new Date(from).toISOString() : undefined,
+      to: to ? new Date(to).toISOString() : undefined,
+      ...(selectedSpeciesId ? { speciesId: selectedSpeciesId } : {}),
+      ...(selectedRaceId ? { raceId: selectedRaceId } : {}),
+    });
+  };
+
+  const handleGetPetReport = async () => {
+    if (!from || !to) {
+      toast("error", "Se necesitan fechas limites para generar el reporte");
+    } else {
+      setIsGettingReport(true);
+      const result = await getPetReport({
+        speciesId: selectedSpeciesId ?? undefined,
+        token,
+        from,
+        to,
+      });
+      if (!(result instanceof Blob)) toast("error", result.message);
+      else downloadFromBlob(result);
+      setIsGettingReport(false);
+    }
+  };
+
   const handleConfirmDelete = async () => {
     if (!petToDelete) return;
     try {
@@ -62,6 +110,8 @@ export default function ListPets({ token }: ListPetsProps) {
       search({
         name: searchQuery,
         clientName: clientSearchQuery,
+        to: to ? new Date(to).toISOString() : undefined,
+        from: from ? new Date(from).toISOString() : undefined,
         ...(selectedSpeciesId ? { speciesId: selectedSpeciesId } : {}),
         ...(selectedRaceId ? { raceId: selectedRaceId } : {}),
       });
@@ -77,6 +127,8 @@ export default function ListPets({ token }: ListPetsProps) {
     search({
       name: query,
       clientName: clientSearchQuery,
+      to: to ? new Date(to).toISOString() : undefined,
+      from: from ? new Date(from).toISOString() : undefined,
       ...(selectedSpeciesId ? { speciesId: selectedSpeciesId } : {}),
       ...(selectedRaceId ? { raceId: selectedRaceId } : {}),
     });
@@ -88,6 +140,8 @@ export default function ListPets({ token }: ListPetsProps) {
     search({
       name: searchQuery,
       clientName: query,
+      to: to ? new Date(to).toISOString() : undefined,
+      from: from ? new Date(from).toISOString() : undefined,
       ...(selectedSpeciesId ? { speciesId: selectedSpeciesId } : {}),
       ...(selectedRaceId ? { raceId: selectedRaceId } : {}),
     });
@@ -100,6 +154,8 @@ export default function ListPets({ token }: ListPetsProps) {
     setSelectedRaceId(null);
     search({
       name: searchQuery,
+      to: to ? new Date(to).toISOString() : undefined,
+      from: from ? new Date(from).toISOString() : undefined,
       clientName: clientSearchQuery,
       ...(speciesId ? { speciesId } : {}),
     });
@@ -110,6 +166,8 @@ export default function ListPets({ token }: ListPetsProps) {
     setSelectedRaceId(raceId);
     search({
       name: searchQuery,
+      to: to ? new Date(to).toISOString() : undefined,
+      from: from ? new Date(from).toISOString() : undefined,
       clientName: clientSearchQuery,
       ...(selectedSpeciesId ? { speciesId: selectedSpeciesId } : {}),
       ...(raceId ? { raceId } : {}),
@@ -187,8 +245,28 @@ export default function ListPets({ token }: ListPetsProps) {
         clientSearchQuery={clientSearchQuery}
         selectedSpeciesId={selectedSpeciesId}
         selectedRaceId={selectedRaceId}
+        to={to}
+        from={from}
+        setDateTo={handleSetToDate}
+        setDateFrom={handleSetFromDate}
       />
-      <h1 className="text-2xl font-bold">Lista de Mascotas</h1>
+      <div className="flex justify-between mr-5">
+        <h1 className="text-2xl font-bold">Lista de Mascotas</h1>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            disabled={isGettingReport}
+            className="disabled:opacity-75"
+            onClick={() => router.push("/dashboard/settings/pets/register")}
+          >
+            Registrar Mascota
+          </Button>
+          <ExportButton
+            handleGetReport={handleGetPetReport}
+            isLoading={isGettingReport}
+          />
+        </div>
+      </div>
       <GenericTable<ListPetData>
         data={pets || []}
         columns={columns}

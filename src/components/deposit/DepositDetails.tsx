@@ -142,13 +142,22 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
       />
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">{st("productStock")}</h1>
-        <Button
-          variant="default"
-          onClick={() => router.push(`/dashboard/products/register`)}
-          className="bg-black text-white hover:bg-gray-800"
-        >
-          {b("add")}
-        </Button>
+        <div className="flex gap-4">
+          <Button
+            variant="outline"
+            onClick={() => router.push('/dashboard/stock')}
+            className="px-6 border-gray-200 border-solid"
+          >
+            {b("toReturn")}
+          </Button>
+          <Button
+            variant="default"
+            onClick={() => router.push(`/dashboard/products/register`)}
+            className="bg-black text-white hover:bg-gray-800"
+          >
+            {b("add")}
+          </Button>
+        </div>
       </div>
 
       {isLoading ? (
