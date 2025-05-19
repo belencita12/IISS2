@@ -48,7 +48,11 @@ export interface AppointmentData {
     designatedDate: string;
     completedDate: string;
     details: string;
-    service: string; 
+    service?: string;
+    services?: {
+      id: number;
+      name: string;
+    }[]; 
     pet: {
       id: number;
       name: string;
@@ -59,10 +63,14 @@ export interface AppointmentData {
       };
     };
     status: AppointmentStatus;
-    employees: {
+    employees?: {
       id: number;
       name: string;
     }[];
+    employee?: {
+      id: number;
+      name: string;
+    };
   }
 
 export interface AppointmentRegister {
