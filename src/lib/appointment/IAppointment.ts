@@ -44,29 +44,35 @@ export interface AppointmentQueryParams extends BaseQueryParams {
 
 
 export interface AppointmentData {
-  id: number;
-  designatedDate: string;
-  completedDate?: string; 
-  details: string;
-  services: {
     id: number;
-    name: string;
-  }[];
-  pet: {
-    id: number;
-    name: string;
-    race: string;
-    owner: {
+    designatedDate: string;
+    completedDate: string;
+    details: string;
+    service?: string;
+    services?: {
+      id: number;
+      name: string;
+    }[]; 
+    pet: {
+      id: number;
+      name: string;
+      race: string;
+      owner: {
+        id: number;
+        name: string;
+      };
+    };
+    status: AppointmentStatus;
+    employees?: {
+      id: number;
+      name: string;
+    }[];
+    employee?: {
       id: number;
       name: string;
     };
-  };
-  status: AppointmentStatus;
-  employee: {
-    id: number;
-    name: string;
-  };
-}
+  }
+
 
 export interface AppointmentRegister {
     designatedDate: string;
