@@ -1,8 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
-
+import { useEffect, useState } from "react";
 import { toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,7 +27,6 @@ export default function VaccineRegistryForm({
   token,
   petId,
   selectedPetLabel,
-  selectedClientId,
 }: Props) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,14 +37,11 @@ export default function VaccineRegistryForm({
 
   const {
     form,
-    clientSearch,
-    clients,
-    isLoadingClients,
-    onClientSelect,
     petLabels,
     isLoadingPets,
-    selectedPetId,
-    setSelectedPetId,
+    pets,
+    selectedPet,
+    setSelectedPet,
     vaccineSearch,
     setVaccineSearch,
     vaccineOptions,
@@ -54,29 +49,18 @@ export default function VaccineRegistryForm({
     setHasSelectedVaccine,
     petSearch,
     setPetSearch,
-    handleClientInputChange,
     handlePetInputChange,
     handleVaccineInputChange,
     setHasSelectedPet,
-  } = useVaccineRegistryCreateForm(token, selectedClientId);
+  } = useVaccineRegistryCreateForm(token);
 
   const {
     register,
     handleSubmit,
     setValue,
-    getValues,
+    watch,
     formState: { errors },
   } = form;
-
-  useEffect(() => {
-    if (selectedClientId) {
-      setValue("clientId", selectedClientId);
-    }
-    if (petId) {
-      setValue("petId", petId);
-      setSelectedPetId(petId);
-    }
-  }, [selectedClientId, petId, setValue, setSelectedPetId]);
 
   const isNightHour = (dateStr?: string): boolean => {
     if (!dateStr) return false;
@@ -112,7 +96,7 @@ export default function VaccineRegistryForm({
 
       await createVaccineRegistry(payload, token);
       toast("success", "Registro creado con éxito");
-      router.back();
+      router.push(`/dashboard/clients/${data.clientId}/pet/${data.petId}`);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Ocurrió un error";
@@ -121,6 +105,11 @@ export default function VaccineRegistryForm({
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    if (selectedPet) setValue("clientId", selectedPet.owner.id);
+    else setValue("clientId", undefined as unknown as number);
+  }, [selectedPet, setValue]);
 
   const onSubmit = async (data: VaccineRegistryFormValues) => {
     if (isNightHour(data.expectedDate) || isNightHour(data.applicationDate)) {
@@ -131,66 +120,42 @@ export default function VaccineRegistryForm({
     }
   };
 
-  const clientSelected = !!(selectedClientId || getValues("clientId"));
+  console.log(errors);
+  const isPetSelected = !!watch("petId");
 
   return (
     <div className="p-4 max-w-3xl mx-auto">
       <h2 className="text-2xl font-bold mb-6">Nuevo Registro de Vacunación</h2>
-
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div>
           <SearchableSelect
-            label="Cliente"
-            placeholder="Buscar por nombre o cédula..."
-            value={clientSearch}
-            options={clients.map((c) => ({
-              id: c.id,
-              label: `${c.fullName} - ${c.ruc}`,
-            }))}
-            isLoading={isLoadingClients}
-            onChangeSearch={handleClientInputChange}
-            onSelect={(option) => {
-              const fullClient = clients.find((c) => c.id === option.id);
-              if (fullClient) onClientSelect(fullClient);
+            label="Mascota"
+            placeholder="Buscar mascota..."
+            value={
+              petId
+                ? selectedPetLabel ??
+                  petLabels.find((p) => p.id === petId)?.label ??
+                  ""
+                : petSearch
+            }
+            options={petLabels}
+            isLoading={isLoadingPets}
+            disabled={!!petId}
+            onChangeSearch={handlePetInputChange}
+            onSelect={(pet) => {
+              setSelectedPet(pets.find((p) => p.id === pet.id) || null);
+              setValue("petId", pet.id);
+              setPetSearch(pet.label);
+              setHasSelectedPet(true);
             }}
-            disabled={!!selectedClientId}
-            noOptionsMessage="No se encontraron clientes que coincidan con la búsqueda. Pruebe de otra forma..."
+            noOptionsMessage="No se encontraron mascotas que coincidan con la búsqueda. Pruebe de otra forma..."
           />
-          {errors.clientId && (
-            <p className="text-red-500 text-sm">{errors.clientId.message}</p>
+          {errors.petId && (
+            <p className="text-red-500 text-sm">{errors.petId.message}</p>
           )}
         </div>
-
-        {clientSelected && (
+        {isPetSelected && (
           <>
-            <div>
-              <SearchableSelect
-                label="Mascota"
-                placeholder="Buscar mascota..."
-                value={
-                  petId
-                    ? selectedPetLabel ??
-                      petLabels.find((p) => p.id === petId)?.label ??
-                      ""
-                    : petSearch
-                }
-                options={petLabels}
-                isLoading={isLoadingPets}
-                disabled={!!petId}
-                onChangeSearch={handlePetInputChange}
-                onSelect={(pet) => {
-                  setValue("petId", pet.id);
-                  setSelectedPetId(pet.id);
-                  setPetSearch(pet.label);
-                  setHasSelectedPet(true);
-                }}
-                noOptionsMessage="No se encontraron mascotas que coincidan con la búsqueda. Pruebe de otra forma..."
-              />
-              {errors.petId && (
-                <p className="text-red-500 text-sm">{errors.petId.message}</p>
-              )}
-            </div>
-
             <div>
               <SearchableSelect
                 label="Vacuna"
@@ -207,7 +172,7 @@ export default function VaccineRegistryForm({
                   setVaccineSearch(vaccine.label);
                   setHasSelectedVaccine(true);
                 }}
-                disabled={!selectedPetId}
+                disabled={!selectedPet}
                 noOptionsMessage="No se encontraron vacunas que coincidan con la búsqueda. Pruebe de otra forma..."
               />
               {errors.vaccineId && (
