@@ -6,13 +6,13 @@ import { Button } from "@/components/ui/button"
 import { AppointmentDetailSkeleton } from "@/components/admin/appointment/skeleton/AppointmentDetailSkeleton"
 import { useAppointmentDetail } from "@/hooks/appointment/useAppointmentDetail"
 import { AppointmentInfoCard } from "@/components/admin/appointment/details/AppointmentInfoCard"
-import { PetDetailsCard } from "@/components/admin/appointment/details/PetInfoCard"
-import { OwnerDetailsCard } from "@/components/admin/appointment/details/OwnerInfoCard"
-import { EmployeeCard } from "@/components/admin/appointment/details/EmployeeInfoCard"
-import { Appointment } from "@/lib/appointment/IAppointment"
-import { EmployeeData } from "@/lib/employee/IEmployee"
-import { PetData } from "@/lib/pets/IPet"
-import { IUserProfile } from "@/lib/client/IUserProfile"
+import { PetInfoCard } from "@/components/admin/appointment/details/PetInfoCard"
+import { OwnerInfoCard } from "@/components/admin/appointment/details/OwnerInfoCard"
+import { EmployeeInfoCard } from "@/components/admin/appointment/details/EmployeeInfoCard"
+import type { Appointment } from "@/lib/appointment/IAppointment"
+import type { EmployeeData } from "@/lib/employee/IEmployee"
+import type { PetData } from "@/lib/pets/IPet"
+import type { IUserProfile } from "@/lib/client/IUserProfile"
 import { toast } from "@/lib/toast"
 
 interface AppointmentDetailProps {
@@ -65,28 +65,31 @@ export const AppointmentDetail = ({ token, appointmentId }: AppointmentDetailPro
         <div className="hidden sm:block order-3 w-[72px]"></div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          <AppointmentInfoCard appointment={appointment} />
-          <PetDetailsCard 
-            appointment={appointment} 
-            petDetails={petDetails} 
-            petLoading={petLoading} 
-          />
-          <OwnerDetailsCard 
-            appointment={appointment} 
-            ownerDetails={ownerDetails} 
-            ownerLoading={ownerLoading} 
+      <div className="grid grid-cols-1 gap-6">
+        <AppointmentInfoCard appointment={appointment} />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Intercambiamos posiciones: propietario donde estaba mascota */}
+          <OwnerInfoCard
+            appointment={appointment}
+            ownerDetails={ownerDetails}
+            ownerLoading={ownerLoading}
             petDetails={petDetails}
           />
-        </div>
-
-        <div className="space-y-6">
-          <EmployeeCard 
-            appointment={appointment} 
-            employeeDetails={employeeDetails} 
-            employeeLoading={employeeLoading} 
-          />
+          
+          <div className="grid grid-cols-1 gap-6">
+            {/* Mascota y empleado en la columna derecha */}
+            <PetInfoCard 
+              appointment={appointment} 
+              petDetails={petDetails} 
+              petLoading={petLoading} 
+            />
+            <EmployeeInfoCard
+              appointment={appointment}
+              employeeDetails={employeeDetails}
+              employeeLoading={employeeLoading}
+            />
+          </div>
         </div>
       </div>
     </div>

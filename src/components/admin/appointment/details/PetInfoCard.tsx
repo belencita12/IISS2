@@ -1,38 +1,31 @@
-"use client";
+"use client"
 
-import { PawPrint, Calendar, Weight, CircleDot, Info } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { calcularEdad } from "@/lib/utils";
-import Image from "next/image";
-import { Appointment } from "@/lib/appointment/IAppointment";
-import { PetData } from "@/lib/pets/IPet";
+import { PawPrint, Calendar, Weight, CircleDot, Info } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { calcularEdad } from "@/lib/utils"
+import Image from "next/image"
+import type { Appointment } from "@/lib/appointment/IAppointment"
+import type { PetData } from "@/lib/pets/IPet"
+import { PetInfoCardSkeleton } from "../skeleton/PetInfoCardSkeleton"
 
 interface PetDetailsCardProps {
-  appointment: Appointment | null;
-  petDetails: PetData | null;
-  petLoading: boolean;
+  appointment: Appointment | null
+  petDetails: PetData | null
+  petLoading: boolean
 }
 
-export const PetDetailsCard = ({
-  appointment,
-  petDetails,
-  petLoading,
-}: PetDetailsCardProps) => {
+export const PetInfoCard = ({ appointment, petDetails, petLoading }: PetDetailsCardProps) => {
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
           <PawPrint className="h-5 w-5 text-primary" />
-          <CardTitle>Datos de la Mascota</CardTitle>
+          <CardTitle className="text-base">Datos de la Mascota</CardTitle>
         </div>
       </CardHeader>
       <CardContent>
         {petLoading ? (
-          <div className="flex items-center justify-center py-6">
-            <div className="text-sm text-muted-foreground">
-              Cargando datos de la mascota...
-            </div>
-          </div>
+          <PetInfoCardSkeleton />
         ) : (
           <div className="flex flex-col md:flex-row gap-6">
             {/* Sección de la imagen */}
@@ -40,10 +33,7 @@ export const PetDetailsCard = ({
               <div className="w-32 h-32 rounded-full bg-gray-100 overflow-hidden flex items-center justify-center relative">
                 {petDetails?.profileImg?.originalUrl ? (
                   <Image
-                    src={
-                      petDetails.profileImg.originalUrl ||
-                      "/NotImageNicoPets.png"
-                    }
+                    src={petDetails.profileImg.originalUrl || "/NotImageNicoPets.png" || "/placeholder.svg"}
                     alt={`Foto de ${appointment?.pet.name}`}
                     fill
                     className="object-cover"
@@ -70,34 +60,22 @@ export const PetDetailsCard = ({
                 {
                   icon: PawPrint,
                   label: "Raza",
-                  value:
-                    petDetails?.race?.name ||
-                    appointment?.pet.race ||
-                    "Sin raza",
+                  value: petDetails?.race?.name || appointment?.pet.race || "Sin raza",
                 },
                 {
                   icon: Calendar,
                   label: "Edad",
-                  value: petDetails?.dateOfBirth
-                    ? calcularEdad(petDetails.dateOfBirth)
-                    : "Sin datos",
+                  value: petDetails?.dateOfBirth ? calcularEdad(petDetails.dateOfBirth) : "Sin datos",
                 },
                 {
                   icon: Weight,
                   label: "Peso",
-                  value: petDetails?.weight
-                    ? `${petDetails.weight} kg`
-                    : "Sin registro",
+                  value: petDetails?.weight ? `${petDetails.weight} kg` : "Sin registro",
                 },
                 {
                   icon: CircleDot,
                   label: "Género",
-                  value:
-                    petDetails?.sex === "M"
-                      ? "Macho"
-                      : petDetails?.sex === "F"
-                      ? "Hembra"
-                      : "Sin registro",
+                  value: petDetails?.sex === "M" ? "Macho" : petDetails?.sex === "F" ? "Hembra" : "Sin registro",
                 },
               ].map(({ icon: Icon, label, value }) => (
                 <div key={label} className="flex items-center gap-3 min-w-0">
@@ -106,7 +84,7 @@ export const PetDetailsCard = ({
                   </div>
                   <div className="break-words">
                     <p className="text-sm text-muted-foreground mb-1">{label}</p>
-                    <p className="font-medium">{value}</p>
+                    <p className="font-medium text-sm break-words">{value}</p>
                   </div>
                 </div>
               ))}
@@ -115,5 +93,6 @@ export const PetDetailsCard = ({
         )}
       </CardContent>
     </Card>
-  );
-};
+  )
+}
+

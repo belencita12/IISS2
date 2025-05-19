@@ -2,73 +2,66 @@
 
 import { User } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import Image from "next/image";
-import { EmployeeData } from "@/lib/employee/IEmployee";
-import { Appointment } from "@/lib/appointment/IAppointment";
+import Image from "next/image"
+import type { EmployeeData } from "@/lib/employee/IEmployee"
+import type { Appointment } from "@/lib/appointment/IAppointment"
+import { EmployeeInfoCardSkeleton } from "../skeleton/EmployeeInfoCardSkeleton"
 
 interface EmployeeCardProps {
-  appointment: Appointment | null;
-  employeeDetails: EmployeeData | null;
-  employeeLoading: boolean;
+  appointment: Appointment | null
+  employeeDetails: EmployeeData | null
+  employeeLoading: boolean
 }
 
-export const EmployeeCard = ({
-  appointment,
-  employeeDetails,
-  employeeLoading,
-}: EmployeeCardProps) => {
+export const EmployeeInfoCard = ({ appointment, employeeDetails, employeeLoading }: EmployeeCardProps) => {
   return (
     <Card>
-      <CardHeader>
-        <div className="flex items-center gap-2">
+      <CardHeader className="pb-0">
+        <div className="flex items-center gap-2 mb-2">
           <User className="h-5 w-5 text-primary" />
-          <CardTitle>Empleado Asignado</CardTitle>
+          <CardTitle className="text-base">Empleado Asignado</CardTitle>
         </div>
-      </CardHeader>
-      <CardContent>
+
         {employeeLoading ? (
-          <div className="flex items-center justify-center py-6">
-            <div className="text-sm text-muted-foreground">
-              Cargando datos del empleado...
-            </div>
-          </div>
+          <EmployeeInfoCardSkeleton />
         ) : appointment?.employee ? (
-          <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-4 p-4 bg-muted/30 rounded-lg">
-            <div className="relative w-10 h-10 rounded-full bg-gray-100 overflow-hidden mx-auto sm:mx-0">
+          <div className="flex items-center gap-4 p-4 rounded-lg hover:bg-muted/50 transition-colors mt-2">
+            <div className="relative w-16 h-16 rounded-full bg-muted overflow-hidden flex-shrink-0 border border-muted shadow-sm">
               {employeeDetails?.image?.originalUrl ? (
                 <Image
                   src={employeeDetails.image.originalUrl || "/NotImageNicoPets.png"}
-                  alt={`Foto de ${employeeDetails.fullName}`}
+                  alt={`Foto de ${employeeDetails?.fullName || "empleado"}`}
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                  <User className="h-8 w-8 text-gray-500" />
+                <div className="w-full h-full flex items-center justify-center bg-muted">
+                  <User className="h-8 w-8 text-muted-foreground" />
                 </div>
               )}
             </div>
             <div>
-              <p className="font-medium">
-                {employeeDetails?.fullName || appointment.employee.name}
+              <p className="text-base font-medium break-words">
+                {employeeDetails?.fullName || appointment?.employee?.name || ""}
               </p>
               <p className="text-sm text-muted-foreground">
-                {employeeDetails?.position?.name || "Sin puesto"}
+                {employeeDetails?.position?.name || "Sin puesto asignado"}
               </p>
             </div>
           </div>
         ) : (
-          <div className="text-center py-6 px-4 bg-muted/30 rounded-lg">
-            <div className="flex justify-center mb-2">
-              <User className="h-8 w-8 text-muted-foreground opacity-50" />
+          <div className="text-center py-6 px-4 rounded-lg mt-2">
+            <div className="flex justify-center mb-3">
+              <div className="bg-muted/60 p-4 rounded-full">
+                <User className="h-10 w-10 text-muted-foreground opacity-70" />
+              </div>
             </div>
-            <p className="text-sm text-muted-foreground">
-              No hay empleado asignado a esta cita
-            </p>
+            <p className="text-sm text-muted-foreground">No hay empleado asignado a esta cita</p>
           </div>
         )}
-      </CardContent>
+      </CardHeader>
+      <CardContent>{/* Espacio para información adicional si es necesario */}</CardContent>
     </Card>
-  );
-};
+  )
+}
