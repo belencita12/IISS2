@@ -128,7 +128,12 @@ export default function PetDetails({ token }: Props) {
         },
         {
           label: "Género",
-          value: pet.sex || "No especificado",
+          value:
+            pet.sex === "F"
+              ? "Hembra"
+              : pet.sex === "M"
+              ? "Macho"
+              : "No especificado",
           icon: <CircleDot className="h-4 w-4" />,
         },
       ]

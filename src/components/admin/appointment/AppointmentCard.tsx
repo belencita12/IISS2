@@ -11,7 +11,10 @@ interface AppointmentCardProps {
   onChange?: () => void;
   isProcessing?: boolean;
   setIsProcessing?: (value: boolean) => void;
-  onOpenModal?: (appointment: AppointmentData, action: "complete" | "cancel") => void;
+  onOpenModal?: (
+    appointment: AppointmentData,
+    action: "complete" | "cancel"
+  ) => void;
 }
 
 const statusTranslations: Record<string, string> = {
@@ -43,11 +46,11 @@ const AppointmentCard = ({
     >
       <div className="flex flex-col gap-2">
         <h3 className="font-bold text-lg">
-          Servicio de{" "}
-          {appointment.services?.length
-            ? appointment.services.map((s) => s.name).join(", ")
-            : "Servicio no especificado"}
+          Servicio{appointment.services?.length !== 1 ? "s" : ""}:{" "}
+          {appointment.services?.map((s) => s.name).join(", ") ||
+            "No especificado"}
         </h3>
+
         <p>Dueño: {appointment.pet?.owner?.name ?? "Dueño desconocido"}</p>
         <p>Animal: {appointment.pet?.race ?? "Especie no especificada"}</p>
         <p>Detalles: {appointment.details ?? "Detalles no especificados"}</p>
@@ -58,7 +61,9 @@ const AppointmentCard = ({
 
       <div className="flex flex-col items-end justify-between h-full gap-2">
         <p className="text-black text-lg font-bold text-right">
-          {appointment.designatedDate ? formatDate(appointment.designatedDate) : ""}
+          {appointment.designatedDate
+            ? formatDate(appointment.designatedDate)
+            : ""}
         </p>
 
         {appointment.status === "PENDING" && (
@@ -71,7 +76,7 @@ const AppointmentCard = ({
               }}
               className="px-3 py-1 bg-white text-black rounded border border-gray-300 hover:bg-gray-100"
             >
-              { "Finalizar"}
+              {"Finalizar"}
             </Button>
             <Button
               disabled={isProcessing}
@@ -81,7 +86,7 @@ const AppointmentCard = ({
               }}
               className="px-3 py-1 bg-black text-white rounded border border-gray-300 hover:bg-gray-800"
             >
-              { "Cancelar"}
+              {"Cancelar"}
             </Button>
           </div>
         )}

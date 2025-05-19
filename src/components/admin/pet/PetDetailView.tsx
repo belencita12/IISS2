@@ -25,6 +25,16 @@ export default function PetDetailView({ token, pet, clientId }: Props) {
 
   return (
     <div className="py-4 space-y-10">
+      <div className="mx-auto px-1 md:px-24 mb-6 mt-6">
+        <Button 
+          variant="outline" 
+          className="border-black border-solid"
+          onClick={() => router.back()}
+        >
+          Volver
+        </Button>
+      </div>
+
       {/* Datos generales de la mascota */}
       <section className="flex flex-col md:flex-row items-center gap-6 bg-white p-6 rounded-lg shadow-md max-w-5xl mx-auto">
         <Image
@@ -66,13 +76,6 @@ export default function PetDetailView({ token, pet, clientId }: Props) {
             Historial de vacunación
           </h2>
           <div className="flex gap-3">
-            <Button 
-              variant="outline" 
-              className="border-black border-solid"
-              onClick={() => router.back()}
-            >
-              Volver
-            </Button>
             <AddToHistoryButton />
           </div>
         </div>

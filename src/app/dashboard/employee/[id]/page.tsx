@@ -38,7 +38,18 @@ export default async function Page({
 
     return (
         <div className="container py-8 h-full">
-            <Card className="mb-8 shadow-md  w-full relative">
+            <div className="mb-6 mt-4 px-6">
+                <Link href="/dashboard/employee">
+                    <Button
+                        variant="outline"
+                        className="border-black border-solid"
+                    >
+                        Volver
+                    </Button>
+                </Link>
+            </div>
+
+            <Card className="mb-8 shadow-md w-full relative">
                 <CardHeader className="pb-0">
                     <h1 className="text-3xl font-bold tracking-tight">
                         Perfil de Empleado
@@ -150,14 +161,6 @@ export default async function Page({
                         </div>
                     </div>
                     <div className="absolute bottom-4 right-12">
-                        <Link href="/dashboard/employee">
-                            <Button
-                                variant="outline"
-                                className="px-6 border-gray-200 border-solid"
-                            >
-                                Volver
-                            </Button>
-                        </Link>
                     </div>
                 </CardContent>
             </Card>

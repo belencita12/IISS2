@@ -49,9 +49,12 @@ export interface AppointmentQueryParams extends BaseQueryParams {
 export interface AppointmentData {
   id: number;
   designatedDate: string;
-  completedDate?: string | null;
-  details?: string;
-  services: AppointmentService[];
+  completedDate?: string; 
+  details: string;
+  services: {
+    id: number;
+    name: string;
+  }[];
   pet: {
     id: number;
     name: string;
@@ -69,32 +72,32 @@ export interface AppointmentData {
 }
 
 export interface AppointmentRegister {
-  designatedDate: string;
-  designatedTime: string;
-  details?: string;
-  serviceIds: number[];
-  petId: number;
-  employeeId: number;
-}
-
-export interface ServiceType {
-  id: number,
-  slug: string,
-  name: string,
-  description: string,
-  durationMin: number,
-  maxColabs?: number,
-  isPublic?: boolean,
-  iva: number,
-  price: number,
-  cost: number,
-  tags?: string[],
-  img?: {
-    id: number,
-    previewUrl: string,
-    originalUrl: string
+    designatedDate: string;
+    designatedTime: string;
+    details?: string;
+    serviceIds: number[];
+    petId: number;
+    employeeId: number;
   }
-}
+
+  export interface ServiceType{
+    id: number,
+    slug: string,
+    name: string,
+    description: string,
+    durationMin: number,
+    maxColabs?: number,
+    isPublic?: boolean,
+    iva: number,
+    price: number,
+    cost: number,
+    tags?: string[],
+    img?: {
+      id: number,
+      previewUrl: string,
+      originalUrl: string
+    }
+  }
 
 export interface AvailabilitySlot {
   time: string;
