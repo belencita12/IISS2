@@ -7,7 +7,7 @@ import { toast } from "@/lib/toast";
 import { formatDate } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import React from "react";
-
+import { useTranslations } from "next-intl";
 
  export type InvoiceTableProps = Omit<
    GenericTableProps<Invoice>,
@@ -21,30 +21,34 @@ import React from "react";
   
  const router = useRouter();
 
+ const i = useTranslations("InvoiceTable");
+ const e = useTranslations("Error");
+ const b = useTranslations("Button");
+
   const actions: TableAction<Invoice>[] = [
     {
       icon: <Eye className="w-4 h-4" />,
       onClick: (invoice) => {
         if (!invoice.id || isNaN(Number(invoice.id))) {
-          toast("error", "No se pueden obtener los detalles de la factura");
+          toast("error", e("notGetData"));
           return;
         }
         router.push(`/dashboard/invoices/${invoice.id}`);
       },
-      label: "Ver detalle",
+      label: b("seeDetails"),
     },
     
 
   ];
 
   const columns: Column<Invoice>[] = [
-    { header: "Nro Factura", accessor: "invoiceNumber" },
-    { header: "Cliente", accessor: "clientName" },
-    { header: "RUC", accessor: "ruc" },
-    { header: "Fecha", accessor: (i) => formatDate(i.issueDate) },
-    { header: "Tipo", accessor: (i) => (i.type === "CASH" ? "Contado" : "Crédito") },
-    { header: "Total", accessor: (i) => `${i.total.toLocaleString()} Gs.` },
-    { header: "Pagado", accessor: (i) => `${i.totalPayed.toLocaleString()} Gs.` },
+    { header: i("invoiceNumber"), accessor: "invoiceNumber" },
+    { header: i("client"), accessor: "clientName" },
+    { header: i("ruc"), accessor: "ruc" },
+    { header: i("date"), accessor: (i) => formatDate(i.issueDate) },
+    { header: i("type"), accessor: (i) => (i.type === "CASH" ? "Contado" : "Crédito") },
+    { header: i("total"), accessor: (i) => `${i.total.toLocaleString()} Gs.` },
+    { header: i("totalPayed"), accessor: (i) => `${i.totalPayed.toLocaleString()} Gs.` },
   ];
 
  

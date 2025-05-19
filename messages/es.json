@@ -108,7 +108,9 @@
     "provider": "Proveedor",
     "stock": "Depósito",
     "minTotal": "Total mínimo",
-    "maxTotal": "Total máximo"
+    "maxTotal": "Total máximo",
+    "startDateError": "La fecha no puede ser posterior a la actual.",
+    "isMaxLessThanMin": "El total máximo no puede ser menor al mínimo."
 
   },
   "Placeholder": {
@@ -476,5 +478,32 @@
     "confirmRevert": "¿Estás seguro de que deseas revertir {field}?",
     "motivo": "Motivo de cancelación",
     "reason": "Ingrese el motivo"
+  },
+  "InvoiceTable":{
+    "title": "Facturas",
+    "emptyMessage": "No se encontraron facturas",
+    "invoiceNumber": "Factura N°",
+    "client": "Cliente",
+    "date": "Fecha",
+    "ruc": "RUC",
+    "type": "Tipo",
+    "typeCash": "Contado",
+    "typeCredit": "Crédito",
+    "total": "Total",
+    "totalPayed": "Total pagado",
+    "invoiceDetail": "Detalle de factura",
+    "clientInformation": "Información del Cliente",
+    "payInformation": "Información de Pago",
+    "salesCondition": "Condición de venta",
+    "gs": "Gs.",
+    "stamped": "Timbrado"
+  },
+  "InvoiceDetail": {
+    "name": "Nombre",
+    "quantity": "Cantidad",
+    "unitCost": "Costo unitario",
+    "iva": "IVA",
+    "subTotal": "Sub. Total"
   }
+
 }

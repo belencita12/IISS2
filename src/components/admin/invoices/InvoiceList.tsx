@@ -9,6 +9,7 @@ import { INVOICE_API } from "@/lib/urls";
 import { Invoice } from "@/lib/invoices/IInvoice";
 import { toast } from "@/lib/toast";
 import { GetInvoiceQueryParams } from "@/lib/invoices/IInvoice";
+import { useTranslations } from "next-intl";
 
 interface InvoiceListProps {
   token: string;
@@ -42,6 +43,9 @@ const InvoiceList = ({ token }: InvoiceListProps) => {
     },
   });
 
+  const i = useTranslations("InvoiceTable");
+  const ph = useTranslations("Placeholder");
+
   const handleFilterChange = (updatedFilters: GetInvoiceQueryParams) => {
     const { page, size, ...safeFilters } = updatedFilters; 
     setFilters((prev) => ({
@@ -52,13 +56,13 @@ const InvoiceList = ({ token }: InvoiceListProps) => {
     search(safeFilters as Record<string, unknown>);
   };
 
-  if (error) toast("error", error.message || "Error al cargar las facturas");
+  if (error instanceof Error) toast("error", error.message);
 
   return (
     <div className="p-4 mx-auto">
        <div className="max-w-6xl mx-auto p-4 space-y-6">
           <SearchBar
-            placeholder="Buscar por RUC"
+            placeholder={ph("getBy", {field: "RUC"})}
             onSearch={(value) => {
               setFilters((prev) => ({ ...prev, search: value }));
               search({ search: value });
@@ -71,11 +75,11 @@ const InvoiceList = ({ token }: InvoiceListProps) => {
           </div>
         </div>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-3xl font-bold">Facturas</h2>
+          <h2 className="text-3xl font-bold">{i("title")}</h2>
         </div>
 
       <InvoiceTable
-        emptyMessage="No se encontraron facturas"
+        emptyMessage={i("emptyMessage")}
         onPageChange={setPage}
         token={token}
         isLoading={isLoading}
