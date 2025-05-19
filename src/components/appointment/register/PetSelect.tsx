@@ -20,6 +20,7 @@ import type { PetData, PetDataResponse } from "@/lib/pets/IPet";
 import { useFetch } from "@/hooks/api/useFetch"; 
 import { PET_API } from "@/lib/urls";
 import { toast } from "@/lib/toast";
+import useDebounce from "@/hooks/useDebounce";
 
 type PetSelectProps = {
   clientId: number;
@@ -36,6 +37,7 @@ export default function PetSelect({
   const [pets, setPets] = useState<PetData[]>([]);
   const [selectedPet, setSelectedPet] = useState<PetData | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 2000);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
   const { loading: isLoading, get } = useFetch<PetDataResponse>(PET_API, token);
@@ -43,7 +45,7 @@ export default function PetSelect({
   const fetchPets = async (search?: string) => {
     try {
       const baseUrl = `${PET_API}?page=1&clientId=${clientId}`;
-      const url = search ? `${baseUrl}&name=${search}` : baseUrl;
+      const url = search ? `${baseUrl}&name=${encodeURIComponent(search)}` : baseUrl;
 
       const response = await get(undefined, url);
 
@@ -55,15 +57,22 @@ export default function PetSelect({
     }
   };
 
+  // Cargar mascotas al montar
   useEffect(() => {
     if (clientId && token) {
       fetchPets();
     }
   }, [clientId, token]);
 
+  // Búsqueda con debounce
+  useEffect(() => {
+    if (clientId && token) {
+      fetchPets(debouncedSearchQuery);
+    }
+  }, [debouncedSearchQuery]);
+
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
-    fetchPets(query);
   };
 
   const handleSelectPet = (pet: PetData) => {
@@ -106,7 +115,6 @@ export default function PetSelect({
                 <SearchBar
                   onSearch={handleSearchChange}
                   placeholder="Buscar por nombre..."
-                  debounceDelay={500}
                   defaultQuery={searchQuery}
                 />
               </div>
@@ -128,17 +136,10 @@ export default function PetSelect({
                         onSelect={() => handleSelectPet(pet)}
                         className="px-4 py-2 cursor-pointer hover:bg-myPurple-disabled/50"
                       >
-                        <div className="flex flex-col w-full">
-                          <div className="flex items-center w-full">
-                            <span className="font-medium truncate">{pet.name}</span>
-                            {selectedPet?.id === pet.id && (
-                              <Check className="ml-auto h-4 w-4 text-myPurple-primary" />
-                            )}
-                          </div>
-                          {pet.race?.name && (
-                            <span className="text-sm text-muted-foreground truncate">
-                              {pet.race.name}
-                            </span>
+                        <div className="flex justify-between w-full">
+                          <span className="truncate">{pet.name}</span>
+                          {selectedPet?.id === pet.id && (
+                            <Check className="h-4 w-4 text-myPurple-primary" />
                           )}
                         </div>
                       </CommandItem>

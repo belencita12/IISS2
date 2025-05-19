@@ -20,7 +20,7 @@ import {
 } from "@/lib/appointment/service";
 import { Modal } from "@/components/global/Modal";
 import { Button } from "@/components/ui/button";
-import AppointmentListSkeleton from "./Skeleton/AppointmentListSkeleton";
+import AppointmentListSkeleton from "./skeleton/AppointmentListSkeleton";
 
 interface AppointmentListProps {
     token: string;
