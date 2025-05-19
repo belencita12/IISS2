@@ -326,7 +326,10 @@
     "totalCost": "Costo total",
     "totalCostIva": "Costo total IVA",
     "stock": "Depósito",
-    "title": "Compras"
+    "title": "Compras",
+    "titleDetail": "Detalles de compra",
+    "provider": "Proveedor",
+    "gs": "Gs."
   },
 
   "Header": {
@@ -368,6 +371,13 @@
     "quantityDeposit": "Cantidad por depósitos",
     "name": "Nombre"
     
+  },
+  "PurchaseForm": {
+    "title": "Registrar compra",
+    "provider": "Proveedor",
+    "date": "Fecha",
+    "stock": "Depósito",
+    "productSelected": "Productos seleccionados"
   },
   "ProductStockCard": {
     "code": "Código",

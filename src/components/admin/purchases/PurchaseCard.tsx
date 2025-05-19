@@ -29,7 +29,7 @@ const PurchaseCard = ({ purchase }: PurchaseCardProps) => {
         <h3 className="font-bold text-lg">{purchase.provider?.businessName}</h3>
         <p>{p("totalCost")}: {purchase.total.toLocaleString()} Gs.</p>
         <p>{p("totalCostIva")}: {purchase.ivaTotal.toLocaleString()} Gs.</p>
-        <p>{p("stock")} {purchase.stock?.name}</p>
+        <p>{p("stock")}: {purchase.stock?.name}</p>
       </div>
 
       <div className="flex flex-col justify-between items-end h-full">

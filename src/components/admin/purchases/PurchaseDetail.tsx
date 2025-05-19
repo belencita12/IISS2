@@ -23,9 +23,12 @@ const PurchaseDetail: React.FC<PurchaseDetailProps> = ({ token, purchaseInfo, in
   
   const { data: purchaseDetails, totalPages, loading, error } = usePurchaseDetail(id as string, token, page);
 
+  const p = useTranslations("PurchaseDetail");
+  const e = useTranslations("Error");
+
   useEffect(() => {
     if (!loading && !toastShown && (!purchaseDetails || purchaseDetails.length === 0)) {
-      toast("warning", "No existen detalles para esta compra.");
+      toast("warning", e("notFound"));
       setToastShown(true);
     }
   }, [purchaseDetails, toastShown, loading]);
@@ -55,7 +58,7 @@ const PurchaseDetail: React.FC<PurchaseDetailProps> = ({ token, purchaseInfo, in
     <div>
       {purchaseDetails && purchaseDetails.length > 0 && (
         <>
-          <h1 className="text-3xl font-bold text-center mt-4 mb-2">Compra Detalles</h1>
+          <h1 className="text-3xl font-bold text-center mt-4 mb-2">{p("titleDetail")}</h1>
           {/* Muestra los datos del proveedor que realizó la compra y datos resumidos de la compra */}
           <PurchaseProviderCard 
             providerName={purchaseInfo?.provider?.businessName}
