@@ -17,7 +17,7 @@ import {
   VaccineRegistryFormValues,
 } from "@/hooks/vaccine-registry/useVaccineRegistryEditForm";
 import { VaccineRecord } from "@/lib/vaccine-registry/IVaccineRegistry";
-import { IUserProfile } from "@/lib/client/IUserProfile";
+import { Loader2 } from "lucide-react";
 
 interface Props {
   token: string;
@@ -36,22 +36,19 @@ export default function VaccineRegistryEditForm({
 
   const {
     form,
-    clients,
     pets,
-    vaccines,
     loading,
-    clientSearch,
+    vaccines,
     petSearch,
     setPetSearch,
     vaccineSearch,
     setVaccineSearch,
-    isLoadingClients,
-    onClientSelect,
     isLoadingPets,
     setSelectedPetId,
     isLoadingVaccines,
+    selectedPetId,
+    hasSelectedPet,
     setHasSelectedVaccine,
-    handleClientInputChange,
     handlePetInputChange,
     handleVaccineInputChange,
     setHasSelectedPet,
@@ -89,10 +86,9 @@ export default function VaccineRegistryEditForm({
         applicationDate: new Date(data.applicationDate).toISOString(),
         expectedDate: new Date(data.expectedDate).toISOString(),
       };
-
       await updateVaccineRegistry(token, initialData.id, payload);
       toast("success", "Registro actualizado correctamente");
-      router.back();
+      router.push(`/dashboard/clients/${data.clientId}/pet/${data.petId}`);
     } catch {
       toast("error", "Error al actualizar el registro");
     }
@@ -118,31 +114,15 @@ export default function VaccineRegistryEditForm({
 
   if (loading) {
     return (
-      <p className="text-center text-gray-500">
-        Cargando datos del registro...
-      </p>
+      <div className="text-center my-16 w-full h-full flex justify-center items-center text-gray-700 ">
+        <Loader2 className="w-16 h-16 animate-spin" />
+      </div>
     );
   }
 
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <SearchableSelect
-          label="Cliente"
-          value={clientSearch}
-          options={clients}
-          isLoading={isLoadingClients}
-          onChangeSearch={handleClientInputChange}
-          onSelect={(v) =>
-            onClientSelect({ id: v.id, fullName: v.label } as IUserProfile)
-          }
-          noOptionsMessage="No se encontraron clientes que coincidan con la búsqueda. Pruebe con otro campo..."
-        />
-
-        {errors.clientId && (
-          <p className="text-red-500 text-sm">{errors.clientId.message}</p>
-        )}
-
         <SearchableSelect
           label="Mascota"
           value={petSearch}
@@ -162,73 +142,77 @@ export default function VaccineRegistryEditForm({
           <p className="text-red-500 text-sm">{errors.petId.message}</p>
         )}
 
-        <SearchableSelect
-          label="Vacuna"
-          value={vaccineSearch}
-          options={vaccines}
-          isLoading={isLoadingVaccines}
-          onChangeSearch={handleVaccineInputChange}
-          onSelect={(v) => {
-            setValue("vaccineId", v.id);
-            setVaccineSearch(v.label);
-            setHasSelectedVaccine(true);
-          }}
-          noOptionsMessage="No se encontraron vacunas que coincidan con la búsqueda.  Pruebe con otro campo..."
-        />
+        {hasSelectedPet && selectedPetId && (
+          <>
+            <SearchableSelect
+              label="Vacuna"
+              value={vaccineSearch}
+              options={vaccines}
+              isLoading={isLoadingVaccines}
+              onChangeSearch={handleVaccineInputChange}
+              onSelect={(v) => {
+                setValue("vaccineId", v.id);
+                setVaccineSearch(v.label);
+                setHasSelectedVaccine(true);
+              }}
+              noOptionsMessage="No se encontraron vacunas que coincidan con la búsqueda.  Pruebe con otro campo..."
+            />
 
-        {errors.vaccineId && (
-          <p className="text-red-500 text-sm">{errors.vaccineId.message}</p>
+            {errors.vaccineId && (
+              <p className="text-red-500 text-sm">{errors.vaccineId.message}</p>
+            )}
+
+            <FormInput
+              id="dose"
+              label="Dosis (ml)"
+              type="number"
+              step="any"
+              min="0"
+              register={register("dose")}
+              error={errors.dose?.message}
+              onKeyDown={blockExtraKeysNumber}
+              name="dose"
+            />
+
+            <div>
+              <label className="block text-sm font-medium">
+                Fecha de aplicación
+              </label>
+              <Input type="datetime-local" {...register("applicationDate")} />
+              {errors.applicationDate && (
+                <p className="text-red-500 text-sm">
+                  {errors.applicationDate.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium">
+                Próxima aplicación
+              </label>
+              <Input type="datetime-local" {...register("expectedDate")} />
+              {errors.expectedDate && (
+                <p className="text-red-500 text-sm">
+                  {errors.expectedDate.message}
+                </p>
+              )}
+            </div>
+
+            <div className="flex justify-end gap-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.back()}
+                disabled={isSubmitting}
+              >
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Guardando..." : "Guardar cambios"}
+              </Button>
+            </div>
+          </>
         )}
-
-        <FormInput
-          id="dose"
-          label="Dosis (ml)"
-          type="number"
-          step="any"
-          min="0"
-          register={register("dose")}
-          error={errors.dose?.message}
-          onKeyDown={blockExtraKeysNumber}
-          name="dose"
-        />
-
-        <div>
-          <label className="block text-sm font-medium">
-            Fecha de aplicación
-          </label>
-          <Input type="datetime-local" {...register("applicationDate")} />
-          {errors.applicationDate && (
-            <p className="text-red-500 text-sm">
-              {errors.applicationDate.message}
-            </p>
-          )}
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium">
-            Próxima aplicación
-          </label>
-          <Input type="datetime-local" {...register("expectedDate")} />
-          {errors.expectedDate && (
-            <p className="text-red-500 text-sm">
-              {errors.expectedDate.message}
-            </p>
-          )}
-        </div>
-
-        <div className="flex justify-end gap-4">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => router.back()}
-            disabled={isSubmitting}
-          >
-            Cancelar
-          </Button>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Guardando..." : "Guardar cambios"}
-          </Button>
-        </div>
       </form>
 
       {showNightWarning && (
