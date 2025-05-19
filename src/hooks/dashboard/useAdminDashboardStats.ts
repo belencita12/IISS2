@@ -126,7 +126,8 @@ export const useAdminDashboardStats = (token: string) => {
 
   // Contar cuántas veces aparece cada servicio en las citas
   const serviceCountMap = appointments.reduce<Record<string, number>>((acc, appt) => {
-    const serviceName = appt.service;
+    const serviceName = appt.services?.[0]?.name ?? "Desconocido";
+    console.log(serviceName)
     acc[serviceName] = (acc[serviceName] || 0) + 1;
     return acc;
   }, {});

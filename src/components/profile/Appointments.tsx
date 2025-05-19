@@ -28,7 +28,11 @@ interface AppointmentsProps {
   onFetchError?: (error: string) => void;
 }
 
-export const Appointments = ({ token, ruc, onFetchError }: AppointmentsProps) => {
+export const Appointments = ({
+  token,
+  ruc,
+  onFetchError,
+}: AppointmentsProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [executed, setExecuted] = useState(false);
@@ -60,7 +64,7 @@ export const Appointments = ({ token, ruc, onFetchError }: AppointmentsProps) =>
       onFetchError?.("No se pudo obtener el RUC del cliente");
       return;
     }
-    
+
     const url = new URL(APPOINTMENT_API);
     url.searchParams.append("clientRuc", ruc);
     url.searchParams.append("page", page.toString());
@@ -106,7 +110,11 @@ export const Appointments = ({ token, ruc, onFetchError }: AppointmentsProps) =>
       accessor: (app) => (
         <div className="flex items-center gap-3">
           <div>
-            <p className="font-medium">{app.service}</p>
+            <p className="font-medium">
+              {app.services?.length
+                ? app.services.map((s) => s.name).join(", ")
+                : "Sin servicios"}
+            </p>
           </div>
         </div>
       ),
@@ -114,21 +122,8 @@ export const Appointments = ({ token, ruc, onFetchError }: AppointmentsProps) =>
     {
       header: "Encargado",
       accessor: (app) => (
-        <div className="flex items-center gap-2">
-          <div>
-            {app.employees && app.employees.length > 0 ? (
-              app.employees.map((emp, i) => (
-                <p
-                  key={emp.id}
-                  className={i > 0 ? "font-medium" : "font-medium"}
-                >
-                  {emp.name}
-                </p>
-              ))
-            ) : (
-              <p className="text-sm text-gray-500">No asignado</p>
-            )}
-          </div>
+        <div className="text-sm font-medium text-myPurple-primary">
+          {app.employee?.name || "No asignado"}
         </div>
       ),
     },
@@ -169,7 +164,7 @@ export const Appointments = ({ token, ruc, onFetchError }: AppointmentsProps) =>
       ),
     },
   ];
-  
+
   const actions: TableAction<AppointmentData>[] = [
     {
       icon: <Eye size={16} />,
@@ -213,7 +208,7 @@ export const Appointments = ({ token, ruc, onFetchError }: AppointmentsProps) =>
               currentPage,
               totalPages,
               totalItems,
-              pageSize
+              pageSize,
             }}
             onPageChange={handlePageChange}
           />
