@@ -11,7 +11,6 @@ import GenericTable, {
 import { useVaccineRegistryList } from "@/hooks/vaccine-registry/useVaccineRegistryList";
 import { VaccineRecord } from "@/lib/vaccine-registry/IVaccineRegistry";
 import VaccineRegistryDateFilter from "./filters/VaccineRegistryDateFilter";
-import GenericPagination from "@/components/global/GenericPagination";
 import { getPetById } from "@/lib/pets/getPetById";
 import { formatDate } from "@/lib/utils";
 import VaccineRegistryListSkeleton from "./skeleton/VaccineRegistryListSkeleton";
@@ -131,22 +130,6 @@ export default function VaccineRegistryList({ token }: Props) {
           onPageChange={handlePageChange}
           isLoading={loading}
           emptyMessage="No se encontraron registros"
-        />
-      )}
-
-      {!loading && initialized && (
-        <GenericPagination
-          currentPage={pagination.currentPage}
-          totalPages={pagination.totalPages}
-          handlePreviousPage={() =>
-            pagination.currentPage > 1 &&
-            handlePageChange(pagination.currentPage - 1)
-          }
-          handleNextPage={() =>
-            pagination.currentPage < pagination.totalPages &&
-            handlePageChange(pagination.currentPage + 1)
-          }
-          handlePageChange={handlePageChange}
         />
       )}
     </div>

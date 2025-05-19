@@ -9,20 +9,21 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import ClientAppointmentList from "@/components/admin/appointment/AppointmentListByClient"; // ✅ asegúrate de que el path sea correcto
 
+export default async function ClientDetails({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const session = await getServerSession(authOptions);
+  const token = session?.user?.token || "";
+  const clientId = Number(id);
+  if (isNaN(clientId)) return notFound();
 
-export default async function ClientDetails(
-    { params }: { params: Promise<{ id: string }> }
-) {
-    const { id } = await params;
-    const session = await getServerSession(authOptions);
-    const token = session?.user?.token || "";
-    const clientId = Number(id);
-    if (isNaN(clientId)) return notFound();
-    
-    const client = await getClientById(clientId, token) as IUserProfile;
-    if (!client) {
-        return notFound();
-    }
+  const client = (await getClientById(clientId, token)) as IUserProfile;
+  if (!client) {
+    return notFound();
+  }
 
     return (
         <>
