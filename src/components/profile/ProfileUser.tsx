@@ -16,7 +16,6 @@ interface ProfileUserProps {
 }
 
 export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProps) {
-  const t = useTranslations("ProfileUser");
   const b= useTranslations("Button");
   const e= useTranslations("Error");
   const c = useTranslations("ClientForm");

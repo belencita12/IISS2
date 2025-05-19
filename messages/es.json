@@ -259,7 +259,7 @@
   },
 
   "Appointments": {
-    "appointmentTitle": "Citas agendadas",
+    "appointmentTitle": "Mis citas",
     "appointmentsDescription": "Consulta y agenda nuevas citas médicas para tus mascotas",
     "addAppointmentBtn": "Agendar cita"
   },
@@ -313,7 +313,8 @@
     "completed": "Completada",
     "canceled": "Cancelada",
     "inProgress": "En progreso",
-    "noVisits": "No hay visitas registradas"
+    "noVisits": "No hay visitas registradas",
+    "emptyMessage": "No hay citas agendadas"
   },
   
   "ProfileUser": {

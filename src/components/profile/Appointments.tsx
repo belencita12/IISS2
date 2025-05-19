@@ -58,13 +58,13 @@ export const Appointments = ({ token, ruc, onFetchError }: AppointmentsProps) =>
     : fetchError?.message || null;
   useEffect(() => {
     if (fetchError) {
-      onFetchError?.("Error al obtener citas");
+      onFetchError?.(e("errorLoad", {field : "citas"}));
     }
   }, [fetchError, onFetchError]);
 
   const fetchAppointments = (page: number) => {
     if (!ruc) {
-      onFetchError?.("No se pudo obtener el RUC del cliente");
+      onFetchError?.(e("notGetRuc"));
       return;
     }
     
@@ -143,7 +143,7 @@ export const Appointments = ({ token, ruc, onFetchError }: AppointmentsProps) =>
       header: a("details"),
       accessor: (app) => (
         <div className="flex items-start gap-2">
-          <p className="font-medium">{app.details || "Sin detalles"}</p>
+          <p className="font-medium">{app.details || e("noDetails")}</p>
         </div>
       ),
     },
@@ -214,7 +214,7 @@ export const Appointments = ({ token, ruc, onFetchError }: AppointmentsProps) =>
           actions={actions}
           actionsTitle={a("actions")}
           isLoading={loading}
-          emptyMessage="No tienes citas agendadas"
+          emptyMessage={a("emptyMessage")}
           className="w-full"
              pagination={{
               currentPage,
