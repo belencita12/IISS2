@@ -82,6 +82,16 @@ export default function ProductDetail({ token }: ProductDetailProps) {
 
   return (
     <div className="max-w-5xl mx-auto p-6">
+      <div className="mb-6 mt-6">
+        <Button
+          variant="outline"
+          onClick={() => router.push('/dashboard/products')}
+          className="border-black border-solid"
+        >
+          Volver
+        </Button>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
         <div className="md:col-span-4 flex justify-start">
           <div className="relative w-[300px] h-[300px]">
@@ -107,13 +117,6 @@ export default function ProductDetail({ token }: ProductDetailProps) {
       <div className="grid grid-cols-3 mt-6">
         <div></div>
         <div className="flex justify-start mx-7">
-          <Button
-            variant="outline"
-            onClick={() => router.push('/dashboard/products')}
-            className="px-6 border-gray-200 border-solid"
-          >
-            Volver
-          </Button>
         </div>
         <div className="flex justify-end gap-4">
           <Button

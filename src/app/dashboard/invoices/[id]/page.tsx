@@ -4,6 +4,8 @@ import { getServerSession } from "next-auth";
 import { notFound, redirect } from "next/navigation";
 import { getInvoiceById } from "@/lib/invoices/getInvoiceById";
 import { getInvoiceDetail } from "@/lib/invoices/getInvoiceDetail";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default async function InvoiceDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
@@ -27,5 +29,21 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
   if (!detailResp || !detailResp.data || detailResp.data.length === 0) return notFound();
   
   // Si pasó todas las validaciones, renderizar el componente
-  return <InvoiceDetail token={token} />;
+  return (
+    <div className="relative">
+      <div className="absolute my-2 -top-14 left-4 z-50">
+        <Link href="/dashboard/invoices">
+          <Button
+            variant="outline"
+            className="px-6 border-gray-200 border-solid"
+          >
+            Volver
+          </Button>
+        </Link>
+      </div>
+      <div className="mt-28">
+        <InvoiceDetail token={token} />
+      </div>
+    </div>
+  );
 }

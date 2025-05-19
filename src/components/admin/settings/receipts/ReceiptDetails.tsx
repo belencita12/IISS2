@@ -44,97 +44,101 @@ export default function ReceiptDetail({ id, token }: ReceiptDetailProps) {
   if (!receipt || !invoice) return <div>No se encontraron datos</div>;
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Detalle del Recibo</h1>
-      
-      <div className="bg-white shadow rounded-lg p-6 space-y-6">
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">Información del Recibo</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-gray-600">Número de recibo</p>
-              <p className="font-medium">{receipt.receiptNumber}</p>
+    <div className="relative">
+      <div className="absolute left-4 top-6 mx-4">
+        <Button 
+          variant="outline"
+          onClick={() => window.location.href = "/dashboard/settings/receipts"}
+        >
+          Volver
+        </Button>
+      </div>
+      <div className="p-6 max-w-4xl mx-auto">
+        <h1 className="text-2xl font-bold mb-6 mt-12">Detalle del Recibo</h1>
+        
+        <div className="bg-white shadow rounded-lg p-6 space-y-6">
+          <section className="space-y-4">
+            <h2 className="text-xl font-semibold">Información del Recibo</h2>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-gray-600">Número de recibo</p>
+                <p className="font-medium">{receipt.receiptNumber}</p>
+              </div>
+              <div>
+                <p className="text-gray-600">Fecha de emisión</p>
+                <p className="font-medium">
+                  {(() => {
+                      const [year, month, day] = receipt.issueDate.split("-");
+                      return `${day.padStart(2, '0')} - ${month.padStart(2, '0')} - ${year}`;
+                  })()}
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-gray-600">Fecha de emisión</p>
-              <p className="font-medium">
-                {(() => {
-                    const [year, month, day] = receipt.issueDate.split("-");
-                    return `${day.padStart(2, '0')} - ${month.padStart(2, '0')} - ${year}`;
-                })()}
-              </p>
-            </div>
-          </div>
-        </section>
+          </section>
 
-        {/* Métodos de Pago */}
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">Métodos de Pago</h2>
-          <div className="space-y-2">
-            {receipt.paymentMethods.map((pm, index) => (
-              <div key={index} className="grid grid-cols-2 gap-4 border-b pb-2">
-                <span>{pm.method}</span>
-                <span className="font-medium">
-                  {pm.amount.toLocaleString("es-PY", {
+          {/* Métodos de Pago */}
+          <section className="space-y-4">
+            <h2 className="text-xl font-semibold">Métodos de Pago</h2>
+            <div className="space-y-2">
+              {receipt.paymentMethods.map((pm, index) => (
+                <div key={index} className="grid grid-cols-2 gap-4 border-b pb-2">
+                  <span>{pm.method}</span>
+                  <span className="font-medium">
+                    {pm.amount.toLocaleString("es-PY", {
+                      style: "currency",
+                      currency: "PYG",
+                    })}
+                  </span>
+                </div>
+              ))}            
+            </div>
+          </section>
+
+          {/* Datos de la Factura */}
+          <section className="space-y-4">
+            <h2 className="text-xl font-semibold">Datos de la Factura</h2>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-gray-600">Número de factura</p>
+                <p className="font-medium">{invoice.invoiceNumber}</p>
+              </div>
+              <div>
+                <p className="text-gray-600">RUC</p>
+                <p className="font-medium">{invoice.ruc}</p>
+              </div>
+              <div>
+                <p className="text-gray-600">Cliente</p>
+                <p className="font-medium">{invoice.clientName}</p>
+              </div>
+              <div>
+                <p className="text-gray-600">Tipo</p>
+                <p className="font-medium">
+                  {invoice.type === "CASH" ? "Contado"
+                  : invoice.type === "CREDIT" ? "Crédito"
+                  : invoice.type}
+                </p>
+              </div>
+              <div>
+                <p className="text-gray-600">Total</p>
+                <p className="font-medium">
+                  {invoice.total.toLocaleString("es-PY", {
                     style: "currency",
                     currency: "PYG",
                   })}
-                </span>
+                </p>
               </div>
-            ))}            
-          </div>
-        </section>
-
-        {/* Datos de la Factura */}
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">Datos de la Factura</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-gray-600">Número de factura</p>
-              <p className="font-medium">{invoice.invoiceNumber}</p>
+              <div>
+                <p className="text-gray-600">IVA Total</p>
+                <p className="font-medium">
+                  {invoice.totalVat.toLocaleString("es-PY", {
+                    style: "currency",
+                    currency: "PYG",
+                  })}
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-gray-600">RUC</p>
-              <p className="font-medium">{invoice.ruc}</p>
-            </div>
-            <div>
-              <p className="text-gray-600">Cliente</p>
-              <p className="font-medium">{invoice.clientName}</p>
-            </div>
-            <div>
-              <p className="text-gray-600">Tipo</p>
-              <p className="font-medium">
-                {invoice.type === "CASH" ? "Contado"
-                : invoice.type === "CREDIT" ? "Crédito"
-                : invoice.type}
-              </p>
-            </div>
-            <div>
-              <p className="text-gray-600">Total</p>
-              <p className="font-medium">
-                {invoice.total.toLocaleString("es-PY", {
-                  style: "currency",
-                  currency: "PYG",
-                })}
-              </p>
-            </div>
-            <div>
-              <p className="text-gray-600">IVA Total</p>
-              <p className="font-medium">
-                {invoice.totalVat.toLocaleString("es-PY", {
-                  style: "currency",
-                  currency: "PYG",
-                })}
-              </p>
-            </div>
-            <div className="mt-6 flex justify-end">
-                <Button variant="secondary"
-                  onClick={() => window.location.href = "/dashboard/settings/receipts"}>
-                    Volver
-                </Button>
-            </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
     </div>
   );

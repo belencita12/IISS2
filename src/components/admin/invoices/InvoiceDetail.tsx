@@ -36,16 +36,6 @@ export default function InvoiceDetail({ token }: Props) {
       <div className="w-full">
         <InvoiceDetailTable details={invoiceDetails} />
       </div>
-      <div className="flex justify-end mt-6">
-        <Link href="/dashboard/invoices">
-          <Button
-            variant="outline"
-            className="px-6 border-gray-200 border-solid"
-          >
-            Volver
-          </Button>
-        </Link>
-      </div>
     </div>
   );
 }
