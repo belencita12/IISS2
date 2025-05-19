@@ -15,6 +15,7 @@ import { toast } from "@/lib/toast";
 import { useFetch } from "@/hooks/api/useFetch";
 import { PRODUCT_API } from "@/lib/urls";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
+import ProductDetailSkeleton from "./skeleton/ProductDetailSkeleton";
 
 interface ProductDetailProps {
   token: string;
@@ -72,7 +73,7 @@ export default function ProductDetail({ token }: ProductDetailProps) {
     setIsDeleteModalOpen(false);
   };
 
-  if (isLoading) return <div className="text-center mt-8">Cargando...</div>;
+  if (isLoading) return <ProductDetailSkeleton />;
   if (!product)
     return <div className="text-center mt-8">Producto no encontrado</div>;
 
@@ -81,6 +82,16 @@ export default function ProductDetail({ token }: ProductDetailProps) {
 
   return (
     <div className="max-w-5xl mx-auto p-6">
+      <div className="mb-6 mt-6">
+        <Button
+          variant="outline"
+          onClick={() => router.push('/dashboard/products')}
+          className="border-black border-solid"
+        >
+          Volver
+        </Button>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
         <div className="md:col-span-4 flex justify-start">
           <div className="relative w-[300px] h-[300px]">
@@ -103,24 +114,29 @@ export default function ProductDetail({ token }: ProductDetailProps) {
         </div>
       </div>
 
-      <div className="flex gap-4 justify-end mt-6">
-        <Button
-          variant="outline"
-          onClick={() => setIsDeleteModalOpen(true)}
-          className="px-6"
-        >
-          Eliminar
-        </Button>
+      <div className="grid grid-cols-3 mt-6">
+        <div></div>
+        <div className="flex justify-start mx-7">
+        </div>
+        <div className="flex justify-end gap-4">
+          <Button
+            variant="outline"
+            onClick={() => setIsDeleteModalOpen(true)}
+            className="px-6"
+          >
+            Eliminar
+          </Button>
 
-        <Button
-          variant="outline"
-          onClick={() =>
-            router.push(`/dashboard/products/update/${product.id}`)
-          }
-          className="px-6"
-        >
-          Editar
-        </Button>
+          <Button
+            variant="outline"
+            onClick={() =>
+              router.push(`/dashboard/products/update/${product.id}`)
+            }
+            className="px-6"
+          >
+            Editar
+          </Button>
+        </div>
       </div>
 
       <hr className="my-8 border-t border-gray-200" />

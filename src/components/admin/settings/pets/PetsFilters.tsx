@@ -4,6 +4,7 @@ import React from "react";
 import SearchBar from "@/components/global/SearchBar";
 import { SpeciesFilter } from "./filter/SpeciesFilter";
 import { RaceFilter } from "./filter/RaceFilter";
+import PetDateFilter from "./filter/PetDateFilter";
 
 interface PetFiltersProps {
   token: string;
@@ -11,6 +12,10 @@ interface PetFiltersProps {
   onClientSearch: (query: string) => void;
   onSpeciesFilter: (speciesId: number | null) => void;
   onRaceFilter: (raceId: number | null) => void;
+  to: string | undefined;
+  from: string | undefined;
+  setDateTo: (to: string | undefined) => void;
+  setDateFrom: (from: string | undefined) => void;
   petSearchQuery?: string;
   clientSearchQuery?: string;
   selectedSpeciesId?: number | null;
@@ -23,6 +28,10 @@ export function PetFilters({
   onClientSearch,
   onSpeciesFilter,
   onRaceFilter,
+  setDateFrom,
+  setDateTo,
+  to,
+  from,
   petSearchQuery = "",
   clientSearchQuery = "",
   selectedSpeciesId = null,
@@ -66,6 +75,14 @@ export function PetFilters({
             selectedSpeciesId={selectedSpeciesId}
           />
         </div>
+      </div>
+      <div className="mt-2">
+        <PetDateFilter
+          to={to}
+          from={from}
+          setDateTo={setDateTo}
+          setDateFrom={setDateFrom}
+        />
       </div>
     </div>
   );

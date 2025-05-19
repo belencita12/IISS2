@@ -20,6 +20,7 @@ import {
 } from "@/lib/appointment/service";
 import { Modal } from "@/components/global/Modal";
 import { Button } from "@/components/ui/button";
+import AppointmentListSkeleton from "./Skeleton/AppointmentListSkeleton";
 
 interface AppointmentListProps {
     token: string;
@@ -46,6 +47,7 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
     const [cancelModalOpen, setCancelModalOpen] = useState(false);
     const [cancelDescription, setCancelDescription] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
 
     const { data, error, pagination, fetchData, refresh } =
         usePaginatedFetch<AppointmentData>(APPOINTMENT_API, token, {
@@ -63,9 +65,11 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
         );
 
         setIsLoading(true);
-        fetchData(updatedFilters.page || 1, queryParams).finally(() =>
-            setIsLoading(false)
-        );
+        setIsRefreshing(true);
+        fetchData(updatedFilters.page || 1, queryParams).finally(() => {
+            setIsLoading(false);
+            setIsRefreshing(false);
+        });
     };
 
     const handleFilterChange = (updatedFilters: AppointmentQueryParams) => {
@@ -73,7 +77,7 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
             ...filters,
             ...updatedFilters,
             employeeRuc,
-            page: 1, 
+            page: 1,
         };
         performSearchWithFilters(newFilters);
     };
@@ -104,8 +108,17 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
     const handleConfirmAction = async () => {
         if (!selectedAppointment || !modalAction) return;
 
+        if (modalAction === "cancel" && cancelDescription.length < 12) {
+            toast(
+                "error",
+                "El motivo de la cancelación debe tener al menos 12 caracteres"
+            );
+            return;
+        }
+
         try {
             setIsProcessing(true);
+            setIsRefreshing(true);
             if (modalAction === "complete") {
                 await completeAppointment(selectedAppointment.id, token);
             } else {
@@ -121,11 +134,12 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
                     modalAction === "complete" ? "finalizada" : "cancelada"
                 } con éxito`
             );
-            refresh();
+            await fetchData(filters.page || 1, { employeeRuc });
         } catch (error) {
             toast("error", "Ocurrió un error al actualizar la cita");
         } finally {
             setIsProcessing(false);
+            setIsRefreshing(false);
             setIsModalOpen(false);
             setCancelModalOpen(false);
             setSelectedAppointment(null);
@@ -165,8 +179,8 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
                 <h2 className="text-3xl font-bold">Citas</h2>
             </div>
 
-            {isLoading || isProcessing ? (
-                <p className="text-center text-black">Cargando citas...</p>
+            {isLoading ? (
+                <AppointmentListSkeleton/>
             ) : (
                 <div className="grid grid-cols-1 gap-4">
                     {data?.length ? (
@@ -176,7 +190,7 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
                                 appointment={appointment}
                                 token={token}
                                 onChange={refresh}
-                                isProcessing={isProcessing}
+                                isProcessing={isProcessing || isRefreshing}
                                 setIsProcessing={setIsProcessing}
                                 onOpenModal={openConfirmModal}
                             />
@@ -215,7 +229,13 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
             {selectedAppointment && modalAction === "complete" && (
                 <ConfirmationModal
                     isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
+                    onClose={() => {
+                        if (!isProcessing && !isRefreshing) {
+                            setIsModalOpen(false);
+                            setSelectedAppointment(null);
+                            setModalAction(null);
+                        }
+                    }}
                     onConfirm={handleConfirmAction}
                     title="Confirmar Finalización"
                     message="¿Estás seguro de que quieres finalizar esta cita?"
@@ -228,7 +248,14 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
             {selectedAppointment && modalAction === "cancel" && (
                 <Modal
                     isOpen={cancelModalOpen}
-                    onClose={() => setCancelModalOpen(false)}
+                    onClose={() => {
+                        if (!isProcessing && !isRefreshing) {
+                            setCancelModalOpen(false);
+                            setSelectedAppointment(null);
+                            setModalAction(null);
+                            setCancelDescription("");
+                        }
+                    }}
                     title="Motivo de cancelación"
                     size="md"
                 >
@@ -237,19 +264,31 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
                         placeholder="Escribe una razón para cancelar la cita"
                         value={cancelDescription}
                         onChange={(e) => setCancelDescription(e.target.value)}
+                        disabled={isProcessing}
                     />
                     <div className="flex justify-end mt-4 gap-2">
                         <Button
-                            className="bg-gray-300 px-4 py-2 rounded"
-                            onClick={() => setCancelModalOpen(false)}
-                            disabled={isProcessing}
+                            className="bg-white text-black px-4 py-2 rounded border hover:bg-gray-100"
+                            onClick={() => {
+                                if (!isProcessing && !isRefreshing) {
+                                    setCancelModalOpen(false);
+                                    setSelectedAppointment(null);
+                                    setModalAction(null);
+                                    setCancelDescription("");
+                                }
+                            }}
+                            disabled={isProcessing || isRefreshing}
                         >
                             Cancelar
                         </Button>
                         <Button
-                            className="bg-red-600 text-white px-4 py-2 rounded"
+                            className="bg-red-600 text-white px-4 py-2 rounded border hover:bg-red-700"
                             onClick={handleConfirmAction}
-                            disabled={isProcessing || !cancelDescription.trim()}
+                            disabled={
+                                isProcessing ||
+                                !cancelDescription.trim() ||
+                                isRefreshing
+                            }
                         >
                             {isProcessing ? "Cancelando..." : "Confirmar"}
                         </Button>

@@ -8,6 +8,8 @@ interface UpdateVaccineData {
   cost?: number;
   iva?: number;
   price?: number;
+  providerId: number; 
+  description: string; 
   productImg?: File | null;
 }
 

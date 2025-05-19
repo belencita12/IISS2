@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import LogoutButton from "./LogoutButton";
 import { SessionProvider, useSession } from "next-auth/react";
 import NavbarSkeleton from "../skeleton/NavbarSkeleton";
+import { usePathname } from "next/navigation";
 
 type NavbarProps = {
   links: { label: string; href: string }[];
@@ -19,74 +20,110 @@ export function Navbar({ links }: NavbarProps) {
   const { data: session, status } = useSession();
   const isLoading = status === "loading";
   const isAuthenticated = !!session && !isLoading;
-
+  const pathname = usePathname();
+  const profileActive =
+    pathname === "/user-profile" || pathname.startsWith("/user-profile");
 
   const isAdmin = session?.user?.roles?.includes("ADMIN");
- 
+
   if (isAdmin) return null;
 
-
-  if (isLoading ) return <NavbarSkeleton />;
-  
-
+  if (isLoading) return <NavbarSkeleton />;
 
   return (
-    <header className="w-full shadow-sm px-8 py-4 bg-white">
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
-        <Link href="/" className="flex items-center gap-4">
-          <Image
-            src="/logo.png"
-            alt="NicoPets logo"
-            width={75}
-            height={103}
-            priority
-          />
-          <h1 className="text-xl font-semibold">NicoPets</h1>
-        </Link>
+    <header className="w-full shadow-sm px-4 md:px-8 bg-white border-b border-myPurple-disabled/30">
+      <div className="w-full flex flex-wrap items-center justify-between h-full">
+        {/* Logo */}
+        <div className="flex items-start gap-2 min-w-fit">
+          <Link href="/" className="flex items-start gap-2">
+            <Image
+              src="/logo.png"
+              alt="NicoPets logo"
+              width={60}
+              height={60}
+              className="-mt-2"
+              priority
+            />
+            <h1 className="hidden sm:block text-lg font-semibold text-myPurple-focus mt-6">
+              NicoPets
+            </h1>
+          </Link>
+        </div>
 
-        {/* Desktop Menu */}
-        <nav className="hidden md:flex gap-8 items-center">
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="hover:text-[#258084] transition-colors duration-200"
-            >
-              {link.label}
-            </Link>
-          ))}
-          {isAuthenticated && (
-            <>
+        {/* Links */}
+        <div
+          className={`hidden md:flex flex-1 ${
+            isAuthenticated ? "justify-center" : "justify-end"
+          }`}
+        >
+          <nav className="flex flex-wrap gap-4 lg:gap-8 items-center">
+            {links.map((link) => {
+              const isActive =
+                pathname === link.href ||
+                pathname.startsWith(link.href) ||
+                (link.href === "/user-profile" &&
+                  pathname.startsWith("/user-profile"));
+
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`transition-colors duration-200 ${
+                    isActive
+                      ? "text-myPurple-hover font-semibold"
+                      : "text-myPurple-primary hover:text-myPurple-hover"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+
+            {isAuthenticated && (
               <Link
                 key="user-profile"
                 href="/user-profile"
-                className="hover:text-[#258084] transition-colors duration-200"
+                className={`transition-colors duration-200 ${
+                  profileActive
+                    ? "text-myPurple-hover font-semibold"
+                    : "text-myPurple-primary hover:text-myPurple-hover"
+                }`}
               >
                 Mi Perfil
               </Link>
-              <LogoutButton />
-            </>
-          )}
-        </nav>
+            )}
+          </nav>
+        </div>
 
-        {/* Mobile Menu Button */}
-        <Button
-          variant="ghost"
-          className="md:hidden"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </Button>
+        {/* Logout */}
+        <div className="flex items-center gap-2 md:gap-4 ml-auto md:ml-0">
+          {isAuthenticated && (
+            <div className="hidden md:block">
+              <LogoutButton />
+            </div>
+          )}
+          <Button
+            variant="ghost"
+            className="md:hidden text-myPurple-primary hover:text-myPurple-hover hover:bg-myPurple-disabled/20 p-2"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
+          </Button>
+        </div>
       </div>
 
       {/* Mobile Dropdown Menu */}
       {isOpen && (
-        <nav className="md:hidden flex flex-col gap-4 items-center bg-white py-4">
+        <nav className="md:hidden flex flex-col gap-4 items-center bg-white py-4 border-t border-myPurple-disabled/30 w-full">
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="hover:text-[#258084] transition-colors duration-200 text-lg"
+              className={`transition-colors duration-200 text-lg ${
+                pathname === link.href || pathname.startsWith(link.href)
+                  ? "text-myPurple-hover font-semibold"
+                  : "text-myPurple-primary hover:text-myPurple-hover"
+              }`}
               onClick={() => setIsOpen(false)}
             >
               {link.label}
@@ -97,11 +134,19 @@ export function Navbar({ links }: NavbarProps) {
               <Link
                 key="user-profile"
                 href="/user-profile"
-                className="hover:text-[#258084] transition-colors duration-200"
+                className={`transition-colors duration-200 text-lg ${
+                  profileActive
+                    ? "text-myPurple-hover font-semibold"
+                    : "text-myPurple-primary hover:text-myPurple-hover"
+                }`}
+                onClick={() => setIsOpen(false)}
               >
                 Mi Perfil
               </Link>
-              <LogoutButton />
+              
+              <div className="mt-4 w-full flex justify-center">
+                <LogoutButton />
+              </div>
             </>
           )}
         </nav>

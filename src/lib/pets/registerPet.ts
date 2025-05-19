@@ -15,7 +15,6 @@ export const registerPet = async (petData: FormData, token: string) => {
 
         return await response.json();
     } catch (error) {
-        console.error("Error en registerPet:", error);
         throw error;
     }
 };

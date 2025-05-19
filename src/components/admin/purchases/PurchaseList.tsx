@@ -7,6 +7,7 @@ import PurchaseCard from "./PurchaseCard";
 import GenericPagination from "@/components/global/GenericPagination";
 import PurchaseSelectFilter from "./filters/PurchaseSelectFilter";
 import PurchaseNumericFilter from "./filters/PurchaseNumericFilter";
+import PurchaseListSkeleton from "./skeleton/PurchaseListSkeleton";
 
 interface Props {
   token: string;
@@ -46,7 +47,7 @@ export default function PurchaseList({ token }: Props) {
       {error && <p className="text-center text-red-500">{error}</p>}
 
       {isLoading ? (
-        <p className="text-center">Cargando compras...</p>
+        <PurchaseListSkeleton />
       ) : purchases.length === 0 ? (
         <p className="text-center">No hay compras registradas.</p>
       ) : (

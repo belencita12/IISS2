@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "@/lib/toast";
 import {
   AppointmentData,
   AppointmentQueryParams,
+  AppointmentStatus,
 } from "@/lib/appointment/IAppointment";
 import { APPOINTMENT_API } from "@/lib/urls";
 import { usePaginatedFetch } from "@/hooks/api/usePaginatedFetch";
@@ -18,6 +19,9 @@ import { completeAppointment, cancelAppointment } from "@/lib/appointment/servic
 import { Modal } from "@/components/global/Modal";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import AppointmentListSkeleton from "./Skeleton/AppointmentListSkeleton";
+import useDebounce from "@/hooks/useDebounce";
+import { normalizeText } from "@/lib/utils";
 
 interface AppointmentListProps {
   token: string;
@@ -27,7 +31,10 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
   const router = useRouter();
   const [filters, setFilters] = useState<AppointmentQueryParams>({
     page: 1,
-    clientRuc: undefined,
+    search: undefined,
+    fromDesignatedDate: undefined,
+    toDesignatedDate: undefined,
+    status: undefined,
   });
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentData | null>(null);
@@ -35,6 +42,8 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [cancelDescription, setCancelDescription] = useState("");
+  const [searchValue, setSearchValue] = useState("");
+  const debouncedSearchValue = useDebounce(searchValue, 500);
 
   const {
     data,
@@ -46,15 +55,26 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
     refresh,
   } = usePaginatedFetch<AppointmentData>(APPOINTMENT_API, token, {
     initialPage: 1,
-    size: 7,
     autoFetch: true,
     extraParams: {
-      clientRuc: filters.clientRuc,
+      search: filters.search,
       fromDesignatedDate: filters.fromDesignatedDate,
       toDesignatedDate: filters.toDesignatedDate,
       status: filters.status,
     },
   });
+
+  useEffect(() => {
+    if (debouncedSearchValue !== undefined) {
+      const searchParams: Record<string, unknown> = {
+        search: normalizeText(debouncedSearchValue),
+        fromDesignatedDate: filters.fromDesignatedDate,
+        toDesignatedDate: filters.toDesignatedDate,
+        status: filters.status,
+      };
+      search(searchParams);
+    }
+  }, [debouncedSearchValue, filters.fromDesignatedDate, filters.toDesignatedDate, filters.status]);
 
   const handleFilterChange = (updatedFilters: AppointmentQueryParams) => {
     const { page, size, ...safeFilters } = updatedFilters;
@@ -63,15 +83,26 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
       ...safeFilters,
       page: 1,
     }));
-    search(safeFilters as Record<string, unknown>);
   };
 
   const handleSearch = (value: string) => {
-    setFilters((prev) => ({ ...prev, clientRuc: value }));
-    search({ clientRuc: value });
+    setSearchValue(value);
   };
 
   const openConfirmModal = (appointment: AppointmentData, action: "complete" | "cancel") => {
+    if (action === "complete") {
+      const appointmentDate = new Date(appointment.designatedDate);
+      const currentDate = new Date();
+
+      // Set hours, minutes, seconds, and milliseconds to 0 for both dates to compare only the date part
+      appointmentDate.setHours(0, 0, 0, 0);
+      currentDate.setHours(0, 0, 0, 0);
+
+      if (appointmentDate > currentDate) {
+        toast("error", "No se puede finalizar una cita antes de su fecha programada.");
+        return;
+      }
+    }
     setSelectedAppointment(appointment);
     setModalAction(action);
     if (action === "cancel") {
@@ -111,7 +142,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
     <div className="p-4 mx-auto">
       <div className="max-w-8xl mx-auto p-4 space-y-6">
         <SearchBar
-          placeholder="Buscar por RUC del cliente"
+          placeholder="Buscar por nombre o RUC del cliente"
           onSearch={handleSearch}
         />
         <div className="flex flex-col md:flex-row gap-4">
@@ -119,20 +150,20 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
             <AppointmentDateFilter filters={filters} setFilters={handleFilterChange} />
           </div>
           <div className="flex-1">
-              <AppointmentStatusFilter filters={filters} setFilters={handleFilterChange} />
+            <AppointmentStatusFilter filters={filters} setFilters={handleFilterChange} />
           </div>
         </div>
       </div>
       
       <div className="flex justify-between items-center mb-4">
-            <h2 className="text-3xl font-bold">Citas</h2>
-            <Button variant="outline" className="px-6" onClick={() => router.push("/dashboard/appointment/register")}>
-                    Agendar
-            </Button>
-        </div>
+        <h2 className="text-3xl font-bold">Citas</h2>
+        <Button variant="outline" className="px-6" onClick={() => router.push("/dashboard/appointment/register")}>
+          Agendar
+        </Button>
+      </div>
 
       {isLoading ? (
-        <p className="text-center text-black">Cargando citas...</p>
+        <AppointmentListSkeleton />
       ) : (
         <div className="grid grid-cols-1 gap-4">
           {data?.length ? (

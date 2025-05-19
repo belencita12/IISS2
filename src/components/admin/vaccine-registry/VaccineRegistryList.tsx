@@ -1,13 +1,20 @@
-'use client';
+"use client";
 
 import { useRouter } from "next/navigation";
 import { Eye, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SearchBar from "@/components/global/SearchBar";
-import GenericTable, { Column, TableAction } from "@/components/global/GenericTable";
+import GenericTable, {
+  Column,
+  TableAction,
+} from "@/components/global/GenericTable";
 import { useVaccineRegistryList } from "@/hooks/vaccine-registry/useVaccineRegistryList";
 import { VaccineRecord } from "@/lib/vaccine-registry/IVaccineRegistry";
-import { PetData } from "@/lib/pets/IPet";
+import VaccineRegistryDateFilter from "./filters/VaccineRegistryDateFilter";
+import GenericPagination from "@/components/global/GenericPagination";
+import { getPetById } from "@/lib/pets/getPetById";
+import { formatDate } from "@/lib/utils";
+import VaccineRegistryListSkeleton from "./skeleton/VaccineRegistryListSkeleton";
 
 interface Props {
   token: string;
@@ -22,37 +29,53 @@ export default function VaccineRegistryList({ token }: Props) {
     loading,
     handleSearch,
     handlePageChange,
+    filters,
+    setFilters,
+    initialized,
+    pendingUpdate,
   } = useVaccineRegistryList(token);
 
-  const columns: Column<(VaccineRecord & { pet?: PetData; clientName?: string })>[] = [
+  const columns: Column<VaccineRecord>[] = [
+    {
+      header: "Cliente",
+      accessor: (item) => item.pet?.client?.user?.fullName ?? "—",
+    },
     { header: "Mascota", accessor: (item) => item.pet?.name ?? "—" },
-    { header: "Cliente", accessor: (item) => item.clientName ?? "—" },
     { header: "Vacuna", accessor: (item) => item.vaccine?.name ?? "—" },
     {
       header: "Aplicación",
       accessor: (item) =>
-        item.applicationDate ? new Date(item.applicationDate).toLocaleDateString() : "—",
+        item.applicationDate ? formatDate(item.applicationDate) : "—",
     },
     {
       header: "Próxima aplicación",
       accessor: (item) =>
-        item.expectedDate ? new Date(item.expectedDate).toLocaleDateString() : "—",
+        item.expectedDate ? formatDate(item.expectedDate) : "—",
     },
   ];
 
-  const actions: TableAction<(VaccineRecord & { pet?: PetData })>[] = [
+  const actions: TableAction<VaccineRecord>[] = [
     {
       icon: <Eye className="w-4 h-4" />,
       label: "Ver",
-      onClick: (r) => router.push(`/dashboard/settings/vaccine-registry/${r.id}`),
+      onClick: (r) =>
+        router.push(`/dashboard/settings/vaccine-registry/${r.id}`),
     },
     {
       icon: <Pencil className="w-4 h-4" />,
       label: "Editar",
-      onClick: (r) => {
-        if (r.pet?.id && r.pet.owner?.id) {
-          router.push(`/dashboard/clients/${r.pet.owner.id}/pet/${r.pet.id}/${r.id}`);
-        } else {
+      //espero no me odien por esto xd
+      onClick: async (r) => {
+        try {
+          const pet = await getPetById(Number(r.petId), token);
+          const clientId = pet?.owner?.id;
+
+          if (clientId && pet.id) {
+            router.push(`/dashboard/clients/${clientId}/pet/${pet.id}/${r.id}`);
+          } else {
+            router.push(`/dashboard/settings/vaccine-registry/${r.id}/edit`);
+          }
+        } catch {
           router.push(`/dashboard/settings/vaccine-registry/${r.id}/edit`);
         }
       },
@@ -65,22 +88,67 @@ export default function VaccineRegistryList({ token }: Props) {
         <div className="flex flex-col">
           <h2 className="text-3xl font-bold">Historial de vacunación</h2>
         </div>
-        <Button onClick={() => router.push("/dashboard/settings/vaccine-registry/new")}>
+        <Button
+          onClick={() =>
+            router.push("/dashboard/settings/vaccine-registry/new")
+          }
+        >
           Nuevo registro
         </Button>
       </div>
 
-      {/* <SearchBar onSearch={handleSearch} placeholder="Buscar por nombre de mascota o cliente" debounceDelay={400} /> */}
+      <div className="space-y-4 mb-4">
+        <SearchBar
+          onSearch={handleSearch}
+          placeholder="Buscar por nombre de cliente"
+        />
 
-      <GenericTable
-        data={registries}
-        columns={columns}
-        actions={actions}
-        pagination={pagination}
-        onPageChange={handlePageChange}
-        isLoading={loading}
-        emptyMessage="No se encontraron registros"
-      />
+        <VaccineRegistryDateFilter
+          label="Aplicada"
+          fromKey="fromApplicationDate"
+          toKey="toApplicationDate"
+          filters={filters}
+          setFilters={setFilters}
+        />
+
+        <VaccineRegistryDateFilter
+          label="Próxima aplicación"
+          fromKey="fromExpectedDate"
+          toKey="toExpectedDate"
+          filters={filters}
+          setFilters={setFilters}
+        />
+      </div>
+
+      {(loading || pendingUpdate) && !initialized ? (
+        <VaccineRegistryListSkeleton />
+      ) : (
+        <GenericTable
+          data={registries}
+          columns={columns}
+          actions={actions}
+          pagination={pagination}
+          onPageChange={handlePageChange}
+          isLoading={loading}
+          emptyMessage="No se encontraron registros"
+        />
+      )}
+
+      {!loading && initialized && (
+        <GenericPagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          handlePreviousPage={() =>
+            pagination.currentPage > 1 &&
+            handlePageChange(pagination.currentPage - 1)
+          }
+          handleNextPage={() =>
+            pagination.currentPage < pagination.totalPages &&
+            handlePageChange(pagination.currentPage + 1)
+          }
+          handlePageChange={handlePageChange}
+        />
+      )}
     </div>
   );
 }

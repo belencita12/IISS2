@@ -12,6 +12,7 @@ import { useState } from "react";
 import { revertMovement } from "@/lib/movements/revertMovement";
 import { toast } from "@/lib/toast";
 import { useRouter } from "next/navigation";
+import MovementDetailSkeleton from "../skeleton/MovementDetailSkeleton";
 
 interface Props {
   id: number;
@@ -24,7 +25,7 @@ export const MovementDetailsList = ({ id, token }: Props) => {
   const [isReverting, setIsReverting] = useState(false);
   const router = useRouter();
 
-  if (loading) return <p className="text-center mt-10">Cargando...</p>;
+  if (loading) return <MovementDetailSkeleton/>;
   if (error) return <p className="text-center text-red-500 mt-10">Error: {error}</p>;
   if (!movement) return <p className="text-center mt-10">No se encontró el movimiento.</p>;
 
@@ -57,6 +58,16 @@ export const MovementDetailsList = ({ id, token }: Props) => {
 
   return (
     <div className="container mx-auto p-4 max-w-6xl">
+      <div className="mb-6 mt-6">
+        <Button
+          variant="outline"
+          onClick={() => router.push('/dashboard/movement')}
+          className="border-black border-solid"
+        >
+          Volver
+        </Button>
+      </div>
+
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">
           Movimiento de {getMovementTypeLabel(movement.type)}
@@ -74,9 +85,9 @@ export const MovementDetailsList = ({ id, token }: Props) => {
           <div className="flex flex-col">
             <p className="text-sm text-gray-500 mb-1">Descripción</p>
             <p className="bg-gray-200 rounded-md px-3 py-2 text-sm text-gray-800 w-full break-words">
-              {movement.description}
+                {movement.description}
             </p>
-            {movement.type === "TRANSFER" && (
+            {movement.type === "TRANSFER" && movement.isReversible && (
               <div className="mt-4">
                 <Button
                   variant="default"
@@ -92,9 +103,9 @@ export const MovementDetailsList = ({ id, token }: Props) => {
         )}
       </Card>
 
-
-
-      <h2 className="text-xl font-semibold mb-2 text-gray-700">Productos</h2>
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-xl font-semibold text-gray-700">Productos</h2>
+      </div>
       <Separator className="mb-4" />
       <div className="space-y-6">
         {details.map((detail, idx) => (

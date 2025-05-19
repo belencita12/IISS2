@@ -11,6 +11,7 @@ import { toast } from "@/lib/toast";
 import { getStockById } from "@/lib/stock/getStockById";
 import GenericPagination from "../global/GenericPagination";
 import StockDetailCard from "./StockDetailCard";
+import StockDetailCardskeleton from "./skeleton/StockDetailSkeleton";
 
 interface DepositDetailsProps {
   token: string;
@@ -112,6 +113,16 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
 
   return (
     <div className="max-w-6xl mx-auto p-4">
+      <div className="mb-6 mt-6">
+        <Button
+          variant="outline"
+          onClick={() => router.push('/dashboard/stock')}
+          className="border-black border-solid"
+        >
+          Volver
+        </Button>
+      </div>
+
       <div className="mb-6">
         {depositInfo ? (
           <div>
@@ -136,17 +147,19 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
       />
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Productos del Deposito</h1>
-        <Button
-          variant="default"
-          onClick={() => router.push(`/dashboard/products/register`)}
-          className="bg-black text-white hover:bg-gray-800"
-        >
-          Crear Producto
-        </Button>
+        <div className="flex gap-4">
+          <Button
+            variant="default"
+            onClick={() => router.push(`/dashboard/products/register`)}
+            className="bg-black text-white hover:bg-gray-800"
+          >
+            Crear Producto
+          </Button>
+        </div>
       </div>
 
       {isLoading ? (
-        <p className="text-center py-4">Cargando detalles del Depósito...</p>
+        <StockDetailCardskeleton />
       ) : products.length === 0 ? (
         <p className="text-center py-4">No hay información del Depósito disponible</p>
       ) : (

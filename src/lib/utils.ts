@@ -22,6 +22,17 @@ export const mapToFormData = <T extends object>(obj: T) => {
   return formData;
 };
 
+export const mapToQueryParamsStr = <T extends object>(query: T) => {
+  const url = new URLSearchParams();
+  Object.entries(query).forEach(([key, value]) => {
+    if (value) {
+      if (value instanceof Date) url.set(key, value.toISOString());
+      else url.set(key, String(value));
+    }
+  });
+  return url.toString();
+};
+
 export function calcularEdad(fechaNacimiento: string): string {
   const nacimiento = new Date(fechaNacimiento);
   const hoy = new Date();
@@ -60,18 +71,48 @@ export function calcularEdad(fechaNacimiento: string): string {
   return `${edad} Años`;
 }
 
+export const getFileNameFromContentDisposition = (
+  res: Response,
+  fallbackName = `${Date.now()}.pdf`
+): string => {
+  const disposition = res.headers.get("Content-Disposition") || "";
+  const match = disposition.match(/filename="?([^"]+)"?/);
+  return match?.[1] || fallbackName;
+};
+
+export const downloadFromBlob = (blob: Blob) => {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${Date.now()}.pdf`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
 export function formatDate(dateString: string): string {
   const date = new Date(dateString);
 
-  const day = date.getDate().toString().padStart(2, '0');
-  const month = (date.getMonth() + 1).toString().padStart(2, '0'); 
-  const year = date.getFullYear();
+  // Obtener el día, mes y año en formato UTC para evitar el desfase horario
+  const day = date.getUTCDate().toString().padStart(2, "0");
+  const month = (date.getUTCMonth() + 1).toString().padStart(2, "0");
+  const year = date.getUTCFullYear();
 
   return `${day} - ${month} - ${year}`;
 }
 
+/**
+ * Formatea una hora en formato HH:MM (24h) a partir de una fecha ISO
+ * - Usa UTC (Hora Universal Coordinada) para evitar discrepancias por zonas horarias
+ * @param dateString - (ej: "2024-05-20T14:30:00Z") -- 14:30
+ */
+export function formatTimeUTC(dateString: string): string {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "--:--";
 
-
+  const hours = date.getUTCHours().toString().padStart(2, "0");
+  const minutes = date.getUTCMinutes().toString().padStart(2, "0");
+  return `${hours}:${minutes}`;
+}
 
 export function validatePhoneNumber(phoneNumber: string): boolean {
   const phoneRegex = /^\+\d{1,3}\d{7,}$/;
@@ -98,5 +139,5 @@ export function normalizeText(text: string): string {
     .normalize("NFD") // Descompone los caracteres acentuados
     .replace(/[\u0300-\u036f]/g, "") // Elimina los diacríticos (acentos)
     .toLowerCase() // Convierte a minúsculas
-    .trim() // Elimina espacios en blanco al inicio y final
+    .trim(); // Elimina espacios en blanco al inicio y final
 }

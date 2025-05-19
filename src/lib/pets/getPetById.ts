@@ -17,10 +17,8 @@ export async function getPetById(id: number, token: string) {
         if (!data || !data.id || !data.name) {
             return null;
         }
-        console.log(data)
         return data as PetData;
     } catch (error) {
-        console.error(error);
         return null;        
     }
 }

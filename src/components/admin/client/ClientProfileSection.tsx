@@ -1,22 +1,128 @@
-import { IUserProfile } from '@/lib/client/IUserProfile';
-import Image from 'next/image';
+"use client";
 
-export default function ClientProfileSection({ fullName,email,image}: IUserProfile) {
-  return (
-    <section className="flex flex-wrap items-center gap-4 px-16 mx-auto md:gap-16 md:px-24 py-12">
-      <Image
-        src={image?.originalUrl || "/default-avatar.png"}
-        alt={fullName}
-        width={250}
-        height={250}
-        className="w-[250px] h-[250px] rounded-full object-cover"
-      />
-      <div>
-        <h1 className="text-xl md:text-3xl font-bold text-gray-800">
-          {fullName}
-        </h1>
-        <p className=" text-gray-600 text-wrap">{email}</p>
-      </div>
-    </section>
-  );
+import type { IUserProfile } from "@/lib/client/IUserProfile";
+import { Mail, Phone, MapPin, FileText } from "lucide-react";
+import Image from "next/image";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+export default function ClientProfileSection({
+    fullName,
+    image,
+    ruc,
+    email,
+    phoneNumber,
+    adress,
+}: IUserProfile) {
+    return (
+        <Card className="mb-8 mt-8 shadow-md w-full">
+            <CardHeader className="pb-0">
+                <h1 className="text-3xl font-bold tracking-tight">
+                    Perfil de Cliente
+                </h1>
+            </CardHeader>
+            <CardContent>
+                <div className="flex flex-col md:flex-row items-center gap-8 py-4">
+                    <div className="w-[180px] h-[180px] rounded-full overflow-hidden border-4 border-background shadow-lg flex-shrink-0">
+                        <Image
+                            src={image?.originalUrl || "/default-avatar.png"}
+                            alt={fullName}
+                            width={300}
+                            height={300}
+                            className="w-full h-full object-cover"
+                        />
+                    </div>
+
+                    <div className="flex-1 space-y-4 w-full">
+                        <div>
+                            <h2 className="text-2xl font-bold">{fullName}</h2>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="flex items-center gap-2">
+                                <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-gray-600">
+                                    <FileText className="w-5 h-5" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                    <p className="text-sm text-muted-foreground">
+                                        RUC
+                                    </p>
+                                    <p className="font-medium truncate">
+                                        {ruc}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-gray-600">
+                                    <Mail className="w-5 h-5" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                    <p className="text-sm text-muted-foreground">
+                                        Correo Electrónico
+                                    </p>
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <p className="font-medium truncate">
+                                                    {email}
+                                                </p>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>{email}</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-gray-600">
+                                    <Phone className="w-5 h-5" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                    <p className="text-sm text-muted-foreground">
+                                        Teléfono
+                                    </p>
+                                    <p className="font-medium truncate">
+                                        {phoneNumber}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {adress && (
+                                <div className="flex items-center gap-2">
+                                    <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-gray-600">
+                                        <MapPin className="w-5 h-5" />
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                        <p className="text-sm text-muted-foreground">
+                                            Dirección
+                                        </p>
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <p className="font-medium truncate">
+                                                        {adress}
+                                                    </p>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <p>{adress}</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+    );
 }

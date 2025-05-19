@@ -38,7 +38,7 @@ const InvoiceList = ({ token }: InvoiceListProps) => {
       toTotal: filters?.toTotal ? Number(filters?.toTotal) : undefined,
       fromIssueDate: filters?.fromIssueDate,
       toIssueDate: filters?.toIssueDate,
-      ruc: filters?.ruc,
+      search: filters?.search,
     },
   });
 
@@ -60,8 +60,8 @@ const InvoiceList = ({ token }: InvoiceListProps) => {
           <SearchBar
             placeholder="Buscar por RUC"
             onSearch={(value) => {
-              setFilters((prev) => ({ ...prev, ruc: value }));
-              search({ ruc: value });
+              setFilters((prev) => ({ ...prev, search: value }));
+              search({ search: value });
             }}
           />
 

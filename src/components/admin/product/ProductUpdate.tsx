@@ -43,8 +43,10 @@ const productFormSchema = z.object({
     .number({ message: "Complete con valores numéricos adecuados" })
     .min(1, "El IVA debe ser mayor a 0"),
   providerId: z
-    .number({ invalid_type_error: "Selecciona un proveedor" })
-    .min(1, "Selecciona un proveedor"),
+    .number({
+      required_error: "Selecciona un proveedor",
+      invalid_type_error: "Selecciona un proveedor",
+    }),
   tags: z.string().min(1, "Selecciona al menos una etiqueta"),
   category: z.string().min(1, "Selecciona una categoría"),
   imageFile: z
@@ -72,6 +74,7 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [product, setProduct] = useState<Product | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCanceling, setIsCanceling] = useState(false);
   const router = useRouter();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [tags, setTags] = useState<string[]>([]);
@@ -290,7 +293,7 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
                   control={control}
                   render={({ field }) => (
                     <Select
-                      onValueChange={(val) => field.onChange(Number(val))}
+                      onValueChange={(val) => field.onChange(val ? Number(val) : undefined)}
                       value={field.value?.toString() ?? ""}
                     >
                       <SelectTrigger
@@ -391,16 +394,22 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
             </div>
             <div className="flex justify-start gap-4 mt-8">
               <Button
-                type="button"
-                variant="outline"
-                onClick={(e) => {
-                  e.preventDefault();
-                  router.push(`/dashboard/products/${id}`);
-                }}
+                  type="button"
+                  variant="outline"
+                  onClick={async (e) => {
+                      e.preventDefault();
+                      setIsCanceling(true);
+                      await new Promise((resolve) =>
+                          setTimeout(resolve, 100)
+                      );
+
+                      router.push(`/dashboard/products/${id}`);
+                  }}
+                  disabled={isSubmitting || isCanceling}
               >
-                Cancelar
+                  {isCanceling ? "Cancelando..." : "Cancelar"}
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button type="submit" disabled={isSubmitting || isCanceling}>
                 {isSubmitting ? "Guardando..." : "Guardar"}
               </Button>
             </div>

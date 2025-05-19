@@ -5,6 +5,9 @@ import { useInvoiceDetail } from "@/hooks/invoices/useInvoiceDetail";
 import InvoiceDetailCard from "@/components/admin/invoices/InvoiceDetailCard";
 import InvoiceDetailTable from "@/components/admin/invoices/InvoiceDetailTable";
 import { toast } from "@/lib/toast";
+import InvoiceDetailSkeleton from "./skeleton/InvoiceDetailSkeleton";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface Props {
   token: string;
@@ -12,7 +15,7 @@ interface Props {
 
 export default function InvoiceDetail({ token }: Props) {
   const params = useParams<{ id: string }>();
-  const invoiceId = params?.id;
+  const invoiceId = params?.id || "";
   const { invoice, invoiceDetails, loading, error } = useInvoiceDetail(
     invoiceId, 
     token
@@ -24,7 +27,7 @@ export default function InvoiceDetail({ token }: Props) {
     }
   }, [error]);
 
-  if (loading) return <p className="text-center">Cargando detalles de la factura...</p>;
+  if (loading) return <InvoiceDetailSkeleton/>;
 
   return (
     <div className="w-full px-0">
