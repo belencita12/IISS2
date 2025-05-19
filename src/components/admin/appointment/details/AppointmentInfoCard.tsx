@@ -34,7 +34,7 @@ export const AppointmentInfoCard = ({ appointment }: AppointmentInfoCardProps) =
             <div className="space-y-2">
               <div className="flex flex-col space-y-2">
                 {/* Fecha */}
-                <div className="flex items-center min-h-14 p-2 bg-muted/40 rounded-lg">
+                <div className="flex items-center min-h-14 p-2 bg-muted/60 rounded-lg">
                   <div className="bg-primary/10 p-2 rounded-full mr-2">
                     <Calendar className="h-4 w-4 text-primary" />
                   </div>
@@ -46,7 +46,7 @@ export const AppointmentInfoCard = ({ appointment }: AppointmentInfoCardProps) =
                   </div>
                 </div>
                 {/* Hora */}
-                <div className="flex items-center h-14 p-2 bg-muted/40 rounded-lg overflow-hidden">
+                <div className="flex items-center h-14 p-2 bg-muted/60 rounded-lg overflow-hidden">
                   <div className="bg-primary/10 p-2 rounded-full mr-2 flex-shrink-0">
                     <Clock className="h-4 w-4 text-primary" />
                   </div>
@@ -70,7 +70,7 @@ export const AppointmentInfoCard = ({ appointment }: AppointmentInfoCardProps) =
             {appointment?.services && appointment.services.length > 0 ? (
               <div className="space-y-2">
                 {appointment.services.map((service) => (
-                  <div key={service.id} className="flex items-center min-h-14 p-2 bg-muted/40 rounded-lg">
+                  <div key={service.id} className="flex items-center min-h-14 p-2 bg-muted/60 rounded-lg">
                     <div className="bg-primary/10 p-2 rounded-full mr-2">
                       <Stethoscope className="h-4 w-4 text-primary" />
                     </div>
@@ -91,7 +91,7 @@ export const AppointmentInfoCard = ({ appointment }: AppointmentInfoCardProps) =
             <Info className="h-4 w-4 text-primary" />
             Notas adicionales
           </h3>
-          <div className="bg-muted/50 rounded-lg p-3 text-sm break-words">
+          <div className="bg-muted/60 rounded-lg p-3 text-sm break-words">
             {appointment?.details || "Sin notas adicionales"}
           </div>
         </div>

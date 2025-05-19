@@ -3,7 +3,7 @@
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { AppointmentDetailSkeleton } from "@/components/admin/appointment/skeleton/AppointmentDetailSkeleton"
+import { AppointmentDetailSkeleton } from "@/components/admin/appointment/Skeleton/AppointmentDetailSkeleton"
 import { useAppointmentDetail } from "@/hooks/appointment/useAppointmentDetail"
 import { AppointmentInfoCard } from "@/components/admin/appointment/details/AppointmentInfoCard"
 import { PetInfoCard } from "@/components/admin/appointment/details/PetInfoCard"
@@ -55,8 +55,12 @@ export const AppointmentDetail = ({ token, appointmentId }: AppointmentDetailPro
 
   return (
     <div className="w-full">
-      <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">
-        <Button variant="outline" className="border-black border-solid" onClick={() => router.back()}>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
+        <Button
+          variant="outline"
+          className="border-black border-solid self-start"
+          onClick={() => router.back()}
+        >
           Volver
         </Button>
         <div className="order-2 sm:order-none mx-auto sm:mx-0">

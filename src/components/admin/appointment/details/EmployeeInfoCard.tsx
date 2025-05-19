@@ -1,11 +1,12 @@
 "use client"
 
 import { User } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardHeader, CardTitle } from "@/components/ui/card"
 import Image from "next/image"
 import type { EmployeeData } from "@/lib/employee/IEmployee"
 import type { Appointment } from "@/lib/appointment/IAppointment"
-import { EmployeeInfoCardSkeleton } from "../skeleton/EmployeeInfoCardSkeleton"
+import { EmployeeInfoCardSkeleton } from "../Skeleton/EmployeeInfoCardSkeleton"
+import NotImageNicoPets from "../../../../../public/NotImageNicoPets.png";
 
 interface EmployeeCardProps {
   appointment: Appointment | null
@@ -26,20 +27,14 @@ export const EmployeeInfoCard = ({ appointment, employeeDetails, employeeLoading
           <EmployeeInfoCardSkeleton />
         ) : appointment?.employee ? (
           <div className="flex items-center gap-4 p-4 rounded-lg hover:bg-muted/50 transition-colors mt-2">
-            <div className="relative w-16 h-16 rounded-full bg-muted overflow-hidden flex-shrink-0 border border-muted shadow-sm">
-              {employeeDetails?.image?.originalUrl ? (
-                <Image
-                  src={employeeDetails.image.originalUrl || "/NotImageNicoPets.png"}
-                  alt={`Foto de ${employeeDetails?.fullName || "empleado"}`}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-muted">
-                  <User className="h-8 w-8 text-muted-foreground" />
-                </div>
-              )}
+            <div className="relative w-16 h-16 rounded-full bg-muted overflow-hidden flex-shrink-0 border border-muted shadow-sm">            
+              <Image
+                src={employeeDetails?.image?.originalUrl ?? NotImageNicoPets.src}
+                alt={`Foto de ${employeeDetails?.fullName || "empleado"}`}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
             </div>
             <div>
               <p className="text-base font-medium break-words">
@@ -61,7 +56,6 @@ export const EmployeeInfoCard = ({ appointment, employeeDetails, employeeLoading
           </div>
         )}
       </CardHeader>
-      <CardContent>{/* Espacio para información adicional si es necesario */}</CardContent>
     </Card>
   )
 }
