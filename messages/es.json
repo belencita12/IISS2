@@ -21,6 +21,7 @@
     "add": "Agregar",
     "adding": "Agregando...",
     "finish": "Finalizar",
+    "finalizing": "Finalizando...",
     "register": "Registrar",
     "registering":"Registrando...",
     "delete": "Eliminar",
@@ -402,6 +403,22 @@
     "tags": "Etiqueta/s",
     "image": "Imagen"
   },
+
+  "Sales": {
+    "SaleCreation": {
+      "condition": "Condición de venta",
+      "cash": "Contado",
+      "credit": "Crédito",
+      "client" : "Cliente",
+      "products" : "Productos",
+      "summary": "Resumen de venta",
+      "total" : "Total",
+      "totalPaid": "Total Pagado",
+      "gs": "Gs."
+    }
+  },
+
+
   "StockList": {
     "title":"Depósitos",
     "titleEdit": "Editar depósito",
