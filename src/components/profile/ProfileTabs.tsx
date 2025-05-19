@@ -30,12 +30,13 @@ export default function ProfileTabs({
     ruc: ruc
   });
   const t = useTranslations("ProfileTabs");
+  const e = useTranslations("Error");
   const [fetchErrors, setFetchErrors] = useState<string[]>([]);
 
   useEffect(() => {
     // Mostrar un solo toast si hay errores de fetch
     if (fetchErrors.length > 0) {
-      toast("error", "Ha ocurrido un error de conexión");
+      toast("error", e("notGetData"));
     }
   }, [fetchErrors]);
 

@@ -10,6 +10,7 @@ import { List, Plus } from "lucide-react";
 import { RecommendedProducts } from "./RecommendedProducts";
 import PetListsSkeleton from "./skeleton/PetListsSkeleton";
 import { ProductSkeleton } from "./skeleton/ProductSkeleton";
+import { toast } from "@/lib/toast";
 import { useTranslations } from "next-intl";
 
 interface PetsListProps {
@@ -32,8 +33,7 @@ export const PetsList = ({ clientId, token, onFetchError }: PetsListProps) => {
         const fetchedPets = await getPetsByUserId(clientId, token);
         setPets(fetchedPets);
       } catch (error) {
-        const errorMessage = "Error al obtener mascotas";
-        onFetchError?.(errorMessage);
+        if (error instanceof Error) toast("error", error.message)
       } finally {
         setLoading(false);
       }
