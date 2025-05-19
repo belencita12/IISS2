@@ -32,9 +32,9 @@ export const getAllSpecies = async (token: string, queryParams?: string) => {
   }
 };
 
-export const getRacesBySpecies = async (speciesId: number, token: string) => {
+export const getRacesBySpecies = async (speciesId: number, token: string, includeDeleted?: boolean, pageSize?: number) => {
   try {
-    const response = await fetch(`${RACE_API}?page=1&speciesId=${speciesId}`, {
+    const response = await fetch(`${RACE_API}?page=1&size=${pageSize ?? 16}&speciesId=${speciesId}&includeDeleted=${includeDeleted?.toString() ?? 'false'}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
