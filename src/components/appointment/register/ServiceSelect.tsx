@@ -116,7 +116,7 @@ export default function ServiceSelect({
             >
               {selectedService ? (
                 <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-start">
-                  {selectedService.name}
+                   Selecciona otro servicio
                 </div>
               ) : (
                 <span>Selecciona al menos un servicio</span>
@@ -176,7 +176,7 @@ export default function ServiceSelect({
 
         {userRole !== "USER" && (
           <Link
-            href="/dashboard/service/register"
+            href={"/dashboard/service/register"}
             target="_blank"
             className="flex items-center justify-center rounded-md border border-myPurple-tertiary bg-white p-2 text-myPurple-primary hover:bg-myPurple-disabled hover:text-myPurple-focus focus:outline-none focus:ring-2 focus:ring-myPurple-primary focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 transition-colors duration-200 flex-shrink-0"
           >
