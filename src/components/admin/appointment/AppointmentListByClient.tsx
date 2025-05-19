@@ -17,7 +17,7 @@ import {
     completeAppointment,
 } from "@/lib/appointment/service";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
-import AppointmentListSkeleton from "./skeleton/AppointmentListSkeleton";
+import AppointmentListSkeleton from "./Skeleton/AppointmentListSkeleton";
 
 interface ClientAppointmentListProps {
     token: string;
