@@ -22,16 +22,23 @@ import { Modal } from "@/components/global/Modal";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import AppointmentListSkeleton from "./Skeleton/AppointmentListSkeleton";
+import { useTranslations } from "next-intl";
 import useDebounce from "@/hooks/useDebounce";
 import { downloadFromBlob, normalizeText } from "@/lib/utils";
 import ExportButton from "@/components/global/ExportButton";
 import { getAppointmentReport } from "@/lib/appointment/getAppointmentReport";
+import { unknown } from "zod";
 
 interface AppointmentListProps {
     token: string;
 }
 
 const AppointmentList = ({ token }: AppointmentListProps) => {
+    const a = useTranslations("AppointmentDetail");
+  const b = useTranslations("Button");
+  const e = useTranslations("Error");
+  const ph= useTranslations("Placeholder");
+
     const router = useRouter();
     const [filters, setFilters] = useState<AppointmentQueryParams>({
         page: 1,
@@ -115,7 +122,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
         if (!from || !to) {
             toast(
                 "error",
-                "Se necesitan fechas límites para generar el reporte"
+                e("errorLimitDate")
             );
             return;
         }
@@ -153,7 +160,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
             if (appointmentDate > currentDate) {
                 toast(
                     "error",
-                    "No se puede finalizar una cita antes de su fecha programada."
+                    e("errorEndDate")
                 );
                 return;
             }
@@ -185,12 +192,12 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
             toast(
                 "success",
                 `Cita ${
-                    modalAction === "complete" ? "finalizada" : "cancelada"
+                    modalAction === b("") ? a("completed") : a("canceled")
                 } con éxito`
             );
             refresh();
-        } catch (error) {
-            toast("error", "Ocurrió un error al actualizar la cita");
+        } catch (error: unknown) {
+            if (error instanceof Error) toast("error", error.message);
         } finally {
             setIsProcessing(false);
             setIsModalOpen(false);
@@ -201,13 +208,13 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
         }
     };
 
-    if (error) toast("error", error.message || "Error al cargar las citas");
+    if (error instanceof Error ) toast("error", error.message );
 
     return (
         <div className="p-4 mx-auto">
             <div className="max-w-8xl mx-auto p-4 space-y-6">
                 <SearchBar
-                    placeholder="Buscar por nombre o RUC del cliente"
+                    placeholder={ph("getBy", {field: "nombre o ruc del cliente"})}
                     onSearch={handleSearch}
                 />
                 <div className="flex flex-col md:flex-row gap-4">
@@ -227,7 +234,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
             </div>
 
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-3xl font-bold">Citas</h2>
+                <h2 className="text-3xl font-bold">{a("title")}</h2>
                 <div className="flex justify-between items-center mb-4">
                     <Button
                         variant="outline"
@@ -236,7 +243,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
                             router.push("/dashboard/appointment/register")
                         }
                     >
-                        Agendar
+                        {b("schedule")}
                     </Button>
                     <ExportButton
                         handleGetReport={handleGetAppointmentReport}
@@ -262,7 +269,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
                             />
                         ))
                     ) : (
-                        <p>No se encontraron citas.</p>
+                        <p>{e("notFoundField", {field: "citas"})}</p>
                     )}
                 </div>
             )}
@@ -280,10 +287,10 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
                     onConfirm={handleConfirmAction}
-                    title="Confirmar Finalización"
-                    message="¿Estás seguro de que quieres finalizar esta cita?"
-                    confirmText="Confirmar"
-                    cancelText="Cancelar"
+                    title={a("titleFinish")}
+          message={a("finishDescription")}
+          confirmText={b("confirm")}
+          cancelText={b("cancel")}
                     isLoading={isProcessing}
                 />
             )}
@@ -292,12 +299,12 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
                 <Modal
                     isOpen={cancelModalOpen}
                     onClose={() => setCancelModalOpen(false)}
-                    title="Motivo de cancelación"
+                    title={a("titleCancel")}
                     size="md"
                 >
                     <textarea
                         className="w-full h-32 p-2 border border-gray-300 rounded"
-                        placeholder="Escribe una razón para cancelar la cita"
+                        placeholder={ph("reason")}
                         value={cancelDescription}
                         onChange={(e) => setCancelDescription(e.target.value)}
                     />
@@ -307,14 +314,14 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
                             onClick={() => setCancelModalOpen(false)}
                             disabled={isProcessing}
                         >
-                            Cancelar
+                            {b("cancel")}
                         </Button>
                         <Button
                             className="bg-red-600 text-white px-4 py-2 rounded border hover:bg-red-700"
                             onClick={handleConfirmAction}
                             disabled={isProcessing || !cancelDescription.trim()}
                         >
-                            {isProcessing ? "Cancelando..." : "Confirmar"}
+                            {isProcessing ? b("canceling") : b("confirm")}
                         </Button>
                     </div>
                 </Modal>

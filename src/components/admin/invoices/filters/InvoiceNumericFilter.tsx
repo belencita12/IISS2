@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { GetInvoiceQueryParams } from "@/lib/invoices/IInvoice";
 import useDebounce from "@/hooks/useDebounce";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface Props {
   filters: GetInvoiceQueryParams;
@@ -12,6 +13,9 @@ interface Props {
 }
 
 export default function InvoiceNumericFilter({ filters, setFilters }: Props) {
+  const f = useTranslations("Filters");
+  const ph = useTranslations("Placeholder");
+
   const [min, setMin] = useState(filters.fromTotal?.toString() ?? "");
   const [max, setMax] = useState(filters.toTotal?.toString() ?? "");
 
@@ -38,29 +42,29 @@ export default function InvoiceNumericFilter({ filters, setFilters }: Props) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div className="space-y-2">
-        <Label htmlFor="totalMin">Total mínimo</Label>
+        <Label htmlFor="totalMin">{f("minTotal")}</Label>
         <NumericInput
           id="totalMin"
           type="formattedNumber"
           value={min}
-          placeholder="Ejemplo: 100.000"
+          placeholder={ph("minAmount")}
           onChange={(e) => setMin(e.target.value)} 
           className="w-full border px-3 py-2 rounded"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="totalMax">Total máximo</Label>
+        <Label htmlFor="totalMax">{f("maxTotal")}</Label>
         <NumericInput
           id="totalMax"
           type="formattedNumber"
           value={max}
-          placeholder="Ejemplo: 1.000.000"
+          placeholder={ph("maxAmount")}
           onChange={(e) => setMax(e.target.value)} 
           className="w-full border px-3 py-2 rounded"
         />
         {isMaxLessThanMin && (
-          <p className="text-sm text-red-500">El total máximo no puede ser menor al mínimo.</p>
+          <p className="text-sm text-red-500">{f("isMaxLessThanMin")}</p>
         )}
       </div>
     </div>

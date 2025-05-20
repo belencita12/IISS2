@@ -34,10 +34,11 @@ export async function updateVaccineById(token: string, id: number, data: UpdateV
     body: formData,
   });
 
-  if (!response.ok) {
-    toast("error", `Error en la respuesta de la API: ${response.status} | ${response.statusText}`);
-    throw new Error("Error al actualizar la vacuna");
-  }
+ if (!response.ok) {
+            const errorData = await response.json().catch(() => ({})); // fallback si no es JSON
+            const message = errorData?.message || `Error HTTP: ${response.status}`;
+            throw new Error(message);
+        }
 
   const updatedData = await response.json();
   return updatedData;

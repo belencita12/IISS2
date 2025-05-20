@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { AppointmentQueryParams } from "@/lib/appointment/IAppointment";
+import { useTranslations } from "next-intl";
 
 interface AppointmentStatusFilterProps {
   filters: AppointmentQueryParams;
@@ -27,9 +28,10 @@ const AppointmentStatusFilter: React.FC<AppointmentStatusFilterProps> = ({
     });
   };
 
+  const f = useTranslations("Filters")
   return (
     <div className="space-y-2">
-      <Label>Estado de la cita</Label>
+      <Label>{f("statusAppointment")}</Label>
       <Select
         value={filters.status ?? "ALL"}
         onValueChange={handleChange}
@@ -38,10 +40,10 @@ const AppointmentStatusFilter: React.FC<AppointmentStatusFilterProps> = ({
           <SelectValue placeholder="Seleccione estado" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="ALL">Todos</SelectItem>
-          <SelectItem value="PENDING">Pendiente</SelectItem>
-          <SelectItem value="COMPLETED">Finalizada</SelectItem>
-          <SelectItem value="CANCELLED">Cancelada</SelectItem>
+          <SelectItem value="ALL">{f("all")}</SelectItem>
+          <SelectItem value="PENDING">{f("pending")}</SelectItem>
+          <SelectItem value="COMPLETED">{f("finished")}</SelectItem>
+          <SelectItem value="CANCELLED">{f("cancelled")}</SelectItem>
         </SelectContent>
       </Select>
     </div>

@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTranslations } from "next-intl";
 
 const MAX_FILE_SIZE = 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -116,6 +117,12 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
+  const p = useTranslations("PetForm");
+  const b = useTranslations("Button");
+  const e = useTranslations("Error");
+  const s = useTranslations("Success");
+  const ph = useTranslations("Placeholder")
+
   const {
     register,
     handleSubmit,
@@ -140,8 +147,8 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
       try {
         const speciesData = await getSpecies(token);
         setSpecies(speciesData);
-      } catch {
-        toast("error", "Error al obtener las especies.");
+      } catch(error : unknown) {
+        toast("error", error instanceof Error ? error.message : e("errorGet", {field: "especies"}));
       }
     };
     fetchSpecies();
@@ -154,8 +161,8 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
     try {
       const racesData = await getRacesBySpecies(parseInt(speciesId), token);
       setRaces(racesData);
-    } catch {
-      toast("error", "Error al obtener las razas.");
+    } catch(error : unknown) {
+      toast("error", error instanceof Error ? error.message : e("errorGet", {field: "razas"}));
     }
   };
 
@@ -175,7 +182,7 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
   const onSubmit = async (data: PetFormValues) => {
     
     if (!token) {
-      toast("error", "Debes estar autenticado para editar una mascota.");
+      toast("error", e("authError"));
       return;
     }
 
@@ -198,10 +205,10 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
     setIsSubmitting(true);
     try {
       const response = await updatePet(Number(petId), formData, token);
-      toast("success", "Mascota actualizada correctamente");
+      toast("success", s("successEdit", {field: "Mascota"}));
       router.back();
-    } catch (error) {
-      toast("error", "Error al actualizar la mascota");
+    } catch (error: unknown) {
+      toast("error", error instanceof Error ? error.message: e("errorUpdate", {field: "mascota"}));
     } finally {
       setIsSubmitting(false);
     }
@@ -229,7 +236,7 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
   useEffect(() => {
     setPet(undefined);
     if (!petId || !token) {
-      toast("error", "Faltan datos");
+      toast("error", e("empty"));
       return;
     }
 
@@ -250,8 +257,8 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
         } else {
           setPet(null);
         }
-      } catch (error) {
-        toast("error", "No se pudo obtener los datos de la mascota");
+      } catch (error: unknown) {
+        toast("error", error instanceof Error ? error.message : e("noGetData"));
       }
     };
 
@@ -260,13 +267,12 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
 
   return (
     <div className="flex-col">
-      <h1 className="text-2xl font-bold my-3 text-center">Editar mascota del cliente</h1>
+      <h1 className="text-2xl font-bold my-3 text-center">{p("editPetFormTitle")}</h1>
       {pet === undefined ? (
-        <p className="text-center text-gray-600 pt-10">Cargando mascota...</p>
+        <p className="text-center text-gray-600 pt-10">{b("loading")}</p>
       ) : pet === null ? (
         <>
-          <p className="text-center mt-4 p-10">Mascota no registrada.</p>
-          <p className="text-center">Error 404</p>
+          <p className="text-center mt-4 p-10">{e("notFound")}</p>
         </>
       ) : (
         <>
@@ -291,7 +297,7 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
                   />
                 ) : (
                   <div className="w-full h-full bg-gray-300 mx-auto flex items-center justify-center">
-                    <span className="text-gray-500">Sin imagen</span>
+                    <span className="text-gray-500">{e("noImage")}</span>
                   </div>
                 )}
               </div>
@@ -303,7 +309,7 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
                     onChange={handleImageChange}
                     className="hidden"
                   />
-                  {previewImage ? "Cambiar imagen" : "Cambiar imagen de la mascota"}
+                  {previewImage ? b("change") : b("upload")}
                 </Label>
                 {errors.imageFile && (
                   <p className="text-red-500 text-sm mt-2">
@@ -326,11 +332,11 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
                 className="flex-col space-y-4"
               >
                 <div>
-                  <Label className="">Nombre</Label>
+                  <Label className="">{p("name")}</Label>
                   <Input
                     id="petName"
                     {...register("petName")}
-                    placeholder="Ej. Luna"
+                    placeholder={ph("name")}
                   />
                   {errors.petName && (
                     <p className="text-red-500 mt-1">
@@ -339,7 +345,7 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
                   )}
                 </div>
                 <div>
-                  <Label className="">Fecha de nacimiento</Label>
+                  <Label className="">{p("born")}</Label>
                   <Input
                     id="birthDate"
                     type="date"
@@ -353,7 +359,7 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
                   )}
                 </div>
                 <div>
-                  <Label className="">Especie</Label>
+                  <Label className="">{p("specie")}</Label>
                   <Select
                     defaultValue={watch("animalType")}
                     onValueChange={(value) => {
@@ -362,7 +368,7 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
                     }}
                   >
                     <SelectTrigger id="animalType" className="bg-white">
-                      <SelectValue placeholder="Seleccionar" />
+                      <SelectValue placeholder={ph("select")} />
                     </SelectTrigger>
                     <SelectContent className="bg-white">
                       {species.map((specie) => (
@@ -382,7 +388,7 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
                   )}
                 </div>
                 <div>
-                  <Label className="">Raza</Label>
+                  <Label className="">{p("race")}</Label>
                   <Select
                     defaultValue={watch("breed")}
                     onValueChange={(value) => setValue("breed", value)}
@@ -403,7 +409,7 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
                   )}
                 </div>
                 <div>
-                  <Label className="">Peso (kg)</Label>
+                  <Label className="">{p("weight")}</Label>
                   <Input
                     id="weight"
                     type="number"
@@ -419,7 +425,7 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
                   )}
                 </div>
                 <div>
-                  <Label className="">Género</Label>
+                  <Label className="">{p("sex")}</Label>
                   <div className="flex gap-4">
                     <Button
                       id="genderFemale"
@@ -427,7 +433,7 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
                       variant={watch("gender") === "F" ? "default" : "outline"}
                       onClick={() => setValue("gender", "F")}
                     >
-                      Hembra
+                      {b("female")}
                     </Button>
                     <Button
                       id="genderMale"
@@ -435,7 +441,7 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
                       variant={watch("gender") === "M" ? "default" : "outline"}
                       onClick={() => setValue("gender", "M")}
                     >
-                      Macho
+                      {b("male")}
                     </Button>
                   </div>
                   {errors.gender && (
@@ -454,14 +460,14 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
                       router.back()
                     }}
                   >
-                    Cancelar
+                    {b("cancel")}
                   </Button>
 
                   <Button 
                     type="submit" 
                     disabled={isCancelling || isSubmitting}
                   >
-                    {isSubmitting ? "Guardando..." : "Guardar"}
+                    {isSubmitting ? b("saving") : b("save")}
                   </Button>
                 </div>
               </form>

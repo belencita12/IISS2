@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "@/lib/toast";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import { deletePet } from "@/lib/pets/deletePet";
+import { useTranslations } from "next-intl";
 
 export default function PaginatedPetsTable({ token,id }: { token: string ,id:number}) {
     const router = useRouter();
@@ -18,6 +19,12 @@ export default function PaginatedPetsTable({ token,id }: { token: string ,id:num
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [pets, setPets] = useState<PetData[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+
+    const p = useTranslations("PetForm");
+    const s = useTranslations("Success");
+    const e = useTranslations("Error");
+    const b = useTranslations("Button");
+    const m = useTranslations("ModalConfirmation");
 
     const [pagination, setPagination] = useState({
         currentPage: 1,
@@ -45,7 +52,7 @@ export default function PaginatedPetsTable({ token,id }: { token: string ,id:num
       const success = await deletePet(token, selectedPet.id);
       
       if (success) {
-        toast("success", "Mascota eliminada correctamente");
+        toast("success", s("successDelete", {field: "Mascota"}));
         setIsDeleteModalOpen(false);
         setSelectedPet(null);
         // Recargar la lista de mascotas
@@ -60,7 +67,7 @@ export default function PaginatedPetsTable({ token,id }: { token: string ,id:num
           pageSize: data.size
         });
       } else {
-        toast("error", "Error al eliminar la mascota");
+        toast("error", e("errorDelete", {field: "mascota"}));
       }
     };
 
@@ -79,16 +86,16 @@ export default function PaginatedPetsTable({ token,id }: { token: string ,id:num
           className: "w-[50px]"
         },
         {
-          header: "Nombre",
+          header: p("name"),
           accessor: "name",
           className: "font-medium"
         },
         {
-          header: "Especie",
+          header: p("specie"),
           accessor: (pet) => pet.species.name
         },
         {
-          header: "Raza",
+          header: p("race"),
           accessor: (pet) => pet.race.name
         }
     ];
@@ -97,17 +104,17 @@ export default function PaginatedPetsTable({ token,id }: { token: string ,id:num
         {
           icon: <Eye className="w-4 h-4" />,
           onClick: onRedirect,
-          label: "Detalles"
+          label: b("seeDetails")
         },
         {
           icon: <Pencil className="w-4 h-4" />,
           onClick: onEdit,
-          label: "Editar mascota"
+          label: b("edit")
         },
         {
           icon: <Trash className="w-4 h-4" />,
           onClick: onDelete,
-          label: "Eliminar mascota"
+          label: b("delete")
         }
     ];
 
@@ -124,7 +131,7 @@ export default function PaginatedPetsTable({ token,id }: { token: string ,id:num
               pageSize: data.size
             });
           } catch (error) {
-            const errorMessage = (error as Error).message || "Error al obtener las mascotas";
+            const errorMessage = (error as Error).message || e("errorLoad", {field: "mascotas"});
             toast("error",errorMessage);
           }
           finally {
@@ -145,7 +152,7 @@ export default function PaginatedPetsTable({ token,id }: { token: string ,id:num
                 isLoading={isLoading}
                 skeleton={<PetsTableSkeleton />}
                 onPageChange={(page) => setPagination({ ...pagination, currentPage: page })}
-                emptyMessage="No hay mascotas disponibles"
+                emptyMessage={e("notFoundPets")}
             />
             <ConfirmationModal
                 isOpen={isDeleteModalOpen}
@@ -154,10 +161,10 @@ export default function PaginatedPetsTable({ token,id }: { token: string ,id:num
                     setSelectedPet(null);
                 }}
                 onConfirm={handleConfirmDelete}
-                title="¿Estás seguro de eliminar esta mascota?"
+                title={m("confirmDelete", {field: "mascota"})}
                 message={`La mascota ${selectedPet?.name} será eliminada permanentemente.`}
-                confirmText="Eliminar"
-                cancelText="Cancelar"
+                confirmText={b("delete")}
+                cancelText={b("cancel")}
                 variant="danger"
             />
         </>

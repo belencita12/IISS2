@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Product } from "@/lib/products/IProducts";
 import { getCategoryLabel } from "@/lib/products/utils/categoryLabel";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
 
 interface ProductCardProps {
   product: Product;
@@ -13,6 +14,9 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
   const defaultImageSrc = "/NotImageNicoPets.png";
   const providerName = product.provider?.name ?? "–";
+
+  const p = useTranslations("ProductDetail");
+  const b = useTranslations("Button");
 
   return (
     <div
@@ -49,35 +53,35 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
 
           <div className="grid grid-cols-[1fr_0.6fr] gap-x-10 gap-y-2 text-xs">
             <div className="truncate">
-              <span className="text-gray-600">Código:</span>
+              <span className="text-gray-600">{p("code")}:</span>
               <p className="font-medium truncate">{product.code || "-"}</p>
             </div>
             <div className="flex flex-col truncate">
-              <span className="text-gray-600">Precio:</span>
+              <span className="text-gray-600">{p("price")}:</span>
               <p className="font-medium truncate">
-                {product.price.toLocaleString()} Gs
+                {product.price.toLocaleString()} {p("gs")}
               </p>
             </div>
             {product.provider && (
               <div className="truncate">
-                <span className="text-gray-600">Proveedor:</span>
+                <span className="text-gray-600">{p("provider")}:</span>
                 <p className="font-medium truncate">{product.provider.name}</p>
               </div>
             )}
             <div className="flex flex-col truncate">
-              <span className="text-gray-600">Costo:</span>
+              <span className="text-gray-600">{p("cost")}:</span>
               <p className="font-medium truncate">
-                {product.cost?.toLocaleString() || "-"} Gs
+                {product.cost?.toLocaleString() || "-"} {p("gs")}
               </p>
             </div>
             <div className="truncate">
-              <span className="text-gray-600">Categoría:</span>
+              <span className="text-gray-600">{p("category")}:</span>
               <p className="font-medium truncate">
                 {getCategoryLabel(product.category)}
               </p>
             </div>
             <div className="flex flex-col truncate">
-              <span className="text-gray-600">Cantidad:</span>
+              <span className="text-gray-600">{p("quantity")}:</span>
               <p className="font-medium truncate">{product.quantity}</p>
             </div>
           </div>
@@ -88,7 +92,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
           className="mt-2 w-full py-1 text-xs bg-gray-900 hover:bg-gray-800
                      text-white rounded-md"
         >
-          Ver detalles
+          {b("seeDetails")}
         </Button>
       </div>
     </div>

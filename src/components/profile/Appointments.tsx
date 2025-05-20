@@ -38,6 +38,10 @@ export const Appointments = ({
   const [executed, setExecuted] = useState(false);
   const router = useRouter();
   const t = useTranslations("Appointments");
+  const e = useTranslations("Error");
+  const a= useTranslations("AppointmentTable");
+  const b = useTranslations("Button");
+
 
   const {
     data: appointmentsResponse,
@@ -53,15 +57,18 @@ export const Appointments = ({
     }
   }, [ruc, executed]);
 
+  const error = !ruc
+    ? e("noGetRuc")
+    : fetchError?.message || null;
   useEffect(() => {
     if (fetchError) {
-      onFetchError?.("Error al obtener citas");
+      onFetchError?.(e("errorLoad", {field : "citas"}));
     }
   }, [fetchError, onFetchError]);
 
   const fetchAppointments = (page: number) => {
     if (!ruc) {
-      onFetchError?.("No se pudo obtener el RUC del cliente");
+      onFetchError?.(e("notGetRuc"));
       return;
     }
 
@@ -85,20 +92,20 @@ export const Appointments = ({
   const statusInfo = (st: AppointmentData["status"]) => {
     switch (st) {
       case "COMPLETED":
-        return { txt: "Completada", style: "bg-green-100 text-green-800" };
+        return { txt: a("completed"), style: "bg-green-100 text-green-800" };
       case "CANCELLED":
-        return { txt: "Cancelada", style: "bg-red-100 text-red-800" };
+        return { txt: a("canceled"), style: "bg-red-100 text-red-800" };
       case "IN_PROGRESS":
-        return { txt: "En progreso", style: "bg-blue-100 text-blue-800" };
+        return { txt: a("inProgress"), style: "bg-blue-100 text-blue-800" };
       default:
-        return { txt: "Pendiente", style: "bg-yellow-100 text-yellow-800" };
+        return { txt: a("pending"), style: "bg-yellow-100 text-yellow-800" };
     }
   };
 
   // Definir las columnas para la tabla genérica
   const columns: Column<AppointmentData>[] = [
     {
-      header: "Mascota",
+      header: a("pet"),
       accessor: (app) => (
         <div>
           <p className="font-medium">{app.pet.name}</p>
@@ -106,7 +113,7 @@ export const Appointments = ({
       ),
     },
     {
-      header: "Servicio",
+      header: a("service"),
       accessor: (app) => (
         <div className="flex items-center gap-3">
           <div>
@@ -120,23 +127,23 @@ export const Appointments = ({
       ),
     },
     {
-      header: "Encargado",
+      header: a("employee"),
       accessor: (app) => (
         <div className="text-sm font-medium text-myPurple-primary">
-          {app.employee?.name || "No asignado"}
+          {app.employee?.name || e("noAsigned")}
         </div>
       ),
     },
     {
-      header: "Detalles",
+      header: a("details"),
       accessor: (app) => (
         <div className="flex items-start gap-2">
-          <p className="font-medium">{app.details || "Sin detalles"}</p>
+          <p className="font-medium">{app.details || e("noDetails")}</p>
         </div>
       ),
     },
     {
-      header: "Fecha",
+      header: a("date"),
       accessor: (app) => (
         <div>
           <p className="font-medium">{formatDate(app.designatedDate)}</p>
@@ -144,7 +151,7 @@ export const Appointments = ({
       ),
     },
     {
-      header: "Hora",
+      header: a("time"),
       accessor: (app) => (
         <div>
           <p className="font-medium">{formatTimeUTC(app.designatedDate)}</p>
@@ -152,7 +159,7 @@ export const Appointments = ({
       ),
     },
     {
-      header: "Estado",
+      header: a("status"),
       accessor: (app) => (
         <span
           className={`px-2 py-1 rounded text-xs ${
@@ -169,7 +176,7 @@ export const Appointments = ({
     {
       icon: <Eye size={16} />,
       onClick: (item) => router.push(`/user-profile/appointment/${item.id}`),
-      label: "Ver detalles",
+      label: b("seeDetails"),
     },
   ];
 
@@ -187,7 +194,7 @@ export const Appointments = ({
           <Link href="/user-profile/appointment/register">
             <Button className="bg-pink-500 text-white flex items-center gap-2 hover:bg-pink-600">
               <Plus className="w-5 h-5" />
-              {t("addAppointmentBtn")}
+              {b("schedule")}
             </Button>
           </Link>
         </div>
@@ -197,21 +204,21 @@ export const Appointments = ({
           <AppointmentsTableSkeleton />
         ) : (
           <GenericTable
-            data={appointments}
-            columns={columns}
-            actions={actions}
-            actionsTitle="Acciones"
-            isLoading={loading}
-            emptyMessage="No tienes citas agendadas"
-            className="w-full"
-            pagination={{
+          data={appointments}
+          columns={columns}
+          actions={actions}
+          actionsTitle={a("actions")}
+          isLoading={loading}
+          emptyMessage={a("emptyMessage")}
+          className="w-full"
+             pagination={{
               currentPage,
               totalPages,
               totalItems,
               pageSize,
             }}
             onPageChange={handlePageChange}
-          />
+        />
         )}
       </div>
     </section>

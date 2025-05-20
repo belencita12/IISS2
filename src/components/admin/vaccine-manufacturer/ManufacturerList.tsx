@@ -17,6 +17,7 @@ import {
 } from "@/lib/vaccine-manufacturer/getVaccineManufacturerById";
 import SearchBar from "@/components/global/SearchBar";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
+import { useTranslations } from "next-intl";
 import ManufacturerFormModal from "@/components/admin/vaccine-manufacturer/VaccineManufacturerFormModal"
 
 interface Manufacturer {
@@ -42,6 +43,14 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
             pageSize: 4,
         },
     });
+
+    const mf = useTranslations("ManufacturerTable");
+    const b = useTranslations("Button");
+    const e = useTranslations("Error");
+    const s = useTranslations("Success");
+    const m = useTranslations("ModalConfirmation");
+    const ph = useTranslations("Placeholder");
+
     const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -113,7 +122,7 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
     };
 
     const columns: Column<Manufacturer>[] = [
-        { header: "Nombre", accessor: "name" },
+        { header: mf("name"), accessor: "name" },
     ];
 
     const actions: TableAction<Manufacturer>[] = [
@@ -123,12 +132,12 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
                 router.push(
                     `/dashboard/vaccine/manufacturer/${manufacturer.id}`
                 ),
-            label: "Ver detalles",
+            label: b("seeDetails"),
         },
         {
             icon: <Pencil className="w-4 h-4" />,
             onClick: handleEditManufacturer,
-            label: "Editar",
+            label: b("edit"),
         },
         {
             icon: <Trash className="w-4 h-4" />,
@@ -136,7 +145,7 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
                 setManufacturerToDelete(manufacturer);
                 setIsDeleteModalOpen(true);
             },
-            label: "Eliminar",
+            label: b("delete"),
         },
     ];
 
@@ -155,8 +164,9 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
 
             await loadManufacturers(newPage, searchQuery);
         } catch (error) {
-            console.error("Error al eliminar fabricante:", error);
-            toast("error", "Error al eliminar fabricante");
+            if (error instanceof Error) {
+                toast("error", error.message);
+            }
         } finally {
             setIsDeleteModalOpen(false);
             setManufacturerToDelete(null);
@@ -167,16 +177,16 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
         <div className="p-4 mx-auto">
             <SearchBar
                 onSearch={handleSearch}
-                placeholder="Buscar por nombre..."
+                placeholder={ph("getBy", {field : "nombre"})}
                 debounceDelay={400}
             />
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-3xl font-bold">Fabricantes de Vacunas</h2>
+                <h2 className="text-3xl font-bold">{mf("titleManufacturers")}</h2>
                 <Button
                     className="border border-gray-300 hover:bg-gray-800"
                     onClick={handleAddManufacturer}
                 >
-                    Agregar
+                    {b("add")}
                 </Button>
             </div>
             <GenericTable
@@ -187,16 +197,16 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
                 onPageChange={handlePageChange}
                 isLoading={loading}
                 skeleton={<VaccineTableSkeleton />}
-                emptyMessage="No se encontraron fabricantes"
+                emptyMessage={e("notFoundField", {field: "fabricantes"})}
             />
             <ConfirmationModal
                 isOpen={isDeleteModalOpen}
                 onClose={() => setIsDeleteModalOpen(false)}
                 onConfirm={handleConfirmDelete}
-                title="¿Estás seguro de eliminar este fabricante?"
-                message="Esta acción no se puede deshacer."
-                confirmText="Eliminar"
-                cancelText="Cancelar"
+                title={m("titleDelete", {field : "fabricante"})}
+                message={m("deleteMessage", {field : manufacturerToDelete?.name ?? ""})}
+                confirmText={b("delete")}
+                cancelText={b("cancel")}
                 variant="danger"
             />
 

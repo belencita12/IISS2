@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { setStock } from "@/lib/stock/setStock";
 import { StockData } from "@/lib/stock/IStock";
 import {Modal} from "@/components/global/Modal";
+import { useTranslations } from "next-intl";
 
 const stockFormSchema = z.object({
   name: z.string().min(1, "El nombre del stock es obligatorio"),
@@ -31,6 +32,12 @@ interface StockFormProps {
 export const StockForm = ({ token, isOpen, onClose, onRegisterSuccess, initialData}: StockFormProps) => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const st= useTranslations("StockList");
+  const s = useTranslations("Success");
+  const e = useTranslations("Error");
+  const b = useTranslations("Button");
+  const p = useTranslations("Placeholder");
 
   const {
     register,
@@ -61,10 +68,10 @@ export const StockForm = ({ token, isOpen, onClose, onRegisterSuccess, initialDa
     try {
       if(initialData?.id) {
         await setStock({id:initialData.id, ...data}, token);
-        toast("success", "Depósito actualizado con éxito");
+        toast("success", s("successEdit", {field: "Depósito"}));
       } else {
         await registerStock({ name: data.name, address:data.address}, token);
-        toast("success", "Depósito registrado con éxito");
+        toast("success", s("successRegister", {field: "Depósito"}));
       }
       onClose();
       onRegisterSuccess();
@@ -72,7 +79,7 @@ export const StockForm = ({ token, isOpen, onClose, onRegisterSuccess, initialDa
       if (error instanceof Error) {
         toast("error", error.message);
       } else {
-        toast("error", "Error inesperado al registrar el depósito");
+        toast("error", e("errorRegister", {field : "depósito"}));
       }
     }finally {
       setIsSubmitting(false);
@@ -83,30 +90,30 @@ export const StockForm = ({ token, isOpen, onClose, onRegisterSuccess, initialDa
     <Modal
   isOpen={isOpen}
   onClose={onClose}
-  title={initialData ? "Editar Depósito" : "Registro de Depósito"}
+  title={initialData ? st("titleEdit") :st("titleRegister")}
   size="md"
 >
   <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
     <div>
-      <Label>Nombre</Label>
-      <Input {...register("name")} placeholder="Ingrese el nombre del depósito" />
+      <Label>{st("name")}</Label>
+      <Input {...register("name")} placeholder={p("name")} />
       {errors.name && <p className="text-red-500">{errors.name.message}</p>}
     </div>
     <div>
-      <Label>Dirección</Label>
-      <Input {...register("address")} placeholder="Ingrese la dirección del depósito" />
+      <Label>{st("address")}</Label>
+      <Input {...register("address")} placeholder={p("address")} />
       {errors.address && <p className="text-red-500">{errors.address.message}</p>}
     </div>
     <div className="flex justify-end gap-4">
-      <Button type="button" variant="outline" onClick={onClose}>Cancelar</Button>
+      <Button type="button" variant="outline" onClick={onClose}>{b("cancel")}</Button>
       <Button type="submit" disabled={isSubmitting}>
         {isSubmitting ? 
           initialData ?
-            "Guardando..." :
-            "Registrando..." :
+            b("saving") :
+            b("registering") :
           initialData ?
-            "Guardar cambios" :
-            "Registrar"}
+            b("save") :
+            b("register")}
       </Button>
     </div>
   </form>

@@ -17,6 +17,7 @@ import Image from 'next/image';
 import { image } from "@/lib/schemas";
 import { PawPrint, Upload, Info, Calendar, Weight } from 'lucide-react';
 import { blockExtraKeysNumber } from "@/lib/utils";
+import { useTranslations } from 'next-intl';
 
 const petFormSchema = z.object({
   petName: z.string().min(1, 'El nombre es obligatorio'),
@@ -42,6 +43,11 @@ export default function PetForm({ clientId, token }: PetFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const router = useRouter();
+  const e = useTranslations("Error")
+  const b= useTranslations("Button");
+  const p= useTranslations("PetForm");
+  const ph= useTranslations("Placeholder");
+  const s = useTranslations("Success");
   const {
     register,
     handleSubmit,

@@ -9,6 +9,7 @@ import NotImageNicoPets from "../../../public/NotImageNicoPets.png";
 import { useRouter } from "next/navigation";
 import { ProductSkeleton } from "./skeleton/ProductSkeleton";
 import { Carousel } from "./Carousel";
+import { useTranslations } from "next-intl";
 
 interface RecommendedProductsProps {
   clientId: number;
@@ -26,6 +27,7 @@ export const RecommendedProducts = ({
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  const b = useTranslations("Button");
   useEffect(() => {
     const fetchRecommendations = async () => {
       try {
@@ -80,7 +82,7 @@ export const RecommendedProducts = ({
               title={product.name}
               price={`${product.price.toLocaleString()} Gs.`}
               image={product.image?.originalUrl ?? NotImageNicoPets.src}
-              ctaText="Ver detalles"
+              ctaText={b("seeDetails")}
               ctaLink={`/shop/product/${product.id}`}
               tags={product.tags}
             />

@@ -19,7 +19,7 @@ const vaccineSchema = z.object({
   manufacturerId: z.number().min(1, "Seleccione un fabricante"),
   speciesId: z.number().min(1, "Seleccione una especie"),
   cost: z.number().min(1, "El costo debe ser mayor a 0"),
-  iva: z.number().min(1, "El IVA debe ser mayor a 0"),
+  iva: z.number().min(1, "El IVA debe ser mayor a 0").max(100, "El IVA no puede ser mayor a 100"),
   price: z.number().min(1, "El precio debe ser mayor a 0"),
   productImg: z.any().optional(),
   providerId: z.number().min(1, "Seleccione un proveedor"),
@@ -211,15 +211,26 @@ export function useVaccineForm(token: string | null, initialData?: VaccineFormVa
         });
 
         if (!response.ok) {
-          throw new Error("Error al crear la vacuna");
+            const errorData = await response.json().catch(() => ({})); // fallback si no es JSON
+            const message = errorData?.message || `Error HTTP: ${response.status}`;
+            throw new Error(message);
         }
 
         toast("success", "Vacuna creada exitosamente");
       }
 
       router.push("/dashboard/vaccine");
-    } catch (error) {
-      toast("error", isEdit ? "Error al actualizar la vacuna" : "Error al crear la vacuna");
+    } catch (error : unknown) {
+      toast(
+        "error",
+        isEdit
+          ? error instanceof Error
+            ? error.message
+            : "Error al actualizar la vacuna"
+          : error instanceof Error
+            ? error.message
+            : "Error al crear la vacuna"
+      );
     } finally {
       setIsSubmitting(false);
     }
