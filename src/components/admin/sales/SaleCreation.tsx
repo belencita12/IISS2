@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/select";
 import { PrintInvoiceModal } from "@/components/global/PrintInvoiceModal";
 import { getInvoiceDetailReport } from "@/lib/invoices/getInvoiceDetailReport";
+import { useTranslations } from "next-intl";
 
 type Props = {
   token: string;
@@ -53,10 +54,15 @@ export default function SaleCreation({ token }: Props) {
   );
   const router = useRouter();
 
+
   // Modal para imprimir la factura
   const [showPrintModal, setShowPrintModal] = useState(false);
   const [isPrinting, setIsPrinting] = useState(false);
   const [createdInvoiceId, setCreatedInvoiceId] = useState<string | null>(null);
+
+  const s = useTranslations("Sales");
+  const b = useTranslations("Button");
+
 
   // Calcular el total de la factura
   const total = products.reduce((sum, product) => sum + product.total, 0);
@@ -236,7 +242,7 @@ export default function SaleCreation({ token }: Props) {
         <div className="lg:col-span-1 space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Condición de Venta</CardTitle>
+              <CardTitle>{s("SaleCreation.condition")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <Select
@@ -252,15 +258,15 @@ export default function SaleCreation({ token }: Props) {
                   <SelectValue placeholder="Seleccionar condición" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="CASH">Contado</SelectItem>
-                  <SelectItem value="CREDIT">Crédito</SelectItem>
+                  <SelectItem value="CASH">{s("SaleCreation.cash")}</SelectItem>
+                  <SelectItem value="CREDIT">{s("SaleCreation.credit")}</SelectItem>
                 </SelectContent>
               </Select>
             </CardContent>
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Cliente</CardTitle>
+              <CardTitle>{s("SaleCreation.client")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <CustomerSearch
@@ -309,7 +315,7 @@ export default function SaleCreation({ token }: Props) {
         <div className="lg:col-span-2 space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Productos</CardTitle>
+              <CardTitle>{s("SaleCreation.products")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {!selectedStock ? (
@@ -336,26 +342,26 @@ export default function SaleCreation({ token }: Props) {
 
           <Card>
             <CardHeader>
-              <CardTitle>Resumen de Venta</CardTitle>
+              <CardTitle>{s("SaleCreation.summary")}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 <div className="flex justify-between font-bold text-lg">
-                  <span>Total:</span>
-                  <span>{total.toLocaleString("ES-PY")} Gs.</span>
+                  <span>{s("SaleCreation.total")}:</span>
+                  <span>{total.toLocaleString("ES-PY")} {s("SaleCreation.gs")}</span>
                 </div>
 
                 {paymentMethods.length > 0 && (
                   <>
                     <div className="h-px bg-gray-200 my-2"></div>
                     <div className="flex justify-between">
-                      <span>Total Pagado:</span>
-                      <span>{totalPaid.toLocaleString("ES-PY")} Gs.</span>
+                      <span>{s("SaleCreation.totalPaid")}:</span>
+                      <span>{totalPaid.toLocaleString("ES-PY")} {s("SaleCreation.gs")}</span>
                     </div>
                     {remainingBalance > 0 && (
                       <div className="flex justify-between text-red-500 font-medium">
                         <span>
-                          Faltan {remainingBalance.toLocaleString("ES-PY")} Gs.
+                          Faltan {remainingBalance.toLocaleString("ES-PY")} {s("SaleCreation.gs")}
                           para completar el pago.
                         </span>
                       </div>
@@ -365,7 +371,7 @@ export default function SaleCreation({ token }: Props) {
                         <span>
                           El monto excede por{" "}
                           {Math.abs(remainingBalance).toLocaleString("ES-PY")}{" "}
-                          Gs.
+                          {s("SaleCreation.gs")}
                         </span>
                       </div>
                     )}
@@ -392,7 +398,7 @@ export default function SaleCreation({ token }: Props) {
                 }
                 onClick={handleFinalizeSale}
               >
-                {loading ? "Finalizando..." : "Finalizar Venta"}
+                {loading ? b("finalizing") : b("finish")}
               </Button>
             </CardFooter>
           </Card>

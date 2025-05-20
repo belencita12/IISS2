@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { registerClient } from "@/lib/client/registerClient"; 
 import { FormClient } from "@/lib/client/IUserProfile"; 
 import { phoneNumber, ruc } from "@/lib/schemas"; 
+import { useTranslations } from "next-intl";
 
 const clientFormSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
@@ -34,6 +35,11 @@ interface RegisterClientFormProps {
 export default function RegisterClientForm({ token }: RegisterClientFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter(); 
+  const c = useTranslations("ClientForm");
+  const b = useTranslations("Button");
+  const e = useTranslations("Error");
+  const s = useTranslations("Success");
+  const p = useTranslations("Placeholder");
 
   const {
     register,
@@ -65,13 +71,13 @@ export default function RegisterClientForm({ token }: RegisterClientFormProps) {
       const response = await registerClient(clientData, token);
       
       if ('error' in response) {
-        toast("error", response.error || "No se pudo registrar el cliente");
+        toast("error", response.error || e("errorField", {field : "cliente"}));
       } else {
-        toast("success", "Cliente registrado con éxito"); 
+        toast("success", s("successRegister", {field : "Cliente"})); 
         router.push("/dashboard/clients"); 
       }
     } catch (error) {
-      toast("error", "Hubo un error al registrar el cliente");
+      toast("error", error instanceof Error ? error.message : e("errorField", {field : "cliente"}));
     } finally {
       setIsSubmitting(false);
     }
@@ -79,44 +85,44 @@ export default function RegisterClientForm({ token }: RegisterClientFormProps) {
 
   return (
     <div className="max-w-5xl mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-6">Registro de Cliente</h1>
+      <h1 className="text-3xl font-bold mb-6">{c("title")}</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
         <div>
-          <Label>Nombre</Label>
-          <Input {...register("name")} placeholder="Ingrese el nombre del cliente" />
+          <Label>{c("name")}</Label>
+          <Input {...register("name")} placeholder={p("name")} />
           {errors.name && <p className="text-red-500">{errors.name.message}</p>}
         </div>
         <div>
-          <Label>Apellido</Label>
-          <Input {...register("lastname")} placeholder="Ingrese el apellido del cliente" />
+          <Label>{c("lastName")}</Label>
+          <Input {...register("lastname")} placeholder={p("lastName")} />
           {errors.lastname && <p className="text-red-500">{errors.lastname.message}</p>}
         </div>
         <div>
-          <Label>Correo Electrónico</Label>
-          <Input {...register("email")} placeholder="ejemplo@gmail.com" type="email" />
+          <Label>{c("email")}</Label>
+          <Input {...register("email")} placeholder={p("exampleEmail")} type="email" />
           {errors.email && <p className="text-red-500">{errors.email.message}</p>}
         </div>
         <div>
-          <Label>Dirección</Label>
-          <Input {...register("adress")} placeholder="Ingrese la dirección del cliente" />
+          <Label>{c("address")}</Label>
+          <Input {...register("adress")} placeholder={p("address")} />
           {errors.adress && <p className="text-red-500">{errors.adress.message}</p>}
         </div>
         <div>
-          <Label>Número de Teléfono</Label>
-          <Input {...register("phoneNumber")} placeholder="Ingrese el número de teléfono" />
+          <Label>{c("phone")}</Label>
+          <Input {...register("phoneNumber")} placeholder={p("phone")} />
           {errors.phoneNumber && <p className="text-red-500">{errors.phoneNumber.message}</p>}
         </div>
         <div>
-          <Label>RUC</Label>
-          <Input {...register("ruc")} placeholder="Ingrese el RUC del cliente" />
+          <Label>{c("ruc")}</Label>
+          <Input {...register("ruc")} placeholder={p("ruc")} />
           {errors.ruc && <p className="text-red-500">{errors.ruc.message}</p>}
         </div>
         <div className="flex justify-end gap-4">
           <Button type="button" variant="outline" onClick={() => router.push("/dashboard/clients")}>
-            Cancelar
+            {b("cancel")}
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Registrando..." : "Agregar cliente"}
+            {isSubmitting ? b("registering") : b("register")}
           </Button>
         </div>
       </form>

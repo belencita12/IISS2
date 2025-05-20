@@ -8,6 +8,7 @@ import GenericPagination from "@/components/global/GenericPagination";
 import PurchaseSelectFilter from "./filters/PurchaseSelectFilter";
 import PurchaseNumericFilter from "./filters/PurchaseNumericFilter";
 import PurchaseListSkeleton from "./skeleton/PurchaseListSkeleton";
+import { useTranslations } from "next-intl";
 
 interface Props {
   token: string;
@@ -17,6 +18,10 @@ export default function PurchaseList({ token }: Props) {
 
   const router = useRouter();
   const { data, query, setQuery,  isLoading, error } = useGetPurchases({ token });
+
+  const p = useTranslations("PurchaseDetail");
+  const b = useTranslations("Button");
+  const e = useTranslations("Error");
 
   const purchases = data?.data || [];
 
@@ -34,13 +39,13 @@ export default function PurchaseList({ token }: Props) {
       />
 
       <div className="flex justify-between items-center mb-6 w-full">
-        <h1 className="text-2xl font-bold">Compras</h1>
+        <h1 className="text-2xl font-bold">{p("title")}</h1>
         <Button
           variant="default"
           onClick={() => router.push("/dashboard/purchases/register")}
           className="bg-black text-white hover:bg-gray-800"
         >
-          Registrar Compra
+          {b("register")}
         </Button>
       </div>
 
@@ -49,7 +54,7 @@ export default function PurchaseList({ token }: Props) {
       {isLoading ? (
         <PurchaseListSkeleton />
       ) : purchases.length === 0 ? (
-        <p className="text-center">No hay compras registradas.</p>
+        <p className="text-center">{e("notFoundField", {field: "compras"})}</p>
       ) : (
         purchases.map((purchase) => (
           <PurchaseCard key={purchase.id} purchase={purchase} />

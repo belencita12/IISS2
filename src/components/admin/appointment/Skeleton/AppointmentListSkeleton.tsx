@@ -23,7 +23,6 @@ export default function AppointmentListSkeleton() {
               <Skeleton className="h-4 w-2/3" />
               <Skeleton className="h-4 w-1/2" />
             </div>
-
             <div className="md:w-1/2"></div>
           </div>
         </div>

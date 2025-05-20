@@ -15,6 +15,7 @@ import { EmployeeData } from "@/lib/employee/IEmployee";
 import { EMPLOYEE_API } from "@/lib/urls";
 import { useFetch } from "@/hooks/api";
 import useDebounce from "@/hooks/useDebounce";
+import { useTranslations } from "next-intl";
 
 type EmployeeSelectProps = {
   onSelectEmployee: (employee: EmployeeData) => void;
@@ -45,6 +46,10 @@ export default function EmployeeSelect({
 
   const { data, get, loading } = useFetch<EmployeeResponse>("", token);
 
+  const p = useTranslations("Placeholder");
+  const b = useTranslations("Button");
+  const e = useTranslations("Error");
+
   useEffect(() => {
     if (debouncedSearch) {
       get(undefined, `${EMPLOYEE_API}?query=${encodeURIComponent(debouncedSearch)}&page=1&size=5`);
@@ -72,7 +77,7 @@ export default function EmployeeSelect({
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Buscar empleado..."
+            placeholder={p("name")}
             className="pl-8"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -83,7 +88,7 @@ export default function EmployeeSelect({
               <Command className="rounded-lg border shadow-md">
                 <CommandList>
                   <CommandEmpty>
-                    {loading ? "Cargando..." : "No se encontraron empleados."}
+                    {loading ? b("loading") : e("notFoundField", { field: "empleados"})}
                   </CommandEmpty>
                   <CommandGroup>
                     {employees.map((employee) => (

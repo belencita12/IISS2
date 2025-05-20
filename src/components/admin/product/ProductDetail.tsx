@@ -16,6 +16,7 @@ import { useFetch } from "@/hooks/api/useFetch";
 import { PRODUCT_API } from "@/lib/urls";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import ProductDetailSkeleton from "./skeleton/ProductDetailSkeleton";
+import { useTranslations } from "next-intl";
 
 interface ProductDetailProps {
   token: string;
@@ -29,6 +30,13 @@ export default function ProductDetail({ token }: ProductDetailProps) {
   const [stocks, setStocks] = useState<StockData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+
+  const b = useTranslations("Button");
+  const m = useTranslations("ModalConfirmation");
+  const e = useTranslations("Error");
+  const s = useTranslations("Success");
+  const p = useTranslations("ProductDetail");
 
   const { delete: deleteReq, loading: isDelLoading } = useFetch<void, null>(
     PRODUCT_API,
@@ -51,9 +59,8 @@ export default function ProductDetail({ token }: ProductDetailProps) {
         setProduct(productData);
         setStockDetails(stockResponse.data);
         setStocks(stocksResponse.data);
-      } catch (err) {
-        toast("error", "No se pudo cargar la información del producto");
-        console.error(err);
+      } catch (err: unknown) {
+        toast("error", err instanceof Error ? err.message : e("noGetData"));
       } finally {
         setIsLoading(false);
       }
@@ -65,9 +72,9 @@ export default function ProductDetail({ token }: ProductDetailProps) {
     if (!id) return;
     const { ok, error } = await deleteReq(null, `${PRODUCT_API}/${id}`);
     if (!ok) {
-      toast("error", error?.message || "Error al eliminar el producto");
+      toast("error", error?.message || e("noDelete", {field: "producto"}));
     } else {
-      toast("success", "Producto eliminado correctamente");
+      toast("success", s("successDelete", {field: "Producto"}));
       router.back();
     }
     setIsDeleteModalOpen(false);
@@ -75,7 +82,7 @@ export default function ProductDetail({ token }: ProductDetailProps) {
 
   if (isLoading) return <ProductDetailSkeleton />;
   if (!product)
-    return <div className="text-center mt-8">Producto no encontrado</div>;
+    return <div className="text-center mt-8">{e("notFound")}</div>;
 
   // URL por defecto si no hay imagen
   const defaultImageSrc = "/NotImageNicoPets.png";
@@ -88,7 +95,7 @@ export default function ProductDetail({ token }: ProductDetailProps) {
           onClick={() => router.push('/dashboard/products')}
           className="border-black border-solid"
         >
-          Volver
+          {b("toReturn")}
         </Button>
       </div>
 
@@ -114,36 +121,34 @@ export default function ProductDetail({ token }: ProductDetailProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 mt-6">
+      <div className="flex gap-4 justify-end mt-6">
         <div></div>
         <div className="flex justify-start mx-7">
         </div>
-        <div className="flex justify-end gap-4">
-          <Button
-            variant="outline"
-            onClick={() => setIsDeleteModalOpen(true)}
-            className="px-6"
-          >
-            Eliminar
-          </Button>
+        <Button
+          variant="outline"
+          onClick={() => setIsDeleteModalOpen(true)}
+          className="px-6"
+        >
+          {b("delete")}
+        </Button>
 
-          <Button
-            variant="outline"
-            onClick={() =>
-              router.push(`/dashboard/products/update/${product.id}`)
-            }
-            className="px-6"
-          >
-            Editar
-          </Button>
-        </div>
+        <Button
+          variant="outline"
+          onClick={() =>
+            router.push(`/dashboard/products/update/${product.id}`)
+          }
+          className="px-6"
+        >
+          {b("edit")}
+        </Button>
       </div>
 
       <hr className="my-8 border-t border-gray-200" />
 
       <div className="mt-8">
         <h3 className="text-2xl font-semibold text-center mb-4">
-          Cantidad por Depósitos
+          {p("quantityDeposit")}
         </h3>
         <StockList
           stockDetails={stockDetails}
@@ -157,10 +162,10 @@ export default function ProductDetail({ token }: ProductDetailProps) {
         isLoading={isDelLoading}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
-        title="Eliminar"
-        message={`¿Seguro que quieres eliminar el producto ${product.name}?`}
-        confirmText="Eliminar"
-        cancelText="Cancelar"
+        title={m("titleDelete", {field: "producto"})}
+        message={m("deleteMessage", {field: product.name})}
+        confirmText={b("delete")}
+        cancelText={b("cancel")}
         variant="danger"
       />
     </div>

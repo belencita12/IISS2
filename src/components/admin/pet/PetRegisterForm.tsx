@@ -16,6 +16,7 @@ import { blockExtraKeysNumber, mapToFormData } from "@/lib/utils";
 import { image } from "@/lib/schemas";
 import FormImgUploader from "@/components/global/FormImgUploader";
 import PetSexSelector from "./PetSexSelector";
+import { useTranslations } from "next-intl";
 
 const petFormSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
@@ -63,6 +64,12 @@ export default function PetRegisterForm({
   const selectedSpeciesId = Number(watch("speciesId"));
   const selectedSex = watch("sex");
 
+  const p = useTranslations("PetForm");
+  const e = useTranslations("Error");
+  const s = useTranslations("Success");
+  const ph = useTranslations("Placeholder");
+  const b = useTranslations("Button");
+
   const { data: species, isLoading: isGettingSpecies } = useGetSpecies({
     token,
   });
@@ -102,13 +109,13 @@ export default function PetRegisterForm({
     try {
       await registerPet(formData, token);
       reset();
-      toast("success", "Mascota registrada con éxito!", {
+      toast("success", s("successRegister", {field: "Mascota"}), {
         duration: 2000,
         onAutoClose: () => router.push(`/dashboard/clients/${clientId}`),
         onDismiss: () => router.push(`/dashboard/clients/${clientId}`),
       });
-    } catch {
-      toast("error", "Hubo un error al registrar la mascota.");
+    } catch(error : unknown) {
+      toast("error", error instanceof Error ? error.message : e("errorRegister", {field: "mascota"}))
     }
   };
 
@@ -117,14 +124,14 @@ export default function PetRegisterForm({
       <div className="flex flex-col md:flex-row gap-16">
         <div className="flex flex-col items-center space-y-4 w-80">
           <h1 className="text-3xl font-bold self-start">
-            Registro de Mascota (Admin)
+            {p("petFormTitle")}
           </h1>
           <p className="text-gray-600 self-start">
-            Ingresa los datos de la mascota
+            {p("description")}
           </p>
           <div className="w-full flex flex-col items-center">
             <h3 className="text-sm font-semibold mb-2 text-gray-700">
-              Imagen (Opcional)
+              {p("image")}
             </h3>
             <FormImgUploader
               prevClassName="rounded"
@@ -141,20 +148,20 @@ export default function PetRegisterForm({
             <FormInput
               register={register("name")}
               error={errors.name?.message}
-              label="Nombre"
-              placeholder="Luna"
+              label={p("name")}
+              placeholder={ph("name")}
               name="name"
             />
             <FormInput
               register={register("dateOfBirth")}
               error={errors.dateOfBirth?.message}
-              label="Fecha de nacimiento"
+              label={p("born")}
               type="date"
               name="dateOfBirth"
               max={new Date().toISOString().split("T")[0]}
             />
             <FormSelect
-              label="Especie"
+              label={p("specie")}
               name="speciesId"
               disabled={isGettingSpecies}
               onChange={handleSpeciesChange}
@@ -162,8 +169,8 @@ export default function PetRegisterForm({
               error={errors.speciesId?.message}
               placeholder={
                 isGettingSpecies
-                  ? "Cargando Especies..."
-                  : "Seleccionar Especie"
+                  ? b("loading")
+                  : b("select")
               }
               options={species?.data.map((s) => ({
                 value: s.id.toString(),
@@ -171,7 +178,7 @@ export default function PetRegisterForm({
               }))}
             />
             <FormSelect
-              label="Raza"
+              label={p("race")}
               name="raceId"
               disabled={isGettingRaces || !selectedSpeciesId || !species}
               register={register("raceId")}
@@ -179,10 +186,10 @@ export default function PetRegisterForm({
               error={errors.raceId?.message}
               placeholder={
                 !species || !selectedSpeciesId
-                  ? "Selecciona una especie"
+                  ? p("selectFirst")
                   : isGettingRaces
-                  ? "Cargando Razas..."
-                  : "Seleccionar Raza"
+                  ? b("loading")
+                  : b("select")
               }
               options={races?.data?.map((r) => ({
                 value: r.id.toString(),
@@ -197,7 +204,7 @@ export default function PetRegisterForm({
               onKeyDown={blockExtraKeysNumber}
               register={register("weight")}
               error={errors.weight?.message}
-              label="Peso (kg)"
+              label={p("weight")}
               name="weight"
             />
             <PetSexSelector
@@ -207,10 +214,10 @@ export default function PetRegisterForm({
             />
             <div className="flex justify-start gap-4 mt-16">
               <Button type="button" variant="outline">
-                <Link href={`/dashboard/clients/${clientId}`}>Cancelar</Link>
+                <Link href={`/dashboard/clients/${clientId}`}>{b("cancel")}</Link>
               </Button>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Registrando..." : "Registrar Mascota"}
+                {isSubmitting ? b("registering") : b("register")}
               </Button>
             </div>
           </form>

@@ -17,6 +17,7 @@ import {
 import SearchBar from "@/components/global/SearchBar";
 import type { ServiceType } from "@/lib/appointment/IAppointment";
 import { useFetch } from "@/hooks/api";
+import { useTranslations } from "next-intl";
 import { SERVICE_TYPE } from "@/lib/urls";
 import { toast } from "@/lib/toast";
 import useDebounce from "@/hooks/useDebounce";
@@ -50,6 +51,10 @@ export default function ServiceSelect({
   const debouncedSearchQuery = useDebounce(searchQuery, 2000);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
+ const ph = useTranslations("Placeholder");
+  const a = useTranslations("AppointmentForm");
+  const b = useTranslations("Button");
+  const e = useTranslations("Error");
   const { data, loading: isLoading, get } = useFetch<ServiceTypeApiResponse>(
     SERVICE_TYPE,
     token
@@ -70,8 +75,7 @@ export default function ServiceSelect({
 
       await get(undefined, url);
     } catch (err) {
-      toast("error", "Error al cargar servicios");
-      setIsSearching(false);
+      if (err instanceof Error) toast("error", err.message);
     }
   };
 
@@ -116,10 +120,10 @@ export default function ServiceSelect({
             >
               {selectedService ? (
                 <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-start">
-                   Selecciona otro servicio
+                  {a("otherService")}
                 </div>
               ) : (
-                <span>Selecciona al menos un servicio</span>
+                <span>{e("selectOne", {field: "servicio"})}</span>
               )}
               <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
@@ -136,7 +140,8 @@ export default function ServiceSelect({
                 <div className="w-full pb-2">
                   <SearchBar
                     onSearch={handleSearchChange}
-                    placeholder="Buscar por nombre..."
+                    placeholder={ph("getBy", {field: "nombre"})}
+                    debounceDelay={500}
                     defaultQuery={searchQuery}
                   />
                 </div>
@@ -144,11 +149,11 @@ export default function ServiceSelect({
 
               {(isLoading || isSearching) ? (
                 <div className="py-6 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
-                  {isSearching ? "Buscando..." : "Cargando servicios..."}
+                  {isSearching ? b("searching") : b("loading")}
                 </div>
               ) : (
                 <>
-                  <CommandEmpty>No se encontraron servicios</CommandEmpty>
+                  <CommandEmpty>{e("notFoundField", {field: "servicios"})}</CommandEmpty>
                   <CommandGroup>
                     <CommandList className="max-h-[250px] overflow-y-auto">
                       {services.map((service) => (
