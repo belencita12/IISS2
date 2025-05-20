@@ -10,6 +10,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useTranslations } from "next-intl";
 
 export default function ClientProfileSection({
     fullName,
@@ -19,11 +20,13 @@ export default function ClientProfileSection({
     phoneNumber,
     adress,
 }: IUserProfile) {
+    const u= useTranslations("ProfileUser")
+
     return (
         <Card className="mb-8 mt-8 shadow-md w-full">
             <CardHeader className="pb-0">
                 <h1 className="text-3xl font-bold tracking-tight">
-                    Perfil de Cliente
+                    {u("title")}
                 </h1>
             </CardHeader>
             <CardContent>
@@ -50,7 +53,7 @@ export default function ClientProfileSection({
                                 </div>
                                 <div className="min-w-0 flex-1">
                                     <p className="text-sm text-muted-foreground">
-                                        RUC
+                                        {u("rucLabel")}
                                     </p>
                                     <p className="font-medium truncate">
                                         {ruc}
@@ -64,7 +67,7 @@ export default function ClientProfileSection({
                                 </div>
                                 <div className="min-w-0 flex-1">
                                     <p className="text-sm text-muted-foreground">
-                                        Correo Electrónico
+                                        {u("emailLabel")}
                                     </p>
                                     <TooltipProvider>
                                         <Tooltip>
@@ -87,7 +90,7 @@ export default function ClientProfileSection({
                                 </div>
                                 <div className="min-w-0 flex-1">
                                     <p className="text-sm text-muted-foreground">
-                                        Teléfono
+                                        {u("phoneLabel")}
                                     </p>
                                     <p className="font-medium truncate">
                                         {phoneNumber}
@@ -102,7 +105,7 @@ export default function ClientProfileSection({
                                     </div>
                                     <div className="min-w-0 flex-1">
                                         <p className="text-sm text-muted-foreground">
-                                            Dirección
+                                            {u("addressLabel")}
                                         </p>
                                         <TooltipProvider>
                                             <Tooltip>

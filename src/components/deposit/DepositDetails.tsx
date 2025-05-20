@@ -12,6 +12,7 @@ import { getStockById } from "@/lib/stock/getStockById";
 import GenericPagination from "../global/GenericPagination";
 import StockDetailCard from "./StockDetailCard";
 import StockDetailCardskeleton from "./skeleton/StockDetailSkeleton";
+import { useTranslations } from "next-intl";
 
 interface DepositDetailsProps {
   token: string;
@@ -48,6 +49,11 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
     if (e.key === "-" || e.key === "e") e.preventDefault();
   };
 
+  const st= useTranslations("StockDetail");
+  const b = useTranslations("Button");
+  const e = useTranslations("Error");
+
+
   const fetchStockProducts = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -73,9 +79,8 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
 
       setProducts(productList);
       setTotalPages(stockDetails.totalPages || 1);
-    } catch (error) {
-      console.error("Error al obtener detalles de stock:", error);
-      toast("error", "No se pudieron cargar los productos del depósito.");
+    } catch (error: unknown) {
+      toast("error", error instanceof Error ? error.message : e("notGetData"));
     } finally {
       setIsLoading(false);
     }
@@ -119,7 +124,7 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
           onClick={() => router.push('/dashboard/stock')}
           className="border-black border-solid"
         >
-          Volver
+          {b("toReturn")}
         </Button>
       </div>
 
@@ -131,8 +136,8 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
           </div>
         ) : (
           <div>
-            <h2 className="text-3xl font-bold">Depósito</h2>
-            <p className="text-gray-400">Cargando información del depósito...</p>
+            <h2 className="text-3xl font-bold">{st("title")}</h2>
+            <p className="text-gray-400">{b("loading")}</p>
           </div>
         )}
       </div>
@@ -146,14 +151,14 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
         token={token}
       />
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Productos del Deposito</h1>
+        <h1 className="text-2xl font-bold">{st("productStock")}</h1>
         <div className="flex gap-4">
           <Button
             variant="default"
             onClick={() => router.push(`/dashboard/products/register`)}
             className="bg-black text-white hover:bg-gray-800"
           >
-            Crear Producto
+            {b("add")}
           </Button>
         </div>
       </div>
@@ -161,7 +166,7 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
       {isLoading ? (
         <StockDetailCardskeleton />
       ) : products.length === 0 ? (
-        <p className="text-center py-4">No hay información del Depósito disponible</p>
+        <p className="text-center py-4">{e("notFound")}</p>
       ) : (
         products.map((product) => (
           <StockDetailCard

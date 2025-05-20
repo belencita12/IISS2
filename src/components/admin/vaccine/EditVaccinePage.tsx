@@ -6,6 +6,7 @@ import VaccineForm from "@/components/admin/vaccine/NewVaccineForm";
 import { getVaccineById } from "@/lib/vaccine/getVaccineById";
 import { VaccineFormValues } from "@/lib/vaccine/IVaccine";
 import { Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface EditVaccinePageProps {
   token: string;
@@ -17,13 +18,13 @@ export default function EditVaccinePage({ token, id }: EditVaccinePageProps) {
     null
   );
   const [loading, setLoading] = useState(true);
+  const e = useTranslations("Error");
 
   useEffect(() => {
     if (!token || !id) return;
 
     getVaccineById(token, Number(id))
       .then((data) => {
-        console.log(data);
         const adaptedData: VaccineFormValues = {
           id: data.id,
           name: data.name,
@@ -51,8 +52,8 @@ export default function EditVaccinePage({ token, id }: EditVaccinePageProps) {
 
         setVaccineData(adaptedData);
       })
-      .catch(() => {
-        toast("error", "Error al cargar los datos de la vacuna");
+      .catch((error : unknown) => {
+        toast("error", error instanceof Error ? error.message : e("errorLoad", {field: vaccineData?.name || ""}));
       })
       .finally(() => setLoading(false));
   }, [token, id]);
@@ -64,7 +65,7 @@ export default function EditVaccinePage({ token, id }: EditVaccinePageProps) {
       </div>
     );
 
-  if (!vaccineData) return <p>No se encontró la vacuna</p>;
+  if (!vaccineData) return <p>{e("notFound")}</p>;
 
   return <VaccineForm token={token} initialData={vaccineData} />;
 }

@@ -11,6 +11,7 @@ import { deleteEmployeeByID } from "@/lib/employee/deleteEmployeeByID";
 import { ConfirmationModal } from "../global/Confirmation-modal";
 import SearchBar from "../global/SearchBar";
 import EmployeeTableSkeleton from "./skeleton/EmployeeTableSkeleton";
+import { useTranslations } from "next-intl";
 
 interface EmployeesTableProps {
   token: string | null;
@@ -30,13 +31,19 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
   });
   const [loading, setLoading] = useState(false);
 
+  const e = useTranslations("EmployeeTable");
+  const b = useTranslations("Button");
+  const m = useTranslations("ModalConfirmation");
+  const s = useTranslations("Success");
+  const err= useTranslations("Error");
+
   const loadEmployees = useCallback(
     async (page: number = 1, query: string = "") => {
       if (!token) return;
       setLoading(true);
       try {
         const results = await fetchEmployees(page, query, token);
-        if (!results?.data?.length && query) toast("info", "No se encontraron empleados!");
+        if (!results?.data?.length && query) toast("info", e("notFoundField", {field: "empleados"}));
         setData({
           employees: results?.data || [],
           pagination: {
@@ -46,9 +53,9 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
             pageSize: results?.size || 8,
           },
         });
-      } catch (error) {
-        toast("error", "Error al cargar empleados");
-        console.error("Error cargando empleados:", error);
+      } catch (error:unknown) {
+        if (error instanceof Error) {
+          toast("error", error.message)};
       } finally {
         setLoading(false);
       }
@@ -89,10 +96,10 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
         : false;
     
       if (success) {
-        toast("success", "Empleado eliminado correctamente.");
+        toast("success", s("successDelete", {field: selectedEmployee.fullName}));
         loadEmployees(data.pagination.currentPage);
       } else {
-        toast("error", "No se pudo eliminar el empleado.");
+        toast("error", e("noDelete", {field : selectedEmployee.fullName}));
       }
     
       setIsModalOpen(false);
@@ -101,10 +108,10 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
     
 
   const columns: Column<EmployeeData>[] = [
-    { header: "Nombre", accessor: "fullName" },
-    { header: "Correo", accessor: "email" },
-    { header: "Ruc", accessor: "ruc" },
-    { header: "Cargo", accessor: (employee) => employee.position.name },
+    { header: e("name"), accessor: "fullName" },
+    { header: e("email"), accessor: "email" },
+    { header: e("ruc"), accessor: "ruc" },
+    { header: e("position"), accessor: (employee) => employee.position.name },
   
   ];
 
@@ -113,28 +120,28 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
       icon: <Eye className="w-4 h-4" />,
       onClick: (employee) => {
         if (!employee.id || isNaN(Number(employee.id))) {
-          toast("error", "ID de empleado inválido");
+          toast("error", e("invalidID"));
           return;
         }
         router.push(`/dashboard/employee/${employee.id}`);
       },
-      label: "Ver detalles",
+      label: b("seeDetails"),
     },
     {
       icon: <Pencil className="w-4 h-4" />,
       onClick: (employee) => {
         if (!employee.id || isNaN(Number(employee.id))) {
-          toast("error", "ID de empleado inválido");
+          toast("error", e("invalidID"));
           return;
         }
         router.push(`/dashboard/employee/update/${employee.id}`);
       },
-      label: "Editar",
+      label: b("edit"),
     },
     {
       icon: <Trash className="w-4 h-4" />,
       onClick: confirmDelete, 
-      label: "Eliminar",
+      label: b("delete"),
     },
   ];
 
@@ -142,9 +149,9 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
     <div className="p-4 mx-auto">
         <SearchBar onSearch={handleSearch} />
         <div className="flex justify-between items-center mb-4">
-            <h2 className="text-3xl font-bold">Empleados</h2>
+            <h2 className="text-3xl font-bold">{e("title")}</h2>
             <Button variant="outline" className="px-6" onClick={() => router.push("/dashboard/employee/register")}>
-                    Agregar
+                    {b("register")}
             </Button>
         </div>
         <GenericTable
@@ -155,16 +162,16 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
           onPageChange={handlePageChange}
           isLoading={loading}
           skeleton={<EmployeeTableSkeleton />}
-          emptyMessage="No se encontraron empleados"
+          emptyMessage={e("emptyMessage")}
       />
       <ConfirmationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleDelete}
-        title="Eliminar Empleado"
-        message={`¿Seguro que quieres eliminar a ${selectedEmployee?.fullName}?`}
-        confirmText="Eliminar"
-        cancelText="Cancelar"
+        title={m("titleDelete", {field: "empleado"})}
+        message={m("deleteMessagePerson", {field: selectedEmployee?.fullName ?? ""})}
+        confirmText={b("delete")}
+        cancelText={b("cancel")}
         variant="danger"
       />
     </div>

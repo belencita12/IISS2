@@ -8,6 +8,7 @@ import GenericTable, {
 } from "@/components/global/GenericTable";
 import { StockDetailsData, StockData } from "@/lib/stock/IStock";
 import { Eye } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface Row {
   id: number;
@@ -28,6 +29,8 @@ export default function ProductStockList({
   isLoading,
 }: StockListProps) {
   const router = useRouter();
+  const s = useTranslations("StockList");
+  const b = useTranslations("Button");
 
   const rows: Row[] = stockDetails
     .map((detail) => {
@@ -43,10 +46,10 @@ export default function ProductStockList({
     .filter((r): r is Row => r !== null);
 
   const columns: Column<Row>[] = [
-    { header: "Nombre", accessor: "name", className: "text-left" },
-    { header: "Dirección", accessor: "address", className: "text-left" },
+    { header: s("name"), accessor: "name", className: "text-left" },
+    { header: s("address"), accessor: "address", className: "text-left" },
     {
-      header: "Cantidad",
+      header: s("quantity"),
       accessor: (item) => `${item.amount} Unids.`,
       className: "text-right",
     },
@@ -56,7 +59,7 @@ export default function ProductStockList({
     {
       icon: <Eye size={16} />,
       onClick: (item) => router.push(`/dashboard/stock/${item.id}`),
-      label: "Ver detalles",
+      label: b("seeDetails"),
     },
   ];
 
@@ -65,9 +68,9 @@ export default function ProductStockList({
       data={rows}
       columns={columns}
       actions={actions}
-      actionsTitle="Acciones"
+      actionsTitle={b("actions")}
       isLoading={isLoading}
-      emptyMessage="No disponible en ninguna sucursal"
+      emptyMessage={s("empty")}
       className="w-full table-auto"
     />
   );
