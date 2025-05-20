@@ -1,91 +1,158 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { Check, ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { PetData } from "@/lib/pets/IPet";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import SearchBar from "@/components/global/SearchBar";
+import type { PetData, PetDataResponse } from "@/lib/pets/IPet";
+import { useFetch } from "@/hooks/api/useFetch"; 
 import { PET_API } from "@/lib/urls";
-import { useFetch } from "@/hooks/api";
+import { toast } from "@/lib/toast";
 import { useTranslations } from "next-intl";
+import { SelectValue } from "@radix-ui/react-select";
 
-type ClientPetSelectProps = {
+type PetSelectProps = {
   clientId: number;
   token: string;
   onSelectPet: (pet: PetData) => void;
 };
 
-type PetResponse = {
-  data: PetData[];
-};
-
-export default function ClientPetSelect({
+export default function PetSelect({
   clientId,
   token,
   onSelectPet,
-}: ClientPetSelectProps) {
+}: PetSelectProps) {
+  const [open, setOpen] = useState(false);
   const [pets, setPets] = useState<PetData[]>([]);
-  const [selectedPetName, setSelectedPetName] = useState<string>("");
+  const [selectedPet, setSelectedPet] = useState<PetData | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
 
-  const { data, get } = useFetch<PetResponse>("", token);
+  const { loading: isLoading, get } = useFetch<PetDataResponse>(PET_API, token);
 
   const ph = useTranslations("Placeholder");
+  const fetchPets = async (search?: string) => {
+    try {
+      const baseUrl = `${PET_API}?page=1&clientId=${clientId}`;
+      const url = search ? `${baseUrl}&name=${search}` : baseUrl;
 
-  useEffect(() => {
-    if (clientId) {
-      get(undefined, `${PET_API}?clientId=${clientId}&page=1&size=100`);
-    }
-  }, [clientId]);
+      const response = await get(undefined, url);
 
-  useEffect(() => {
-    if (data?.data) {
-      setPets(data.data);
-    }
-  }, [data]);
-
-  const handleSelect = (petId: string) => {
-    const selectedPet = pets.find((p) => p.id === Number(petId));
-    if (selectedPet) {
-      setSelectedPetName(selectedPet.name);
-      onSelectPet(selectedPet);
+      if (response && response.data) {
+        setPets(response.data.data || []);
+      }
+    } catch (err) {
+      toast("error", "Error al cargar mascotas");
     }
   };
 
+  useEffect(() => {
+    if (clientId && token) {
+      fetchPets();
+    }
+  }, [clientId, token]);
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+    fetchPets(query);
+  };
+
+  const handleSelectPet = (pet: PetData) => {
+    setSelectedPet(pet);
+    onSelectPet(pet);
+    setOpen(false);
+  };
+
   return (
-    <div className="space-y-2">
-      <div className="flex gap-2">
-        <Select onValueChange={handleSelect}>
-          <SelectTrigger className="w-full h-11 border-myPurple-tertiary focus:ring-myPurple-primary focus:border-myPurple-primary transition-all duration-200">
-            {selectedPetName ? (
-              <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-start flex items-center">
-                {selectedPetName}
+    <div className="w-full">
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            ref={buttonRef}
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="w-full h-11 justify-between border-myPurple-tertiary focus:ring-myPurple-primary focus:border-myPurple-primary transition-all duration-200"
+          >
+            {selectedPet ? (
+              <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-start">
+                {selectedPet.name}
               </div>
             ) : (
               <SelectValue placeholder={ph("select")} />
             )}
-          </SelectTrigger>
-          <SelectContent className="border-myPurple-tertiary">
-            {pets.map((pet) => (
-              <SelectItem
-                key={pet.id}
-                value={String(pet.id)}
-                className="focus:bg-myPurple-disabled/50"
-              >
-                <div className="flex flex-col py-1">
-                  <p className="font-medium">{pet.name}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {pet.race.name}
-                  </p>
-                </div>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+            <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent
+          className="p-0 shadow-lg border-myPurple-tertiary/30 w-[var(--radix-popover-trigger-width)] max-w-[95vw]"
+          align="start"
+          side="bottom"
+          sideOffset={5}
+          avoidCollisions={false}
+        >
+          <Command>
+            <div className="flex items-center border-b px-2 pt-2 sticky top-0 bg-white z-10">
+              <div className="w-full pb-2">
+                <SearchBar
+                  onSearch={handleSearchChange}
+                  placeholder="Buscar por nombre..."
+                  debounceDelay={500}
+                  defaultQuery={searchQuery}
+                />
+              </div>
+            </div>
+
+            {isLoading ? (
+              <div className="py-6 text-center text-sm text-muted-foreground">
+                Cargando mascotas...
+              </div>
+            ) : (
+              <>
+                <CommandEmpty>No se encontraron mascotas</CommandEmpty>
+                <CommandGroup>
+                  <CommandList className="max-h-[250px] overflow-y-auto">
+                    {pets.map((pet) => (
+                      <CommandItem
+                        key={pet.id}
+                        value={pet.name}
+                        onSelect={() => handleSelectPet(pet)}
+                        className="px-4 py-2 cursor-pointer hover:bg-myPurple-disabled/50"
+                      >
+                        <div className="flex flex-col w-full">
+                          <div className="flex items-center w-full">
+                            <span className="font-medium truncate">{pet.name}</span>
+                            {selectedPet?.id === pet.id && (
+                              <Check className="ml-auto h-4 w-4 text-myPurple-primary" />
+                            )}
+                          </div>
+                          {pet.race?.name && (
+                            <span className="text-sm text-muted-foreground truncate">
+                              {pet.race.name}
+                            </span>
+                          )}
+                        </div>
+                      </CommandItem>
+                    ))}
+                  </CommandList>
+                </CommandGroup>
+              </>
+            )}
+          </Command>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 }

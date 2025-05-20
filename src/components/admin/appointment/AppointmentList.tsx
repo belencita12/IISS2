@@ -21,6 +21,8 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import AppointmentListSkeleton from "./Skeleton/AppointmentListSkeleton";
 import { useTranslations } from "next-intl";
+import useDebounce from "@/hooks/useDebounce";
+import { normalizeText } from "@/lib/utils";
 
 interface AppointmentListProps {
   token: string;
@@ -45,6 +47,8 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
   const b = useTranslations("Button");
   const e = useTranslations("Error");
   const p= useTranslations("Placeholder");
+  const [searchValue, setSearchValue] = useState("");
+  const debouncedSearchValue = useDebounce(searchValue, 500);
 
   const {
     data,
@@ -65,6 +69,18 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
     },
   });
 
+  useEffect(() => {
+    if (debouncedSearchValue !== undefined) {
+      const searchParams: Record<string, unknown> = {
+        search: normalizeText(debouncedSearchValue),
+        fromDesignatedDate: filters.fromDesignatedDate,
+        toDesignatedDate: filters.toDesignatedDate,
+        status: filters.status,
+      };
+      search(searchParams);
+    }
+  }, [debouncedSearchValue, filters.fromDesignatedDate, filters.toDesignatedDate, filters.status]);
+
   const handleFilterChange = (updatedFilters: AppointmentQueryParams) => {
     const { page, size, ...safeFilters } = updatedFilters;
     setFilters((prev) => ({
@@ -72,12 +88,10 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
       ...safeFilters,
       page: 1,
     }));
-    search(safeFilters as Record<string, unknown>);
   };
 
   const handleSearch = (value: string) => {
-    setFilters((prev) => ({ ...prev, search: value }));
-    search({ search: value });
+    setSearchValue(value);
   };
 
   const openConfirmModal = (appointment: AppointmentData, action: "complete" | "cancel") => {

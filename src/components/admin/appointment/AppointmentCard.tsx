@@ -12,7 +12,10 @@ interface AppointmentCardProps {
   onChange?: () => void;
   isProcessing?: boolean;
   setIsProcessing?: (value: boolean) => void;
-  onOpenModal?: (appointment: AppointmentData, action: "complete" | "cancel") => void;
+  onOpenModal?: (
+    appointment: AppointmentData,
+    action: "complete" | "cancel"
+  ) => void;
 }
 
 const statusTranslations: Record<string, string> = {
@@ -49,11 +52,22 @@ const AppointmentCard = ({
     >
       <div className="flex flex-col gap-2">
         <h3 className="font-bold text-lg">
+<<<<<<< HEAD
           {appointment.service ?? e("noSpecified")}
         </h3>
         <p>{a("owner")}: {appointment.pet?.owner?.name ?? e("notFound")}</p>
         <p>{a("race")}: {appointment.pet?.race ?? e("notFound")}</p>
         <p>{a("details")}: {appointment.details ?? e("noDetails")}</p>
+=======
+          Servicio{appointment.services?.length !== 1 ? "s" : ""}:{" "}
+          {appointment.services?.map((s) => s.name).join(", ") ||
+            "No especificado"}
+        </h3>
+
+        <p>Dueño: {appointment.pet?.owner?.name ?? "Dueño desconocido"}</p>
+        <p>Animal: {appointment.pet?.race ?? "Especie no especificada"}</p>
+        <p>Detalles: {appointment.details ?? "Detalles no especificados"}</p>
+>>>>>>> c5184e1f40969a8fe3771af743fcbe1db6a0a22d
         <p className="text-sm text-gray-500 font-semibold">
           {a("status")}: {statusTranslations[appointment.status] ?? appointment.status}
         </p>
@@ -61,7 +75,9 @@ const AppointmentCard = ({
 
       <div className="flex flex-col items-end justify-between h-full gap-2">
         <p className="text-black text-lg font-bold text-right">
-          {appointment.designatedDate ? formatDate(appointment.designatedDate) : ""}
+          {appointment.designatedDate
+            ? formatDate(appointment.designatedDate)
+            : ""}
         </p>
 
         {appointment.status === "PENDING" && (
@@ -74,7 +90,11 @@ const AppointmentCard = ({
               }}
               className="px-3 py-1 bg-white text-black rounded border border-gray-300 hover:bg-gray-100"
             >
+<<<<<<< HEAD
               { b("finish")}
+=======
+              {"Finalizar"}
+>>>>>>> c5184e1f40969a8fe3771af743fcbe1db6a0a22d
             </Button>
             <Button
               disabled={isProcessing}
@@ -84,7 +104,11 @@ const AppointmentCard = ({
               }}
               className="px-3 py-1 bg-black text-white rounded border border-gray-300 hover:bg-gray-800"
             >
+<<<<<<< HEAD
               { b("cancel")}
+=======
+              {"Cancelar"}
+>>>>>>> c5184e1f40969a8fe3771af743fcbe1db6a0a22d
             </Button>
           </div>
         )}

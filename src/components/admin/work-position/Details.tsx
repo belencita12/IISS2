@@ -14,16 +14,8 @@ export default function PositionDetail({ position }: Props) {
     <div className="px-8 py-6 w-full">
       <h1 className="text-4xl font-bold mb-10">{position.name}</h1>
 
-      <div className="flex justify-between items-center mb-4">
+      <div className="mb-4">
         <h2 className="text-2xl font-semibold">Turnos</h2>
-        <Link href="/dashboard/settings/positions">
-          <Button
-            variant="outline"
-            className="px-6 border-gray-200 border-solid"
-          >
-            Volver
-          </Button>
-        </Link>
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse">

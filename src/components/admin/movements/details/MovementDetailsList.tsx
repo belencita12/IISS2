@@ -66,6 +66,16 @@ export const MovementDetailsList = ({ id, token }: Props) => {
 
   return (
     <div className="container mx-auto p-4 max-w-6xl">
+      <div className="mb-6 mt-6">
+        <Button
+          variant="outline"
+          onClick={() => router.push('/dashboard/movement')}
+          className="border-black border-solid"
+        >
+          {b("toReturn")}
+        </Button>
+      </div>
+
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">
           {m("movementOf")} {getMovementTypeLabel(movement.type)}
@@ -110,6 +120,7 @@ export const MovementDetailsList = ({ id, token }: Props) => {
         >
           {b("toReturn")}
         </Button>
+        <h2 className="text-xl font-semibold text-gray-700">Productos</h2>
       </div>
       <Separator className="mb-4" />
       <div className="space-y-6">

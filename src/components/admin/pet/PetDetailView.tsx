@@ -30,6 +30,16 @@ const b = useTranslations("Button");
 
   return (
     <div className="py-4 space-y-10">
+      <div className="mx-auto px-1 md:px-24 mb-6 mt-6">
+        <Button 
+          variant="outline" 
+          className="border-black border-solid"
+          onClick={() => router.back()}
+        >
+          {b("toReturn")}
+        </Button>
+      </div>
+
       {/* Datos generales de la mascota */}
       <section className="flex flex-col md:flex-row items-center gap-6 bg-white p-6 rounded-lg shadow-md max-w-5xl mx-auto">
         <Image
@@ -42,7 +52,7 @@ const b = useTranslations("Button");
         <div className="space-y-2 text-gray-700">
           <h1 className="text-3xl font-bold text-gray-900">{pet.name}</h1>
           <p>
-            <strong>{p("race")}:</strong> {pet.race?.name || "No especificada"}
+            <strong>{p("race")}:</strong> {pet.race?.name || e("noSpecified")}
           </p>
           <p>
             <strong>{p("sex")}:</strong>{" "}
@@ -71,13 +81,6 @@ const b = useTranslations("Button");
             {p("vaccuneHistory")}
           </h2>
           <div className="flex gap-3">
-            <Button 
-              variant="outline" 
-              className="border-black border-solid"
-              onClick={() => router.back()}
-            >
-              {b("toReturn")}
-            </Button>
             <AddToHistoryButton />
           </div>
         </div>

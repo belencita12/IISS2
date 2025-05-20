@@ -20,6 +20,7 @@ type TagListProps = {
 const TagList = ({ token }: TagListProps) => {
   const [isDelOpen, setIsDelOpen] = useState(false);
   const [showDeleted, setShowDeleted] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const { selectedTag, isFormOpen, setSelectedTag, onCreate, onEdit, onClose } =
     useTagForm();
 
@@ -53,6 +54,7 @@ const TagList = ({ token }: TagListProps) => {
   if (error) toast("error", error.message || "Error al cargar las etiquetas");
 
   const handleSearch = (query: string) => {
+    setSearchQuery(query)
     if (query.length > 0) {
       search({ name: query, includeDeleted: showDeleted });
     } else {
@@ -62,7 +64,7 @@ const TagList = ({ token }: TagListProps) => {
 
   const toggleDeletedTags = () => {
     setShowDeleted(!showDeleted);
-    search({ includeDeleted: !showDeleted });
+    search( {name: searchQuery, includeDeleted: !showDeleted })
   };
 
   const handleRestore = async (tag: Tag) => {

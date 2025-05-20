@@ -58,7 +58,8 @@ const PurchaseDetail: React.FC<PurchaseDetailProps> = ({ token, purchaseInfo, in
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
+    <div className="relative min-h-screen">
+    
       {purchaseDetails && purchaseDetails.length > 0 && (
         <>
           <h1 className="text-3xl font-bold text-center mt-4 mb-2">{p("titleDetail")}</h1>
