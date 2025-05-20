@@ -37,6 +37,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useTranslations } from "next-intl"
 
 type AppointmentFormProps = {
   token: string;
@@ -69,6 +70,11 @@ export const AppointmentForm = ({
 
   const router = useRouter();
 
+  const a = useTranslations("AppointmentForm");
+  const e = useTranslations("Error");
+  const s = useTranslations("Success");
+  const b = useTranslations("Button");
+  const ph = useTranslations("Placeholder");
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeData | null>(
     null
   );
@@ -92,13 +98,12 @@ export const AppointmentForm = ({
     setShowTimeError(false);
 
     try {
-      await createAppointment(token, data);
-      toast("success", "Cita registrada con éxito");
-      router.push("/user-profile");
+      await createAppointment(token, data)
+      toast("success", s("successAppointment"))
+      router.push("/user-profile")
     } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Error al registrar la cita";
-      toast("error", errorMessage);
+      const errorMessage = error instanceof Error ? error.message : e("errorRegister", {field: "cita"})
+      toast("error", errorMessage)
     }
   };
 
@@ -148,11 +153,9 @@ export const AppointmentForm = ({
     <div className="max-w-6xl mx-auto">
       <Card className="shadow-lg border-0">
         <CardHeader className="from-myPurple-primary to-myPink-primary text-white text-center py-6">
-          <CardTitle className="text-3xl font-bold text-myPurple-focus">
-            Agendar Cita
-          </CardTitle>
+          <CardTitle className="text-3xl font-bold text-myPurple-focus">{a("title")}</CardTitle>
           <CardDescription className="text-myPurple-focus/70 text-sm mt-2">
-            Ingresa los datos para agendar tu cita veterinaria
+            {a("descriptionClient")}
           </CardDescription>
         </CardHeader>
         <CardContent className="p-6 md:p-8">
@@ -162,7 +165,7 @@ export const AppointmentForm = ({
               <div className="space-y-4 bg-white p-4 rounded-lg border border-myPurple-tertiary/30 shadow-sm">
                 <div className="flex items-center gap-2 text-myPurple-focus border-b border-myPurple-tertiary/30 pb-2 mb-3">
                   <PawPrint className="w-5 h-5" />
-                  <h3 className="font-medium">Mascota</h3>
+                  <h3 className="font-medium">{a("selectPet")}</h3>
                 </div>
                 <div>
                   <PetSelect
@@ -184,7 +187,7 @@ export const AppointmentForm = ({
               <div className="space-y-4 bg-white p-4 rounded-lg border border-myPurple-tertiary/30 shadow-sm">
                 <div className="flex items-center gap-2 text-myPurple-focus border-b border-myPurple-tertiary/30 pb-2 mb-3">
                   <User className="w-5 h-5" />
-                  <h3 className="font-medium">Servicio</h3>
+                  <h3 className="font-medium">{a("selectService")}</h3>
                 </div>
                 <div>
                   <ServiceSelect
@@ -211,7 +214,7 @@ export const AppointmentForm = ({
               <div className="bg-white p-4 rounded-lg border border-myPurple-tertiary/30 shadow-sm">
                 <div className="flex items-center gap-2 text-myPurple-focus border-b border-myPurple-tertiary/30 pb-2 mb-3">
                   <Stethoscope className="w-5 h-5" />
-                  <h3 className="font-medium">Empleado</h3>
+                  <h3 className="font-medium">{a("selectEmployee")}</h3>
                 </div>
                 <div>
                   <EmployeeSelect
@@ -234,7 +237,7 @@ export const AppointmentForm = ({
               <div className="bg-white p-4 rounded-lg border border-myPurple-tertiary/30 shadow-sm">
                 <div className="flex items-center gap-2 text-myPurple-focus border-b border-myPurple-tertiary/30 pb-2 mb-3">
                   <Calendar className="w-5 h-5" />
-                  <h3 className="font-medium">Fecha</h3>
+                  <h3 className="font-medium">{a("selectDate")}</h3>
                 </div>
                 <div>
                   <input
@@ -263,7 +266,7 @@ export const AppointmentForm = ({
               <div className="bg-white p-4 rounded-lg border border-myPurple-tertiary/30 shadow-sm">
                 <div className="flex items-center gap-2 text-myPurple-focus border-b border-myPurple-tertiary/30 pb-2 mb-3">
                   <Clock className="w-5 h-5" />
-                  <h3 className="font-medium">Horario Disponible</h3>
+                  <h3 className="font-medium">{a("availabilityHour")}</h3>
                 </div>
                 <div>
                   <AvailabilityPicker
@@ -288,14 +291,14 @@ export const AppointmentForm = ({
             <div className="bg-white p-4 rounded-lg border border-myPurple-tertiary/30 shadow-sm">
               <div className="flex items-center gap-2 text-myPurple-focus border-b border-myPurple-tertiary/30 pb-2 mb-3">
                 <FileText className="w-5 h-5" />
-                <h3 className="font-medium">Detalles de la Cita</h3>
+                <h3 className="font-medium">{a("details")}</h3>
               </div>
               <div>
                 <textarea
                   {...register("details")}
                   className="w-full border border-myPurple-tertiary rounded-md p-3 focus:ring-myPurple-primary focus:border-myPurple-primary transition-all duration-200"
                   rows={4}
-                  placeholder="Describe los síntomas o motivo de la consulta"
+                  placeholder={ph("description")}
                 />
               </div>
             </div>
@@ -309,14 +312,14 @@ export const AppointmentForm = ({
                 onClick={() => router.push("/user-profile")}
                 disabled={isSubmitting}
               >
-                Cancelar
+                {b("cancel")}
               </Button>
               <Button
                 type="submit"
                 className="bg-gradient-to-r from-myPurple-primary to-myPink-primary hover:from-myPurple-hover hover:to-myPink-hover text-white transition-all duration-200 shadow-md hover:shadow-lg"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Agendando..." : "Agendar Cita"}
+                {isSubmitting ? b("scheduleing") : b("schedule")}
               </Button>
             </div>
           </form>

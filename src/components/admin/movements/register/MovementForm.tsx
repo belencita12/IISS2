@@ -23,6 +23,7 @@ import { useInitialData } from "@/hooks/purchases/useProviderStock";
 import { EmployeeData } from "@/lib/employee/IEmployee";
 import { useEmployeeSearch } from "@/hooks/employees/useEmployeeSearch";
 import MovementEmployeeSelected from "../MovementEmployeeSelected";
+import { useTranslations } from "next-intl";
 
 export default function MovementForm({ token }: { token: string }) {
   const {
@@ -63,6 +64,9 @@ export default function MovementForm({ token }: { token: string }) {
   const details = watch("details") || [];
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeData | null>(null);
 
+  const m = useTranslations("MovementForm");
+  const b = useTranslations("Button");
+
   const handleAddProduct = (product: Product, quantity: number) => {
     if (quantity > 0) {
       addProduct(product, quantity);
@@ -96,23 +100,23 @@ export default function MovementForm({ token }: { token: string }) {
         className="w-full  bg-white p-8  space-y-8"
       >
          <fieldset disabled={isSubmitting} className="space-y-8">
-        <h2 className="text-3xl font-bold mb-4 text-start">Registrar Movimiento</h2>
+        <h2 className="text-3xl font-bold mb-4 text-start">{m("title")}</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="flex flex-col">
-            <label className="text-sm font-medium mb-1">Tipo de Movimiento</label>
+            <label className="text-sm font-medium mb-1">{m("typeOfMovement")}</label>
             <Controller
               name="type"
               control={control}
               render={({ field }) => (
                 <Select onValueChange={field.onChange} value={field.value}>
                   <SelectTrigger className={errors.type ? "border-red-500" : ""}>
-                    <SelectValue placeholder="Seleccionar tipo" />
+                    <SelectValue placeholder={b("select")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="INBOUND">Ingreso</SelectItem>
-                    <SelectItem value="OUTBOUND">Egreso</SelectItem>
-                    <SelectItem value="TRANSFER">Transferencia</SelectItem>
+                    <SelectItem value="INBOUND">{m("inbound")}</SelectItem>
+                    <SelectItem value="OUTBOUND">{m("outbound")}</SelectItem>
+                    <SelectItem value="TRANSFER">{m("transfer")}</SelectItem>
                   </SelectContent>
                 </Select>
               )}
@@ -131,13 +135,13 @@ export default function MovementForm({ token }: { token: string }) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex flex-col">
-            <label className="text-sm font-medium mb-1">Fecha</label>
+            <label className="text-sm font-medium mb-1">{m("date")}</label>
             <Input type="date" {...register("dateMovement")} max={new Date().toISOString().split("T")[0]} className={errors.dateMovement ? "border-red-500" : ""} />
             {errors.dateMovement && <p className="text-red-500 text-sm">{errors.dateMovement.message}</p>}
           </div>
 
           <div className="flex flex-col">
-            <label className="text-sm font-medium mb-1">Descripción</label>
+            <label className="text-sm font-medium mb-1">{m("description")}</label>
             <Input placeholder="Descripción del movimiento" {...register("description")}
               className={errors.description ? "border-red-500" : ""} />
             {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
@@ -145,7 +149,7 @@ export default function MovementForm({ token }: { token: string }) {
         </div>
 
         <div className="p-6 border rounded-xl bg-gray-50">
-          <h3 className="font-semibold text-lg mb-4">Seleccionar Empleado</h3>
+          <h3 className="font-semibold text-lg mb-4">{m("selectEmployee")}</h3>
           <MovementEmployeeSearch
             searchEmployees={employees}
             onSearch={searchEmployees}
@@ -167,7 +171,7 @@ export default function MovementForm({ token }: { token: string }) {
         </div>
 
         <div className="p-6 border rounded-xl bg-gray-50">
-          <h3 className="font-semibold text-lg mb-4">Productos del Movimiento</h3>
+          <h3 className="font-semibold text-lg mb-4">{m("products")}</h3>
           <ProductSearch
             searchProducts={searchProducts}
             searchQuery={searchQuery}
@@ -182,7 +186,7 @@ export default function MovementForm({ token }: { token: string }) {
 
           {details.length > 0 && (
             <>
-              <h4 className="font-medium text-sm mt-6 mb-2">Productos Seleccionados</h4>
+              <h4 className="font-medium text-sm mt-6 mb-2">{m("productSelected")}</h4>
               <ProductList
                 details={details}
                 onRemove={removeProduct}
@@ -194,9 +198,9 @@ export default function MovementForm({ token }: { token: string }) {
         </div>
         </fieldset>
         <div className="flex justify-end gap-4">
-          <Button variant="outline" type="button" onClick={() => router.push("/dashboard/movement")} disabled={isSubmitting} >Cancelar</Button>
+          <Button variant="outline" type="button" onClick={() => router.push("/dashboard/movement")} disabled={isSubmitting} >{b("cancel")}</Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Registrando..." : "Registrar Movimiento"}
+            {isSubmitting ? b("registering") : b("register")}
           </Button>
         </div>
       </form>

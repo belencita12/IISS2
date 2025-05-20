@@ -19,6 +19,8 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { motion, AnimatePresence } from "framer-motion"
 import { calcularEdad } from "@/lib/utils"
+import { useTranslations } from "next-intl";
+
 
 interface Props {
   token: string
@@ -36,6 +38,10 @@ export default function PetDetails({ token }: Props) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [activeTab, setActiveTab] = useState("info")
   const [activeSubTab, setActiveSubTab] = useState("vacunas")
+  const b = useTranslations("Button");
+  const p = useTranslations("PetDetail");
+  const v = useTranslations("Vaccune");
+  const e = useTranslations("Error");
 
   const handleSelectImage = (file: File, url: string) => {
     if (previewUrl) URL.revokeObjectURL(previewUrl)
@@ -59,20 +65,20 @@ export default function PetDetails({ token }: Props) {
         setPet(data)
         setEditedName(data?.name ?? "")
       })
-      .catch(() => {
-        toast("error", "Error al obtener la mascota.")
-        setPet(null)
-      })
-  }, [id, token])
+      .catch((error: unknown) => {
+        toast("error", error instanceof Error ? error.message : e("error"));
+        setPet(null);
+      });
+  }, [id, token]);
 
   const handleSave = async () => {
     if (!editedName.trim()) {
-      setError("El nombre no puede estar vacío.")
-      return
+      setError(e("noEmpty"));
+      return;
     }
     if (!pet || pet.id === undefined) {
-      setError("No se puede actualizar, la mascota no tiene ID.")
-      return
+      setError(e("noUpdate"));
+      return;
     }
     setIsSaving(true)
     setError(null)
@@ -96,7 +102,7 @@ export default function PetDetails({ token }: Props) {
       if (error instanceof Error) {
         setError(error.message)
       } else {
-        setError("Error al guardar los cambios")
+        setError(e("noSave"));
       }
       toast("error", "Error al actualizar la mascota")
     } finally {

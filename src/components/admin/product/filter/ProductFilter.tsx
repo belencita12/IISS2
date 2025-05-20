@@ -7,6 +7,7 @@ import { CategoryFilter } from "./CategoryFilter";
 import { NumericFilter } from "./NumericFilter";
 import { TagFilter } from "@/components/admin/product/filter/TagFilter";
 import { useProductFilters } from "@/hooks/product/useProductFilter";
+import { useTranslations } from "next-intl";
 
 interface ProductFiltersProps {
   filters: {
@@ -49,6 +50,8 @@ export default function ProductFilters({
     setFilters
   );
 
+  const f = useTranslations("Filters");
+  const ph= useTranslations("Placeholder");
   const handleRemoveTag = (tag: string) => {
     onTagsChange(selectedTags.filter((t) => t !== tag));
   };
@@ -64,7 +67,7 @@ export default function ProductFilters({
             }}
             defaultQuery={searchInput}
             debounceDelay={400}
-            placeholder="Buscar por código o nombre del producto"
+            placeholder={ph("getBy", {field: "código o nombre del producto"})}
           />
         </div>
         <div className="w-full sm:w-[30%]">
@@ -81,7 +84,7 @@ export default function ProductFilters({
       <div className="w-full flex flex-col sm:flex-row gap-4 mb-5">
         <div className="w-full sm:w-1/2">
           <NumericFilter
-            label="Precio"
+            label={ph("price")}
             minValue={filters.minPrice}
             maxValue={filters.maxPrice}
             onMinChange={(minPrice) =>
@@ -97,7 +100,7 @@ export default function ProductFilters({
         </div>
         <div className="w-full sm:w-1/2">
           <NumericFilter
-            label="Costo"
+            label={ph("cost")}
             minValue={filters.minCost}
             maxValue={filters.maxCost}
             onMinChange={(minCost) =>
@@ -115,7 +118,7 @@ export default function ProductFilters({
       <div className="flex flex-col sm:flex-row sm:gap-4 w-full">
         <div className="w-full sm:w-[24%]">
           <TagFilter
-            title="Etiqueta"
+            title={f("tag")}
             selectedTags={selectedTags}
             onChange={onTagsChange}
             token={token}
