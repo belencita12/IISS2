@@ -3,6 +3,7 @@ import React from "react";
 import { PurchaseDetail } from "@/lib/purchases/IPurchaseDetail";
 import Image from "next/image";
 import { getCategoryLabel } from "@/lib/products/utils/categoryLabel";
+import { useTranslations } from "next-intl";
 
 interface PurchaseProductCardProps {
   detail: PurchaseDetail;
@@ -13,6 +14,7 @@ const PurchaseProductCard: React.FC<PurchaseProductCardProps> = ({
 }) => {
   const { product, quantity } = detail;
   const defaultImageSrc = "/NotImageNicoPets.png";
+  const p = useTranslations("ProductDetail");
 
   return (
     <div
@@ -46,34 +48,34 @@ const PurchaseProductCard: React.FC<PurchaseProductCardProps> = ({
           )}
 
           <h3 className="text-md font-semibold line-clamp-2">
-            {product.name || "Producto sin nombre"}
+            {product.name}
           </h3>
 
           <div className="grid grid-cols-[1fr_0.6fr] gap-x-10 gap-y-2 text-xs">
             <div className="truncate">
-              <span className="text-gray-600">Código:</span>
+              <span className="text-gray-600">{p("code")}:</span>
               <p className="font-medium truncate">{product.code || "-"}</p>
             </div>
             <div className="truncate">
-              <span className="text-gray-600">Precio:</span>
+              <span className="text-gray-600">{p("price")}:</span>
               <p className="font-medium truncate">
-                {product.price?.toLocaleString() || "0"} Gs
+                {product.price?.toLocaleString() || "0"} {p("gs")}
               </p>
             </div>
             <div className="truncate">
-              <span className="text-gray-600">Categoría:</span>
+              <span className="text-gray-600">{p("category")}:</span>
               <p className="font-medium truncate">
                 {getCategoryLabel(product.category)}
               </p>
             </div>
             <div className="truncate">
-              <span className="text-gray-600">Costo:</span>
+              <span className="text-gray-600">{p("cost")}:</span>
               <p className="font-medium truncate">
-                {product.cost?.toLocaleString() || "0"} Gs
+                {product.cost?.toLocaleString() || "0"} {p("gs")}
               </p>
             </div>
             <div className="truncate">
-              <span className="text-gray-600">Cantidad:</span>
+              <span className="text-gray-600">{p("quantity")}:</span>
               <p className="font-medium truncate">{quantity}</p>
             </div>
           </div>

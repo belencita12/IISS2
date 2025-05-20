@@ -8,6 +8,7 @@ import { toast } from "@/lib/toast";
 import GenericPagination from "@/components/global/GenericPagination";
 import { usePurchaseDetail } from "@/hooks/purchases/usePurchaseDetail";
 import PurchaseDetailSkeleton from "./skeleton/PurchaseDetailSkeleton";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 
 interface PurchaseDetailProps {
@@ -24,9 +25,13 @@ const PurchaseDetail: React.FC<PurchaseDetailProps> = ({ token, purchaseInfo, in
   
   const { data: purchaseDetails, totalPages, loading, error } = usePurchaseDetail(id as string, token, page);
 
+  const p = useTranslations("PurchaseDetail");
+  const e = useTranslations("Error");
+  const b = useTranslations("Button");
+
   useEffect(() => {
     if (!loading && !toastShown && (!purchaseDetails || purchaseDetails.length === 0)) {
-      toast("warning", "No existen detalles para esta compra.");
+      toast("warning", e("notFound"));
       setToastShown(true);
     }
   }, [purchaseDetails, toastShown, loading]);
@@ -56,8 +61,8 @@ const PurchaseDetail: React.FC<PurchaseDetailProps> = ({ token, purchaseInfo, in
     <div className="relative min-h-screen">
     
       {purchaseDetails && purchaseDetails.length > 0 && (
-        <> 
-          <h1 className="text-3xl font-bold text-center mt-4 mb-2">Compra Detalles</h1>
+        <>
+          <h1 className="text-3xl font-bold text-center mt-4 mb-2">{p("titleDetail")}</h1>
           {/* Muestra los datos del proveedor que realizó la compra y datos resumidos de la compra */}
           <div className="relative">
             <PurchaseProviderCard 
@@ -66,6 +71,15 @@ const PurchaseDetail: React.FC<PurchaseDetailProps> = ({ token, purchaseInfo, in
               ivaTotal={purchaseInfo?.ivaTotal}
               date={purchaseInfo?.date}
             />
+            <div className="absolute bottom-4 right-4">
+              <Button
+                variant="outline"
+                onClick={() => router.push('/dashboard/purchases')}
+                className="px-6 border-gray-200 border-solid"
+              >
+                {b("toReturn")}
+              </Button>
+            </div>
           </div>
         </>
       )}

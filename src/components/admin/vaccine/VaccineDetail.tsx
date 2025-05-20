@@ -4,6 +4,7 @@ import { notFound, useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useVaccineDetail } from "@/hooks/vaccine/useVaccineDetail";
+import { useTranslations } from "next-intl";
 
 interface Props {
   id: number;
@@ -14,7 +15,10 @@ export const VaccineDetail = ({ id, token }: Props) => {
   const router = useRouter();
   const { vaccine, loading, error } = useVaccineDetail(id, token);
 
-  if (loading) return <p className="text-center mt-10">Cargando...</p>;
+  const v = useTranslations("VaccineDetail");
+  const b = useTranslations("Button");
+
+  if (loading) return <p className="text-center mt-10">{b("loading")}</p>;
   if (error || !vaccine)
     return notFound();
 
@@ -41,22 +45,22 @@ export const VaccineDetail = ({ id, token }: Props) => {
         {/* Detalles */}
         <div className="w-full md:w-3/4 space-y-4 mr-4">
           <h1 className="text-2xl font-bold">{vaccine.name}</h1>
-          <Detail label="Fabricante" value={vaccine.manufacturer.name} />
-          <Detail label="Especie" value={vaccine.species.name} />
+          <Detail label={v("manufacturer")} value={vaccine.manufacturer.name} />
+          <Detail label={v("specie")} value={vaccine.species.name} />
           <Detail
-            label="Costo"
+            label={v("cost")}
             value={`Gs. ${vaccine.product.cost.toLocaleString("es-PY")}`}
           />
           <Detail
-            label="IVA"
+            label={v("iva")}
             value={`${(vaccine.product.iva ).toLocaleString("es-PY")} %`}
           />
           <Detail
-            label="Precio"
+            label={v("price")}
             value={`Gs. ${vaccine.product.price.toLocaleString("es-PY")}`}
           />
           <Detail
-            label="Cantidad"
+            label={v("quantity")}
             value={`${vaccine.product.quantity} Uds.`}
           />
         </div>
@@ -65,10 +69,10 @@ export const VaccineDetail = ({ id, token }: Props) => {
       {/* Botones */}
       <div className="flex gap-4 mt-6 justify-end">
         <Button variant="outline" onClick={() => router.push("/dashboard/vaccine")}>
-          Volver
+          {b("toReturn")}
         </Button>
         <Button onClick={() => router.push(`/dashboard/vaccine/edit/${vaccine.id}`)}>
-          Editar
+          {b("edit")}
         </Button>
       </div>
     </div>

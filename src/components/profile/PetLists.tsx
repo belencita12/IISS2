@@ -10,6 +10,7 @@ import { List, Plus } from "lucide-react";
 import { RecommendedProducts } from "./RecommendedProducts";
 import PetListsSkeleton from "./skeleton/PetListsSkeleton";
 import { ProductSkeleton } from "./skeleton/ProductSkeleton";
+import { toast } from "@/lib/toast";
 import { useTranslations } from "next-intl";
 
 interface PetsListProps {
@@ -22,6 +23,8 @@ export const PetsList = ({ clientId, token, onFetchError }: PetsListProps) => {
   const [pets, setPets] = useState<PetData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const t = useTranslations("PetLists");
+  const b = useTranslations("Button");
+  const e = useTranslations("Error");
   const defaultImageSrc = "/NotImageNicoPets.png";
 
   useEffect(() => {
@@ -30,8 +33,7 @@ export const PetsList = ({ clientId, token, onFetchError }: PetsListProps) => {
         const fetchedPets = await getPetsByUserId(clientId, token);
         setPets(fetchedPets);
       } catch (error) {
-        const errorMessage = "Error al obtener mascotas";
-        onFetchError?.(errorMessage);
+        if (error instanceof Error) toast("error", error.message)
       } finally {
         setLoading(false);
       }
@@ -69,7 +71,7 @@ export const PetsList = ({ clientId, token, onFetchError }: PetsListProps) => {
           <Link href="/user-profile/pet/register">
             <Button className="bg-pink-500 text-white flex items-center gap-2 hover:bg-pink-600">
               <Plus className="w-5 h-5" />
-              {t("addPetBtn")}
+              {b("add")}
             </Button>
           </Link>
           <Link href="/user-profile/pet/list-pets">
@@ -83,7 +85,7 @@ export const PetsList = ({ clientId, token, onFetchError }: PetsListProps) => {
         {loading ? (
           <PetListsSkeleton />
         ) : pets.length === 0 ? (
-          <p className="mt-4 text-gray-500">{t("petNotFound")}</p>
+          <p className="mt-4 text-gray-500">{e("notFoundPets")}</p>
         ) : (
           <div className="mt-8 flex flex-wrap justify-center gap-2 md:gap-3">
             {pets.map((pet) => (
@@ -131,7 +133,7 @@ export const PetsList = ({ clientId, token, onFetchError }: PetsListProps) => {
           {t("exploreProducts")}
         </p>
         <Button className="bg-white text-pink-500 border border-pink-500 mt-3 hover:bg-pink-600 hover:text-white">
-          <Link href="/shop">{t("seeMore")}</Link>
+          <Link href="/shop">{b("seeMore")}</Link>
         </Button>
       </section>
 

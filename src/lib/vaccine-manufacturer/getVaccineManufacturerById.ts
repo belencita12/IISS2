@@ -42,7 +42,11 @@ export async function getManufacturers(token: string, page: number = 1, searchQu
     },
   });
 
-  if (!response.ok) throw new Error('Error al obtener fabricantes');
+         if (!response.ok) {
+            const errorData = await response.json().catch(() => ({})); // fallback si no es JSON
+            const message = errorData?.message || `Error HTTP: ${response.status}`;
+            throw new Error(message);
+        }
   return response.json();
 }
 

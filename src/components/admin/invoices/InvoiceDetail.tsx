@@ -8,6 +8,7 @@ import { toast } from "@/lib/toast";
 import InvoiceDetailSkeleton from "./skeleton/InvoiceDetailSkeleton";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 interface Props {
   token: string;
@@ -21,9 +22,12 @@ export default function InvoiceDetail({ token }: Props) {
     token
   );
 
+  const i = useTranslations("InvoiceTable");
+  const b = useTranslations("Button");
+
   useEffect(() => {
-    if (error) {
-      toast("error", error || "Ocurrió un error al cargar la factura");
+    if (error && typeof error === "object" && "message" in error) {
+      toast("error", (error as Error).message);
     }
   }, [error]);
 
@@ -32,9 +36,19 @@ export default function InvoiceDetail({ token }: Props) {
   return (
     <div className="w-full px-0">
       {invoice && <InvoiceDetailCard invoice={invoice} />}
-      <h3 className="text-xl font-semibold text-black mb-3 mt-3">Detalle</h3>
+      <h3 className="text-xl font-semibold text-black mb-3 mt-3">{i("invoiceDetail")}</h3>
       <div className="w-full">
         <InvoiceDetailTable details={invoiceDetails} />
+      </div>
+      <div className="flex justify-end mt-6">
+        <Link href="/dashboard/invoices">
+          <Button
+            variant="outline"
+            className="px-6 border-gray-200 border-solid"
+          >
+            {b("toReturn")}
+          </Button>
+        </Link>
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Product } from "@/lib/products/IProducts";
 import { Badge } from "@/components/ui/badge";
 import { getCategoryLabel } from "@/lib/products/utils/categoryLabel";
+import { useTranslations } from "next-intl";
 
 const defaultImage = "/NotImageNicoPets.png";
 
@@ -15,6 +16,9 @@ interface StockDetailCardProps {
 }
 
 const StockDetailCard: React.FC<StockDetailCardProps> = ({ product, amount, onClick }) => {
+  const p = useTranslations("ProductDetail");
+
+
   return (
     <Card
       className="overflow-hidden mb-4 cursor-pointer hover:shadow-md transition-shadow"
@@ -49,23 +53,23 @@ const StockDetailCard: React.FC<StockDetailCardProps> = ({ product, amount, onCl
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             <div className="flex flex-col">
-              <p className="text-sm text-gray-500">Código</p>
-              <p className="text-sm text-gray-500 mt-2">Proveedor</p>
-              <p className="text-sm text-gray-500 mt-2">Categoría</p>
-              <p className="text-sm text-gray-500 mt-2">Precio Unitario</p>
+              <p className="text-sm text-gray-500">{p("name")}</p>
+              <p className="text-sm text-gray-500 mt-2">{p("provider")}</p>
+              <p className="text-sm text-gray-500 mt-2">{p("category")}</p>
+              <p className="text-sm text-gray-500 mt-2">{p("price")}</p>
             </div>
             <div className="flex flex-col min-w-0">
               <p className="text-sm break-words">{product.code}</p>
-              <p className="text-sm mt-2 break-words">La Mascota S.A.</p>
+              <p className="text-sm mt-2 break-words">{product.provider.name}</p>
               <p className="text-sm mt-2 break-words">{getCategoryLabel(product.category)}</p>
-              <p className="text-sm mt-2">{product.price.toLocaleString()} Gs</p>
+              <p className="text-sm mt-2">{product.price.toLocaleString()} {p("gs")}</p>
             </div>
             <div className="flex flex-col">
-              <p className="text-sm text-gray-500">Costo</p>
-              <p className="text-sm text-gray-500 mt-2">Cantidad</p>
+              <p className="text-sm text-gray-500">{p("cost")}</p>
+              <p className="text-sm text-gray-500 mt-2">{p("quantity")}</p>
             </div>
             <div className="flex flex-col">
-              <p className="text-sm">{product.cost?.toLocaleString()} Gs</p>
+              <p className="text-sm">{product.cost?.toLocaleString()} {p("gs")}</p>
               <p className="text-sm mt-2">{amount}</p>
             </div>
           </div>

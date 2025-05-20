@@ -6,6 +6,7 @@ import type { AvailabilitySlot } from "@/lib/appointment/IAppointment";
 import { toast } from "@/lib/toast";
 import { isToday, set, parseISO, addMinutes } from "date-fns";
 import { Clock } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type Props = {
   token: string;
@@ -26,6 +27,9 @@ export const AvailabilityPicker = ({
   const [loading, setLoading] = useState(false);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
+  const b = useTranslations("Button");
+  const e = useTranslations("Error");
+
   useEffect(() => {
     if (!employeeId || !date) return;
 
@@ -39,7 +43,7 @@ export const AvailabilityPicker = ({
           "error",
           error instanceof Error
             ? error.message
-            : "Error al cargar disponibilidad"
+            : e("errorLoad", {field: "horarios"})
         );
         setSlots([]);
       } finally {
@@ -143,7 +147,7 @@ export const AvailabilityPicker = ({
           <div className="animate-pulse flex items-center">
             <Clock className="h-4 w-4 mr-2 text-myPurple-primary" />
             <p className="text-myPurple-focus/70">
-              Cargando horarios disponibles...
+              {b("loading")}
             </p>
           </div>
         </div>
@@ -172,7 +176,7 @@ export const AvailabilityPicker = ({
           <div className="p-3 bg-myPink-disabled/30 border border-myPink-tertiary rounded-md">
             <p className="text-myPink-focus text-sm flex items-center">
               <Clock className="h-4 w-4 mr-2 text-myPink-primary" />
-              No hay horarios disponibles para esta fecha
+              {e("noAvailabilityHour")}
             </p>
           </div>
         )}

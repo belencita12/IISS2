@@ -21,7 +21,8 @@ import ServiceSelected from "./ServiceSelected";
 import EmployeeSelect from "./EmployeeSelect";
 import EmployeeSelected from "./EmployeeSelected";
 import { AvailabilityPicker } from "./AvailabilityPicker";
-import { Trash, X } from "lucide-react";
+import { Trash } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type AppointmentFormProps = {
   token: string;
@@ -32,7 +33,6 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
     setValue,
     watch,
   } = useForm<AppointmentRegister>({
@@ -40,6 +40,11 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
   });
 
   const router = useRouter();
+
+  const a = useTranslations("AppointmentForm");
+  const b = useTranslations("Button");
+  const e = useTranslations("Error");
+  const s = useTranslations("Success");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeData | null>(
@@ -62,11 +67,10 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
     console.log("Data to submit:", data);
     try {
       await createAppointment(token, data);
-      toast("success", "Cita registrada con éxito");
+      toast("success", s("successAppointment"));
       router.push("/dashboard/appointment");
     } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Error al registrar la cita";
+      const errorMessage = error instanceof Error ? error.message : e("errorRegister", {field: "cita"});
       toast("error", errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -114,9 +118,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Seleccionar Mascota
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{a("selectPet")}</label>
           <PetSearch token={token} onSelectPet={handleSelectPet} />
           <input type="hidden" {...register("petId")} />
           {errors.petId && (
@@ -126,9 +128,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Seleccionar Servicio
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{a("selectService")}</label>
           <ServiceSelect token={token} onSelectService={handleSelectService} />
           <input type="hidden" {...register("serviceIds")} />
           {errors.serviceIds && (
@@ -153,7 +153,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
 
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Seleccionar Empleado
+            {a("selectEmployee")}
           </label>
           <EmployeeSelect
             token={token}
@@ -171,7 +171,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
         <div className="md:col-span-2 flex flex-col md:flex-row gap-6">
           <div className="w-full">
             <label className="block text-sm font-medium text-gray-700">
-              Fecha
+              {a("selectDate")}
             </label>
             <input
               type="date"
@@ -208,7 +208,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
 
       <div>
         <label className="block text-sm font-medium text-gray-700">
-          Detalles
+          {a("details")}
         </label>
         <textarea
           {...register("details")}
@@ -225,7 +225,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
           onClick={() => router.push("/dashboard/appointment")}
           disabled={isSubmitting}
         >
-          Cancelar
+          {b("cancel")}
         </Button>
         <Button
           type="submit"
@@ -238,7 +238,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
             isSubmitting
           }
         >
-          {isSubmitting ? "Registrando..." : "Registrar Cita"}
+          {isSubmitting ? b("scheduleing") : b("schedule")}
         </Button>
       </div>
     </form>
