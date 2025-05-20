@@ -20,6 +20,7 @@ import type { EmployeeData } from "@/lib/employee/IEmployee";
 import { useFetch } from "@/hooks/api";
 import { EMPLOYEE_API } from "@/lib/urls";
 import { toast } from "@/lib/toast";
+import useDebounce from "@/hooks/useDebounce";
 
 type EmployeeSelectProps = {
   token: string;
@@ -42,10 +43,14 @@ export default function EmployeeSelect({
   const [employees, setEmployees] = useState<EmployeeData[]>([]);
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeData | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  // Reducir el tiempo de debounce para una mejor experiencia de usuario
+  const debouncedSearchQuery = useDebounce(searchQuery, 2000);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
   const { data, loading: isLoading, get } = useFetch<EmployeeApiResponse>(EMPLOYEE_API, token);
 
+  // Manejar datos que vienen de la API
   useEffect(() => {
     if (data?.data) {
       const vets = data.data.filter(
@@ -54,6 +59,7 @@ export default function EmployeeSelect({
           emp.position?.name === "Veterinaria"
       );
       setEmployees(vets);
+      setIsSearching(false);
     }
   }, [data]);
 
@@ -66,16 +72,31 @@ export default function EmployeeSelect({
       await get(undefined, url);
     } catch (err) {
       toast("error", "Error al cargar empleados");
+      setIsSearching(false);
     }
   };
 
+  // Cargar empleados al inicio
   useEffect(() => {
     fetchEmployees();
-  }, [token]);
+  }, []);
+
+  // Efecto para manejar la búsqueda debounceada
+  useEffect(() => {
+    // Evitamos búsquedas innecesarias al inicio
+    if (debouncedSearchQuery !== searchQuery) {
+      setIsSearching(true);
+    }
+    
+    fetchEmployees(debouncedSearchQuery);
+  }, [debouncedSearchQuery]);
 
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
-    fetchEmployees(query);
+    // Indicamos que estamos en proceso de búsqueda
+    if (query !== debouncedSearchQuery) {
+      setIsSearching(true);
+    }
   };
 
   const handleSelectEmployee = (employee: EmployeeData) => {
@@ -118,15 +139,14 @@ export default function EmployeeSelect({
                 <SearchBar
                   onSearch={handleSearchChange}
                   placeholder="Buscar por nombre..."
-                  debounceDelay={500}
                   defaultQuery={searchQuery}
                 />
               </div>
             </div>
 
-            {isLoading ? (
-              <div className="py-6 text-center text-sm text-muted-foreground">
-                Cargando empleados...
+            {isLoading || isSearching ? (
+              <div className="py-6 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
+                {isSearching ? "Buscando..." : "Cargando empleados..."}
               </div>
             ) : (
               <>

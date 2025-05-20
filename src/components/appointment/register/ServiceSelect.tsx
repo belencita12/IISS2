@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect, useRef } from "react";
 import { UserPlus, Check, ChevronDown } from "lucide-react";
 import Link from "next/link";
@@ -21,6 +19,7 @@ import type { ServiceType } from "@/lib/appointment/IAppointment";
 import { useFetch } from "@/hooks/api";
 import { SERVICE_TYPE } from "@/lib/urls";
 import { toast } from "@/lib/toast";
+import useDebounce from "@/hooks/useDebounce";
 
 type ServiceSelectProps = {
   onSelectService: (service: ServiceType) => void;
@@ -47,35 +46,53 @@ export default function ServiceSelect({
   const [services, setServices] = useState<ServiceType[]>([]);
   const [selectedService, setSelectedService] = useState<ServiceType | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const debouncedSearchQuery = useDebounce(searchQuery, 2000);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
-  const { data, loading: isLoading, get } = useFetch<ServiceTypeApiResponse>(SERVICE_TYPE, token);
+  const { data, loading: isLoading, get } = useFetch<ServiceTypeApiResponse>(
+    SERVICE_TYPE,
+    token
+  );
 
   useEffect(() => {
     if (data?.data) {
       setServices(data.data);
+      setIsSearching(false);
     }
   }, [data]);
 
   const fetchServices = async (search?: string) => {
     try {
-      const url = search 
-        ? `${SERVICE_TYPE}?page=1&name=${encodeURIComponent(search)}` 
+      const url = search
+        ? `${SERVICE_TYPE}?page=1&name=${encodeURIComponent(search)}`
         : `${SERVICE_TYPE}?page=1`;
-      
+
       await get(undefined, url);
     } catch (err) {
       toast("error", "Error al cargar servicios");
+      setIsSearching(false);
     }
   };
 
+  // Initial load
   useEffect(() => {
     fetchServices();
   }, [token]);
 
+  // Debounce
+  useEffect(() => {
+    if (debouncedSearchQuery !== searchQuery) {
+      setIsSearching(true);
+    }
+    fetchServices(debouncedSearchQuery);
+  }, [debouncedSearchQuery]);
+
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
-    fetchServices(query);
+    if (query !== debouncedSearchQuery) {
+      setIsSearching(true);
+    }
   };
 
   const handleSelectService = (service: ServiceType) => {
@@ -99,7 +116,7 @@ export default function ServiceSelect({
             >
               {selectedService ? (
                 <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-start">
-                  Selecciona otro servicio
+                   Selecciona otro servicio
                 </div>
               ) : (
                 <span>Selecciona al menos un servicio</span>
@@ -120,15 +137,14 @@ export default function ServiceSelect({
                   <SearchBar
                     onSearch={handleSearchChange}
                     placeholder="Buscar por nombre..."
-                    debounceDelay={500}
                     defaultQuery={searchQuery}
                   />
                 </div>
               </div>
 
-              {isLoading ? (
-                <div className="py-6 text-center text-sm text-muted-foreground">
-                  Cargando servicios...
+              {(isLoading || isSearching) ? (
+                <div className="py-6 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
+                  {isSearching ? "Buscando..." : "Cargando servicios..."}
                 </div>
               ) : (
                 <>
