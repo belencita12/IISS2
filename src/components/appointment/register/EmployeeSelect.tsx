@@ -21,7 +21,7 @@ import { useFetch } from "@/hooks/api";
 import { EMPLOYEE_API } from "@/lib/urls";
 import { toast } from "@/lib/toast";
 import { useTranslations } from "next-intl";
-import { phoneNumber } from "@/lib/schemas";
+import useDebounce from "@/hooks/useDebounce";
 
 type EmployeeSelectProps = {
   token: string;
@@ -44,6 +44,9 @@ export default function EmployeeSelect({
   const [employees, setEmployees] = useState<EmployeeData[]>([]);
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeData | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  // Reducir el tiempo de debounce para una mejor experiencia de usuario
+  const debouncedSearchQuery = useDebounce(searchQuery, 2000);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
   const em = useTranslations("EmployeeTable");
@@ -53,6 +56,7 @@ export default function EmployeeSelect({
 
   const { data, loading: isLoading, get } = useFetch<EmployeeApiResponse>(EMPLOYEE_API, token);
 
+  // Manejar datos que vienen de la API
   useEffect(() => {
     if (data?.data) {
       const vets = data.data.filter(
@@ -61,6 +65,7 @@ export default function EmployeeSelect({
           emp.position?.name === "Veterinaria"
       );
       setEmployees(vets);
+      setIsSearching(false);
     }
   }, [data]);
 
@@ -76,13 +81,27 @@ export default function EmployeeSelect({
     }
   };
 
+  // Cargar empleados al inicio
   useEffect(() => {
     fetchEmployees();
-  }, [token]);
+  }, []);
+
+  // Efecto para manejar la búsqueda debounceada
+  useEffect(() => {
+    // Evitamos búsquedas innecesarias al inicio
+    if (debouncedSearchQuery !== searchQuery) {
+      setIsSearching(true);
+    }
+    
+    fetchEmployees(debouncedSearchQuery);
+  }, [debouncedSearchQuery]);
 
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
-    fetchEmployees(query);
+    // Indicamos que estamos en proceso de búsqueda
+    if (query !== debouncedSearchQuery) {
+      setIsSearching(true);
+    }
   };
 
   const handleSelectEmployee = (employee: EmployeeData) => {
@@ -131,9 +150,9 @@ export default function EmployeeSelect({
               </div>
             </div>
 
-            {isLoading ? (
-              <div className="py-6 text-center text-sm text-muted-foreground">
-                {b("loading")}
+            {isLoading || isSearching ? (
+              <div className="py-6 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
+                {isSearching ? b("searching") : b("loading")}
               </div>
             ) : (
               <>

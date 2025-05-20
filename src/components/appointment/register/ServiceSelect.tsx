@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect, useRef } from "react";
 import { UserPlus, Check, ChevronDown } from "lucide-react";
 import Link from "next/link";
@@ -22,6 +20,7 @@ import { useFetch } from "@/hooks/api";
 import { useTranslations } from "next-intl";
 import { SERVICE_TYPE } from "@/lib/urls";
 import { toast } from "@/lib/toast";
+import useDebounce from "@/hooks/useDebounce";
 
 type ServiceSelectProps = {
   onSelectService: (service: ServiceType) => void;
@@ -48,40 +47,56 @@ export default function ServiceSelect({
   const [services, setServices] = useState<ServiceType[]>([]);
   const [selectedService, setSelectedService] = useState<ServiceType | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const debouncedSearchQuery = useDebounce(searchQuery, 2000);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
-  const ph = useTranslations("Placeholder");
+ const ph = useTranslations("Placeholder");
   const a = useTranslations("AppointmentForm");
   const b = useTranslations("Button");
   const e = useTranslations("Error");
-
-  const { data, loading: isLoading, get } = useFetch<ServiceTypeApiResponse>(SERVICE_TYPE, token);
+  const { data, loading: isLoading, get } = useFetch<ServiceTypeApiResponse>(
+    SERVICE_TYPE,
+    token
+  );
 
   useEffect(() => {
     if (data?.data) {
       setServices(data.data);
+      setIsSearching(false);
     }
   }, [data]);
 
   const fetchServices = async (search?: string) => {
     try {
-      const url = search 
-        ? `${SERVICE_TYPE}?page=1&name=${encodeURIComponent(search)}` 
+      const url = search
+        ? `${SERVICE_TYPE}?page=1&name=${encodeURIComponent(search)}`
         : `${SERVICE_TYPE}?page=1`;
-      
+
       await get(undefined, url);
     } catch (err) {
       if (err instanceof Error) toast("error", err.message);
     }
   };
 
+  // Initial load
   useEffect(() => {
     fetchServices();
   }, [token]);
 
+  // Debounce
+  useEffect(() => {
+    if (debouncedSearchQuery !== searchQuery) {
+      setIsSearching(true);
+    }
+    fetchServices(debouncedSearchQuery);
+  }, [debouncedSearchQuery]);
+
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
-    fetchServices(query);
+    if (query !== debouncedSearchQuery) {
+      setIsSearching(true);
+    }
   };
 
   const handleSelectService = (service: ServiceType) => {
@@ -132,9 +147,9 @@ export default function ServiceSelect({
                 </div>
               </div>
 
-              {isLoading ? (
-                <div className="py-6 text-center text-sm text-muted-foreground">
-                  {b("loading")}
+              {(isLoading || isSearching) ? (
+                <div className="py-6 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
+                  {isSearching ? b("searching") : b("loading")}
                 </div>
               ) : (
                 <>
