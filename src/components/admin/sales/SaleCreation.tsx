@@ -28,6 +28,8 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { PrintInvoiceModal } from "@/components/global/PrintInvoiceModal";
+import { getInvoiceDetailReport } from "@/lib/invoices/getInvoiceDetailReport";
 
 type Props = {
   token: string;
@@ -50,6 +52,11 @@ export default function SaleCreation({ token }: Props) {
     undefined
   );
   const router = useRouter();
+
+  // Modal para imprimir la factura
+  const [showPrintModal, setShowPrintModal] = useState(false);
+  const [isPrinting, setIsPrinting] = useState(false);
+  const [createdInvoiceId, setCreatedInvoiceId] = useState<string | null>(null);
 
   // Calcular el total de la factura
   const total = products.reduce((sum, product) => sum + product.total, 0);
@@ -109,6 +116,43 @@ export default function SaleCreation({ token }: Props) {
     setDepositError(undefined); // Clear any previous errors
   };
 
+  // Handle print invoice function
+  const handlePrintInvoice = async () => {
+    if (!createdInvoiceId) return;
+
+    setIsPrinting(true);
+    try {
+      const result = await getInvoiceDetailReport(createdInvoiceId, token);
+
+      if ("message" in result) {
+        toast("error", result.message);
+        return;
+      }
+
+      const blobUrl = URL.createObjectURL(result);
+      const printWindow = window.open(blobUrl, "_blank");
+
+      if (printWindow) {
+        printWindow.addEventListener("load", () => {
+          printWindow.focus();
+          printWindow.print();
+          printWindow.addEventListener("afterprint", () => {
+            URL.revokeObjectURL(blobUrl);
+          });
+        });
+      } else {
+        toast("error", "No se pudo abrir la ventana de impresión.");
+      }
+
+      setShowPrintModal(false);
+      router.push("/dashboard/invoices");
+    } catch {
+      toast("error", "Error al imprimir la factura");
+    } finally {
+      setIsPrinting(false);
+    }
+  };
+
   const handleFinalizeSale = async () => {
     if (!selectedStock) {
       setDepositError("Debe seleccionar un depósito");
@@ -130,27 +174,39 @@ export default function SaleCreation({ token }: Props) {
       clientId: Number(selectedCustomer?.id),
       stockId: Number(selectedStock),
       issueDate: new Date().toLocaleDateString("en-CA"),
-      details: products.filter((p) => p.category === "PRODUCT").map((p) => ({
-        quantity: p.quantity,
-        productId: Number(p.id),
-      })),
+      details: products
+        .filter((p) => p.category === "PRODUCT")
+        .map((p) => ({
+          quantity: p.quantity,
+          productId: Number(p.id),
+        })),
       paymentMethods: paymentMethods.map((p) => ({
         methodId: Number(p.method),
         amount: p.amount,
       })),
       totalPayed: totalPaid || 1,
       type: saleCondition,
-      services: products.filter((p) => p.category === "SERVICE").map((p) => ({
-        quantity: p.quantity,
-        productId: Number(p.id),
-      })),
+      services: products
+        .filter((p) => p.category === "SERVICE")
+        .map((p) => ({
+          quantity: p.quantity,
+          productId: Number(p.id),
+        })),
     };
 
     try {
-      const { error } = await post(saleData);
-      if (!error && !loading) {
+      const response = await post(saleData);
+      if (!response.error && !loading) {
         toast("success", "Venta finalizada con éxito");
-        router.push("/dashboard/invoices");
+
+        // Verificamos si la respuesta contiene datos y un ID
+        // Usamos una aserción de tipo o verificación con tipo any para acceder al id
+        if (response.data && "id" in response.data) {
+          setCreatedInvoiceId(String(response.data.id));
+          setShowPrintModal(true);
+        } else {
+          router.push("/dashboard/invoices");
+        }
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -342,6 +398,15 @@ export default function SaleCreation({ token }: Props) {
           </Card>
         </div>
       </div>
+      <PrintInvoiceModal
+        isOpen={showPrintModal}
+        onClose={() => {
+          setShowPrintModal(false);
+          router.push("/dashboard/invoices");
+        }}
+        onPrint={handlePrintInvoice}
+        isPrinting={isPrinting}
+      />
     </div>
   );
 }
