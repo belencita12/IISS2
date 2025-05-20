@@ -71,35 +71,21 @@ export default function PurchaseList({ token }: Props) {
           setDateFrom={setFrom}
         />
       </div>
-
       <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">Compras</h1>
+        <h1 className="text-2xl font-bold">{p("title")}</h1>
         <div className="flex gap-2">
           <Button
             variant="outline"
             disabled={isGettingReport}
             onClick={() => router.push("/dashboard/purchases/register")}
           >
-            Registrar Compra
+            {b("register")}
           </Button>
           <ExportButton
             handleGetReport={handleGetPurchaseReport}
             isLoading={isGettingReport}
           />
         </div>
-
-
-
-      <div className="flex justify-between items-center mb-6 w-full">
-        <h1 className="text-2xl font-bold">{p("title")}</h1>
-        <Button
-          variant="default"
-          onClick={() => router.push("/dashboard/purchases/register")}
-          className="bg-black text-white hover:bg-gray-800"
-        >
-          {b("register")}
-        </Button>
-
       </div>
 
       {error && <p className="text-center text-red-500">{error}</p>}
@@ -107,7 +93,7 @@ export default function PurchaseList({ token }: Props) {
       {isLoading ? (
         <PurchaseListSkeleton />
       ) : purchases.length === 0 ? (
-        <p className="text-center">{e("notFoundField", {field: "compras"})}</p>
+        <p className="text-center">{e("notFoundField", { field: "compras" })}</p>
       ) : (
         purchases.map((purchase) => (
           <PurchaseCard key={purchase.id} purchase={purchase} />
