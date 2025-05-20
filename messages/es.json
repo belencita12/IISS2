@@ -82,7 +82,8 @@
     "noImage": "Sin imagen",
     "empty": "Faltan datos",
     "authError": "Error, debes estar autenticado para acceder a esta sección",
-    "numericMin": "No puede ser menor al mínimo"
+    "numericMin": "No puede ser menor al mínimo",
+    "selectOne": "Debes seleccionar al menos un {field}"
   },
   "Filters":{
     "from": "Deste",
@@ -146,7 +147,8 @@
     "image": "Foto del empleado (Opcional)",
     "titleRegister": "Registro de Empleado",
     "titleUpdate": "Actualizar empleado",
-    "address": "Dirección"
+    "address": "Dirección",
+    "selectEmployee": "Selecciona un empleado"
   },
   "Vaccune": {
     "vaccuneControlTitle": "Control de vacunas"
@@ -267,7 +269,7 @@
 
   "AppointmentForm": {
     "selectPet": "Seleccionar mascota",
-    "selectService": "Seleccionar servicio",
+    "selectService": "Seleccionar servicio/s",
     "selectEmployee": "Seleccionar empleado",
     "selectDate": "Fecha de la cita",
     "details": "Detalles de la cita",
@@ -281,7 +283,8 @@
     "price": "Precio",
     "title": "Agendar cita",
     "descriptionClient": "Ingresa los datos para agendar tu cita veterinaria",
-    "availabilityHour": "Horario disponible"
+    "availabilityHour": "Horario disponible",
+    "otherService": "Selecciona otro servicio"
   },
   "AppointmentDetail": {
     "titleCancel": "Motivo de cancelación",

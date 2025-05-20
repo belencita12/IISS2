@@ -43,6 +43,9 @@ export default function PetSelect({
   const { loading: isLoading, get } = useFetch<PetDataResponse>(PET_API, token);
 
   const ph = useTranslations("Placeholder");
+  const b = useTranslations("Button");
+  const e = useTranslations("Error");
+
   const fetchPets = async (search?: string) => {
     try {
       const baseUrl = `${PET_API}?page=1&clientId=${clientId}`;
@@ -54,7 +57,7 @@ export default function PetSelect({
         setPets(response.data.data || []);
       }
     } catch (err) {
-      toast("error", "Error al cargar mascotas");
+      if (err instanceof Error) toast("error", err.message);
     }
   };
 
@@ -91,8 +94,9 @@ export default function PetSelect({
                 {selectedPet.name}
               </div>
             ) : (
-              <SelectValue placeholder={ph("select")} />
+              <span className="text-muted-foreground">{ph("select")}</span>
             )}
+
             <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -108,7 +112,7 @@ export default function PetSelect({
               <div className="w-full pb-2">
                 <SearchBar
                   onSearch={handleSearchChange}
-                  placeholder="Buscar por nombre..."
+                  placeholder={ph("getBy", {field: "nombre"})}
                   debounceDelay={500}
                   defaultQuery={searchQuery}
                 />
@@ -117,11 +121,11 @@ export default function PetSelect({
 
             {isLoading ? (
               <div className="py-6 text-center text-sm text-muted-foreground">
-                Cargando mascotas...
+                {b("loading")}
               </div>
             ) : (
               <>
-                <CommandEmpty>No se encontraron mascotas</CommandEmpty>
+                <CommandEmpty>{e("notFoundField", {field: "mascotas"})}</CommandEmpty>
                 <CommandGroup>
                   <CommandList className="max-h-[250px] overflow-y-auto">
                     {pets.map((pet) => (

@@ -69,12 +69,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
       toast("success", s("successAppointment"));
       router.push("/dashboard/appointment");
     } catch (error: unknown) {
-<<<<<<< HEAD
       const errorMessage = error instanceof Error ? error.message : e("errorRegister", {field: "cita"});
-=======
-      const errorMessage =
-        error instanceof Error ? error.message : "Error al registrar la cita";
->>>>>>> c5184e1f40969a8fe3771af743fcbe1db6a0a22d
       toast("error", errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -117,13 +112,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-<<<<<<< HEAD
           <label className="block text-sm font-medium text-gray-700 mb-1">{a("selectPet")}</label>
-=======
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Seleccionar Mascota
-          </label>
->>>>>>> c5184e1f40969a8fe3771af743fcbe1db6a0a22d
           <PetSearch token={token} onSelectPet={handleSelectPet} />
           <input type="hidden" {...register("petId")} />
           {errors.petId && (
@@ -133,13 +122,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
         </div>
 
         <div>
-<<<<<<< HEAD
           <label className="block text-sm font-medium text-gray-700 mb-1">{a("selectService")}</label>
-=======
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Seleccionar Servicio
-          </label>
->>>>>>> c5184e1f40969a8fe3771af743fcbe1db6a0a22d
           <ServiceSelect token={token} onSelectService={handleSelectService} />
           <input type="hidden" {...register("serviceIds")} />
           {errors.serviceIds && (
@@ -153,14 +136,8 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
         </div>
 
         <div className="md:col-span-2">
-<<<<<<< HEAD
-          <label className="block text-sm font-medium text-gray-700 mb-1">{a("selectEmployee")}</label>
-          <EmployeeSelect token={token} onSelectEmployee={handleSelectEmployee} />
-          <input type="hidden" {...register("employeesId")} />
-          {errors.employeesId && <p className="text-red-500 text-sm mt-1">{errors.employeesId.message}</p>}
-=======
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Seleccionar Empleado
+            {a("selectEmployee")}
           </label>
           <EmployeeSelect
             token={token}
@@ -172,19 +149,14 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
               {errors.employeeId.message}
             </p>
           )}
->>>>>>> c5184e1f40969a8fe3771af743fcbe1db6a0a22d
           {selectedEmployee && <EmployeeSelected employee={selectedEmployee} />}
         </div>
 
         <div className="md:col-span-2 flex flex-col md:flex-row gap-6">
           <div className="w-full">
-<<<<<<< HEAD
-            <label className="block text-sm font-medium text-gray-700">{a("selectDate")}</label>
-=======
             <label className="block text-sm font-medium text-gray-700">
-              Fecha
+              {a("selectDate")}
             </label>
->>>>>>> c5184e1f40969a8fe3771af743fcbe1db6a0a22d
             <input
               type="date"
               {...register("designatedDate")}
@@ -219,13 +191,9 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
       </div>
 
       <div>
-<<<<<<< HEAD
-        <label className="block text-sm font-medium text-gray-700">{a("details")}</label>
-=======
         <label className="block text-sm font-medium text-gray-700">
-          Detalles
+          {a("details")}
         </label>
->>>>>>> c5184e1f40969a8fe3771af743fcbe1db6a0a22d
         <textarea
           {...register("details")}
           className="w-full border border-gray-300 rounded-md p-2"

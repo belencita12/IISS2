@@ -40,7 +40,6 @@ export default function InvoiceDetail({ token }: Props) {
       <div className="w-full">
         <InvoiceDetailTable details={invoiceDetails} />
       </div>
-<<<<<<< HEAD
       <div className="flex justify-end mt-6">
         <Link href="/dashboard/invoices">
           <Button
@@ -51,8 +50,6 @@ export default function InvoiceDetail({ token }: Props) {
           </Button>
         </Link>
       </div>
-=======
->>>>>>> c5184e1f40969a8fe3771af743fcbe1db6a0a22d
     </div>
   );
 }
