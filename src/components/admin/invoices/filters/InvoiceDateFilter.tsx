@@ -24,7 +24,7 @@ export default function InvoiceDateFilter({ filters, setFilters }: Props) {
   const adjustEndDate = (dateStr: string) => {
     if (!dateStr) return undefined;
     const date = new Date(dateStr);
-    date.setDate(date.getDate() + 1);
+    date.setDate(date.getDate());
     return date.toISOString().split("T")[0];
   };
 
