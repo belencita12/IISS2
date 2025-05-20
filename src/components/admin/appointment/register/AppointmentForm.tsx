@@ -21,6 +21,7 @@ import ServiceSelected from "./ServiceSelected";
 import EmployeeSelect from "./EmployeeSelect";
 import EmployeeSelected from "./EmployeeSelected";
 import { AvailabilityPicker } from "./AvailabilityPicker";
+import { Trash } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 type AppointmentFormProps = {
@@ -104,6 +105,11 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
       setSelectedPet(pet);
     }
   };
+  const handleRemoveService = (serviceId: number) => {
+    const updatedServices = selectedServices.filter((s) => s.id !== serviceId);
+    setSelectedServices(updatedServices);
+    setValue("serviceIds", updatedServices.map((s) => s.id), { shouldValidate: true });
+  };
 
   return (
     <form
@@ -131,7 +137,17 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
             </p>
           )}
           {selectedServices.map((service) => (
-            <ServiceSelected key={service.id} service={service} />
+            <div key={service.id} className="border rounded-md flex justify-between items-center px-4 py-2">
+              <ServiceSelected service={service} />
+              <Button
+                variant="outline"
+                type="button"
+                onClick={() => handleRemoveService(service.id)}
+                className="text-black"
+              >
+                <Trash/>
+              </Button>
+            </div>
           ))}
         </div>
 
