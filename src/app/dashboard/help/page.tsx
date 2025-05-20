@@ -14,7 +14,7 @@ export default async function helpPage() {
 
     return (
         <div>
-            <HelpData/>;
+            <HelpData/>
         </div>
     );
 }
