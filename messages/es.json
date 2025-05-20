@@ -11,6 +11,7 @@
     "profile": "Perfil"
   },
   "Button": {
+    "searching": "Buscando...",
     "update": "Actualizar",
     "updating": "Actualizando...",
     "select": "Seleccionar",
@@ -83,7 +84,9 @@
     "empty": "Faltan datos",
     "authError": "Error, debes estar autenticado para acceder a esta sección",
     "numericMin": "No puede ser menor al mínimo",
-    "selectOne": "Debes seleccionar al menos un {field}"
+    "selectOne": "Debes seleccionar al menos un {field}",
+    "errorEndDate": "No se puede finalizar una cita antes de su fecha programada",
+    "errorLimitDate": "Se necesitan fechas límites para generar el reporte"
   },
   "Filters":{
     "from": "Deste",
@@ -303,7 +306,7 @@
     "status": "Estado",
     "details": "Detalles",
     "pending": "Pendiente",
-    "completed": "Completada",
+    "completed": "Finalizada",
     "canceled": "Cancelada",
     "inProgress": "En progreso"
   },
