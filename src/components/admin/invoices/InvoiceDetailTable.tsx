@@ -1,6 +1,7 @@
 import React from "react";
 import GenericTable, { Column } from "@/components/global/GenericTable";
 import { InvoiceDetail } from "@/lib/invoices/IInvoice";
+import { useTranslations } from "next-intl";
 
 interface Props {
   details: InvoiceDetail[];
@@ -13,24 +14,26 @@ export default function InvoiceDetailTable({ details }: Props) {
       maximumFractionDigits: 0,
     }).format(value) + " Gs";
 
+    const i = useTranslations("InvoiceDetail");
+
   const columns: Column<InvoiceDetail>[] = [
     {
-      header: "Nombre",
+      header: i("name"),
       accessor: (item) => item.product.name,
       className: "text-left",
     },
     {
-      header: "Cantidad",
+      header: i("quantity"),
       accessor: "quantity",
       className: "text-right min-w-[80px]",
     },
     {
-      header: "Precio Unitario",
+      header: i("unitCost"),
       accessor: (item) => formatNumber(item.unitCost),
       className: "text-right min-w-[80px]",
     },
     {
-      header: "IVA",
+      header: i("iva"),
       accessor: (item) => {
         const iva = item.product.iva;
         return iva ? `${iva < 1 ? iva * 100 : iva}%` : "0%";
@@ -38,7 +41,7 @@ export default function InvoiceDetailTable({ details }: Props) {
       className: "text-right min-w-[80px]",
     },
     {
-      header: "Sub. Total",
+      header: i("subTotal"),
       accessor: (item) => formatNumber(item.quantity * item.unitCost),
       className: "text-right min-w-[80px]",
     },

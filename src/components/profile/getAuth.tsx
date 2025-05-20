@@ -10,7 +10,9 @@ export const getAuth = async (token: string): Promise<IUserProfile> => {
   });
 
   if (!res.ok) {
-    throw new Error("Error al obtener información del usuario");
+    const errorData = await res.json().catch(() => ({})); // fallback si no es JSON
+    const message = errorData?.message || `Error HTTP: ${res.status}`;
+    throw new Error(message);
   }
 
   const user = await res.json();

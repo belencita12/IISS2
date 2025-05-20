@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { useTranslations } from "next-intl";
 
 interface FormImgUploaderProps {
   onChange: (file: File | undefined) => void;
@@ -19,6 +20,8 @@ const FormImgUploader = ({
   defaultImage,
 }: FormImgUploaderProps) => {
   const [previewImage, setPreviewImage] = useState<string | null>(defaultImage || null);
+
+  const b = useTranslations("Button");
 
   useEffect(() => {
     setPreviewImage(defaultImage || null);
@@ -49,7 +52,7 @@ const FormImgUploader = ({
           onChange={handleImageChange}
           className="hidden"
         />
-        {previewImage ? "Cambiar imagen" : "Subir imagen"}
+        {previewImage ? b("change") : b("upload")}
       </Label>
 
       {(previewImage || defaultImage) && (

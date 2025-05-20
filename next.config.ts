@@ -3,7 +3,7 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 const csp = `
   default-src 'self';
-  connect-src 'self' https://iiss2-backend-production.up.railway.app https://iiss2-backend-0q2e.onrender.com https://asnavagyfjmrbewjgasb.supabase.co;
+  connect-src *;
   script-src 'self' 'unsafe-inline';
   style-src 'self' 'unsafe-inline';
   img-src 'self' data: https://asnavagyfjmrbewjgasb.supabase.co;

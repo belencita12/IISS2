@@ -15,6 +15,7 @@ import { getWorkPosition } from "@/lib/employee/getWorkPosition";
 import { validatePhoneNumber } from "@/lib/utils";
 import { rucFormatRegExp } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 const employeeFormSchema = z.object({
   ruc: z.string().min(1, "El RUC es obligatorio").regex(rucFormatRegExp, "El RUC debe tener el formato 12345678-1"),
@@ -39,6 +40,11 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
+
+  const e = useTranslations("EmployeeTable");
+  const b = useTranslations("Button");
+  const ph= useTranslations("Placeholder");
+  const s = useTranslations("Success");
 
   const {
     register,
@@ -66,10 +72,10 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
         if (Array.isArray(data)) {
           setPositions(data);
         } else {
-          console.error("La respuesta no es un array:", data);
         }
-      } catch {
-        toast("error", "Hubo un error al obtener los puestos de trabajo");
+      } catch (error : unknown) {
+        if (error instanceof Error) {
+          toast("error", error.message)};
       }
     };
     fetchPositions();
@@ -107,7 +113,7 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
     setIsSubmitting(true);
     try {
       await registerEmployee(formData, token);
-      toast("success", "Empleado registrado con éxito");
+      toast("success", s("successRegister", {field: "Empleado"}));
       router.push("/dashboard/employee");
     } catch (error: unknown) {
       if (typeof error === "object" && error !== null && "message" in error) {
@@ -115,7 +121,6 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
         toast("error", errorMessage);
         return;
       }
-      toast("error", "Error inesperado al registrar el empleado");
     } finally {
       setIsSubmitting(false);
     }
@@ -123,25 +128,25 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
 
   return (
     <div className="max-w-5xl mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-6">Registro de Empleado</h1>
+      <h1 className="text-3xl font-bold mb-6">{e("titleRegister")}</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div>
-          <Label>RUC</Label>
-          <Input {...register("ruc")} placeholder="Ingrese el RUC" />
+          <Label>{e("ruc")}</Label>
+          <Input {...register("ruc")} placeholder={ph("ruc")} />
           {errors.ruc && <p className="text-red-500">{errors.ruc.message}</p>}
         </div>
         <div>
-          <Label>Nombre Completo</Label>
-          <Input {...register("fullName")} placeholder="Ingrese el nombre completo" />
+          <Label>{e("name")}</Label>
+          <Input {...register("fullName")} placeholder={ph("name")} />
           {errors.fullName && <p className="text-red-500">{errors.fullName.message}</p>}
         </div>
         <div>
-          <Label>Correo Electrónico</Label>
-          <Input {...register("email")} placeholder="Ingrese el correo" type="email" />
+          <Label>{e("email")}</Label>
+          <Input {...register("email")} placeholder={ph("email")} type="email" />
           {errors.email && <p className="text-red-500">{errors.email.message}</p>}
         </div>
         <div>
-          <Label>Puesto</Label>
+          <Label>{e("position")}</Label>
           <Select
             onValueChange={(value) => {
               setValue("position", value);
@@ -149,7 +154,7 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
             }}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Seleccione un puesto" />
+              <SelectValue placeholder={ph("select")} />
             </SelectTrigger>
             <SelectContent>
               {positions.map((pos) => (
@@ -162,17 +167,17 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
           {errors.position && <p className="text-red-500">{errors.position.message}</p>}
         </div>
         <div>
-          <Label>Dirección</Label>
-          <Input {...register("adress")} placeholder="Ingrese la dirección" />
+          <Label>{e("address")}</Label>
+          <Input {...register("adress")} placeholder={ph("address")} />
           {errors.adress && <p className="text-red-500">{errors.adress.message}</p>}
         </div>
         <div>
-          <Label>Teléfono</Label>
-          <Input {...register("phoneNumber")} placeholder="Ingrese el número de teléfono" />
+          <Label>{e("phone")}</Label>
+          <Input {...register("phoneNumber")} placeholder={ph("phone")}/>
           {errors.phoneNumber && <p className="text-red-500">{errors.phoneNumber.message}</p>}
         </div>
         <div>
-          <Label>Foto del empleado (Opcional)</Label>
+          <Label>{e("image")}</Label>
           <Input type="file" accept="image/*" onChange={handleImageChange} />
           {previewImage && (
             <Image src={previewImage} alt="Vista previa" width={96} height={96} className="mt-4 w-24 h-24 rounded-full" />
@@ -180,11 +185,11 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
           {errors.profileImg && <p className="text-red-500">{errors.profileImg.message}</p>}
         </div>
         <div className="flex justify-end gap-4">
-          <Button type="button" variant="outline" onClick={() => router.push("/dashboard/employee")}>
-            Cancelar
+          <Button type="button" variant="outline"  disabled={isSubmitting} onClick={() => router.push("/dashboard/employee")}>
+            {b("cancel")}
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Registrando..." : "Registrar"}
+            {isSubmitting ? b("registering") : b("register")}
           </Button>
         </div>
       </form>

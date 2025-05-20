@@ -5,6 +5,7 @@ import { AppointmentQueryParams } from "@/lib/appointment/IAppointment";
 import { useEffect, useState } from "react";
 import useDebounce from "@/hooks/useDebounce";
 import clsx from "clsx";
+import { useTranslations } from "next-intl";
 
 interface Props {
   filters: AppointmentQueryParams;
@@ -17,6 +18,8 @@ export default function AppointmentDateFilter({ filters, setFilters }: Props) {
 
   const debouncedStartDate = useDebounce(startDate, 500);
   const debouncedEndDate = useDebounce(endDate, 500);
+
+  const f = useTranslations("Filters");
 
   const adjustEndDate = (dateStr: string) => {
     if (!dateStr) return undefined;
@@ -41,7 +44,7 @@ export default function AppointmentDateFilter({ filters, setFilters }: Props) {
     startDate && endDate && endDate < startDate;
 
   const endDateError = isEndDateBeforeStart
-    ? "La fecha hasta no puede ser menor que la fecha desde."
+    ? f("errorDate")
     : null;
 
   useEffect(() => {
@@ -60,7 +63,7 @@ export default function AppointmentDateFilter({ filters, setFilters }: Props) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div className="space-y-2">
-        <Label htmlFor="startDate">Fecha desde</Label>
+        <Label htmlFor="startDate">{f("fromDate")}</Label>
         <input
           id="startDate"
           type="date"
@@ -79,7 +82,7 @@ export default function AppointmentDateFilter({ filters, setFilters }: Props) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="endDate">Fecha hasta</Label>
+        <Label htmlFor="endDate">{f("toDate")}</Label>
         <input
           id="endDate"
           type="date"

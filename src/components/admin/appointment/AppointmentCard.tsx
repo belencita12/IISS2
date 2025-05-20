@@ -4,6 +4,7 @@ import { AppointmentData } from "@/lib/appointment/IAppointment";
 import { useRouter } from "next/navigation";
 import { formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
 
 interface AppointmentCardProps {
   appointment: AppointmentData;
@@ -30,6 +31,11 @@ const AppointmentCard = ({
 }: AppointmentCardProps) => {
   const router = useRouter();
 
+  const a = useTranslations("AppointmentDetail");
+  const b = useTranslations("Button");
+  const e = useTranslations("Error");
+
+
   const handleViewDetail = () => {
     if (isProcessing) return;
     if (appointment.id) {
@@ -48,14 +54,14 @@ const AppointmentCard = ({
         <h3 className="font-bold text-lg">
           Servicio{appointment.services?.length !== 1 ? "s" : ""}:{" "}
           {appointment.services?.map((s) => s.name).join(", ") ||
-            "No especificado"}
+            e("noSpecified")}
         </h3>
 
-        <p>Dueño: {appointment.pet?.owner?.name ?? "Dueño desconocido"}</p>
-        <p>Animal: {appointment.pet?.race ?? "Especie no especificada"}</p>
-        <p>Detalles: {appointment.details ?? "Detalles no especificados"}</p>
+        <p>{a("owner")}: {appointment.pet?.owner?.name ?? e("notFound")}</p>
+        <p>{a("race")}: {appointment.pet?.race ?? e("noSpecified")}</p>
+        <p>{a("details")}: {appointment.details ?? e("noSpecified")}</p>
         <p className="text-sm text-gray-500 font-semibold">
-          Estado: {statusTranslations[appointment.status] ?? appointment.status}
+          {a("status")}: {statusTranslations[appointment.status] ?? appointment.status}
         </p>
       </div>
 
@@ -76,7 +82,7 @@ const AppointmentCard = ({
               }}
               className="px-3 py-1 bg-white text-black rounded border border-gray-300 hover:bg-gray-100"
             >
-              {"Finalizar"}
+              { b("finish")}
             </Button>
             <Button
               disabled={isProcessing}
@@ -86,7 +92,7 @@ const AppointmentCard = ({
               }}
               className="px-3 py-1 bg-black text-white rounded border border-gray-300 hover:bg-gray-800"
             >
-              {"Cancelar"}
+              { b("cancel")}
             </Button>
           </div>
         )}

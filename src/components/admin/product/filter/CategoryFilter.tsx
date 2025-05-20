@@ -13,6 +13,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { getCategoryLabel } from "@/lib/products/utils/categoryLabel";
+import { useTranslations } from "next-intl";
 
 interface CategoryFilterProps {
   category: string;
@@ -27,6 +28,8 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
 
+  const f = useTranslations("Filters");
+
   return (
     <div className="relative w-full">
       <Popover open={open} onOpenChange={setOpen}>
@@ -38,7 +41,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
             className="w-full h-full p-[9px] text-sm rounded flex items-center justify-between"
           >
             <span className="truncate">
-              {category ? getCategoryLabel(category) : "Categoría"}
+              {category ? getCategoryLabel(category) : f("category")}
             </span>
             <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
           </Button>
@@ -59,7 +62,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
                   }}
                   className="px-4 py-2"
                 >
-                  Ninguno
+                  {f("none")}
                 </CommandItem>
                 <CommandItem
                   onSelect={() => {
@@ -68,7 +71,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
                   }}
                   className="px-4 py-2"
                 >
-                  Servicio
+                  {f("service")}
                 </CommandItem>
                 <CommandItem
                   onSelect={() => {
@@ -77,7 +80,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
                   }}
                   className="px-4 py-2"
                 >
-                  Producto
+                  {f("product")}
                 </CommandItem>
                 <CommandItem
                   onSelect={() => {
@@ -86,7 +89,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
                   }}
                   className="px-4 py-2"
                 >
-                  Vacuna
+                  {f("vaccine")}
                 </CommandItem>
               </CommandList>
             </CommandGroup>

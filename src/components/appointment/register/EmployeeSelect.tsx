@@ -20,6 +20,8 @@ import type { EmployeeData } from "@/lib/employee/IEmployee";
 import { useFetch } from "@/hooks/api";
 import { EMPLOYEE_API } from "@/lib/urls";
 import { toast } from "@/lib/toast";
+import { useTranslations } from "next-intl";
+import useDebounce from "@/hooks/useDebounce";
 
 type EmployeeSelectProps = {
   token: string;
@@ -42,10 +44,19 @@ export default function EmployeeSelect({
   const [employees, setEmployees] = useState<EmployeeData[]>([]);
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeData | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  // Reducir el tiempo de debounce para una mejor experiencia de usuario
+  const debouncedSearchQuery = useDebounce(searchQuery, 2000);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
+
+  const em = useTranslations("EmployeeTable");
+  const e = useTranslations("Error");
+  const b = useTranslations("Button");
+  const ph = useTranslations("Placeholder");
 
   const { data, loading: isLoading, get } = useFetch<EmployeeApiResponse>(EMPLOYEE_API, token);
 
+  // Manejar datos que vienen de la API
   useEffect(() => {
     if (data?.data) {
       const vets = data.data.filter(
@@ -54,6 +65,7 @@ export default function EmployeeSelect({
           emp.position?.name === "Veterinaria"
       );
       setEmployees(vets);
+      setIsSearching(false);
     }
   }, [data]);
 
@@ -64,18 +76,32 @@ export default function EmployeeSelect({
         : `${EMPLOYEE_API}?page=1`;
       
       await get(undefined, url);
-    } catch (err) {
-      toast("error", "Error al cargar empleados");
+    } catch (err: unknown) {
+        if(err instanceof Error) toast("error", err.message);
     }
   };
 
+  // Cargar empleados al inicio
   useEffect(() => {
     fetchEmployees();
-  }, [token]);
+  }, []);
+
+  // Efecto para manejar la búsqueda debounceada
+  useEffect(() => {
+    // Evitamos búsquedas innecesarias al inicio
+    if (debouncedSearchQuery !== searchQuery) {
+      setIsSearching(true);
+    }
+    
+    fetchEmployees(debouncedSearchQuery);
+  }, [debouncedSearchQuery]);
 
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
-    fetchEmployees(query);
+    // Indicamos que estamos en proceso de búsqueda
+    if (query !== debouncedSearchQuery) {
+      setIsSearching(true);
+    }
   };
 
   const handleSelectEmployee = (employee: EmployeeData) => {
@@ -100,7 +126,7 @@ export default function EmployeeSelect({
                 {selectedEmployee.fullName}
               </div>
             ) : (
-              <span>Selecciona un empleado</span>
+              <span>{em("selectEmployee")}</span>
             )}
             <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
@@ -117,20 +143,20 @@ export default function EmployeeSelect({
               <div className="w-full pb-2">
                 <SearchBar
                   onSearch={handleSearchChange}
-                  placeholder="Buscar por nombre..."
+                  placeholder={ph("getBy", {field: "nombre"})}
                   debounceDelay={500}
                   defaultQuery={searchQuery}
                 />
               </div>
             </div>
 
-            {isLoading ? (
-              <div className="py-6 text-center text-sm text-muted-foreground">
-                Cargando empleados...
+            {isLoading || isSearching ? (
+              <div className="py-6 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
+                {isSearching ? b("searching") : b("loading")}
               </div>
             ) : (
               <>
-                <CommandEmpty>No se encontraron empleados</CommandEmpty>
+                <CommandEmpty>{e("notFoundField", {field: "empleados"})}</CommandEmpty>
                 <CommandGroup>
                   <CommandList className="max-h-[250px] overflow-y-auto">
                     {employees.map((employee) => (

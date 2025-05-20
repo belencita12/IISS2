@@ -16,7 +16,11 @@ interface ProfileUserProps {
 }
 
 export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProps) {
-  const t = useTranslations("ProfileUser")
+  const b= useTranslations("Button");
+  const e= useTranslations("Error");
+  const c = useTranslations("ClientForm");
+  const ph = useTranslations ("Placeholder");
+
   const { 
     userData, 
     isEditing, 
@@ -38,7 +42,7 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
 
   if (!userData) {
     return (
-          <p className="mt-4 text-gray-500 text-center">No se encontraron datos del usuario</p>
+          <p className="mt-4 text-gray-500 text-center">{e("notFound")}</p>
     )
   }
 
@@ -89,55 +93,55 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
             <form onSubmit={handleSubmit} className="space-y-5" noValidate>
               <div className="space-y-4">
                 <FormField
-                  label="Nombre completo"
+                  label={c("name")}
                   icon={<User size={18} className="text-violet-500" />}
                   error={errors.fullName?.message}
                 >
                   <input
                     {...register("fullName")}
                     className="w-full border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-300 transition-all duration-200"
-                    placeholder="Tu nombre completo"
+                    placeholder={ph("name")}
                   />
                 </FormField>
 
                 <FormField
-                  label="Email"
+                  label={c("email")}
                   icon={<Mail size={18} className="text-violet-500" />}
                   error={errors.email?.message}
                 >
                   <input
                     {...register("email")}
                     className="w-full border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-300 transition-all duration-200"
-                    placeholder="Tu email"
+                    placeholder={ph("email")}
                   />
                 </FormField>
 
                 <FormField
-                  label="Teléfono"
+                  label={c("phone")}
                   icon={<Phone size={18} className="text-violet-500" />}
                   error={errors.phoneNumber?.message}
                 >
                   <input
                     {...register("phoneNumber")}
                     className="w-full border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-300 transition-all duration-200"
-                    placeholder="Tu número de teléfono"
+                    placeholder={ph("phone")}
                   />
                 </FormField>
 
                 <FormField
-                  label="Dirección"
+                  label={c("address")}
                   icon={<MapPin size={18} className="text-violet-500" />}
                   error={errors.adress?.message}
                 >
                   <input
                     {...register("adress")}
                     className="w-full border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-300 transition-all duration-200"
-                    placeholder="Tu dirección"
+                    placeholder={ph("address")}
                   />
                 </FormField>
 
                 <FormField
-                  label="RUC"
+                  label={c("ruc")}
                   icon={<Building size={18} className="text-violet-500" />}
                   error={errors.ruc?.message}
                 >
@@ -156,7 +160,7 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
                 className="px-4 py-2.5 rounded-lg border border-gray-300 hover:bg-white text-gray-700 font-medium bg-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
                 disabled={updateLoading}
               >
-                Cancelar
+                {b("cancel")}
               </Button>
                 <Button
                   type="submit"
@@ -165,10 +169,11 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
                 >
                   {updateLoading ? (
                     <>
-                      Guardando...
+                      <Loader2 size={18} className="animate-spin mr-2" />
+                      {b("saving")}
                     </>
                   ) : (
-                    "Guardar"
+                    b("save")
                   )}
                 </Button>
               </div>
@@ -183,20 +188,20 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
               <div className="space-y-4 bg-gray-50 rounded-xl p-5">
                 <InfoField
                   icon={<Phone size={18} className="text-violet-500" />}
-                  label="Teléfono"
-                  value={userData.phoneNumber || "No especificado"}
+                  label={c("phone")}
+                  value={userData.phoneNumber || e("noSpecified")}
                 />
                 <div className="border-t border-gray-200 pt-4"></div>
                 <InfoField
                   icon={<MapPin size={18} className="text-violet-500" />}
-                  label="Dirección"
-                  value={userData.adress || "No especificada"}
+                  label={c("address")}
+                  value={userData.adress || e("noSpecified")}
                 />
                 <div className="border-t border-gray-200 pt-4"></div>
                 <InfoField
                   icon={<Building size={18} className="text-violet-500" />}
-                  label="RUC"
-                  value={userData.ruc || "No especificado"}
+                  label={c("ruc")}
+                  value={userData.ruc || e("noSpecified")}
                 />
               </div>
 
@@ -205,7 +210,7 @@ export function ProfileUser({ clientId, token, updateUserData }: ProfileUserProp
                 onClick={handleEdit}
                 className="bg-pink-500 text-white flex items-center gap-2 hover:bg-pink-600 px-5 py-2.5 rounded-lg font-medium transition-colors duration-200"
               >
-                {t("editProfileBtn")}
+                {b("edit")}
               </Button>
               </div>
             </>

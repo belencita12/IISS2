@@ -8,11 +8,16 @@ import GenericPagination from "@/components/global/GenericPagination";
 import PurchaseSelectFilter from "./filters/PurchaseSelectFilter";
 import PurchaseNumericFilter from "./filters/PurchaseNumericFilter";
 import PurchaseListSkeleton from "./skeleton/PurchaseListSkeleton";
+
 import DateFilter from "./filters/PurchaseDateFilter";
 import { getPurchaseReport } from "@/lib/purchases/getPurchaseReport";
 import { downloadFromBlob } from "@/lib/utils";
 import ExportButton from "@/components/global/ExportButton";
 import { toast } from "@/lib/toast";
+
+import { useTranslations } from "next-intl";
+
+
 interface Props {
   token: string;
 }
@@ -41,6 +46,10 @@ export default function PurchaseList({ token }: Props) {
       setIsGettingReport(false);
     }
   };
+
+  const p = useTranslations("PurchaseDetail");
+  const b = useTranslations("Button");
+  const e = useTranslations("Error");
 
   const purchases = data?.data || [];
 
@@ -79,6 +88,18 @@ export default function PurchaseList({ token }: Props) {
           />
         </div>
 
+
+
+      <div className="flex justify-between items-center mb-6 w-full">
+        <h1 className="text-2xl font-bold">{p("title")}</h1>
+        <Button
+          variant="default"
+          onClick={() => router.push("/dashboard/purchases/register")}
+          className="bg-black text-white hover:bg-gray-800"
+        >
+          {b("register")}
+        </Button>
+
       </div>
 
       {error && <p className="text-center text-red-500">{error}</p>}
@@ -86,7 +107,7 @@ export default function PurchaseList({ token }: Props) {
       {isLoading ? (
         <PurchaseListSkeleton />
       ) : purchases.length === 0 ? (
-        <p className="text-center">No hay compras registradas.</p>
+        <p className="text-center">{e("notFoundField", {field: "compras"})}</p>
       ) : (
         purchases.map((purchase) => (
           <PurchaseCard key={purchase.id} purchase={purchase} />
