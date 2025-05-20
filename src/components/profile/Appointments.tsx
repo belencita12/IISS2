@@ -66,7 +66,7 @@ export const Appointments = ({
     }
 
     const url = new URL(APPOINTMENT_API);
-    url.searchParams.append("clientRuc", ruc);
+    url.searchParams.append("search", ruc);
     url.searchParams.append("page", page.toString());
     url.searchParams.append("size", pageSize.toString());
 

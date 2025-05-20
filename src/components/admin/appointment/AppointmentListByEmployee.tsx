@@ -30,7 +30,7 @@ interface AppointmentListProps {
 const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
     const [filters, setFilters] = useState<AppointmentQueryParams>({
         page: 1,
-        clientRuc: undefined,
+        search: undefined,
         employeeRuc: employeeRuc,
         fromDesignatedDate: undefined,
         toDesignatedDate: undefined,
@@ -85,7 +85,7 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
     const handleSearch = (value: string) => {
         const newFilters = {
             ...filters,
-            clientRuc: value,
+            search: value,
             employeeRuc,
             page: 1,
         };
