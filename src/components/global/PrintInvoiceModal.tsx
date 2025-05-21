@@ -23,7 +23,12 @@ export const PrintInvoiceModal: React.FC<PrintInvoiceModalProps> = ({
         ¿Deseas imprimir la factura ahora?
       </p>
       <div className="flex gap-4">
-        <Button onClick={onClose} variant="outline" className="w-full">
+        <Button
+          onClick={onClose}
+          variant="outline"
+          className="w-full"
+          disabled={isPrinting}
+        >
           Cancelar
         </Button>
         <PrintButton onClick={onPrint} isLoading={isPrinting} />
