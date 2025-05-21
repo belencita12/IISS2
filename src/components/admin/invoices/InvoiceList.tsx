@@ -93,7 +93,7 @@ const InvoiceList = ({ token }: InvoiceListProps) => {
     <div className="p-4 mx-auto">
       <div className="max-w-6xl mx-auto p-4 space-y-6">
         <SearchBar
-          placeholder={ph("getBy", {field: "RUC"})}
+          placeholder={ph("getBy", {field: "RUC o nombre"})}
           onSearch={(value) => {
             setFilters((prev) => ({ ...prev, search: value }));
             search({ search: value });
