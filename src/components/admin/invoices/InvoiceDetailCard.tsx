@@ -28,7 +28,7 @@ export default function InvoiceDetailCard({ invoice }: Props) {
   }
 
   return (
-    <Card className="w-full mt-6 overflow-hidden border-border/40 shadow-sm">
+    <Card className="w-full mt-3 overflow-hidden border-border/40 shadow-sm">
       <div className="bg-muted/30 px-6 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center border-b">
         <h2 className="text-xl font-semibold text-foreground">{i("invoiceNumber")} {invoice.invoiceNumber}</h2>
         <span className="text-sm text-muted-foreground mt-2 sm:mt-0">
