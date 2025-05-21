@@ -25,6 +25,9 @@ export interface Race {
   id: number;
   name: string;
   speciesId: number;
+  species: {
+    name: string;
+  };
 }
 
 export interface Species {
