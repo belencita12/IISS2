@@ -13,7 +13,7 @@ export default async function SpeciesPage() {
     const token = session?.user?.token || null;
 
     return (
-        <div className="flex flex-col justify-between items-center gap-4 p-6">
+        <div>
             <SpeciesList token={token} />
         </div>
     );

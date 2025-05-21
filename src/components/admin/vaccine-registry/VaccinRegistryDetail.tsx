@@ -4,6 +4,7 @@ import { notFound, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useVaccineRegistryDetail } from "@/hooks/vaccine-registry/useVaccineRegistryDetail";
 import { formatDate } from "@/lib/utils";
+import VaccineRegistryDetailSkeleton from "./skeleton/VaccineRegistryDetailSkeleton";
 
 interface Props {
   id: number;
@@ -17,16 +18,27 @@ export const VaccineRegistryDetail = ({ id, token }: Props) => {
     token
   );
 
-  if (loading) return <p className="text-center mt-10">Cargando...</p>;
+  if (loading) return <VaccineRegistryDetailSkeleton/>
   if (error || !registry) return notFound();
 
   return (
     <div className="flex flex-col justify-between mt-5 p-4 mx-2">
       <div className="flex flex-col gap-6">
-        <h1 className="text-2xl font-bold">
-          Detalle del Registro de Vacunación
-        </h1>
-
+        <div className="flex items-center gap-4">
+          <Button
+            variant="outline"
+            onClick={() => router.push("/dashboard/settings/vaccine-registry")}
+            className="self-start"
+          >
+            Volver
+          </Button>
+          
+        </div>
+         <div>
+          <h1 className="text-2xl font-bold">
+            Detalle del Registro de Vacunación
+          </h1>
+         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Detail label="Vacuna" value={registry.vaccine.name} />
           <Detail
@@ -53,12 +65,6 @@ export const VaccineRegistryDetail = ({ id, token }: Props) => {
 
       {/* Botones */}
       <div className="flex gap-4 mt-6 justify-end">
-        <Button
-          variant="outline"
-          onClick={() => router.push("/dashboard/settings/vaccine-registry")}
-        >
-          Volver
-        </Button>
         <Button
           onClick={() =>
             router.push(

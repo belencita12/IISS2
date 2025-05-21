@@ -1,8 +1,9 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from 'next-intl/plugin';
 
 const csp = `
   default-src 'self';
-  connect-src 'self' https://iiss2-backend-production.up.railway.app https://iiss2-backend-0q2e.onrender.com https://asnavagyfjmrbewjgasb.supabase.co;
+  connect-src *;
   script-src 'self' 'unsafe-inline';
   style-src 'self' 'unsafe-inline';
   img-src 'self' data: https://asnavagyfjmrbewjgasb.supabase.co;
@@ -55,6 +56,8 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+
+  
   async headers() {
     return [
       {
@@ -65,4 +68,6 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+const withNextIntl = createNextIntlPlugin();
+
+export default withNextIntl(nextConfig);

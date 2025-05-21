@@ -7,24 +7,27 @@ import { Product } from "@/lib/products/IProducts";
 import { Card } from "@/components/product/ProductCardCliente";
 import NotImageNicoPets from "../../../public/NotImageNicoPets.png";
 import { useRouter } from "next/navigation";
-import { toast } from "@/lib/toast";
 import { ProductSkeleton } from "./skeleton/ProductSkeleton";
 import { Carousel } from "./Carousel";
+import { useTranslations } from "next-intl";
 
 interface RecommendedProductsProps {
   clientId: number;
   token: string;
   pets: PetData[];
+  onFetchError?: (error: string) => void;
 }
 
 export const RecommendedProducts = ({
   token,
   pets,
+  onFetchError,
 }: RecommendedProductsProps) => {
   const [recommended, setRecommended] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  const b = useTranslations("Button");
   useEffect(() => {
     const fetchRecommendations = async () => {
       try {
@@ -48,8 +51,8 @@ export const RecommendedProducts = ({
 
         setRecommended(unique);
       } catch (err) {
-        console.error(err);
-        toast("error", "No se pudieron cargar recomendaciones");
+        const errorMessage = "No se pudieron cargar recomendaciones";
+        onFetchError?.(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -61,7 +64,7 @@ export const RecommendedProducts = ({
       setLoading(false);
       setRecommended([]);
     }
-  }, [pets, token]);
+  }, [pets, token, onFetchError]);
 
   if (loading) return <ProductSkeleton />;
   if (recommended.length === 0) return null;
@@ -72,15 +75,15 @@ export const RecommendedProducts = ({
         items={recommended}
         renderItem={(product) => (
           <div
-            onClick={() => router.push(`/user-profile/product/${product.id}`)}
+            onClick={() => router.push(`/shop/product/${product.id}`)}
             className="cursor-pointer"
           >
             <Card
               title={product.name}
               price={`${product.price.toLocaleString()} Gs.`}
               image={product.image?.originalUrl ?? NotImageNicoPets.src}
-              ctaText="Ver detalles"
-              ctaLink={`/user-profile/product/${product.id}`}
+              ctaText={b("seeDetails")}
+              ctaLink={`/shop/product/${product.id}`}
               tags={product.tags}
             />
           </div>

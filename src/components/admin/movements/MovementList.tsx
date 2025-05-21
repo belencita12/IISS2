@@ -8,6 +8,8 @@ import MovementFilters from "./MovementFilters";
 import GenericPagination from "@/components/global/GenericPagination";
 import { useEffect } from "react";
 import { toast } from "@/lib/toast";
+import MovementListSkeleton from "./skeleton/MovementListSkeleton";
+import { useTranslations } from "next-intl";
 
 
 interface Props {
@@ -16,6 +18,10 @@ interface Props {
 
 export default function MovementListPage({ token }: Props) {
   const router = useRouter();
+  const m = useTranslations("MovementDetail");
+  const e = useTranslations("Error");
+  const b = useTranslations("Button");
+
   const { data, query, setQuery, handleSearch, isLoading, error } =
     useMovementList({ token });
   
@@ -37,20 +43,20 @@ export default function MovementListPage({ token }: Props) {
       />
 
       <div className="flex justify-between items-center mb-6 w-full">
-        <h1 className="text-2xl font-bold">Movimientos</h1>
+        <h1 className="text-2xl font-bold">{m("title")}</h1>
         <Button
           variant="default"
           onClick={() => router.push("/dashboard/movement/register")}
           className="bg-black text-white hover:bg-gray-800"
         >
-          Registrar Movimiento
+          {b("register")}
         </Button>
       </div>
 
       {isLoading ? (
-        <p className="text-center">Cargando movimientos...</p>
+         <MovementListSkeleton />
       ) : movements.length === 0 ? (
-        <p className="text-center">No hay movimientos registrados.</p>
+        <p className="text-center">{e("notFoundField", {field: "movimientos"})}</p>
       ) : (
         <div className="flex flex-col gap-4 w-full">
           {movements.map((movement) => (

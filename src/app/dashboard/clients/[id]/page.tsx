@@ -9,32 +9,44 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import ClientAppointmentList from "@/components/admin/appointment/AppointmentListByClient"; // ✅ asegúrate de que el path sea correcto
 
-export default async function ClientDetails(
-    { params }: { params: Promise<{ id: string }> }
-) {
-    const { id } = await params;
-    const session = await getServerSession(authOptions);
-    const token = session?.user?.token || "";
-    const clientId = Number(id);
-    if (isNaN(clientId)) return notFound();
-    
-    const client = await getClientById(clientId, token) as IUserProfile;
-    if (!client) {
-        return notFound();
-    }
+export default async function ClientDetails({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const session = await getServerSession(authOptions);
+  const token = session?.user?.token || "";
+  const clientId = Number(id);
+  if (isNaN(clientId)) return notFound();
+
+  const client = (await getClientById(clientId, token)) as IUserProfile;
+  if (!client) {
+    return notFound();
+  }
 
     return (
         <>
+            <div className="mx-auto px-1 md:px-24 mb-6 mt-6">
+                <Link href="/dashboard/clients">
+                    <Button variant="outline" className="border-black border-solid">
+                        Volver 
+                    </Button>
+                </Link>
+            </div>
+
             <ClientProfileSection {...client} />
 
             <section className="mx-auto mt-10 px-1 md:px-24">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-xl">Mascotas</h2>
-                    <Link href={`/dashboard/clients/${id}/pet/register`}>
-                        <Button variant="outline" className="border-black border-solid">
-                            Agregar
-                        </Button>
-                    </Link>
+                    <div className="flex gap-3">
+                        <Link href={`/dashboard/clients/${id}/pet/register`}>
+                            <Button variant="outline" className="border-black border-solid">
+                                Agregar
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
                 <PaginatedPetsTable token={token} id={clientId} />
             </section>

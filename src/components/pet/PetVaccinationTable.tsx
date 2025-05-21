@@ -2,12 +2,14 @@
 
 import GenericTable, { Column } from "@/components/global/GenericTable";
 import { Eye } from "lucide-react";
-import PetsTableSkeleton from "../admin/pet/skeleton/PetsTableSkeleton";
 import { VaccineRecord } from "@/lib/vaccine-registry/IVaccineRegistry";
 import { useEffect, useState } from "react";
 import { getByPetId } from "@/lib/vaccine-registry/getByPetId";
 import { formatDate } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import PetVaccinationListSkeleton from "./skeleton/PetVaccinationTableSkeleton";
+import { useTranslations } from "next-intl";
+import { toast } from "@/lib/toast";
 
 export default function PetVaccinationTable({
   token,
@@ -22,40 +24,38 @@ export default function PetVaccinationTable({
     console.log("reminder", vac);
   };
   const router = useRouter();
+
+  const v = useTranslations("VaccuneTable");
+  const e = useTranslations("Error");
+  const b = useTranslations("Button");
+
   const columns: Column<VaccineRecord>[] = [
     {
-      header: "Fecha",
+      header: v("date"),
       accessor: (vac) => formatDate(vac.applicationDate || vac.createdAt),
       className: "font-medium",
     },
     {
-      header: "Detalles de la Vacuna",
+      header: v("details"),
       accessor: (vac) => vac.vaccine.name,
     },
     {
-      header: "Fecha Prevista",
+      header: v("expectedDate"),
       accessor: (vac) => formatDate(vac.expectedDate),
     },
     {
-      header: "Dosis",
+      header: v("dosis"),
       accessor: (vac) => vac.dose,
     },
   ];
 
   const actions = [
-   /* { COMENTADO PARA IMPLEMENTAR MÁS ADELANTE
-        CAMPANA NOTIFICACION DE RECORDATORIO ACTIVA O DESACTIVADA
-
-      icon: <Bell className="w-4 h-4" />,
-      onClick: onReminder,
-      label: "Recordatorio",
-    }, */
     {
       icon: <Eye className="w-4 h-4" />,
       onClick: (vac: VaccineRecord) => {
         router.push(`/user-profile/pet/${petId}`);
       },
-      label: "Editar",
+      label: b("edit"),
     }    
   ];
   
@@ -67,7 +67,7 @@ export default function PetVaccinationTable({
     currentPage: 1,
     totalPages: 1,
     totalItems: 0,
-    pageSize: 4,
+    pageSize: 5,
   });
 
   useEffect(() => {
@@ -86,8 +86,8 @@ export default function PetVaccinationTable({
           totalItems: data.total,
           pageSize: data.size,
         });
-      } catch (error) {
-        console.error("Error al obtener vacunas", error);
+      } catch (error: unknown) {
+        toast("error", error instanceof Error ? error.message : e("errorLoad", {field: "vacunas"}));
       } finally {
         setIsLoading(false);
       }
@@ -101,14 +101,14 @@ export default function PetVaccinationTable({
       data={vaccines}
       columns={columns}
       actions={actions}
-      actionsTitle="Acciones"
+      actionsTitle={v("actions")}
       pagination={pagination}
       isLoading={isLoading}
-      skeleton={<PetsTableSkeleton />}
+      skeleton={<PetVaccinationListSkeleton />}
       onPageChange={(page) =>
         setPagination({ ...pagination, currentPage: page })
       }
-      emptyMessage="No hay vacunas registradas"
+      emptyMessage={e("notFoundField", {field: "vacunas"})}
     />
   );
 }

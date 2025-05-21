@@ -21,17 +21,19 @@ export interface PetData {
   dateOfBirth: string;
 }
 
-
 export interface Race {
   id: number;
   name: string;
   speciesId: number;
+  species: {
+    name: string;
+  };
 }
 
 export interface Species {
-    id: number;
-    name: string;
-    deletedAt?: string | null;
+  id: number;
+  name: string;
+  deletedAt?: string | null;
 }
 
 export interface SpeciesQueryParams extends BaseQueryParams {
@@ -51,11 +53,8 @@ export interface ListPetData {
   owner: {
     id: number;
     name: string;
-  }
+  };
   species: Species;
   race: Race;
   profileImg?: Image | null;
 }
-
-
- 

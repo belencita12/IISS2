@@ -1,10 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "./Header";
 import { PetsList } from "./PetLists";
 import { Appointments } from "./Appointments";
 import { User, Dog, Calendar } from "lucide-react";
 import { ProfileUser } from "./ProfileUser";
+import { useTranslations } from "next-intl";
+import { toast } from "@/lib/toast";
 
 interface ProfileTabsProps {
   fullName: string;
@@ -27,12 +29,32 @@ export default function ProfileTabs({
     avatarSrc: initialAvatarSrc,
     ruc: ruc
   });
+  const t = useTranslations("ProfileTabs");
+  const e = useTranslations("Error");
+  const [fetchErrors, setFetchErrors] = useState<string[]>([]);
+
+  useEffect(() => {
+    // Mostrar un solo toast si hay errores de fetch
+    if (fetchErrors.length > 0) {
+      toast("error", e("notGetData"));
+    }
+  }, [fetchErrors]);
 
   const updateUserData = (newData: { fullName?: string; avatarSrc?: string; ruc?: string | null }) => {
     setUserData(prev => ({
       ...prev,
       ...newData
     }));
+  };
+
+  const handleFetchError = (error: string) => {
+    // Agregar error de manera única
+    setFetchErrors(prev => {
+      if (!prev.includes(error)) {
+        return [...prev, error];
+      }
+      return prev;
+    });
   };
 
   const tabClasses = (tab: string) =>
@@ -57,21 +79,21 @@ export default function ProfileTabs({
             className={tabClasses("datos")}
           >
             <User className="w-4 h-4" />
-            Mis Datos
+            {t("myProfile")}
           </div>
           <div
             onClick={() => setSelected("mascotas")}
             className={tabClasses("mascotas")}
           >
             <Dog className="w-4 h-4" />
-            Mis Mascotas
+            {t("myPets")}
           </div>
           <div
             onClick={() => setSelected("citas")}
             className={tabClasses("citas")}
           >
             <Calendar className="w-4 h-4" />
-            Mis Citas
+            {t("myAppointments")}
           </div>
         </div>
       </div>
@@ -87,11 +109,20 @@ export default function ProfileTabs({
         )}
 
         {selected === "mascotas" && (
-          <PetsList clientId={clientId} token={token} />
+          <PetsList 
+            clientId={clientId} 
+            token={token} 
+            onFetchError={handleFetchError}
+          />
         )}
 
         {selected === "citas" && (
-          <Appointments clientId={clientId} token={token} ruc={userData.ruc} />
+          <Appointments 
+            clientId={clientId} 
+            token={token} 
+            ruc={userData.ruc}
+            onFetchError={handleFetchError}
+          />
         )}
       </div>
     </div>

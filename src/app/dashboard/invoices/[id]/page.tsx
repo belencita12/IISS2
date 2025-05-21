@@ -27,5 +27,7 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
   if (!detailResp || !detailResp.data || detailResp.data.length === 0) return notFound();
   
   // Si pasó todas las validaciones, renderizar el componente
-  return <InvoiceDetail token={token} />;
+  return (
+        <InvoiceDetail token={token} />
+  );
 }

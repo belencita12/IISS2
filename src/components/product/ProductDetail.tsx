@@ -12,9 +12,10 @@ import { ChevronLeft, Tag } from "lucide-react";
 import NotImageNicoPets from "../../../public/NotImageNicoPets.png";
 import { Card } from "@/components/product/ProductCardCliente";
 import ProductDetailSkeleton from "@/components/product/ProductDetailSkeleton";
+import { useTranslations } from "next-intl";
 
 interface Props {
-    token: string;
+    token?: string;
 }
 
 export default function ProductDetailPage({ token }: Props) {
@@ -23,10 +24,10 @@ export default function ProductDetailPage({ token }: Props) {
     const [product, setProduct] = useState<Product>();
     const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
+    const t = useTranslations("ProductDetail");
 
     useEffect(() => {
         const fetchProduct = async () => {
-            if (!token) return;
             if (!id || Array.isArray(id)) return notFound();
 
             try {
@@ -73,10 +74,10 @@ export default function ProductDetailPage({ token }: Props) {
                     <Button
                         variant="ghost"
                         className="flex items-center text-purple-600 hover:text-purple-900 pl-0"
-                        onClick={() => router.push("/user-profile/product")}
+                        onClick={() => router.push("/shop")}
                     >
                         <ChevronLeft className="h-4 w-4 mr-1" />
-                        <span>Volver a productos</span>
+                        <span>{t("returnToProducts")}</span>
                     </Button>
                 </div>
 
@@ -113,14 +114,14 @@ export default function ProductDetailPage({ token }: Props) {
                                 </p>
 
                                 <p className="text-purple-700 text-3xl font-bold mb-6">
-                                    Gs. {product.price.toLocaleString()}
+                                    {t("gs")} {product.price.toLocaleString()}
                                 </p>
 
                                 {product.tags && product.tags.length > 0 && (
                                     <div className="mb-6">
                                         <h3 className="text-lg font-medium mb-2 flex items-center text-gray-700">
                                             <Tag className="h-4 w-4 mr-1" />
-                                            Etiquetas
+                                            {t("tags")}
                                         </h3>
                                         <div className="flex gap-2 flex-wrap">
                                             {product.tags.map((tag) => (
@@ -142,7 +143,7 @@ export default function ProductDetailPage({ token }: Props) {
                 {relatedProducts.length > 0 && (
                     <div className="mt-12">
                         <h2 className="text-2xl font-bold mb-6 text-purple-700">
-                            Productos relacionados
+                            {t("relatedProducts")}
                         </h2>
                         <div className="flex flex-wrap justify-center sm:justify-start -mx-2">
                             {relatedProducts
@@ -157,8 +158,8 @@ export default function ProductDetailPage({ token }: Props) {
                                         }
                                         price={`Gs. ${relatedProduct.price.toLocaleString()}`}
                                         alt={relatedProduct.name}
-                                        ctaText="Ver producto"
-                                        ctaLink={`/user-profile/product/${relatedProduct.id}`}
+                                        ctaText={t("ctaText")}
+                                        ctaLink={`/shop/product/${relatedProduct.id}`}
                                         layout="vertical"
                                         imagePosition="top"
                                         showButton={true}

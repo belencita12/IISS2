@@ -35,7 +35,7 @@ export interface InvoiceDetailResponse {
 }
 
 export interface GetInvoiceQueryParams extends BaseQueryParams {
-  ruc?: string;
+  search?: string;
   stockId?: number;
   fromTotal?: number;
   toTotal?: number;

@@ -20,6 +20,7 @@ import {
 } from "@/lib/appointment/service";
 import { Modal } from "@/components/global/Modal";
 import { Button } from "@/components/ui/button";
+import AppointmentListSkeleton from "./Skeleton/AppointmentListSkeleton";
 
 interface AppointmentListProps {
     token: string;
@@ -29,7 +30,7 @@ interface AppointmentListProps {
 const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
     const [filters, setFilters] = useState<AppointmentQueryParams>({
         page: 1,
-        clientRuc: undefined,
+        search: undefined,
         employeeRuc: employeeRuc,
         fromDesignatedDate: undefined,
         toDesignatedDate: undefined,
@@ -84,7 +85,7 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
     const handleSearch = (value: string) => {
         const newFilters = {
             ...filters,
-            clientRuc: value,
+            search: value,
             employeeRuc,
             page: 1,
         };
@@ -179,7 +180,7 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
             </div>
 
             {isLoading ? (
-                <p className="text-center text-black">Cargando citas...</p>
+                <AppointmentListSkeleton/>
             ) : (
                 <div className="grid grid-cols-1 gap-4">
                     {data?.length ? (

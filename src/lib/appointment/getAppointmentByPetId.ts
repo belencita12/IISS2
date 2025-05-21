@@ -1,4 +1,4 @@
-import { Appointment } from "./IAppointment";
+import { AppointmentData } from "./IAppointment";
 import { APPOINTMENT_API } from "../urls";
 
 export async function getAppointmentByPetId(
@@ -6,7 +6,7 @@ export async function getAppointmentByPetId(
   token: string,
   page: number = 1,
   size: number = 100
-): Promise<Appointment[]> {
+): Promise<AppointmentData[]> {
   const url = `${APPOINTMENT_API}?petId=${encodeURIComponent(petId)}&page=${page}&size=${size}`;
   const res = await fetch(
     url,

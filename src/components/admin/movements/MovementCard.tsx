@@ -3,6 +3,7 @@
 import { Card } from "@/components/global/Card";
 import { MovementData } from "@/lib/movements/IMovements";
 import { formatDate } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 interface Props {
   movement: MovementData;
@@ -10,14 +11,17 @@ interface Props {
 }
 
 export default function MovementCard({ movement }: Props) {
+const m = useTranslations("MovementDetail");
+const e = useTranslations("Error");
+
   return (
     <Card
       title={
         movement.type === "INBOUND"
-          ? "Movimiento Entrante"
+          ? m("typeInbound")
           : movement.type === "OUTBOUND"
-          ? "Movimiento Saliente"
-          : "Transferencia entre Depósitos"
+          ? m("typeOutbound")
+          : m("typeTransfer")
       }
       description=""
       alt="Movimiento"
@@ -30,12 +34,12 @@ export default function MovementCard({ movement }: Props) {
       <div className="flex flex-col md:flex-row justify-between gap-4 w-full">
         {/* Columna 1 */}
         <div className="text-sm text-gray-700 space-y-1 md:w-1/2">
-          <p>Depósito Origen: {movement.originStock?.name || "—"}</p>
-          <p>Depósito Destino: {movement.destinationStock?.name || "—"}</p>
+          <p>{m("origin")}: {movement.originStock?.name || "—"}</p>
+          <p>{m("destination")}: {movement.destinationStock?.name || "—"}</p>
           <div>
             <p>
               <strong>
-                {movement.manager?.fullName ?? "Encargado desconocido"} –{" "}
+                {movement.manager?.fullName ?? e("noAsigned")} –{" "}
                 {movement.manager?.ruc ?? "—"}
               </strong>
             </p>

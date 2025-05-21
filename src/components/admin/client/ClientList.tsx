@@ -1,6 +1,6 @@
 "use client";
 
-import { useState,useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { fetchUsers } from "@/lib/client/getUsers";
 import { deleteClient } from "@/lib/client/deleteClient";
@@ -16,12 +16,23 @@ import ClientTableSkeleton from "./skeleton/ClientTableSkeleton";
 import { useRouter } from "next/navigation";
 import { IUserProfile } from "@/lib/client/IUserProfile";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
+import { useTranslations } from "next-intl";
+import DateFilter from "./filter/ClientDateFilter";
+import { getClientReport } from "@/lib/client/getClientReport";
+import { downloadFromBlob } from "@/lib/utils";
+import ExportButton from "@/components/global/ExportButton";
 
 interface ClientListProps {
     token: string;
 }
 
 export default function ClientList({ token }: ClientListProps) {
+    const c = useTranslations("ClientList");
+    const b = useTranslations("Button");
+    const e = useTranslations("Error");
+    const m = useTranslations("ModalConfirmation");
+    const p = useTranslations("Placeholder")
+
     const router = useRouter();
     const [data, setData] = useState<{
         users: IUserProfile[];
@@ -34,7 +45,9 @@ export default function ClientList({ token }: ClientListProps) {
     const [filteredData, setFilteredData] = useState<IUserProfile[]>([]);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [clientToDelete, setClientToDelete] = useState<IUserProfile | null>(null);
-
+    const [from, setFrom] = useState<string | undefined>();
+    const [to, setTo] = useState<string | undefined>();
+    const [isGettingReport, setIsGettingReport] = useState(false);
     const loadUsers = useCallback(
         async (page: number = 1, query: string = "") => {
             if (!token) return;
@@ -43,7 +56,7 @@ export default function ClientList({ token }: ClientListProps) {
             try {
                 const results = await fetchUsers(page, query, token);
                 if (!results.data.length && query)
-                    toast("info", "No se ha encontrado el cliente!");
+                    toast("info", e("notFound"));
 
                 setData({
                     users: results.data,
@@ -55,8 +68,8 @@ export default function ClientList({ token }: ClientListProps) {
                     },
                 });
                 setFilteredData(results.data);
-            } catch (error) {
-                toast("error", "Error al cargar clientes");
+            } catch (error: unknown) {
+                toast("error", error instanceof Error ? error.message : e("errorLoad", {field: "clientes"}));
             } finally {
                 setLoading(false);
             }
@@ -86,11 +99,27 @@ export default function ClientList({ token }: ClientListProps) {
         setIsDeleteModalOpen(true);
     };
 
+    const handleGetClientReport = async () => {
+        if (!from || !to) {
+            toast("error", "Se necesitan fechas limites para generar el reporte");
+        } else {
+            setIsGettingReport(true);
+            const result = await getClientReport({
+                token,
+                from,
+                to,
+            });
+            if (!(result instanceof Blob)) toast("error", result.message);
+            else downloadFromBlob(result);
+            setIsGettingReport(false);
+        }
+    };
+
     const handleConfirmDelete = async () => {
         if (!clientToDelete) return;
         try {
             await deleteClient(token, clientToDelete.id);
-            toast("success", "Cliente eliminado correctamente");
+            toast("success", e("successDelete", {field: "cliente"}));
             setIsDeleteModalOpen(false);
             setClientToDelete(null);
             loadUsers(data.pagination.currentPage);
@@ -98,34 +127,34 @@ export default function ClientList({ token }: ClientListProps) {
             if (error instanceof Error) {
                 toast("error", error.message);
             } else {
-                toast("error", "Ocurrió un error al eliminar el cliente");
+                toast("error", e("noDelete", {field: "cliente"}));
             }
         }
     };
 
     const columns: Column<IUserProfile>[] = [
-        { header: "Nombre", accessor: "fullName" },
-        { header: "Email", accessor: "email" },
-        { header: "RUC", accessor: "ruc" },
-        { header: "Dirección", accessor: "adress" },
-        { header: "Teléfono", accessor: "phoneNumber" },
+        { header: c("fullName"), accessor: "fullName" },
+        { header: c("email"), accessor: "email" },
+        { header: c("ruc"), accessor: "ruc" },
+        { header: c("address"), accessor: "adress" },
+        { header: c("phone"), accessor: "phoneNumber" },
     ];
 
     const actions: TableAction<IUserProfile>[] = [
         {
             icon: <Eye className="w-4 h-4" />,
             onClick: (user) => router.push(`/dashboard/clients/${user.id}`),
-            label: "Ver detalles",
+            label: b("seeDetails"),
         },
         {
             icon: <Pencil className="w-4 h-4" />,
             onClick: (user) => router.push(`/dashboard/clients/${user.id}/edit`),
-            label: "Editar",
+            label: b("edit"),
         },
         {
             icon: <Trash className="w-4 h-4" />,
             onClick: handleDeleteClick,
-            label: "Eliminar",
+            label: b("delete"),
         },
     ];
 
@@ -133,19 +162,35 @@ export default function ClientList({ token }: ClientListProps) {
         <div className="p-4 mx-auto">
             <SearchBar
                 onSearch={handleSearch}
-                placeholder="Buscar por nombre,correo o ruc"
+                placeholder={p("getBy", {field: "nombre, correo o ruc"})}
                 debounceDelay={400}
             />
-            <div className="flex justify-between items-center mb-4">
-                <h2 className="text-3xl font-bold">Clientes</h2>
-                <Button
-                    variant="outline"
-                    className="px-6"
-                    onClick={() => router.push("/dashboard/clients/register")}
-                >
-                    Agregar
-                </Button>
+            <div className="p-2 mb-2">
+                <DateFilter
+                    to={to}
+                    from={from}
+                    setDateTo={setTo}
+                    setDateFrom={setFrom}
+                />
             </div>
+            <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
+                <h2 className="text-3xl font-bold text-gray-800">{c("title")}</h2>
+                <div className="flex gap-2">
+                    <Button
+                        variant="outline"
+                        disabled={isGettingReport}
+                        className="px-6"
+                        onClick={() => router.push("/dashboard/clients/register")}
+                    >
+                        {b("add")}
+                    </Button>
+                    <ExportButton
+                        handleGetReport={handleGetClientReport}
+                        isLoading={isGettingReport}
+                    />
+                </div>
+            </div>
+
             <GenericTable
                 data={filteredData}
                 columns={columns}
@@ -154,16 +199,16 @@ export default function ClientList({ token }: ClientListProps) {
                 onPageChange={handlePageChange}
                 isLoading={loading}
                 skeleton={<ClientTableSkeleton />}
-                emptyMessage="No se encontraron clientes"
+                emptyMessage={e("notFoundField", {field: "clientes"})}
             />
             <ConfirmationModal
                 isOpen={isDeleteModalOpen}
                 onClose={() => setIsDeleteModalOpen(false)}
                 onConfirm={handleConfirmDelete}
-                title="Eliminar Cliente"
+                title={m("titleDelete", {field: "cliente"})}
                 message={`¿Seguro que quieres eliminar a ${clientToDelete?.fullName}?`}
-                confirmText="Eliminar"
-                cancelText="Cancelar"
+                confirmText={b("delete")}
+                cancelText={b("cancel")}
                 variant="danger"
             />
         </div>

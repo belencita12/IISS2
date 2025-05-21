@@ -6,16 +6,15 @@ import Link from "next/link";
 import { APPOINTMENT_API } from "@/lib/urls";
 import { useFetch } from "@/hooks/api/useFetch";
 import { formatDate, formatTimeUTC } from "@/lib/utils";
-import { Plus } from "lucide-react";
+import { Plus, Eye } from "lucide-react";
 import { AppointmentData } from "@/lib/appointment/IAppointment";
 import AppointmentsTableSkeleton from "@/components/profile/skeleton/AppointmentsSkeleton";
-import { Eye } from "lucide-react";
 import GenericTable, {
   Column,
   TableAction,
 } from "@/components/global/GenericTable";
 import { useRouter } from "next/navigation";
-
+import { useTranslations } from "next-intl";
 
 interface AppointmentsData {
   data: AppointmentData[];
@@ -26,11 +25,23 @@ interface AppointmentsProps {
   clientId: number;
   token: string;
   ruc: string | null;
+  onFetchError?: (error: string) => void;
 }
 
-export const Appointments = ({ token, ruc }: AppointmentsProps) => {
+export const Appointments = ({
+  token,
+  ruc,
+  onFetchError,
+}: AppointmentsProps) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
   const [executed, setExecuted] = useState(false);
   const router = useRouter();
+  const t = useTranslations("Appointments");
+  const e = useTranslations("Error");
+  const a= useTranslations("AppointmentTable");
+  const b = useTranslations("Button");
+
 
   const {
     data: appointmentsResponse,
@@ -41,41 +52,60 @@ export const Appointments = ({ token, ruc }: AppointmentsProps) => {
 
   useEffect(() => {
     if (ruc && !executed) {
-      const url = new URL(APPOINTMENT_API);
-      url.searchParams.append("clientRuc", ruc);
-      url.searchParams.append("page", "1");
-      url.searchParams.append("size", "100");
-
-      execute(undefined, url.toString());
+      fetchAppointments(currentPage);
       setExecuted(true);
     }
-  }, [ruc, executed, execute]);
+  }, [ruc, executed]);
 
   const error = !ruc
-    ? "No se pudo obtener el RUC del cliente"
+    ? e("noGetRuc")
     : fetchError?.message || null;
+  useEffect(() => {
+    if (fetchError) {
+      onFetchError?.(e("errorLoad", {field : "citas"}));
+    }
+  }, [fetchError, onFetchError]);
+
+  const fetchAppointments = (page: number) => {
+    if (!ruc) {
+      onFetchError?.(e("notGetRuc"));
+      return;
+    }
+
+    const url = new URL(APPOINTMENT_API);
+    url.searchParams.append("search", ruc);
+    url.searchParams.append("page", page.toString());
+    url.searchParams.append("size", pageSize.toString());
+
+    execute(undefined, url.toString());
+    setCurrentPage(page);
+  };
+
+  const handlePageChange = (page: number) => {
+    fetchAppointments(page);
+  };
 
   const appointments = appointmentsResponse?.data || [];
-
-  const iconFor = (svc: string) => svc.toLowerCase().includes("vacun");
+  const totalItems = appointmentsResponse?.total || 0;
+  const totalPages = Math.ceil(totalItems / pageSize);
 
   const statusInfo = (st: AppointmentData["status"]) => {
     switch (st) {
       case "COMPLETED":
-        return { txt: "Completada", style: "bg-green-100 text-green-800" };
+        return { txt: a("completed"), style: "bg-green-100 text-green-800" };
       case "CANCELLED":
-        return { txt: "Cancelada", style: "bg-red-100 text-red-800" };
+        return { txt: a("canceled"), style: "bg-red-100 text-red-800" };
       case "IN_PROGRESS":
-        return { txt: "En progreso", style: "bg-blue-100 text-blue-800" };
+        return { txt: a("inProgress"), style: "bg-blue-100 text-blue-800" };
       default:
-        return { txt: "Pendiente", style: "bg-yellow-100 text-yellow-800" };
+        return { txt: a("pending"), style: "bg-yellow-100 text-yellow-800" };
     }
   };
 
   // Definir las columnas para la tabla genérica
   const columns: Column<AppointmentData>[] = [
     {
-      header: "Mascota",
+      header: a("pet"),
       accessor: (app) => (
         <div>
           <p className="font-medium">{app.pet.name}</p>
@@ -83,47 +113,37 @@ export const Appointments = ({ token, ruc }: AppointmentsProps) => {
       ),
     },
     {
-      header: "Servicio",
+      header: a("service"),
       accessor: (app) => (
         <div className="flex items-center gap-3">
-          {iconFor(app.service)}
           <div>
-            <p className="font-medium">{app.service}</p>
+            <p className="font-medium">
+              {app.services?.length
+                ? app.services.map((s) => s.name).join(", ")
+                : "Sin servicios"}
+            </p>
           </div>
         </div>
       ),
     },
     {
-      header: "Encargado",
+      header: a("employee"),
       accessor: (app) => (
-        <div className="flex items-center gap-2">
-          <div>
-            {app.employees && app.employees.length > 0 ? (
-              app.employees.map((emp, i) => (
-                <p
-                  key={emp.id}
-                  className={i > 0 ? "font-medium" : "font-medium"}
-                >
-                  {emp.name}
-                </p>
-              ))
-            ) : (
-              <p className="text-sm text-gray-500">No asignado</p>
-            )}
-          </div>
+        <div className="text-sm font-medium text-myPurple-primary">
+          {app.employee?.name || e("noAsigned")}
         </div>
       ),
     },
     {
-      header: "Detalles",
+      header: a("details"),
       accessor: (app) => (
         <div className="flex items-start gap-2">
-          <p className="font-medium">{app.details || "Sin detalles"}</p>
+          <p className="font-medium">{app.details || e("noDetails")}</p>
         </div>
       ),
     },
     {
-      header: "Fecha",
+      header: a("date"),
       accessor: (app) => (
         <div>
           <p className="font-medium">{formatDate(app.designatedDate)}</p>
@@ -131,7 +151,7 @@ export const Appointments = ({ token, ruc }: AppointmentsProps) => {
       ),
     },
     {
-      header: "Hora",
+      header: a("time"),
       accessor: (app) => (
         <div>
           <p className="font-medium">{formatTimeUTC(app.designatedDate)}</p>
@@ -139,7 +159,7 @@ export const Appointments = ({ token, ruc }: AppointmentsProps) => {
       ),
     },
     {
-      header: "Estado",
+      header: a("status"),
       accessor: (app) => (
         <span
           className={`px-2 py-1 rounded text-xs ${
@@ -151,31 +171,30 @@ export const Appointments = ({ token, ruc }: AppointmentsProps) => {
       ),
     },
   ];
+
   const actions: TableAction<AppointmentData>[] = [
     {
       icon: <Eye size={16} />,
       onClick: (item) => router.push(`/user-profile/appointment/${item.id}`),
-      label: "Ver detalles",
+      label: b("seeDetails"),
     },
   ];
-  
-  if (error) return <p className="text-red-500 text-center py-4">{error}</p>;
 
   return (
     <section className="w-full px-6 mt-5 bg-white rounded-lg shadow-sm pb-5 min-h-[80vh]">
       <div className="text-center">
         <h3 className="text-3xl font-bold mt-2 text-purple-600">
-          Citas Agendadas
+          {t("appointmentTitle")}
         </h3>
         <p className="text-gray-500 mt-2 text-sm">
-          Consulta y agenda nuevas citas médicas para tus mascotas
+          {t("appointmentsDescription")}
         </p>
 
         <div className="flex gap-4 mt-4 justify-center flex-wrap">
           <Link href="/user-profile/appointment/register">
             <Button className="bg-pink-500 text-white flex items-center gap-2 hover:bg-pink-600">
               <Plus className="w-5 h-5" />
-              Agendar Cita
+              {b("schedule")}
             </Button>
           </Link>
         </div>
@@ -188,10 +207,17 @@ export const Appointments = ({ token, ruc }: AppointmentsProps) => {
           data={appointments}
           columns={columns}
           actions={actions}
-          actionsTitle="Acciones"
+          actionsTitle={a("actions")}
           isLoading={loading}
-          emptyMessage="No tienes citas agendadas"
+          emptyMessage={a("emptyMessage")}
           className="w-full"
+             pagination={{
+              currentPage,
+              totalPages,
+              totalItems,
+              pageSize,
+            }}
+            onPageChange={handlePageChange}
         />
         )}
       </div>

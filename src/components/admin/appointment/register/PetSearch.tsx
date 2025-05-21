@@ -15,6 +15,7 @@ import { PetData } from "@/lib/pets/IPet";
 import { PET_API } from "@/lib/urls";
 import { useFetch } from "@/hooks/api";
 import useDebounce from "@/hooks/useDebounce";
+import { useTranslations } from "next-intl";
 
 type PetSelectProps = {
   onSelectPet: (pet: PetData) => void;
@@ -43,6 +44,11 @@ export default function PetSearch({
 
   const { data, get, loading } = useFetch<PetResponse>("", token);
 
+  const p = useTranslations("Placeholder");
+  const a = useTranslations("AppointmentForm");
+  const b = useTranslations("Button");
+  const e = useTranslations("Error");
+
   useEffect(() => {
     if (debouncedSearch) {
       get(undefined, `${PET_API}?name=${encodeURIComponent(debouncedSearch)}&page=1&size=5`);
@@ -70,7 +76,7 @@ export default function PetSearch({
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Buscar Mascota..."
+            placeholder={p("name")}
             className="pl-8"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -81,7 +87,7 @@ export default function PetSearch({
               <Command className="rounded-lg border shadow-md">
                 <CommandList>
                   <CommandEmpty>
-                    {loading ? "Cargando..." : "No se encontraron mascotas."}
+                    {loading ? b("loading") : e("notFoundField", {field: "mascotas"})}
                   </CommandEmpty>
                   <CommandGroup>
                     {pets.map((pet) => (
@@ -93,7 +99,7 @@ export default function PetSearch({
                         <div>
                           <p>{pet.name}</p>
                           <p className="text-sm text-muted-foreground">
-                            Dueño: {pet.owner.name}
+                            {a("owner")}: {pet.owner.name}
                           </p>
                         </div>
                       </CommandItem>

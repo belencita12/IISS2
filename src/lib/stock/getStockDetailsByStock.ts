@@ -44,7 +44,11 @@ export async function getStockDetailsByStock (
 
   const json = await response.json();
 
-  if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+         if (!response.ok) {
+            const errorData = await response.json().catch(() => ({})); // fallback si no es JSON
+            const message = errorData?.message || `Error HTTP: ${response.status}`;
+            throw new Error(message);
+        }
 
   return json;
 };

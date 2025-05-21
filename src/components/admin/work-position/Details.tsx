@@ -2,6 +2,8 @@
 
 import { Position } from "@/lib/work-position/IPosition";
 import { WEEKDAYS } from "@/constants/workPositions.constants";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface Props {
   position: Position;
@@ -12,7 +14,9 @@ export default function PositionDetail({ position }: Props) {
     <div className="px-8 py-6 w-full">
       <h1 className="text-4xl font-bold mb-10">{position.name}</h1>
 
-      <h2 className="text-2xl font-semibold mb-4">Turnos</h2>
+      <div className="mb-4">
+        <h2 className="text-2xl font-semibold">Turnos</h2>
+      </div>
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse">
           <thead>

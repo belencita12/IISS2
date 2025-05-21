@@ -12,6 +12,8 @@ import { useState } from "react";
 import { revertMovement } from "@/lib/movements/revertMovement";
 import { toast } from "@/lib/toast";
 import { useRouter } from "next/navigation";
+import MovementDetailSkeleton from "../skeleton/MovementDetailSkeleton";
+import { useTranslations } from "next-intl";
 
 interface Props {
   id: number;
@@ -24,18 +26,25 @@ export const MovementDetailsList = ({ id, token }: Props) => {
   const [isReverting, setIsReverting] = useState(false);
   const router = useRouter();
 
-  if (loading) return <p className="text-center mt-10">Cargando...</p>;
-  if (error) return <p className="text-center text-red-500 mt-10">Error: {error}</p>;
-  if (!movement) return <p className="text-center mt-10">No se encontró el movimiento.</p>;
+  const m = useTranslations("MovementDetail");
+  const e = useTranslations("Error");
+  const b = useTranslations("Button");
+  const mc = useTranslations("ModalConfirmation");
+  const s = useTranslations("Success");
+
+
+  if (loading) return <MovementDetailSkeleton/>;
+  if (error) return <p className="text-center text-red-500 mt-10">{e("error")}: {error}</p>;
+  if (!movement) return <p className="text-center mt-10">{e("notFound")}</p>;
 
   const handleRevert = async () => {
     try {
       setIsReverting(true);
       await revertMovement(id, token);
-      toast('success', 'Movimiento revertido exitosamente');
+      toast('success', s("successRevert", {field: "Movimiento"}));
       router.push("/dashboard/movement");
     } catch (error) {
-      toast('error', error instanceof Error ? error.message : 'Error al revertir el movimiento');
+      toast('error', error instanceof Error ? error.message : e("errorRevert", {field : "movimiento"}));
     } finally {
       setIsReverting(false);
       setIsRevertModalOpen(false);
@@ -45,11 +54,11 @@ export const MovementDetailsList = ({ id, token }: Props) => {
   const getMovementTypeLabel = (type: string) => {
     switch (type) {
       case "INBOUND":
-        return "Ingreso";
+        return m("inbound");
       case "OUTBOUND":
-        return "Egreso";
+        return m("outbound");
       case "TRANSFER":
-        return "Transferencia";
+        return m("transfer");
       default:
         return type;
     }
@@ -57,9 +66,19 @@ export const MovementDetailsList = ({ id, token }: Props) => {
 
   return (
     <div className="container mx-auto p-4 max-w-6xl">
+      <div className="mb-6 mt-6">
+        <Button
+          variant="outline"
+          onClick={() => router.push('/dashboard/movement')}
+          className="border-black border-solid"
+        >
+          {b("toReturn")}
+        </Button>
+      </div>
+
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">
-          Movimiento de {getMovementTypeLabel(movement.type)}
+          {m("movementOf")} {getMovementTypeLabel(movement.type)}
         </h1>
         <p className="text-base md:text-lg font-semibold text-black">
           {formatDate(movement.dateMovement)}
@@ -67,12 +86,12 @@ export const MovementDetailsList = ({ id, token }: Props) => {
       </div>
 
       <Card className="p-6 mb-6 shadow-sm space-y-4">
-        <InfoRow label="Encargado" value={movement.manager?.fullName} />
-        {movement.originStock?.name && <InfoRow label="Depósito Origen" value={movement.originStock.name} />}
-        {movement.destinationStock?.name && <InfoRow label="Depósito Destino" value={movement.destinationStock.name} />}
+        <InfoRow label={m("employee")} value={movement.manager?.fullName} />
+        {movement.originStock?.name && <InfoRow label={m("origin")} value={movement.originStock.name} />}
+        {movement.destinationStock?.name && <InfoRow label={m("destination")} value={movement.destinationStock.name} />}
         {movement.description && (
           <div className="flex flex-col">
-            <p className="text-sm text-gray-500 mb-1">Descripción</p>
+            <p className="text-sm text-gray-500 mb-1">{m("description")}</p>
             <p className="bg-gray-200 rounded-md px-3 py-2 text-sm text-gray-800 w-full break-words">
                 {movement.description}
             </p>
@@ -84,7 +103,7 @@ export const MovementDetailsList = ({ id, token }: Props) => {
                   disabled={isReverting}
                   className="border-none"
                 >
-                  {isReverting ? "Revirtiendo..." : "Revertir"}
+                  {isReverting ? b("reversing") :b("revert")}
                 </Button>
               </div>
             )}
@@ -92,7 +111,9 @@ export const MovementDetailsList = ({ id, token }: Props) => {
         )}
       </Card>
 
-      <h2 className="text-xl font-semibold mb-2 text-gray-700">Productos</h2>
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-xl font-semibold text-gray-700">{m("products")}</h2>
+      </div>
       <Separator className="mb-4" />
       <div className="space-y-6">
         {details.map((detail, idx) => (
@@ -120,10 +141,10 @@ export const MovementDetailsList = ({ id, token }: Props) => {
         isOpen={isRevertModalOpen}
         onClose={() => setIsRevertModalOpen(false)}
         onConfirm={handleRevert}
-        title="Revertir Movimiento"
-        message="¿Estás seguro que deseas revertir este movimiento? Esta acción creará un nuevo movimiento en sentido contrario."
-        confirmText="Sí, revertir"
-        cancelText="Cancelar"
+        title={mc("titleRevert", {field: "movimiento"})}
+        message={mc("confirmRevert", {field: "movimiento"})}
+        confirmText={b("revert")}
+        cancelText={b("cancel")}
         variant="warning"
         isLoading={isReverting}
       />

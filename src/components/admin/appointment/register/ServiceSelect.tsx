@@ -13,6 +13,7 @@ import {
 import { ServiceType } from "@/lib/appointment/IAppointment";
 import { SERVICE_TYPE} from "@/lib/urls";
 import { useFetch } from "@/hooks/api";
+import { useTranslations } from "next-intl";
 
 type ServiceSelectProps = {
   onSelectService: (service: ServiceType) => void;
@@ -27,11 +28,12 @@ type ServiceResponse = {
 export default function ServiceSelect({
   onSelectService,
   token,
-  userRole, // Recibimos el rol del usuario
+  userRole,
 }: ServiceSelectProps) {
   const [services, setServices] = useState<ServiceType[]>([]);
 
   const { data, get } = useFetch<ServiceResponse>("", token);
+  const p = useTranslations("Placeholder");
 
   useEffect(() => {
     get(undefined, `${SERVICE_TYPE}?page=1&size=100`);
@@ -55,7 +57,7 @@ export default function ServiceSelect({
       <div className="flex gap-2">
         <Select onValueChange={handleSelect}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="Selecciona un servicio" />
+            <SelectValue placeholder={p("select")} />
           </SelectTrigger>
           <SelectContent>
             {services.map((service) => (
@@ -68,7 +70,7 @@ export default function ServiceSelect({
 
         {userRole !== "USER" && (
           <Link
-            href={"/dashboard/service/register"}
+            href={"/dashboard/settings/service-types/register"}
             target="_blank"
             className="flex items-center justify-center rounded-md border border-muted bg-muted p-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
           >

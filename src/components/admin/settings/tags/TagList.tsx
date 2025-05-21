@@ -19,6 +19,8 @@ type TagListProps = {
 
 const TagList = ({ token }: TagListProps) => {
   const [isDelOpen, setIsDelOpen] = useState(false);
+  const [showDeleted, setShowDeleted] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const { selectedTag, isFormOpen, setSelectedTag, onCreate, onEdit, onClose } =
     useTagForm();
 
@@ -34,6 +36,9 @@ const TagList = ({ token }: TagListProps) => {
     initialPage: 1,
     size: 10,
     autoFetch: true,
+    extraParams: {
+      includeDeleted: showDeleted,
+    },
   });
 
   const { delete: deleteTag, loading: isDelLoading } = useFetch<void, null>(
@@ -41,14 +46,36 @@ const TagList = ({ token }: TagListProps) => {
     token
   );
 
+  const { patch: restoreTag, loading: isRestoring } = useFetch<Tag, null>(
+    "",
+    token
+  );
+
   if (error) toast("error", error.message || "Error al cargar las etiquetas");
 
   const handleSearch = (query: string) => {
+    setSearchQuery(query)
     if (query.length > 0) {
-      search({ name: query });
+      search({ name: query, includeDeleted: showDeleted });
     } else {
       refresh();
     }
+  };
+
+  const toggleDeletedTags = () => {
+    setShowDeleted(!showDeleted);
+    search( {name: searchQuery, includeDeleted: !showDeleted })
+  };
+
+  const handleRestore = async (tag: Tag) => {
+    const { ok, error } = await restoreTag(null, `${TAG_API}/restore/${tag.id}`);
+
+    if (!ok) {
+      return toast("error", error?.message || "Error al restaurar la etiqueta");
+    }
+
+    toast("success", "Etiqueta restaurada con éxito");
+    refresh();
   };
 
   // Delete logic
@@ -83,17 +110,32 @@ const TagList = ({ token }: TagListProps) => {
         <div className="flex items-center gap-4 mb-4">
           <SearchBar onSearch={handleSearch} placeholder="Buscar tag..." />
         </div>
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-3xl font-bold">Tags</h2>
-          <Button onClick={onCreate} className="px-6">
-            Agregar
-          </Button>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
+          <h2 className="text-3xl font-bold">{showDeleted ? "Tags eliminados" : "Tags"}</h2>
+          <div className="flex gap-2">
+            <Button 
+              variant={showDeleted ? "secondary" : "outline"}
+              onClick={toggleDeletedTags}
+              disabled={isRestoring}
+            >
+              {showDeleted ? "Ver activos" : "Ver eliminados"}
+            </Button>
+            <Button 
+              onClick={onCreate} 
+              className="px-6"
+              disabled={isRestoring}
+            >
+              Agregar
+            </Button>
+          </div>
         </div>
         <TagTable
           emptyMessage="No se encontraron tags"
           onPageChange={setPage}
           handleEdit={onEdit}
           handleDel={onOpenDelModal}
+          isRestoring={isRestoring}
+          handleRestore={showDeleted ? handleRestore : undefined}
           token={token}
           isLoading={isLoading}
           data={data || []}

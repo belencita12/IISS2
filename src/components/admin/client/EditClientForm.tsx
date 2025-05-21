@@ -10,14 +10,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label"; 
 import { useRouter } from "next/navigation"; 
 import { updateClient } from "@/lib/client/updateClient"; 
-import { FormClient } from "@/lib/client/IUserProfile"; 
 import { phoneNumber, ruc } from "@/lib/schemas"; 
 import { notFound } from "next/navigation";
 import { getClientById } from "@/lib/client/getClientById";
 import FormImgUploader from "@/components/global/FormImgUploader";
-
-const MAX_FILE_SIZE = 1024 * 1024; // 1MB
-const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+import { useTranslations } from "next-intl";
 
 const clientFormSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
@@ -43,6 +40,12 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const router = useRouter(); 
+  const u = useTranslations("ClientForm");
+  const b = useTranslations("Button");
+  const e= useTranslations("Error");
+  const s = useTranslations("Success");
+  const p = useTranslations("Placeholder");
+
 
   const {
     register,
@@ -65,7 +68,6 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
           notFound();
         }
         
-        //console.log("Datos del cliente cargados:", clientData);
         
         // Dividir el nombre completo en nombre y apellido
         const [name, ...lastnameParts] = clientData.fullName.split(' ');
@@ -78,15 +80,11 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
         setValue('phoneNumber', clientData.phoneNumber);
         setValue('ruc', clientData.ruc);
 
-        // Establecer la imagen de perfil actual si existe
         if (clientData.image?.originalUrl) {
-         // console.log("Imagen actual del cliente:", clientData.image.originalUrl);
           setPreviewImage(clientData.image.originalUrl);
-          // No establecemos el valor de profileImg aquí para evitar validación
         }
-      } catch (error) {
-        //console.error("Error al cargar datos del cliente:", error);
-        toast("error", "Error al cargar los datos del cliente");
+      } catch (error:unknown) {
+        toast("error", error instanceof Error ? error.message : e("errorLoad", {field: "cliente"}));
         router.push("/dashboard/clients");
       }
     };
@@ -104,10 +102,8 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
       if (data.adress) formData.append("adress", data.adress);
       formData.append("phoneNumber", data.phoneNumber);
       formData.append("ruc", data.ruc);
-      
-      // Solo agregar la imagen si se ha seleccionado una nueva
+
       if (data.profileImg instanceof File) {
-        //console.log("Imagen seleccionada:", data.profileImg);
         formData.append("profileImg", data.profileImg);
       }
     
@@ -116,14 +112,13 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
       const response = await updateClient(clientId, formData, token);
       
       if ('error' in response) {
-        toast("error", response.error || "No se pudo guardar los cambios del cliente");
+        toast("error", response.error || e("noUpdate"));
       } else {
-        toast("success", "Cliente actualizado con éxito"); 
+        toast("success", s("successEdit", {field: "Cliente"})); 
         router.push("/dashboard/clients"); 
       }
-    } catch (error) {
-      console.error("Error al actualizar:", error);
-      toast("error", "Hubo un error al actualizar el cliente");
+    } catch (error:unknown) {
+      toast("error", e("noUpdate"));
     } finally {
       setIsSubmitting(false);
     }
@@ -131,7 +126,7 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
 
   return (
     <div className="max-w-5xl mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-6">Editar Cliente</h1>
+      <h1 className="text-3xl font-bold mb-6">{u("edit")}</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
         <div className="flex flex-col items-center space-y-4">
           <FormImgUploader
@@ -144,9 +139,8 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
                     setPreviewImage(reader.result as string);
                   };
                   reader.readAsDataURL(file);
-                } catch (error) {
-                  console.error("Error al procesar la imagen:", error);
-                  toast("error", "Error al procesar la imagen");
+                } catch (error:unknown) {
+                  toast("error", error instanceof Error ? error.message : e("errorLoad", {field: "imagen"}));
                 }
               }
             }}
@@ -158,42 +152,42 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
         </div>
 
         <div>
-          <Label>Nombre</Label>
-          <Input {...register("name")} placeholder="Ingrese el nombre del cliente" />
+          <Label>{u("name")}</Label>
+          <Input {...register("name")} placeholder={p("name")} />
           {errors.name && <p className="text-red-500">{errors.name.message}</p>}
         </div>
         <div>
-          <Label>Apellido</Label>
-          <Input {...register("lastname")} placeholder="Ingrese el apellido del cliente" />
+          <Label>{u("lastName")}</Label>
+          <Input {...register("lastname")} placeholder={p("lastName")} />
           {errors.lastname && <p className="text-red-500">{errors.lastname.message}</p>}
         </div>
         <div>
-          <Label>Correo Electrónico</Label>
-          <Input {...register("email")} placeholder="ejemplo@gmail.com" type="email" />
+          <Label>{u("email")}</Label>
+          <Input {...register("email")} placeholder={p("exampleEmail")} type="email" />
           {errors.email && <p className="text-red-500">{errors.email.message}</p>}
         </div>
         <div>
-          <Label>Dirección</Label>
-          <Input {...register("adress")} placeholder="Ingrese la dirección del cliente" />
+          <Label>{u("address")}</Label>
+          <Input {...register("adress")} placeholder={p("address")} />
           {errors.adress && <p className="text-red-500">{errors.adress.message}</p>}
         </div>
         <div>
-          <Label>Número de Teléfono</Label>
-          <Input {...register("phoneNumber")} placeholder="Ingrese el número de teléfono" />
+          <Label>{u("phone")}</Label>
+          <Input {...register("phoneNumber")} placeholder={p("phone")} />
           {errors.phoneNumber && <p className="text-red-500">{errors.phoneNumber.message}</p>}
         </div>
         <div>
-          <Label>RUC</Label>
-          <Input {...register("ruc")} placeholder="Ingrese el RUC del cliente" />
+          <Label>{u("ruc")}</Label>
+          <Input {...register("ruc")} placeholder={p("ruc")} />
           {errors.ruc && <p className="text-red-500">{errors.ruc.message}</p>}
         </div>
         
         <div className="flex gap-4">
-          <Button type="button" variant="outline" onClick={() => router.push("/dashboard/clients")}>
-            Cancelar
+          <Button type="button" variant="outline" disabled={isSubmitting} onClick={() => router.push("/dashboard/clients")}>
+            {isSubmitting ? b("cancel") : b("cancel")}
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Guardando..." : "Guardar cambios"}
+            {isSubmitting ? b("saving") : b("save")}
           </Button>
         </div>
       </form>
