@@ -35,7 +35,7 @@ export default function InvoiceDetail({ token }: Props) {
 
   return (
       <div className="w-full px-0">
-        <div className="my-4 ml-4">
+        <div className="my-4">
           <Link href="/dashboard/invoices">
             <Button
               variant="outline"
