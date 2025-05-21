@@ -1,6 +1,6 @@
 "use client";
 
-import { useState,useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { fetchUsers } from "@/lib/client/getUsers";
 import { deleteClient } from "@/lib/client/deleteClient";
@@ -17,6 +17,10 @@ import { useRouter } from "next/navigation";
 import { IUserProfile } from "@/lib/client/IUserProfile";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import { useTranslations } from "next-intl";
+import DateFilter from "./filter/ClientDateFilter";
+import { getClientReport } from "@/lib/client/getClientReport";
+import { downloadFromBlob } from "@/lib/utils";
+import ExportButton from "@/components/global/ExportButton";
 
 interface ClientListProps {
     token: string;
@@ -41,7 +45,9 @@ export default function ClientList({ token }: ClientListProps) {
     const [filteredData, setFilteredData] = useState<IUserProfile[]>([]);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [clientToDelete, setClientToDelete] = useState<IUserProfile | null>(null);
-
+    const [from, setFrom] = useState<string | undefined>();
+    const [to, setTo] = useState<string | undefined>();
+    const [isGettingReport, setIsGettingReport] = useState(false);
     const loadUsers = useCallback(
         async (page: number = 1, query: string = "") => {
             if (!token) return;
@@ -91,6 +97,22 @@ export default function ClientList({ token }: ClientListProps) {
     const handleDeleteClick = (user: IUserProfile) => {
         setClientToDelete(user);
         setIsDeleteModalOpen(true);
+    };
+
+    const handleGetClientReport = async () => {
+        if (!from || !to) {
+            toast("error", "Se necesitan fechas limites para generar el reporte");
+        } else {
+            setIsGettingReport(true);
+            const result = await getClientReport({
+                token,
+                from,
+                to,
+            });
+            if (!(result instanceof Blob)) toast("error", result.message);
+            else downloadFromBlob(result);
+            setIsGettingReport(false);
+        }
     };
 
     const handleConfirmDelete = async () => {
@@ -143,16 +165,32 @@ export default function ClientList({ token }: ClientListProps) {
                 placeholder={p("getBy", {field: "nombre, correo o ruc"})}
                 debounceDelay={400}
             />
-            <div className="flex justify-between items-center mb-4">
-                <h2 className="text-3xl font-bold">{c("title")}</h2>
-                <Button
-                    variant="outline"
-                    className="px-6"
-                    onClick={() => router.push("/dashboard/clients/register")}
-                >
-                    {b("add")}
-                </Button>
+            <div className="p-2 mb-2">
+                <DateFilter
+                    to={to}
+                    from={from}
+                    setDateTo={setTo}
+                    setDateFrom={setFrom}
+                />
             </div>
+            <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
+                <h2 className="text-3xl font-bold text-gray-800">{c("title")}</h2>
+                <div className="flex gap-2">
+                    <Button
+                        variant="outline"
+                        disabled={isGettingReport}
+                        className="px-6"
+                        onClick={() => router.push("/dashboard/clients/register")}
+                    >
+                        {b("add")}
+                    </Button>
+                    <ExportButton
+                        handleGetReport={handleGetClientReport}
+                        isLoading={isGettingReport}
+                    />
+                </div>
+            </div>
+
             <GenericTable
                 data={filteredData}
                 columns={columns}
