@@ -34,22 +34,27 @@ export default function InvoiceDetail({ token }: Props) {
   if (loading) return <InvoiceDetailSkeleton/>;
 
   return (
-    <div className="w-full px-0">
-      {invoice && <InvoiceDetailCard invoice={invoice} />}
-      <h3 className="text-xl font-semibold text-black mb-3 mt-3">{i("invoiceDetail")}</h3>
-      <div className="w-full">
-        <InvoiceDetailTable details={invoiceDetails} />
+      <div className="w-full px-0">
+        <div className="my-4 ml-4">
+          <Link href="/dashboard/invoices">
+            <Button
+              variant="outline"
+               className="border-black border-solid"
+            >
+              {b("toReturn")}
+            </Button>
+          </Link>
+        </div>
+
+        {invoice && <InvoiceDetailCard invoice={invoice} />}
+        
+        <h3 className="text-xl font-semibold text-black mb-3 mt-3">
+          {i("invoiceDetail")}
+        </h3>
+
+        <div className="w-full">
+          <InvoiceDetailTable details={invoiceDetails} />
+        </div>
       </div>
-      <div className="flex justify-end mt-6">
-        <Link href="/dashboard/invoices">
-          <Button
-            variant="outline"
-            className="px-6 border-gray-200 border-solid"
-          >
-            {b("toReturn")}
-          </Button>
-        </Link>
-      </div>
-    </div>
   );
 }
