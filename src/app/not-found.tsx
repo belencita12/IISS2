@@ -4,16 +4,10 @@ import Link from "next/link"
 import { AlertTriangle, Home, ArrowLeft, RefreshCw } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { useState} from "react"
+
 
 export default function NotFound() {
   const router = useRouter()
-  const [loading, setLoading] = useState(false);
-  const handleBack = () => {
-  if (loading) return;
-  setLoading(true);
-  router.back();
-};
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#d8b4fe]/20 to-[#f9a8d4]/20 p-4">
@@ -41,7 +35,6 @@ export default function NotFound() {
             </Link>
 
             <Button 
-            disabled={loading}
             onClick={() => router.back()} 
             className="flex items-center justify-center gap-2 w-full py-2 px-4 bg-white border border-myPink-primary text-myPink-primary hover:bg-[#fbcfe8]/20 font-medium rounded-md transition-colors"
             >
