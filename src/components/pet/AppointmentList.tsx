@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Eye } from "lucide-react"
-import type { Appointment } from "@/lib/appointment/IAppointment"
+import type { AppointmentData } from "@/lib/appointment/IAppointment"
 import { getAppointmentByPetId } from "@/lib/appointment/getAppointmentByPetId"
 import { formatDate } from "@/lib/utils"
 import GenericTable, { type Column, type PaginationInfo, type TableAction } from "@/components/global/GenericTable"
@@ -21,7 +21,7 @@ export default function AppointmentList({
   token,
 }: AppointmentListProps) {
   const router = useRouter();
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [appointments, setAppointments] = useState<AppointmentData[]>([]);
   const [loadingAppointments, setLoadingAppointments] = useState(true);
   const [errorAppointments, setErrorAppointments] = useState<string | null>(
     null
@@ -81,7 +81,7 @@ export default function AppointmentList({
     fetchAppointments(page);
   };
 
-  const appointmentColumns: Column<Appointment>[] = [
+  const appointmentColumns: Column<AppointmentData>[] = [
     {
       header: "Fecha",
       accessor: (a) => formatDate(a.designatedDate),
@@ -89,16 +89,20 @@ export default function AppointmentList({
     },
     {
       header: "Servicio",
-      accessor: "service",
+      accessor: (a) => a.service || (a.services && a.services.length > 0 ? a.services.map(s => s.name).join(", ") : "Sin servicio"),
     },
-     {
+    {
       header: "Detalle",
       accessor: (a) => a.details || "Sin detalles",
     },
     {
       header: "Empleados",
       accessor: (a) =>
-        a.employees?.map((e) => e.name).join(", ") || "Sin asignar",
+        (a.employees && a.employees.length > 0) 
+          ? a.employees.map((e) => e.name).join(", ") 
+          : a.employee 
+            ? a.employee.name 
+            : "Sin asignar",
     },
     {
       header: "Estado",
@@ -115,10 +119,10 @@ export default function AppointmentList({
     },
   ];
 
-  const appointmentActions: TableAction<Appointment>[] = [
+  const appointmentActions: TableAction<AppointmentData>[] = [
     {
       icon: <Eye className="w-4 h-4" />,
-      onClick: (appointment: Appointment) => {
+      onClick: (appointment: AppointmentData) => {
         router.push(`/user-profile/appointment/${appointment.id}`);
       },
       label: "Ver detalle",
@@ -132,7 +136,7 @@ export default function AppointmentList({
   return (
     <Card className="border-none shadow-md">
       <CardContent className="p-4">
-        <GenericTable<Appointment>
+        <GenericTable<AppointmentData>
           data={appointments}
           columns={appointmentColumns}
           actions={appointmentActions}
