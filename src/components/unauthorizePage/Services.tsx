@@ -17,7 +17,7 @@ export default function Services() {
                     className="object-contain rounded-md aspect-square sm:w-[25%] w-[40%]"
                 />
                 <div className="text-left flex flex-col gap-5 flex-1">
-                    <h2 className="sm:text-3xl text-xl font-bold">Nuestros servicios</h2>
+                    <h2 className="sm:text-3xl text-xl font-bold text-myPurple-primary">Nuestros servicios</h2>
                     <p className="text-gray-600">
                         Ofrecemos los siguiente servicios.
                     </p>
@@ -32,7 +32,7 @@ export default function Services() {
                             width={150}
                             height={150}
                             className="h-auto rounded-md sm:w-[90%] w-[30%] aspect-square" />
-                        <h3 className="font-semibold text-sm">{service.name}</h3>
+                        <h3 className="font-semibold text-sm text-myPink-primary">{service.name}</h3>
                     </div>
                 ))}
             </section>
