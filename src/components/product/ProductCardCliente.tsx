@@ -59,6 +59,9 @@ export function Card({
                             src={image || "/placeholder.svg"}
                             alt={alt}
                             fill
+                            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                            quality={75}
+                            priority={false}
                             style={{ objectFit: "cover" }}
                             className={`${
                                 isHorizontal ? "rounded-l-lg" : "rounded-t-lg"
