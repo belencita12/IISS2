@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import ProductSearch from "../../purchases/PurchaseItemSearch";
 import ProductList from "../../purchases/PurchaseItems";
 import { useRegisterMovement } from "@/hooks/movements/useRegisterMovements";
-import { useProductSearch } from "@/hooks/purchases/useProductSearch";
+import { useProductSearch } from "@/hooks/purchases/useProductStock";
 import MovementEmployeeSearch from "../MovementEmployeeSearch";
 import MovementStockSelector from "../MovementStockSelector";
 import { Product } from "@/lib/products/IProducts";
@@ -41,16 +41,19 @@ export default function MovementForm({ token }: { token: string }) {
   } = useRegisterMovement(token);
 
   const { stocks } = useInitialData(token);
-  const {
-    searchProducts,
-    searchQuery,
-    hasSearched: hasSearchedProduct,
-    handleSearchProduct,
-    getProductQuantity,
-    setProductQuantity,
-    resetSearch,
-    isLoading: isLoadingProduct,
-  } = useProductSearch(token);
+  const selectedStockId = watch("originStockId") || watch("destinationStockId") || null;
+
+const {
+  searchProducts,
+  searchQuery,
+  hasSearched: hasSearchedProduct,
+  handleSearchProduct,
+  getProductQuantity,
+  setProductQuantity,
+  resetSearch,
+  isLoading: isLoadingProduct,
+} = useProductSearch(token, selectedStockId);
+
 
   const {
     employees,
