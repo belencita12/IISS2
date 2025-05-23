@@ -4,8 +4,6 @@ import { getServerSession } from "next-auth";
 import { notFound, redirect } from "next/navigation";
 import { getPurchaseById } from "@/lib/purchases/getPurchaseDetailById";
 import { getPurchaseDetailByPurchaseId } from "@/lib/purchases/getPurchaseDetailByPurchaseId";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 
 export default async function PurchaseDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
@@ -30,20 +28,6 @@ export default async function PurchaseDetailPage({ params }: { params: Promise<{
   if (!detailResp || !detailResp.data || detailResp.data.length === 0) return notFound();
 
   return (
-    <div className="relative">
-      <div className="absolute my-2 -top-6 left-4 z-50">
-        <Link href="/dashboard/purchases">
-          <Button
-            variant="outline"
-            className="px-6 border-gray-200 border-solid"
-          >
-            Volver
-          </Button>
-        </Link>
-      </div>
-      <div className="mt-20">
         <PurchaseDetail token={token} purchaseInfo={purchase} />
-      </div>
-    </div>
   );
 }
