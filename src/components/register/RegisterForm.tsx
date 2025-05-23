@@ -4,11 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { phoneNumber, ruc } from "@/lib/schemas";
 import { signup } from "@/lib/auth/signup";
 import { useRouter } from "next/navigation";
 import { toast } from "@/lib/toast";
 import FormInput from "../global/FormInput";
+import { validatePhoneNumber } from "@/lib/utils";
+import { rucFormatRegExp } from "@/lib/utils";
 // Define the schema for registration
 export const RegisterFormSchema = z
   .object({
@@ -23,8 +24,10 @@ export const RegisterFormSchema = z
         10,
         "Ingrese una dirección válida. Ej: Av. España 1234, Asunción, Paraguay"
       ),
-    phoneNumber: phoneNumber(),
-    ruc: ruc(),
+    phoneNumber: z.string().min(1, "El número de teléfono es obligatorio").refine(validatePhoneNumber, {
+    message: "Número de teléfono inválido. Debe comenzar con + y tener al menos 7 dígitos.",
+  }),
+     ruc: z.string().min(1, "El RUC es obligatorio").regex(rucFormatRegExp, "El RUC debe tener el formato 12345678-1"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Las contraseñas no coinciden",
