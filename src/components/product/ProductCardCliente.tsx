@@ -41,7 +41,7 @@ export function Card({
     return (
         <div
             className={`flex ${isHorizontal ? "flex-row" : "flex-col"}
-                w-[260px] min-w-[260px] max-w-[260px] max-h-[350px]
+                w-full sm:w-[260px] min-w-0 sm:min-w-[260px] max-w-[260px] max-h-[350px]
                 m-2 rounded-lg shadow-md hover:shadow-lg
                 transition-shadow duration-300 overflow-hidden ${bgColor} ${textColor} relative`}
         >
