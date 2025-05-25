@@ -10,7 +10,7 @@ export default async function HomePublic() {
       <Services />
       <Products />
       <Image
-        src="/fin5.jpg"
+        src="/fin3.jpg"
         alt="Gato"
         width={1500}
         height={400}
