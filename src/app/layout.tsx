@@ -3,12 +3,13 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { clientLinks } from "@/constants/navbar";
 import Footer from "@/components/global/Footer";
-import NavbarWrapped from "@/components/global/Navbar";
+import { Navbar } from "@/components/global/Navbar";
 import { Toaster } from "@/components/ui/sonner";
-import { headers } from 'next/headers';
-import Script from 'next/script';
-import {NextIntlClientProvider} from 'next-intl';
-import {getLocale} from 'next-intl/server';
+import { headers } from "next/headers";
+import Script from "next/script";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale } from "next-intl/server";
+import ClientLayout from "@/layout/ClientLayout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,27 +37,31 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const headersList = await headers();
-  const nonce = headersList.get('x-nonce') || undefined;
+  const nonce = headersList.get("x-nonce") || undefined;
   const locale = await getLocale();
 
   return (
     <html lang={locale}>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
         <NextIntlClientProvider>
-          <NavbarWrapped links={clientLinks} />
-          {children}
-          <Footer />
-          <Toaster theme="light" />
-          
-          {/* Inline script with nonce */}
-          <Script
-            id="csp-script"
-            nonce={nonce}
-            dangerouslySetInnerHTML={{
-              __html: `console.log("CSP con nonce aplicado correctamente")`,
-            }}
-          />
-          </NextIntlClientProvider>
+          <ClientLayout>
+            <Navbar links={clientLinks} />
+            {children}
+            <Footer />
+            <Toaster theme="light" />
+
+            {/* Inline script with nonce */}
+            <Script
+              id="csp-script"
+              nonce={nonce}
+              dangerouslySetInnerHTML={{
+                __html: `console.log("CSP con nonce aplicado correctamente")`,
+              }}
+            />
+          </ClientLayout>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
