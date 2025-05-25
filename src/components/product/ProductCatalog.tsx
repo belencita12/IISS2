@@ -337,7 +337,7 @@ const ProductCatalog = ({ token }: { token?: string }) => {
                     <main className="flex-1 min-h-[800px]">
                         {products.length > 0 ? (
                             <>
-                                <div className="grid grid-cols-3 gap-4 lg:w-[970px]">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 w-full max-w-[1200px] mx-auto justify-items-center">
                                     {products.slice(0, 12).map((product) => (
                                         <Card
                                             key={product.id}
