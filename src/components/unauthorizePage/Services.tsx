@@ -29,9 +29,10 @@ export default function Services() {
                         <Image
                             src={service.Image}
                             alt={service.name}
-                            width={150}
-                            height={150}
-                            className="h-auto rounded-md sm:w-[90%] w-[30%] aspect-square" />
+                            width={300}
+                            height={300}
+                            quality={100}
+                            className="h-auto rounded-md sm:w-[90%] w-[30%] aspect-square object-cover" />
                         <h3 className="font-semibold text-sm text-myPink-primary">{service.name}</h3>
                     </div>
                 ))}

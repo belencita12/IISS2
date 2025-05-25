@@ -32,9 +32,10 @@ export default function Products() {
             <Image 
               src={product.image} 
               alt={product.name} 
-              width={150}
-              height={150}
-              className="h-auto rounded-md sm:w-[90%] w-[30%] aspect-square" 
+              width={300}
+              height={300}
+              quality={100}
+              className="h-auto rounded-md sm:w-[90%] w-[30%] aspect-square object-cover" 
             />
             <h3 className="font-semibold text-myPink-primary">{product.name}</h3>
           </div>

@@ -14,7 +14,7 @@ export default async function HomePublic() {
         alt="Gato"
         width={1500}
         height={400}
-        className="object-contain rounded-xl w-full max-w-[1500px] max-h-[400] mx-auto"
+        className="w-full h-[400px] sm:h-[400px] h-[200px] object-cover object-[center_70%] rounded-xl mx-auto"
       />
     </div>
   );
