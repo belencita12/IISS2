@@ -1,8 +1,8 @@
 import Image from "next/image";
 const products = [
-  { name: "Alimentos", image: "/image1.png" },
-  { name: "Higiene", image: "/image2.png" },
-  { name: "Medicamentos", image: "/image3.png" },
+  { name: "Alimentos", image: "/veterinaria6.png" },
+  { name: "Higiene", image: "/hig1.jpg" },
+  { name: "Medicamentos", image: "/medicamentos2.jpg" },
 ];
 
 export default function Products() {
@@ -10,7 +10,7 @@ export default function Products() {
     <div>
       <section className="flex items-center py-5 bg-white gap-5">
         <Image
-          src="/image product.png"
+          src="/productos9.jpg"
           alt="Productos"
           width={150}
           height={150}

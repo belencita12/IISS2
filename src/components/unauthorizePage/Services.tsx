@@ -1,8 +1,8 @@
 import Image from "next/image";
 const services = [
-    { name: "Vacunación", Image: "/image container (1).png" },
-    { name: "Peluquería", Image: "/image container (2).png" },
-    { name: "Castración", Image: "/image container (3).png" },
+    { name: "Vacunación", Image: "/vac1.jpg" },
+    { name: "Peluquería", Image: "/peluq1.jpg" },
+    { name: "Castración", Image: "/veterinaria9.jpg" },
 ];
 
 export default function Services() {
@@ -10,7 +10,7 @@ export default function Services() {
         <>
             <section className="flex items-center gap-5 py-5 bg-white">
                 <Image
-                    src="/image container.png"
+                    src="/veterinarios1.jpg"
                     alt="Service"
                     width={150}
                     height={150}
