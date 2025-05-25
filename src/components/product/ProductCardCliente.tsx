@@ -41,7 +41,7 @@ export function Card({
     return (
         <div
             className={`flex ${isHorizontal ? "flex-row" : "flex-col"}
-                w-[260px] min-w-[260px] max-w-[260px] max-h-[350px]
+                w-full sm:w-[260px] min-w-0 sm:min-w-[260px] max-w-[260px] max-h-[350px]
                 m-2 rounded-lg shadow-md hover:shadow-lg
                 transition-shadow duration-300 overflow-hidden ${bgColor} ${textColor} relative`}
         >
@@ -59,6 +59,9 @@ export function Card({
                             src={image || "/placeholder.svg"}
                             alt={alt}
                             fill
+                            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                            quality={75}
+                            priority={false}
                             style={{ objectFit: "cover" }}
                             className={`${
                                 isHorizontal ? "rounded-l-lg" : "rounded-t-lg"
