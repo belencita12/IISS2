@@ -1,8 +1,8 @@
 describe('ClientListSection', () => {
     const SESSION_KEY = "sessionToken";
     const USER = {
-        email:  Cypress.env("USER_EMAIL"),
-        password: Cypress.env("USER_PASSWORD")
+        email:  Cypress.env("USER_EMAIL_A"),
+        password: Cypress.env("USER_PASSWORD_A")
     };
 
     beforeEach(() => {
@@ -31,18 +31,18 @@ describe('ClientListSection', () => {
 
 
     it('Debe buscar clientes correctamente filtrandolos por nombre', () => {
-        cy.get('input[placeholder="Buscar por nombre o email..."]').type('Juan Pérez');
-        cy.get('button').contains('Buscar').click();
+        cy.get('input[placeholder="Buscar por nombre, correo o ruc"]').type('Juan');
+        
         cy.wait(5000);
         cy.get('table tbody tr').should('contain', 'Juan Pérez');
     });
 
 
     it('Debe buscar clientes correctamente filtrando por correo', () => {
-        cy.get('input[placeholder="Buscar por nombre o email..."]').type('testuser83380@gmail.com');
-        cy.get('button').contains('Buscar').click();
+        cy.get('input[placeholder="Buscar por nombre, correo o ruc"]').type('anniamicaela@gmail.com');
+        
         cy.wait(5000);
-        cy.get('table tbody tr').should('contain', 'testuser83380@gmail.com');
+        cy.get('table tbody tr').should('contain', 'anniamicaela@gmail.com');
     });
 
 
@@ -58,24 +58,29 @@ describe('ClientListSection', () => {
         cy.url().should('include', '/dashboard/clients/');
     });
 
-    it('Debe verificar la paginación', () => {
-        cy.contains('span', 'Next').click();
-        cy.wait(2000); 
-        cy.get('table tbody tr').should('exist');
-    
-        cy.contains('span', 'Previous').click();
-        cy.wait(2000);
-        cy.get('table tbody tr').should('exist');
-    
-        cy.wait(2000);
-        cy.get('a').contains('2').click();
-        cy.wait(2000);
-        cy.get('table tbody tr').should('exist');
+   it('Debe verificar la paginación usando íconos SVG', () => {
+  // Ir a la última página
+  cy.get('a svg.lucide-chevrons-right').parent().click();
+  cy.wait(1000);
+  cy.get('table tbody tr').should('exist');
 
-        cy.wait(2000);
-        cy.get('a').contains('1').click();
-        cy.wait(2000);
-        cy.get('table tbody tr').should('exist');
-    });
+  // Ir a la página anterior
+  cy.get('a svg.lucide-chevron-left').parent().click();
+  cy.wait(1000);
+  cy.get('table tbody tr').should('exist');
+
+  // Ir a la primera página
+  cy.get('a svg.lucide-chevrons-left').parent().click();
+  cy.wait(1000);
+  cy.get('table tbody tr').should('exist');
+
+  // Ir a la página siguiente
+  cy.get('a svg.lucide-chevron-right').parent().click();
+  cy.wait(1000);
+  cy.get('table tbody tr').should('exist');
+});
+
+
+
     
 });

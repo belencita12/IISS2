@@ -45,6 +45,7 @@ const AppointmentCard = ({
 
   return (
     <div
+      data-testid="appointment-card"
       onClick={handleViewDetail}
       className={`cursor-pointer border p-4 rounded-lg flex justify-between items-start bg-white shadow transition-transform duration-300 hover:shadow-md ${
         isProcessing ? "opacity-50 pointer-events-none" : "hover:-translate-y-1"
