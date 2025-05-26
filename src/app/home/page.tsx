@@ -10,11 +10,11 @@ export default async function HomePublic() {
       <Services />
       <Products />
       <Image
-        src="/image gato.png"
+        src="/fin3.jpg"
         alt="Gato"
         width={1500}
         height={400}
-        className="object-contain rounded-xl w-full max-w-[1500px] mx-auto"
+        className="w-full h-[400px] sm:h-[400px] h-[200px] object-cover object-[center_70%] rounded-xl mx-auto"
       />
     </div>
   );
