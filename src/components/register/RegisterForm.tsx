@@ -24,7 +24,7 @@ export const RegisterFormSchema = z
         "Ingrese una dirección válida. Ej: Av. España 1234, Asunción, Paraguay"
       ),
     phoneNumber: phoneNumber(),
-    rucOrCi: rucOrCi(),
+    ruc: rucOrCi(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Las contraseñas no coinciden",
@@ -98,8 +98,8 @@ export function RegisterForm() {
           name="phoneNumber"
         />
         <FormInput
-          register={register("rucOrCi")}
-          error={errors.rucOrCi?.message}
+          register={register("ruc")}
+          error={errors.ruc?.message}
           placeholder="RUC/CI"
           name="rucOrCi"
         />
