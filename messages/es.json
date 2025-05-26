@@ -516,6 +516,11 @@
     "unitCost": "Costo unitario",
     "iva": "IVA",
     "subTotal": "Sub. Total"
+  },
+  "header": {
+    "name": "{field}",
+    "description": "Bienvenido a nuestro sistema de veterinaria",
+    "heart": "Veterinaria cliente fiel"
   }
 
 }
