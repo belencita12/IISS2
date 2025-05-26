@@ -101,7 +101,7 @@ export function RegisterForm() {
           register={register("ruc")}
           error={errors.ruc?.message}
           placeholder="RUC/CI"
-          name="rucOrCi"
+          name="ruc"
         />
       </div>
 
