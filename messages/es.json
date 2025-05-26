@@ -521,6 +521,41 @@
     "name": "{field}",
     "description": "Bienvenido a nuestro sistema de veterinaria",
     "heart": "Veterinaria cliente fiel"
+  },
+  "profile":{
+    "name": "{field}",
+    "phone": "Teléfono",
+    "ruc": "RUC",
+    "address": "Dirección",
+    "email": "{field}",
+    "form": {
+      "name": "Nombre",
+      "address": "Dirección",
+      "ruc": "RUC",
+      "email": "Correo electrónico",
+      "phone": "Teléfono"
+    }
+  },
+  "button": {
+    "edit": "Editar",
+    "save":"Guardar",
+    "cancel": "Cancelar",
+    "saving": "Guardando...",
+    "cancelling": "Cancelando..."
+  },
+
+  "placeholder":{
+    "name": "Ingrese el nombre",
+    "address": "Ingrese la dirección",
+    "ruc": "Ingrese el RUC",
+    "email": "Ingrese el correo electrónico",
+    "phone": "Ingrese el número de teléfono",
+    "exampleEmail": "ejemplo@gmail.com"
+  },
+  "error": {
+    "notFound": "No se encontraron datos",
+    "noSpecified": "No especificado"
+
   }
 
 }
