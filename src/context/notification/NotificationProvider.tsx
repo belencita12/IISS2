@@ -2,8 +2,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { NotificationProviderPropsType } from "./notificationContext.types";
-import { NotificationContext } from "./notificationContext";
+import { NotificationProviderPropsType } from "./NotificationContext.types";
+import { NotificationContext } from "./NotificationContext";
 import { io, Socket } from "socket.io-client";
 import { BASE_API_URL } from "@/lib/env";
 import { useSession } from "next-auth/react";

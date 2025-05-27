@@ -9,7 +9,7 @@ import { headers } from "next/headers";
 import Script from "next/script";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
-import ClientLayout from "@/layout/clientLayout";
+import ClientLayout from "@/layout/ClientLayout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
