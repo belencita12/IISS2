@@ -18,11 +18,11 @@ const PurchaseProductCard: React.FC<PurchaseProductCardProps> = ({
 
   return (
     <div
-      className="flex w-full max-w-[550px] min-w-[280px] h-[210px] m-2 rounded-lg shadow-md
-                  hover:shadow-lg transition-shadow duration-300 overflow-hidden
-                  bg-white text-gray-900"
+      className="flex flex-col md:flex-row w-full max-w-[550px] min-w-[280px] h-auto md:h-[210px] m-2
+                 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden
+                 bg-white text-gray-900"
     >
-      <div className="w-[35%] relative overflow-hidden rounded-l-lg">
+      <div className="w-full md:w-[35%] relative aspect-[4/3] md:aspect-auto md:h-full overflow-hidden">
         <Image
           src={product.image?.originalUrl || defaultImageSrc}
           alt={product.name}
@@ -31,10 +31,10 @@ const PurchaseProductCard: React.FC<PurchaseProductCardProps> = ({
         />
       </div>
 
-      <div className="w-[65%] p-4 flex flex-col justify-between">
-        <div className="space-y-2 overflow-hidden">
+      <div className="w-full md:w-[65%] p-3 md:p-4 flex flex-col justify-between">
+        <div className="space-y-2">
           {product.tags && (
-            <div className="flex flex-wrap gap-1 mb-1 max-h-[32px] overflow-hidden">
+            <div className="flex flex-wrap gap-1 mb-1 max-h-[48px] overflow-hidden">
               {product.tags.map((tag, idx) => (
                 <span
                   key={idx}
@@ -51,7 +51,7 @@ const PurchaseProductCard: React.FC<PurchaseProductCardProps> = ({
             {product.name}
           </h3>
 
-          <div className="grid grid-cols-[1fr_0.6fr] gap-x-10 gap-y-2 text-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-[1fr_0.6fr] gap-x-4 gap-y-2 text-xs">
             <div className="truncate">
               <span className="text-gray-600">{p("code")}:</span>
               <p className="font-medium truncate">{product.code || "-"}</p>

@@ -24,18 +24,32 @@ const PurchaseProviderCard: React.FC<PurchaseProviderCardProps> = ({
   const p = useTranslations("PurchaseDetail");
 
   return (
-    <Card className="mb-4 p-7 border-border/100 shadow-sm">
-      <div className="flex justify-between items-start mb-2">
-        <div className="space-y-3">
-          <h2 className="text-xl font-bold">{providerName || "Proveedor"}</h2>
-          <p className="text-sm text-gray-500">
-            {p("totalCost")}: {total?.toLocaleString() || 0} {p("gs")}
-          </p>
-          <p className="text-sm text-gray-500">
-             {p("totalCostIva")}: {ivaTotal?.toLocaleString() || 0} {p("gs")}
-          </p>
+    <Card className="mb-4 p-4 sm:p-6 lg:p-7 border-border/100 shadow-sm">
+      {/* Layout responsive: columna en móviles, fila en desktop */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 sm:gap-2">
+        
+        {/* Fecha responsive - aparece arriba en móviles */}
+        <div className="flex-shrink-0 order-1 sm:order-2">
+          <span className="text-sm sm:text-base font-bold text-gray-500 block text-left sm:text-right">
+            {date ? formatDate(date) : ""}
+          </span>
         </div>
-        <span className="text-base font-bold text-gray-500">{date? formatDate(date):""}</span>
+        
+        {/* Información del proveedor */}
+        <div className="space-y-2 sm:space-y-3 flex-1 order-2 sm:order-1">
+          <h2 className="text-lg sm:text-xl font-bold">
+            {providerName || "Proveedor"}
+          </h2>
+          <div className="space-y-1 sm:space-y-2">
+            <p className="text-xs sm:text-sm text-gray-500">
+              {p("totalCost")}: {total?.toLocaleString() || 0} {p("gs")}
+            </p>
+            <p className="text-xs sm:text-sm text-gray-500">
+              {p("totalCostIva")}: {ivaTotal?.toLocaleString() || 0} {p("gs")}
+            </p>
+          </div>
+        </div>
+        
       </div>
     </Card>
   );
