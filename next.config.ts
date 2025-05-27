@@ -4,13 +4,14 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const csp = `
   default-src 'self';
   connect-src *;
-  script-src 'self' 'unsafe-inline';
+  script-src 'self' 'unsafe-inline' https://www.youtube.com https://drive.google.com;
   style-src 'self' 'unsafe-inline';
   img-src 'self' data: https://asnavagyfjmrbewjgasb.supabase.co;
+  frame-src https://www.youtube.com https://drive.google.com https://docs.google.com;
+  child-src https://www.youtube.com https://drive.google.com https://docs.google.com;
   object-src 'none';
   base-uri 'self';
 `.replace(/\s{2,}/g, " ").trim();
-
 
 const securityHeaders = [
   {
@@ -20,10 +21,6 @@ const securityHeaders = [
   {
     key: "Strict-Transport-Security",
     value: "max-age=63072000; includeSubDomains; preload",
-  },
-  {
-    key: "X-Frame-Options",
-    value: "DENY",
   },
   {
     key: "X-Content-Type-Options",
@@ -46,6 +43,7 @@ const securityHeaders = [
     value: "",
   },
 ];
+
 
 const nextConfig: NextConfig = {
   images: {
