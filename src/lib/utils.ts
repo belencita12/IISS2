@@ -141,3 +141,8 @@ export function normalizeText(text: string): string {
     .toLowerCase() // Convierte a minúsculas
     .trim(); // Elimina espacios en blanco al inicio y final
 }
+
+// Según el backend
+// - CI: "123456" hasta "123456789"  (6 a 9 dígitos, sin guión)
+// - RUC: "123456-1" hasta "123456789-9" (6 a 9 dígitos + guión + 1 dígito)
+export const rucOrCiFormat = /^\d{6,9}(-\d)?$/;

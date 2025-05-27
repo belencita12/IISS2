@@ -59,21 +59,10 @@ const PurchaseDetail: React.FC<PurchaseDetailProps> = ({ token, purchaseInfo, in
 
   return (
     <div className="relative min-h-screen">
-      <div className="relative my-4">
-        <Button
-          variant="outline"
-          onClick={() => router.push('/dashboard/purchases')}
-          className="absolute left-0 border-black border-solid"
-        >
-          {b("toReturn")}
-        </Button>
-
-        <h1 className="text-2xl font-bold text-center">{p("titleDetail")}</h1>
-      </div>
-
+    
       {purchaseDetails && purchaseDetails.length > 0 && (
         <>
-        
+          <h1 className="text-3xl font-bold text-center mt-4 mb-2">{p("titleDetail")}</h1>
           {/* Muestra los datos del proveedor que realizó la compra y datos resumidos de la compra */}
           <div className="relative">
             <PurchaseProviderCard 
@@ -82,16 +71,23 @@ const PurchaseDetail: React.FC<PurchaseDetailProps> = ({ token, purchaseInfo, in
               ivaTotal={purchaseInfo?.ivaTotal}
               date={purchaseInfo?.date}
             />
+            <div className="absolute bottom-4 right-4">
+              <Button
+                variant="outline"
+                onClick={() => router.push('/dashboard/purchases')}
+                className="px-6 border-gray-200 border-solid"
+              >
+                {b("toReturn")}
+              </Button>
+            </div>
           </div>
         </>
       )}
       
       {/* Muestra los productos de la compra */}
-      <div className="grid grid-cols-2 gap-x-14 gap-y-2">
-        {purchaseDetails && purchaseDetails.map(detail => (
-          <PurchaseDetailCard key={detail.id} detail={detail} />
-        ))}
-      </div>
+      {purchaseDetails && purchaseDetails.map(detail => (
+        <PurchaseDetailCard key={detail.id} detail={detail} />
+      ))}
       
       {totalPages > 1 && (
         <GenericPagination
