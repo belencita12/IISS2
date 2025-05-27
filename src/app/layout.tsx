@@ -12,7 +12,7 @@ import { getLocale } from "next-intl/server";
 import ClientLayout from "@/layout/ClientLayout";
 import { getServerSession } from "next-auth";
 import authOptions from "@/lib/auth/options";
-import FooterAdmin from "@/components/global/FooterAdmin";
+import DynamicFooter from "@/components/global/DynamicFooter";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,11 +40,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await getServerSession(authOptions);
-  const isLoggedIn = !!session?.user.token;
-  let isAdmin = false;
-  if (isLoggedIn) {
-    isAdmin = session?.user.roles.includes("ADMIN")
-  }
   const headersList = await headers();
   const nonce = headersList.get("x-nonce") || undefined;
   const locale = await getLocale();
@@ -58,10 +53,7 @@ export default async function RootLayout({
           <ClientLayout>
             <Navbar links={clientLinks} />
             {children}
-            {isAdmin ?
-              <FooterAdmin />:
-              <Footer />
-            }
+            <DynamicFooter session={session} />
             <Toaster theme="light" />
 
             <Script
