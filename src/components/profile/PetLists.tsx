@@ -95,7 +95,6 @@ export const PetsList = ({ clientId, token, onFetchError }: PetsListProps) => {
                 className="flex flex-col w-full max-w-[260px] rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden bg-white text-gray-900"
               >
                 <div className="relative w-full h-[180px] flex items-center justify-center bg-gray-100">
-                  <div className="w-40 h-40 relative overflow-hidden rounded-full bg-gray-200">
                     <Image
                       src={pet.profileImg?.originalUrl || defaultImageSrc}
                       alt={pet.name}
@@ -103,7 +102,6 @@ export const PetsList = ({ clientId, token, onFetchError }: PetsListProps) => {
                       style={{ objectFit: "cover" }}
                       priority
                     />
-                  </div>
                 </div>
                 <div className="p-3 flex flex-col justify-between flex-1 overflow-hidden">
                   <div className="flex flex-col space-y-2 overflow-hidden">

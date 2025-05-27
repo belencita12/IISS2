@@ -132,6 +132,17 @@ export const AppointmentForm = ({
     }
   };
 
+  const handleRemoveService = (serviceId: number) => {
+    const updatedServices = selectedServices.filter((s) => s.id !== serviceId);
+    setSelectedServices(updatedServices);
+    setValue(
+      "serviceIds",
+      updatedServices.map((s) => s.id),
+      { shouldValidate: true }
+    );
+  };
+
+
   const handleSelectPet = (pet: PetData) => {
     if (pet.id) {
       setValue("petId", pet.id, { shouldValidate: true });
@@ -194,6 +205,7 @@ export const AppointmentForm = ({
                     token={token}
                     userRole={userRole}
                     onSelectService={handleSelectService}
+                 
                   />
                   <input type="hidden" {...register("serviceIds")} />
                   {errors.serviceIds && (
@@ -201,9 +213,15 @@ export const AppointmentForm = ({
                       {errors.serviceIds.message}
                     </p>
                   )}
-                  {selectedServices.map((service) => (
-                    <ServiceSelected key={service.id} service={service} />
-                  ))}
+                  <div className="max-h-32 overflow-y-auto space-y-2">
+                    {selectedServices.map((service) => (
+                      <ServiceSelected
+                        key={service.id}
+                        service={service}
+                        onRemove={() => handleRemoveService(service.id)}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
