@@ -1,8 +1,9 @@
+//manejamos la conexión real con el servidor
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { NotificationProviderPropsType } from "./NotificationContext.types";
-import { NotificationContext } from "./NotificationContext";
+import { NotificationProviderPropsType } from "./notificationContext.types";
+import { NotificationContext } from "./notificationContext";
 import { io, Socket } from "socket.io-client";
 import { BASE_API_URL } from "@/lib/env";
 import { useSession } from "next-auth/react";
@@ -16,7 +17,7 @@ export const NotificationProvider = ({
   useEffect(() => {
     if (!session) {
       console.warn(
-        "[NOTIFICATION-SOCKET] Session not found, skipping socket connection"
+        "[NOTIFICACIÓN-SOCKET] Sesión no encontrada, se omite la conexión con el socket"
       );
       return;
     }
@@ -29,11 +30,11 @@ export const NotificationProvider = ({
     });
 
     newSocket.on("connect", () => {
-      console.log("[NOTIFICATION-SOCKET] Connected to WebSocket server");
+      console.log("[NOTIFICACIÓN-SOCKET] Conectado al servidor WebSocket");
     });
 
     newSocket.on("disconnect", () => {
-      console.warn("[NOTIFICATION-SOCKET] Disconnected from WebSocket server");
+      console.warn("[NOTIFICACIÓN-SOCKET] Desconectado del servidor WebSocket");
     });
 
     setSocket(newSocket);

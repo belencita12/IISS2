@@ -9,7 +9,7 @@ import { headers } from "next/headers";
 import Script from "next/script";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
-import ClientLayout from "@/layout/ClientLayout";
+import ClientLayout from "@/layout/clientLayout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -52,7 +52,6 @@ export default async function RootLayout({
             <Footer />
             <Toaster theme="light" />
 
-            {/* Inline script with nonce */}
             <Script
               id="csp-script"
               nonce={nonce}
