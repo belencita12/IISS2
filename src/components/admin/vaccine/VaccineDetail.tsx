@@ -27,19 +27,13 @@ export const VaccineDetail = ({ id, token }: Props) => {
       <div className="flex flex-col md:flex-row gap-6 items-start">
         {/* Imagen o inicial */}
         <div className="w-full md:w-1/4 flex justify-center">
-          {vaccine.product.image?.originalUrl? (
-            <Image
-              src={vaccine.product.image.originalUrl}
-              alt={vaccine.name}
-              width={260}
-              height={260}
-              className="object-contain"
-            />
-          ) : (
-            <div className="w-64 h-64 bg-gray-200 flex items-center justify-center text-4xl font-bold rounded">
-              {vaccine.name.charAt(0).toUpperCase()}
-            </div>
-          )}
+          <Image
+            src={vaccine.product.image?.originalUrl || "/NotImageNicoPets.png"}
+            alt={vaccine.name}
+            width={260}
+            height={260}
+            className="object-contain"
+          />
         </div>
 
         {/* Detalles */}
