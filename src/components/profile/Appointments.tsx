@@ -37,10 +37,8 @@ export const Appointments = ({
   const [pageSize, setPageSize] = useState(5);
   const [executed, setExecuted] = useState(false);
   const router = useRouter();
-  const t = useTranslations("Appointments");
-  const e = useTranslations("Error");
-  const a= useTranslations("AppointmentTable");
-  const b = useTranslations("Button");
+  const t = useTranslations();
+
 
 
   const {
@@ -58,17 +56,17 @@ export const Appointments = ({
   }, [ruc, executed]);
 
   const error = !ruc
-    ? e("noGetRuc")
+    ? t("error.notGetRuc")
     : fetchError?.message || null;
   useEffect(() => {
     if (fetchError) {
-      onFetchError?.(e("errorLoad", {field : "citas"}));
+      onFetchError?.(t("error.errorLoadAppointments"));
     }
   }, [fetchError, onFetchError]);
 
   const fetchAppointments = (page: number) => {
     if (!ruc) {
-      onFetchError?.(e("notGetRuc"));
+      onFetchError?.(t("error.notGetRuc"));
       return;
     }
 
@@ -92,20 +90,20 @@ export const Appointments = ({
   const statusInfo = (st: AppointmentData["status"]) => {
     switch (st) {
       case "COMPLETED":
-        return { txt: a("completed"), style: "bg-green-100 text-green-800" };
+        return { txt: t("appointmentStatus.completed"), style: "bg-green-100 text-green-800" };
       case "CANCELLED":
-        return { txt: a("canceled"), style: "bg-red-100 text-red-800" };
+        return { txt: t("appointmentStatus.cancelled"), style: "bg-red-100 text-red-800" };
       case "IN_PROGRESS":
-        return { txt: a("inProgress"), style: "bg-blue-100 text-blue-800" };
+        return { txt: t("appointmentStatus.inProgress"), style: "bg-blue-100 text-blue-800" };
       default:
-        return { txt: a("pending"), style: "bg-yellow-100 text-yellow-800" };
+        return { txt: t("appointmentStatus.pending"), style: "bg-yellow-100 text-yellow-800" };
     }
   };
 
   // Definir las columnas para la tabla genérica
   const columns: Column<AppointmentData>[] = [
     {
-      header: a("pet"),
+      header: t("appointmentTable.pet"),
       accessor: (app) => (
         <div>
           <p className="font-medium">{app.pet.name}</p>
@@ -113,37 +111,37 @@ export const Appointments = ({
       ),
     },
     {
-      header: a("service"),
+      header: t("appointmentTable.services"),
       accessor: (app) => (
         <div className="flex items-center gap-3">
           <div>
             <p className="font-medium">
               {app.services?.length
                 ? app.services.map((s) => s.name).join(", ")
-                : "Sin servicios"}
+                : t("error.withoutServices")}
             </p>
           </div>
         </div>
       ),
     },
     {
-      header: a("employee"),
+      header: t("appointmentTable.employee"),
       accessor: (app) => (
         <div className="text-sm font-medium text-myPurple-primary">
-          {app.employee?.name || e("noAsigned")}
+          {app.employee?.name || t("error.noAsigned")}
         </div>
       ),
     },
     {
-      header: a("details"),
+      header: t("appointmentTable.details"),
       accessor: (app) => (
         <div className="flex items-start gap-2">
-          <p className="font-medium">{app.details || e("noDetails")}</p>
+          <p className="font-medium">{app.details || t("error.noDetails")}</p>
         </div>
       ),
     },
     {
-      header: a("date"),
+      header: t("appointmentTable.date"),
       accessor: (app) => (
         <div>
           <p className="font-medium">{formatDate(app.designatedDate)}</p>
@@ -151,7 +149,7 @@ export const Appointments = ({
       ),
     },
     {
-      header: a("time"),
+      header: t("appointmentTable.time"),
       accessor: (app) => (
         <div>
           <p className="font-medium">{formatTimeUTC(app.designatedDate)}</p>
@@ -159,7 +157,7 @@ export const Appointments = ({
       ),
     },
     {
-      header: a("status"),
+      header: t("appointmentTable.status"),
       accessor: (app) => (
         <span
           className={`px-2 py-1 rounded text-xs ${
@@ -176,7 +174,7 @@ export const Appointments = ({
     {
       icon: <Eye size={16} />,
       onClick: (item) => router.push(`/user-profile/appointment/${item.id}`),
-      label: b("seeDetails"),
+      label: t("button.seeDetails"),
     },
   ];
 
@@ -184,17 +182,17 @@ export const Appointments = ({
     <section className="w-full px-6 mt-5 bg-white rounded-lg shadow-sm pb-5 min-h-[80vh]">
       <div className="text-center">
         <h3 className="text-3xl font-bold mt-2 text-purple-600">
-          {t("appointmentTitle")}
+          {t("myAppointmentsSection.title")}
         </h3>
         <p className="text-gray-500 mt-2 text-sm">
-          {t("appointmentsDescription")}
+          {t("myAppointmentsSection.description")}
         </p>
 
         <div className="flex gap-4 mt-4 justify-center flex-wrap">
           <Link href="/user-profile/appointment/register">
             <Button className="bg-pink-500 text-white flex items-center gap-2 hover:bg-pink-600">
               <Plus className="w-5 h-5" />
-              {b("schedule")}
+              {t("button.schedule")}
             </Button>
           </Link>
         </div>
@@ -207,9 +205,9 @@ export const Appointments = ({
           data={appointments}
           columns={columns}
           actions={actions}
-          actionsTitle={a("actions")}
+          actionsTitle={t("appointmentTable.actions")}
           isLoading={loading}
-          emptyMessage={a("emptyMessage")}
+          emptyMessage={t("appointmentTable.emptyMessage")}
           className="w-full"
              pagination={{
               currentPage,

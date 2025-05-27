@@ -541,7 +541,13 @@
     "save":"Guardar",
     "cancel": "Cancelar",
     "saving": "Guardando...",
-    "cancelling": "Cancelando..."
+    "cancelling": "Cancelando...",
+    "seeMore": "Ver más",
+    "seeDetails": "Ver detalles",
+    "schedule": "Agendar",
+    "scheduleing": "Agendando...",
+    "loading": "Cargando...",
+    "toReturn": "Volver"
   },
 
   "placeholder":{
@@ -554,8 +560,69 @@
   },
   "error": {
     "notFound": "No se encontraron datos",
-    "noSpecified": "No especificado"
+    "noSpecified": "No especificado",
+    "unknown": "Desconocido",
+    "notGetRuc": "No se pudo obtener el RUC.",
+    "errorLoadAppointments": "No se pudieron cargar las citas",
+    "withoutServices": "Sin servicios",
+    "noAsigned": "No asignado",
+    "noDetails": "No hay detalles disponibles",
+    "notGetData": "No se pudo obtener la información",
+    "notFoundEmployee": "No se encontró empleado"
+
+  },
+  "profileTabs": {
+    "myProfile": "Mis datos",
+    "myPets": "Mis mascotas",
+    "myAppointments": "Mis citas"
+  },
+  "myPetsSection": {
+    "registeredPets": "Mascotas registradas",
+    "managePets": "Administra la información de tus mascotas",
+    "petListBtn": "Lista de mascotas",
+    "addPetBtn": "Agregar mascota",
+    "vetProducts": "Productos veterinarios",
+    "exploreProducts": "Explora los productos disponibles",
+    "recommendedProducts": {
+      "errorLoading": "No se pudieron cargar los productos recomendados"
+    }
+  },
+  "myAppointmentsSection": {
+    "title": "Mis citas",
+    "description": "Consulta y agenda nuevas citas médicas para tus mascotas"
+  },
+  "appointmentStatus": {
+    "pending": "Pendiente",
+    "completed": "Finalizada",
+    "cancelled": "Cancelada",
+    "inProgress": "En progreso"
+  },
+  "appointmentTable": {
+    "title": "Citas",
+    "date": "Fecha",
+    "time": "Hora",
+    "pet": "Mascota",
+    "employee": "Encargado",
+    "services": "Servicio/s",
+    "status": "Estado",
+    "actions": "Acciones",
+    "details": "Detalles",
+    "emptyMessage": "No hay citas agendadas"
+  },
+  "appointmentDetails": {
+    "title": "Detalles de la cita",
+    "pet": "Mascota",
+    "petDetails": {
+      "name": "Nombre",
+      "race": "Raza",
+      "owner": "Dueño"
+    },
+    "status": "Estado",
+    "date": "Fecha y hora designada",
+    "employee": "Encargado",
+    "details": "Detalles",
+    "service":"Servicio",
+    "services": "Servicios"
 
   }
-
 }
