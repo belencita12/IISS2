@@ -24,7 +24,7 @@ const PurchaseProviderCard: React.FC<PurchaseProviderCardProps> = ({
   const p = useTranslations("PurchaseDetail");
 
   return (
-    <Card className="mb-4 p-7 border border-gray-700 shadow-md">
+    <Card className="mb-4 p-7 border-border/100 shadow-sm">
       <div className="flex justify-between items-start mb-2">
         <div className="space-y-3">
           <h2 className="text-xl font-bold">{providerName || "Proveedor"}</h2>
@@ -35,7 +35,7 @@ const PurchaseProviderCard: React.FC<PurchaseProviderCardProps> = ({
              {p("totalCostIva")}: {ivaTotal?.toLocaleString() || 0} {p("gs")}
           </p>
         </div>
-        <span className="text-base font-bold text-black">{date? formatDate(date):""}</span>
+        <span className="text-base font-bold text-gray-500">{date? formatDate(date):""}</span>
       </div>
     </Card>
   );
