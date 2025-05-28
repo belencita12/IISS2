@@ -5,9 +5,9 @@ const ServiciosBanner = () => {
     <section className="relative bg-white overflow-hidden py-16 px-6 text-center">
       {/* Texto principal */}
       <div className="relative z-10">
-        <h3 className="text-myPink-primary text-lg font-semibold tracking-widest uppercase">Nuestros</h3>
-        <h1 className="text-[60px] font-extrabold text-myPurple-primary leading-none">SERVICIOS</h1>
-        <p className="text-black mt-4 text-sm">@NicoPetspy</p>
+        <h3 className="text-myPink-primary text-sm sm:text-lg font-semibold tracking-widest uppercase">Nuestros</h3>
+        <h1 className="text-[40px] sm:text-[50px] md:text-[60px] font-extrabold text-myPurple-primary leading-none">SERVICIOS</h1>
+        <p className="text-black mt-4 text-xs sm:text-sm">@NicoPetspy</p>
       </div>
 
       {/* Formas decorativas */}
@@ -29,17 +29,19 @@ const ServiciosBanner = () => {
         </svg>
       </div>
 
-        {/* Íconos de huella y corazón */}
-        <div className="absolute bottom-6 right-6 z-10">
-        <div className="relative w-20 h-20">
+      {/* Íconos de huella y corazón */}
+      <div className="absolute top-6 left-6 z-10">
+        <div className="relative w-16 h-16">
           {/* Huella */}
-          <PawPrint className="w-full h-full text-gray" />
+          <div className="transform -rotate-30">
+            <PawPrint className="w-full h-full text-gray-300 fill-current" />
+          </div>
           {/* Círculo rosado con corazón blanco */}
-          <div className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-myPink-primary flex items-center justify-center">
-            <Heart className="w-4 h-4 text-white" />
+          <div className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-myPink-primary flex items-center justify-center">
+            <Heart className="w-3 h-3 text-white" />
           </div>
         </div>
-        </div>
+      </div>
     </section>
   );
 };
