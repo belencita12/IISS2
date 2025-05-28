@@ -117,8 +117,8 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-4">
-      <div className="mb-6 mt-6">
+    <div className="w-full mx-auto p-4">
+      <div className="mb-2 mt-2">
         <Button
           variant="outline"
           onClick={() => router.push('/dashboard/stock')}
@@ -150,13 +150,13 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
         onTagsChange={setSelectedTags}
         token={token}
       />
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-6 mt-4">
         <h1 className="text-2xl font-bold">{st("productStock")}</h1>
         <div className="flex gap-4">
           <Button
-            variant="default"
+            variant="outline"
             onClick={() => router.push(`/dashboard/products/register`)}
-            className="bg-black text-white hover:bg-gray-800"
+            className="px-6"
           >
             {b("add")}
           </Button>
