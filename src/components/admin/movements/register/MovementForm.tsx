@@ -41,7 +41,7 @@ export default function MovementForm({ token }: { token: string }) {
   } = useRegisterMovement(token);
 
   const { stocks } = useInitialData(token);
-  const selectedStockId = watch("originStockId") || watch("destinationStockId") || null;
+  const selectedStockId = watch("originStockId") ?? null;
 
 const {
   searchProducts,
