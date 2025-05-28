@@ -553,7 +553,9 @@
     "register": "Registrar",
     "registering": "Registrando...",
     "uploadImage": "Subir imagen",
-    "changeImage": "Cambiar imagen"
+    "changeImage": "Cambiar imagen",
+    "searching": "Buscando..."
+    
   },
 
   "placeholder":{
@@ -564,7 +566,8 @@
     "phone": "Ingrese el número de teléfono",
     "exampleEmail": "ejemplo@gmail.com",
     "select": "Seleccionar",
-    "selectSpecieFirst": "Debes seleccionar una especie primero"
+    "selectSpecieFirst": "Debes seleccionar una especie primero",
+    "details": "Ingrese los detalles"
 
   },
   "error": {
@@ -583,8 +586,11 @@
     "noEmpty": "El campo no puede ser vacío",
     "invalidResponse":"Respuesta inválida de la API",
     "errorUpdatePet": "Error al actualizar la mascota",
-    "noImage": "Sin imagen"
-
+    "noImage": "Sin imagen",
+    "errorLoadSchedule": "Error al cargar horarios",
+    "noAvailabilityHour":"No hay horarios disponibles para esta fecha",
+    "notFoundPets": "No se encontraron mascotas",
+    "notFoundServices": "No se encontraron servicios"
   },
   "profileTabs": {
     "myProfile": "Mis datos",
@@ -640,6 +646,49 @@
     "services": "Servicios"
 
   },
+  "appointmentForm": {
+    "selectPet": "Seleccionar mascota",
+    "selectService": "Seleccionar servicio/s",
+    "selectEmployee": "Seleccionar empleado",
+    "selectDate": "Fecha de la cita",
+    "details": "Detalles de la cita",
+    "selectHour": "Seleccionar horario de la cita",
+    "employeeSelected": "Empleado",
+    "workPosition": "Puesto",
+    "owner": "Dueño",
+    "petSelected": "Mascota",
+    "race": "Raza",
+    "serviceSelected": "Servicio",
+    "price": "Precio",
+    "title": "Agendar cita",
+    "description": "Ingresa los datos para agendar tu cita veterinaria",
+    "availabilityHour": "Horario disponible",
+    "otherService": "Selecciona otro servicio",
+    "dateSelected": {
+      "date": "Fecha",
+      "hour": "Hora"
+    },
+    "employeeSelectedd":{
+      "employee": "Encargado",
+      "workPosition": "Puesto"
+    },
+    "selectedPet": {
+      "pet": "Mascota",
+      "race": "Raza"
+    },
+    "selectedService": {
+      "service" : "Servicio: {service}",
+      "price": "Precio: {price} Gs."
+    },
+    "employeeSelect": {
+      "select": "Seleccionar un empleado"
+    },
+    "serviceSelect": {
+      "otherService":"Selecciona otro servicio",
+      "selectOneService": "Debes seleccionar al menos un servicio"
+    }
+  },
+
   "pet": {
     "form": {
       "title": "Registro de Mascota",
@@ -677,7 +726,8 @@
   
   "success": {
     "successRegisterPet": "Mascota registrada con éxito",
-    "successUpdatePet": "Mascota actualizada correctamente"
+    "successUpdatePet": "Mascota actualizada correctamente",
+    "successRegisterAppointment": "Cita agendada con éxito"
   },
   "vaccine": {
     "table": {

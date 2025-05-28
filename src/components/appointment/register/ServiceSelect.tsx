@@ -51,10 +51,7 @@ export default function ServiceSelect({
   const debouncedSearchQuery = useDebounce(searchQuery, 2000);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
- const ph = useTranslations("Placeholder");
-  const a = useTranslations("AppointmentForm");
-  const b = useTranslations("Button");
-  const e = useTranslations("Error");
+  const t = useTranslations();
   const { data, loading: isLoading, get } = useFetch<ServiceTypeApiResponse>(
     SERVICE_TYPE,
     token
@@ -120,10 +117,10 @@ export default function ServiceSelect({
             >
               {selectedService ? (
                 <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-start">
-                  {a("otherService")}
+                  {t("appointmentForm.serviceSelect.otherService")}
                 </div>
               ) : (
-                <span>{e("selectOne", {field: "servicio"})}</span>
+                <span>{t("appointmentForm.serviceSelect.selectOneService")}</span>
               )}
               <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
@@ -140,7 +137,7 @@ export default function ServiceSelect({
                 <div className="w-full pb-2">
                   <SearchBar
                     onSearch={handleSearchChange}
-                    placeholder={ph("getBy", {field: "nombre"})}
+                    placeholder={t("search.searchByName")}
                     debounceDelay={500}
                     defaultQuery={searchQuery}
                   />
@@ -149,11 +146,11 @@ export default function ServiceSelect({
 
               {(isLoading || isSearching) ? (
                 <div className="py-6 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
-                  {isSearching ? b("searching") : b("loading")}
+                  {isSearching ? t("button.searching") : t("button.loading")}
                 </div>
               ) : (
                 <>
-                  <CommandEmpty>{e("notFoundField", {field: "servicios"})}</CommandEmpty>
+                  <CommandEmpty>{t("error.notFoundServices")}</CommandEmpty>
                   <CommandGroup>
                     <CommandList className="max-h-[250px] overflow-y-auto">
                       {services.map((service) => (

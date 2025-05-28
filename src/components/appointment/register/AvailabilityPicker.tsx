@@ -27,8 +27,8 @@ export const AvailabilityPicker = ({
   const [loading, setLoading] = useState(false);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
-  const b = useTranslations("Button");
-  const e = useTranslations("Error");
+  const t = useTranslations();
+
 
   useEffect(() => {
     if (!employeeId || !date) return;
@@ -43,7 +43,7 @@ export const AvailabilityPicker = ({
           "error",
           error instanceof Error
             ? error.message
-            : e("errorLoad", {field: "horarios"})
+            : t("error.errorLoadSchedule")
         );
         setSlots([]);
       } finally {
@@ -147,7 +147,7 @@ export const AvailabilityPicker = ({
           <div className="animate-pulse flex items-center">
             <Clock className="h-4 w-4 mr-2 text-myPurple-primary" />
             <p className="text-myPurple-focus/70">
-              {b("loading")}
+              {t("button.loading")}
             </p>
           </div>
         </div>
@@ -176,7 +176,7 @@ export const AvailabilityPicker = ({
           <div className="p-3 bg-myPink-disabled/30 border border-myPink-tertiary rounded-md">
             <p className="text-myPink-focus text-sm flex items-center">
               <Clock className="h-4 w-4 mr-2 text-myPink-primary" />
-              {e("noAvailabilityHour")}
+              {t("error.noAvailabilityHour")}
             </p>
           </div>
         )}
