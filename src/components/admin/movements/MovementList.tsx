@@ -45,9 +45,9 @@ export default function MovementListPage({ token }: Props) {
       <div className="flex justify-between items-center mb-6 w-full">
         <h1 className="text-2xl font-bold">{m("title")}</h1>
         <Button
-          variant="default"
+          variant="outline"
           onClick={() => router.push("/dashboard/movement/register")}
-          className="bg-black text-white hover:bg-gray-800"
+          className="px-6"
         >
           {b("register")}
         </Button>
