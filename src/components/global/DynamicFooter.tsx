@@ -1,11 +1,12 @@
 "use client";
 
 import { useSession } from "next-auth/react";
+import type { Session } from "next-auth";
 import Footer from "./Footer";
 import FooterAdmin from "./FooterAdmin";
 
 interface Props {
-  session: any;
+  session: Session | null;
 }
 
 export default function DynamicFooter({ session: initialSession }: Props) {
