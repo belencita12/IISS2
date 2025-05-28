@@ -8,9 +8,16 @@ export const getByPetId = async (petId: number,token:string,page:number) => {
                 "Authorization": `Bearer ${token}`
             }
         });
+        
+            if (!res.ok) {
+            const errorData = await res.json().catch(() => ({})); 
+            const message = errorData?.message || `Error HTTP: ${res.status}`;
+            throw new Error(message);
+        }
         const data = await res.json();
         return data as VaccineRegistryDataResponse;
     } catch (error) {
-        console.error("Error al obtener vacunas", error);
+        throw error;
+        
     }
 }

@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation"
 import AppointmentListSkeleton from "./skeleton/AppointmentListSkeleton"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { useTranslations } from "next-intl"
 
 interface AppointmentListProps {
   petId: number
@@ -33,11 +34,13 @@ export default function AppointmentList({
     pageSize: 5,
   });
 
+  const t = useTranslations();
+
   const estadoCitaEsp: Record<string, string> = {
-    COMPLETED: "Completado",
-    CANCELLED: "Cancelada",
-    PENDING: "Pendiente",
-    IN_PROGRESS: "En progreso",
+    COMPLETED: t("appointmentStatus.completed"),
+    CANCELLED: t("appointmentStatus.cancelled"),
+    PENDING: t("appointmentStatus.pending"),
+    IN_PROGRESS: t("appointmentStatus.inProgress"),
   };
 
   const estadoColorMap: Record<string, string> = {
@@ -64,8 +67,8 @@ export default function AppointmentList({
         totalItems: data.length,
       }));
       setErrorAppointments(null);
-    } catch (error) {
-      setErrorAppointments("No se pudieron cargar las citas");
+    } catch (error:unknown) {
+      if(error instanceof Error) setErrorAppointments(error.message)
       setAppointments([]);
     } finally {
       setLoadingAppointments(false);
@@ -83,29 +86,29 @@ export default function AppointmentList({
 
   const appointmentColumns: Column<AppointmentData>[] = [
     {
-      header: "Fecha",
+      header: t("appointmentTable.date"),
       accessor: (a) => formatDate(a.designatedDate),
       className: "font-medium",
     },
     {
-      header: "Servicio",
-      accessor: (a) => a.service || (a.services && a.services.length > 0 ? a.services.map(s => s.name).join(", ") : "Sin servicio"),
+      header: t("appointmentTable.services"),
+      accessor: (a) => a.service || (a.services && a.services.length > 0 ? a.services.map(s => s.name).join(", ") : t("error.withoutServices")),
     },
     {
-      header: "Detalle",
-      accessor: (a) => a.details || "Sin detalles",
+      header: t("appointmentTable.details"),
+      accessor: (a) => a.details || t("error.noDetails"),
     },
     {
-      header: "Empleados",
+      header: t("appointmentTable.employee"),
       accessor: (a) =>
         (a.employees && a.employees.length > 0) 
           ? a.employees.map((e) => e.name).join(", ") 
           : a.employee 
             ? a.employee.name 
-            : "Sin asignar",
+            : t("error.noAsigned"),
     },
     {
-      header: "Estado",
+      header: t("appointmentTable.status"),
       accessor: (a) => (
         <Badge
           className={`border ${
@@ -125,7 +128,7 @@ export default function AppointmentList({
       onClick: (appointment: AppointmentData) => {
         router.push(`/user-profile/appointment/${appointment.id}`);
       },
-      label: "Ver detalle",
+      label: t("button.seeDetails"),
     },
   ];
 
@@ -140,12 +143,12 @@ export default function AppointmentList({
           data={appointments}
           columns={appointmentColumns}
           actions={appointmentActions}
-          actionsTitle="Acciones"
+          actionsTitle={t("appointmentTable.actions")}
           pagination={pagination}
           onPageChange={handlePageChange}
           isLoading={loadingAppointments}
           skeleton={<AppointmentListSkeleton />}
-          emptyMessage="Sin citas registradas"
+          emptyMessage={t("appointmentTable.emptyMessage")}
           className="mb-0"
         />
       </CardContent>

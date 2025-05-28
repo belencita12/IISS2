@@ -13,6 +13,7 @@ import GenericPagination from "../global/GenericPagination";
 import PetsGridSkeleton from "./skeleton/PetsGridSkeleton";
 import PetsListSkeleton from "./skeleton/PetsListSkeleton";
 import NotImageNicoPets from "../../../public/NotImageNicoPets.png";
+import { useTranslations } from "next-intl";
 
 // componente para la lista de mascotas
 const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
@@ -25,6 +26,8 @@ const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
   const [isEmpty, setIsEmpty] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+  const t = useTranslations();
 
   const handlePreviousPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
@@ -55,8 +58,8 @@ const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
 
       // Actualizamos el total de páginas
       setTotalPages(response.totalPages);
-    } catch {
-      toast("error", "Error al obtener mascotas");
+    } catch(error) {
+      if(error instanceof Error) toast("error", error.message);
     } finally {
       setLoading(false);
     }
@@ -91,12 +94,12 @@ const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
                 onClick={() => router.back()}
               >
                 <ChevronLeft className="w-4 h-4" />
-                Volver
+                {t("button.toReturn")}
               </Button>
             </div>
             <div className="flex items-center gap-3">
               <PawPrint className="w-8 h-8 text-white" />
-              <h1 className="text-3xl font-bold text-white">Mis Mascotas</h1>
+              <h1 className="text-3xl font-bold text-white">{t("pet.myPets")}</h1>
             </div>
           </div>
         </div>
@@ -109,7 +112,7 @@ const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
             <SearchBar
               onSearch={handleSearch}
               defaultQuery={searchQuery}
-              placeholder="Busca el nombre de tu mascota..."
+              placeholder={t("search.searchByName")}
             />
           </div>
           <div className="w-auto flex gap-2 items-center justify-end">
@@ -143,8 +146,8 @@ const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
         ) : isEmpty ? (
           <div className="flex flex-col items-center justify-center py-16 text-gray-500">
             <PawPrint className="w-16 h-16 mb-4 text-gray-300" />
-            <p className="text-lg font-medium">No hay mascotas registradas</p>
-            <p className="text-sm">Comienza agregando una nueva mascota</p>
+            <p className="text-lg font-medium">{t("pet.table.emptyMessage")}</p>
+            <p className="text-sm">{t("pet.addPet")}</p>
           </div>
         ) : isGridView ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 pb-10">
@@ -152,7 +155,7 @@ const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
               <Card
                 key={pet.id}
                 title={pet.name}
-                description={`${pet.species.name} • ${pet.race.name} • ${pet.sex === "M" ? "Macho" : "Hembra"}`}
+                description={`${pet.species.name} • ${pet.race.name} • ${pet.sex === "M" ? t("pet.details.male") : t("pet.details.female")}`}
                 image={pet.profileImg?.originalUrl || NotImageNicoPets.src}
                 alt={`Imagen de un/a ${pet.species.name}`}
                 imagePosition="top"
@@ -168,7 +171,7 @@ const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
                     className="w-full bg-gradient-to-r from-myPurple-primary to-myPink-primary hover:from-myPurple-hover hover:to-myPink-hover text-white"
                     onClick={() => router.push(`../pet/${pet.id}`)}
                   >
-                    Ver detalles
+                    {t("button.seeDetails")}
                   </Button>
                 </div>
               </Card>
@@ -185,7 +188,7 @@ const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
                   <AvatarImage
                     className="object-cover"
                     src={pet.profileImg?.previewUrl || NotImageNicoPets.src}
-                    alt={pet.name || "Imagen no encontrada"}
+                    alt={pet.name || t("error.noImage")}
                   />
                   <AvatarFallback className="bg-gradient-to-r from-myPurple-primary to-myPink-primary text-white">
                     {pet.name.charAt(0)}
@@ -197,14 +200,14 @@ const PetList = ({ clientId, token }: { clientId: number; token: string }) => {
                     {pet.species.name} • {pet.race.name}
                   </p>
                   <p className="text-sm text-myPurple-primary font-medium">
-                    {pet.sex === "M" ? "Macho" : "Hembra"}
+                    {pet.sex === "M" ? t("pet.details.male") : t("pet.details.female")}
                   </p>
                 </div>
                 <Button
                   onClick={() => router.push(`../pet/${pet.id}`)}
                   className="bg-gradient-to-r from-myPurple-primary to-myPink-primary hover:from-myPurple-hover hover:to-myPink-hover text-white"
                 >
-                  Ver detalles
+                  {t("button.seeDetails")}
                 </Button>
               </div>
             ))}

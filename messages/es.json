@@ -538,6 +538,7 @@
   },
   "button": {
     "edit": "Editar",
+    "editing": "Editando...",
     "save":"Guardar",
     "cancel": "Cancelar",
     "saving": "Guardando...",
@@ -547,7 +548,11 @@
     "schedule": "Agendar",
     "scheduleing": "Agendando...",
     "loading": "Cargando...",
-    "toReturn": "Volver"
+    "toReturn": "Volver",
+    "register": "Registrar",
+    "registering": "Registrando...",
+    "uploadImage": "Subir imagen",
+    "changeImage": "Cambiar imagen"
   },
 
   "placeholder":{
@@ -556,7 +561,10 @@
     "ruc": "Ingrese el RUC",
     "email": "Ingrese el correo electrónico",
     "phone": "Ingrese el número de teléfono",
-    "exampleEmail": "ejemplo@gmail.com"
+    "exampleEmail": "ejemplo@gmail.com",
+    "select": "Seleccionar",
+    "selectSpecieFirst": "Debes seleccionar una especie primero"
+
   },
   "error": {
     "notFound": "No se encontraron datos",
@@ -568,7 +576,13 @@
     "noAsigned": "No asignado",
     "noDetails": "No hay detalles disponibles",
     "notGetData": "No se pudo obtener la información",
-    "notFoundEmployee": "No se encontró empleado"
+    "notFoundEmployee": "No se encontró empleado",
+    "noUpdate": "Ocurrió un error al actualizar los datos",
+    "auth": "Debes estar autenticado para realizar esta acción.",
+    "noEmpty": "El campo no puede ser vacío",
+    "invalidResponse":"Respuesta inválida de la API",
+    "errorUpdatePet": "Error al actualizar la mascota",
+    "noImage": "Sin imagen"
 
   },
   "profileTabs": {
@@ -624,5 +638,62 @@
     "service":"Servicio",
     "services": "Servicios"
 
+  },
+  "pet": {
+    "form": {
+      "title": "Registro de Mascota",
+      "description": "Ingrese los datos de la mascota",
+      "name": "Nombre",
+      "specie": "Animal",
+      "race": "Raza",
+      "weight": "Peso (Kg)",
+      "born": "Fecha de nacimiento",
+      "sex" : "Género",
+      "female": "Hembra",
+      "male": "Macho",
+      "image": "Imagen de tu mascota",
+      "optional": "Opcional"
+    },
+    "details": {
+      "name": "Nombre",
+      "weight": "Peso",
+      "race": "Raza",
+      "born": "Fecha de nacimiento",
+      "specie": "Animal",
+      "sex": "Género",
+      "female": "Hembra",
+      "male": "Macho",
+      "vaccineControl": "Control de vacunas"
+    },
+    "myPets": "Mis mascotas",
+    "addPet": "Comienza agregando una nueva mascota",
+    "table": {
+      "emptyMessage": "No hay mascotas registradas"
+    }
+
+
+  },
+  
+  "success": {
+    "successRegisterPet": "Mascota registrada con éxito",
+    "successUpdatePet": "Mascota actualizada correctamente"
+  },
+  "vaccine": {
+    "table": {
+      "date": "Fecha",
+      "details": "Detalles de la vacuna",
+      "expectedDate": "Fecha prevista",
+      "dosis": "Dosis",
+      "actions": "Acciones",
+      "name": "Nombre",
+      "manufacturer": "Fabricante",
+      "specie": "Especie",
+      "manufacturersVaccine": "Fabricantes de vacunas",
+      "vaccineTitle": "Vacunas",
+      "emptyMessage": "No hay vacunas registradas"
+    }
+  },
+  "search": {
+    "searchByName": "Buscar por nombre..."
   }
 }
