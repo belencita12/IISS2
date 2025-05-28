@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import ProductSearch from "../../purchases/PurchaseItemSearch";
 import ProductList from "../../purchases/PurchaseItems";
 import { useRegisterMovement } from "@/hooks/movements/useRegisterMovements";
-import { useProductSearch } from "@/hooks/purchases/useProductStock";
+import { useProductStock } from "@/hooks/purchases/useProductStock";
 import MovementEmployeeSearch from "../MovementEmployeeSearch";
 import MovementStockSelector from "../MovementStockSelector";
 import { Product } from "@/lib/products/IProducts";
@@ -52,7 +52,7 @@ const {
   setProductQuantity,
   resetSearch,
   isLoading: isLoadingProduct,
-} = useProductSearch(token, selectedStockId);
+} = useProductStock(token, selectedStockId);
 
 
   const {

@@ -2,13 +2,16 @@ import { Product } from "@/lib/products/IProducts";
 import { getStockProducts } from "@/lib/stock/getStockProduct";
 import { toast } from "@/lib/toast";
 import { useCallback, useEffect, useState } from "react";
+import useDebounce from "../useDebounce"; 
 
-export const useProductSearch = (token: string, stockId: number | null) => {
+export const useProductStock = (token: string, stockId: number | null) => {
   const [searchProducts, setSearchProducts] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [quantities, setQuantities] = useState<{ [id: string]: number }>({});
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+
+  const debouncedQuery = useDebounce(searchQuery, 1000); 
 
   const fetchProducts = useCallback(
     async (query: string) => {
@@ -37,13 +40,13 @@ export const useProductSearch = (token: string, stockId: number | null) => {
   );
 
   useEffect(() => {
-    if (searchQuery) {
-      fetchProducts(searchQuery);
+    if (debouncedQuery) {
+      fetchProducts(debouncedQuery);
     } else {
       setSearchProducts([]);
       setHasSearched(false);
     }
-  }, [searchQuery, fetchProducts]);
+  }, [debouncedQuery, fetchProducts]);
 
   const handleSearchProduct = (query: string) => {
     setSearchQuery(query);

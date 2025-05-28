@@ -1,42 +1,27 @@
 import { STOCK_DETAILS_API } from "@/lib/urls";
-import { Product } from "@/lib/products/IProducts";
+import { StockDetailsResponse, StockDetailsData } from "@/lib/stock/IStock";
 
-export interface StockProduct {
-  stockId: number;
-  product: Product;
-  amount: number;
-}
-
-export interface StockDetailResponse {
-  data: StockProduct[];
-  total: number;
-  size: number;
-  prev: boolean;
-  next: boolean;
-  currentPage: number;
-  totalPages: number;
-}
-
+//traerá solo los productos del depósito seleccionado que tengan al menos una unidad disponible
 export const getStockProducts = async (
   stockId: number,
   searchTerm: string,
   token: string
-): Promise<StockProduct[]> => {
+): Promise<StockDetailsData[]> => {
   const url = `${STOCK_DETAILS_API}?productSearch=${encodeURIComponent(
     searchTerm
-  )}&stockId=${stockId}&fromAmount=1&page=1&size=5`;
+  )}&stockId=${stockId}&fromAmount=1&page=1`;
 
-  const res = await fetch(url, {
+  const response = await fetch(url, {
     headers: {
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    cache: "no-store",
   });
 
-  if (!res.ok) {
-    throw new Error("Error al buscar productos por depósito");
+  if (!response.ok) {
+    throw new Error(`Error HTTP: ${response.status}`);
   }
 
-  const data: StockDetailResponse = await res.json();
+  const data: StockDetailsResponse = await response.json();
   return data.data;
 };
