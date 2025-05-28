@@ -1,4 +1,5 @@
 import Image from "next/image";
+import ServiciosBanner from "./ServiciosBanner";
 const services = [
     { name: "Vacunación", Image: "/vac1.jpg" },
     { name: "Peluquería", Image: "/peluq1.jpg" },
@@ -7,20 +8,21 @@ const services = [
 
 export default function Services() {
     return (
-        <>
-            <section className="flex items-center gap-5 py-5 bg-white">
-                <Image
-                    src="/veterinarios1.jpg"
-                    alt="Service"
-                    width={150}
-                    height={150}
-                    className="object-contain rounded-md aspect-square sm:w-[25%] w-[40%]"
-                />
-                <div className="text-left flex flex-col gap-5 flex-1">
-                    <h2 className="sm:text-3xl text-xl font-bold text-myPurple-primary">Nuestros servicios</h2>
-                    <p className="text-gray-600">
-                        Ofrecemos los siguiente servicios.
-                    </p>
+        <div className="flex flex-col w-full">
+            <section className="relative flex flex-col sm:flex-row gap-5 py-5 bg-white w-full">
+                <div className="sm:w-1/4 w-full sticky top-0">
+                    <Image
+                        src="/veterinarios1.jpg"
+                        alt="Service"
+                        width={150}
+                        height={150}
+                        className="object-contain rounded-md aspect-square w-full h-full"
+                    />
+                </div>
+                <div className="sm:w-3/4 w-full relative">
+                    <div className="absolute inset-0">
+                        <ServiciosBanner />
+                    </div>
                 </div>
             </section>
             <section className="flex sm:flex-row flex-col items-center justify-between py-10 bg-white gap-4">
@@ -37,6 +39,6 @@ export default function Services() {
                     </div>
                 ))}
             </section>
-        </>
+        </div>
     );
 }

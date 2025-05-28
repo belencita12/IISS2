@@ -9,9 +9,7 @@ export default async function HomePublic() {
   return (
     <div className="sm:px-[6.5%] px-5 max-w-full overflow-hidden">
       <Hero />
-      <ServiciosBanner />
       <Services />
-      <ProductosBanner />
       <Products />
       <Image
         src="/fin3.jpg"

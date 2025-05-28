@@ -1,4 +1,5 @@
 import Image from "next/image";
+import ProductosBanner from "./ProductosBanner";
 const products = [
   { name: "Alimentos", image: "/veterinaria6.png" },
   { name: "Higiene", image: "/hig1.jpg" },
@@ -7,20 +8,21 @@ const products = [
 
 export default function Products() {
   return (
-    <div>
-      <section className="flex items-center py-5 bg-white gap-5">
-        <Image
-          src="/productos9.jpg"
-          alt="Productos"
-          width={150}
-          height={150}
-          className="object-contain rounded-md aspect-square sm:w-[25%] w-[40%]"
-        />
-        <div className="text-left flex flex-col gap-5 flex-1">
-          <h2 className="sm:text-3xl text-xl font-bold mb-4 text-myPurple-primary">Nuestros productos</h2>
-          <p className="text-gray-600">
-            Nuestros productos.
-          </p>
+    <div className="flex flex-col w-full">
+      <section className="relative flex flex-col sm:flex-row gap-5 py-5 bg-white w-full">
+        <div className="sm:w-1/4 w-full sticky top-0">
+          <Image
+            src="/productos9.jpg"
+            alt="Productos"
+            width={150}
+            height={150}
+            className="object-contain rounded-md aspect-square w-full h-full"
+          />
+        </div>
+        <div className="sm:w-3/4 w-full relative">
+          <div className="absolute inset-0">
+            <ProductosBanner />
+          </div>
         </div>
       </section>
       <section className="flex sm:flex-row flex-col items-center justify-between w-full py-10 bg-white gap-4">
