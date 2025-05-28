@@ -41,7 +41,8 @@
     "male": "Macho",
     "female": "Hembra",
     "revert": "Revertir",
-    "reversing": "Revirtiendo..."
+    "reversing": "Revirtiendo...",
+    "refresh": "Reintentar"
   },
   "Success": {
     "success": "Éxito",
@@ -554,7 +555,8 @@
     "registering": "Registrando...",
     "uploadImage": "Subir imagen",
     "changeImage": "Cambiar imagen",
-    "searching": "Buscando..."
+    "searching": "Buscando...",
+    "updating": "Actualizando..."
     
   },
 
@@ -567,7 +569,8 @@
     "exampleEmail": "ejemplo@gmail.com",
     "select": "Seleccionar",
     "selectSpecieFirst": "Debes seleccionar una especie primero",
-    "details": "Ingrese los detalles"
+    "details": "Ingrese los detalles",
+    "tag": "Etiqueta"
 
   },
   "error": {
@@ -590,7 +593,10 @@
     "errorLoadSchedule": "Error al cargar horarios",
     "noAvailabilityHour":"No hay horarios disponibles para esta fecha",
     "notFoundPets": "No se encontraron mascotas",
-    "notFoundServices": "No se encontraron servicios"
+    "notFoundServices": "No se encontraron servicios",
+    "errorLoadProducts": "Error al cargar productos",
+    "notFoundProducts": "No se encontraron productos",
+    "errorUnknown": "Error desconocido"
   },
   "profileTabs": {
     "myProfile": "Mis datos",
@@ -746,5 +752,32 @@
   },
   "search": {
     "searchByName": "Buscar por nombre..."
+  },
+  "productCatalog": {
+    "selectedTags": "Etiquetas seleccionadas:",
+    "searchProducts":"Buscar Productos",
+    "productCard" : {
+      "price": "{price} Gs."
+    }
+    
+  },
+  "filters": {
+    "title": "Filtros",
+    "warning": {
+      "minPrice": "El precio mínimo no puede ser 0. Por favor ingrese un valor mayor.",
+      "maxPrice": "El precio máximo no puede ser 0. Por favor ingrese un valor mayor.",
+      "priceError": "El precio máximo debe ser mayor o igual al precio mínimo.",
+      "notFoundFilteredProducts": "No hay productos que coincidan con los filtros seleccionados. Intenta modificar tus criterios de búsqueda."
+    },
+    "allFiltersDeleted": "Todos los filtros han sido eliminados",
+    "delete": {
+      "label": "Eliminar etiqueta {tag}",
+      "clearAll": "Limpiar todas",
+      "clear":"Limpiar todo",
+      "clearAllFilters": "Limpiar todos los filtros"
+    },
+    "category": "Categoría",
+    "price": "Precio",
+    "tags": "Etiquetas"
   }
 }

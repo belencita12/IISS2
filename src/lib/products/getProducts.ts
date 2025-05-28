@@ -24,10 +24,11 @@ export const getProducts = async (
   try {
     const response = await fetch(url, { headers });
 
-    if (!response.ok) {
-      const errorResponse = await response.json();
-      throw new Error(errorResponse.message || "Ocurrió un error. Intenta nuevamente.");
-    }
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({})); 
+            const message = errorData?.message || `Error HTTP: ${response.status}`;
+            throw new Error(message);
+        }
 
     return await response.json();
   } catch (error) {
