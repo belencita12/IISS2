@@ -72,7 +72,7 @@ export default function ClientAppointmentHelp({
       title: "Clientes",
       description: "Gestión de clientes y sus mascotas",
       questions: clientQuestions.filter(filter),
-      videoId: "5-CikbYpatg"
+      videoId: "C1hcquSQ1lc"
     },
     {
       icon: <CalendarIcon />,
