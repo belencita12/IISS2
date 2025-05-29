@@ -13,8 +13,10 @@ export default async function Page({ params, }: { params: Promise<{ id: string }
   const token = session.user.token;
 
   return (
-      <div className="space-y-4">
+    <div className="flex justify-center">
+      <div className="w-4/5 space-y-4">
         <DepositDetails token={token} stockId={id} />
       </div>
+    </div>
   );
 }
