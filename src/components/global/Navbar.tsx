@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import LogoutButton from "./LogoutButton";
-import { SessionProvider, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import NavbarSkeleton from "../skeleton/NavbarSkeleton";
 import { usePathname } from "next/navigation";
 
@@ -143,7 +143,7 @@ export function Navbar({ links }: NavbarProps) {
               >
                 Mi Perfil
               </Link>
-              
+
               <div className="mt-4 w-full flex justify-center">
                 <LogoutButton />
               </div>
@@ -152,13 +152,5 @@ export function Navbar({ links }: NavbarProps) {
         </nav>
       )}
     </header>
-  );
-}
-
-export default function NavbarWrapped({ links }: NavbarProps) {
-  return (
-    <SessionProvider>
-      <Navbar links={links} />
-    </SessionProvider>
   );
 }

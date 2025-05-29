@@ -228,11 +228,11 @@ const ProductCatalog = ({ token }: { token?: string }) => {
         <div className="bg-gray-50 min-h-screen py-6 px-4 relative">
             {isFiltering && (
                 <>
-                    <div className="fixed inset-0 z-40 bg-white bg-opacity-10 pointer-events-auto" />
+                    <div className="fixed inset-0 z-40 bg-gray-50 bg-opacity-10 pointer-events-auto" />
                     <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
-                        <div className="bg-white/90 rounded-full shadow-md py-2 px-4 flex items-center gap-2 border border-gray-100">
-                            <RefreshCw className="w-4 h-4 text-blue-500 animate-spin" />
-                            <p className="text-sm text-gray-600">
+                        <div className="bg-gray-50/90 rounded-full shadow-md py-2 px-4 flex items-center gap-2 border border-gray-100">
+                            <RefreshCw className="w-4 h-4 text-myPurple-tertiary animate-spin" />
+                            <p className="text-sm text-myPurple-tertiary">
                                 {t("updating")}
                             </p>
                         </div>
@@ -241,15 +241,15 @@ const ProductCatalog = ({ token }: { token?: string }) => {
             )}
 
             <div className="max-w-7xl mx-auto space-y-6">
-                <h1 className="text-3xl font-bold mb-4">{t("title")}</h1>
+                <h1 className="text-3xl font-bold mb-4 text-myPurple-primary">{t("searchProducts")}</h1>
                 <div className="w-full mx-auto bg-gray-50 py-2">
                     <SearchBar onSearch={handleSearch} />
 
                     {selectedTags.length > 0 && (
                         <div className="mt-4 mb-2">
                             <div className="flex items-center gap-2 mb-2">
-                                <Tag className="h-4 w-4 text-blue-500" />
-                                <span className="text-sm font-medium text-gray-700">
+                                <Tag className="h-5 w-5 text-myPurple-primary" />
+                                <span className="text-md font-medium text-black">
                                     {t("selectedTags")}
                                 </span>
                             </div>
@@ -257,12 +257,12 @@ const ProductCatalog = ({ token }: { token?: string }) => {
                                 {selectedTags.map((tag) => (
                                     <div
                                         key={tag}
-                                        className="bg-blue-50 border border-blue-100 text-blue-700 text-xs font-medium px-2.5 py-1 rounded-md flex items-center gap-1.5 transition-colors hover:bg-blue-100"
+                                        className="bg-myPink-tertiary bg-opacity-10 border border-myPink-secondary border-opacity-20 text-myPurple-primary text-sm font-medium px-2.5 py-1 rounded-md flex items-center gap-1.5 transition-colors hover:bg-myPink-tertiary hover:bg-opacity-20"
                                     >
                                         <span>{tag}</span>
                                         <button
                                             onClick={() => handleRemoveTag(tag)}
-                                            className="inline-flex items-center justify-center rounded-full w-4 h-4 bg-blue-200 text-blue-700 hover:bg-blue-300 transition-colors"
+                                            className="inline-flex items-center justify-center rounded-full w-4 h-4 bg-myPink-tertiary bg-opacity-20 text-myPurple-tertiary hover:bg-myPink-tertiary hover:bg-opacity-30 transition-colors"
                                             disabled={isFiltering}
                                             aria-label={`Eliminar etiqueta ${tag}`}
                                         >
@@ -270,24 +270,22 @@ const ProductCatalog = ({ token }: { token?: string }) => {
                                         </button>
                                     </div>
                                 ))}
-                                {selectedTags.length > 1 && (
-                                    <button
-                                        onClick={() => setSelectedTags([])}
-                                        className="text-xs text-gray-500 hover:text-gray-700 hover:underline px-2 py-1"
-                                        disabled={isFiltering}
-                                    >
-                                        {t("clearAll")}
-                                    </button>
-                                )}
+                                <button
+                                    onClick={() => setSelectedTags([])}
+                                    className="text-xs text-myPurple-tertiary hover:text-myPink-tertiary hover:underline px-2 py-1"
+                                    disabled={isFiltering}
+                                >
+                                    {t("clearAll")}
+                                </button>
                             </div>
                         </div>
                     )}
                 </div>
 
                 <div className="flex flex-col lg:flex-row gap-6">
-                    <aside className="w-full lg:w-[30%] bg-white rounded-lg border shadow-sm p-5 space-y-5 h-fit max-h-screen overflow-auto">
+                    <aside className="w-full lg:w-[30%] bg-gray-50 rounded-lg border shadow-sm p-5 space-y-5 h-fit max-h-screen overflow-auto">
                         <div className="flex items-center justify-between mb-2">
-                            <h2 className="text-lg font-semibold mb-[10px]">
+                            <h2 className="text-lg font-semibold mb-[10px] text-myPurple-primary">
                                 {t("filters")}
                             </h2>
                             {hasActiveFilters && (
@@ -295,21 +293,21 @@ const ProductCatalog = ({ token }: { token?: string }) => {
                                     variant="ghost"
                                     size="sm"
                                     onClick={handleClearAllFilters}
-                                    className="text-xs h-8 px-2 text-gray-500 hover:text-gray-700"
+                                    className="text-xs h-8 px-2 text-myPurple-tertiary hover:text-myPink-tertiary"
                                     disabled={isFiltering}
                                 >
                                     {t("clear")}
                                 </Button>
                             )}
                         </div>
-                        <label>{t("category")}</label>
+                        <label className="text-myPink-primary">{t("category")}</label>
                         <CategoryFilter
                             category={inputValues.category}
                             onCategoryChange={handleCategoryChange}
                             onClearCategory={handleClearCategory}
                         />
                         <br />
-                        <label>{t("price")}</label>
+                        <label className="text-myPink-primary">{t("price")}</label>
                         <NumericFilter
                             label=""
                             minValue={inputValues.minPrice}
@@ -322,7 +320,7 @@ const ProductCatalog = ({ token }: { token?: string }) => {
                         />
 
                         <div>
-                            <label className="block text-sm font-medium mb-2">
+                            <label className="block text-sm font-medium mb-2 text-myPink-primary">
                                 {t("tags")}
                             </label>
                             <TagFilter
@@ -349,25 +347,24 @@ const ProductCatalog = ({ token }: { token?: string }) => {
                                             }
                                             ctaText={t("seeDetails")}
                                             ctaLink={`/shop/product/${product.id}`}
-
                                             tags={product.tags}
                                         />
                                     ))}
                                 </div>
                             </>
                         ) : (
-                            <div className="flex flex-col items-center justify-center lg:w-[970px] bg-white border rounded-lg shadow-sm p-10 text-center min-h-[400px]">
-                                <SearchX className="w-16 h-16 text-gray-300 mb-4" />
-                                <h3 className="text-xl font-medium text-gray-700 mb-2">
+                            <div className="flex flex-col items-center justify-center lg:w-[970px] bg-gray-50 border rounded-lg shadow-sm p-10 text-center min-h-[400px]">
+                                <SearchX className="w-16 h-16 text-myPurple-tertiary opacity-30 mb-4" />
+                                <h3 className="text-xl font-medium text-myPurple-tertiary mb-2">
                                     {t("notFoundProducts")}
                                 </h3>
-                                <p className="text-gray-500 max-w-md mb-6">
+                                <p className="text-myPurple-tertiary opacity-70 max-w-md mb-6">
                                     {t("notFoundFilteredProducts")}
                                 </p>
                                 {hasActiveFilters && (
                                     <Button
                                         onClick={handleClearAllFilters}
-                                        className="flex items-center"
+                                        className="flex items-center text-myPurple-tertiary hover:text-myPink-tertiary"
                                     >
                                         <Filter className="w-4 h-4 mr-2" />
                                         {t("clearAllFilters")}
