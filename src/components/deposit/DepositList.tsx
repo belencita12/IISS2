@@ -91,7 +91,7 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
 
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold mb-4">{s("title")}</h2>
-        <Button variant="outline" onClick={handleAddDeposit} className="px-6">
+        <Button variant="outline" className="px-6" onClick={handleAddDeposit}>
           {b("register")}
         </Button>
       </div>
@@ -117,25 +117,24 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
                   if (selected) {
                     setSelectedDeposit(selected);
                     setIsModalOpen(true);
+                }
+              }}
+              onDelete={async (id) => {
+                try {
+                  const success = await deleteStockById(id, token);
+                  if (!success) {
+                    toast("error", e("noDelete", {field: deposit.name}));
+                    return;
                   }
-                }}
-                onDelete={async (id) => {
-                  try {
-                    const success = await deleteStockById(id, token);
-                    if (!success) {
-                      toast("error", "No se pudo eliminar ${deposit.name}");
-                      return;
-                    }
 
-                    toast("success", `${deposit.name} eliminado correctamente`);
-                    showDeposits(currentPage, token, searchTerm);
-                  } catch (error: unknown) {
-                    toast("error", error instanceof Error ? error.message : "No se pudo eliminar ${deposit.name}");
-                  }
-                }}
-              />
-            ))
-          )}
+                  toast("success", sc("successDelete", {field: deposit.name}));
+                  showDeposits(currentPage, token, searchTerm);
+                } catch (error : unknown) {
+                  toast("error", error instanceof Error ? error.message : e("noDelete", {field: deposit.name}));
+                }
+              }}
+            />)
+          ))}
         </div>
       )}
 
