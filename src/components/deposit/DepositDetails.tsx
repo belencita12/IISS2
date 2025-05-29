@@ -117,7 +117,7 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
   };
 
   return (
-    <div className="w-full mx-auto p-4">
+    <div className="max-w-7xl mx-auto p-4">
       <div className="mb-2 mt-2">
         <Button
           variant="outline"
