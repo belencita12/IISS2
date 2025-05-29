@@ -3,16 +3,11 @@ import { IReceiptResponse } from "./IReceipt";
 
 export async function getReceipts(
   token: string,
-  params?: Record<string, string | number>
+  queryParamsStr?: string
 ): Promise<IReceiptResponse> {
-  const queryParams: Record<string, string | number> = {
-    ...params,
-    page: params && "page" in params ? params.page : 1,
-  };
+  const url = `${RECEIPT_API}${queryParamsStr ? `?${queryParamsStr}` : ""}`;
 
-  const query = "?" + new URLSearchParams(queryParams as Record<string, string>).toString();
-
-  const res = await fetch(`${RECEIPT_API}${query}`, {
+  const res = await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
