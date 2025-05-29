@@ -10,7 +10,6 @@ import { formatDate } from "@/lib/utils";
 import { toast } from "@/lib/toast";
 import { getReceiptDetailPdf } from "@/lib/receipts/getReceiptDetailPdf";
 import PrintButton from "@/components/global/PrintButton";
-import { Receipt } from "lucide-react";
 import ReceiptDetailSkeleton from "./skeleton/ReceiptDetailSkeleton";
 
 interface ReceiptDetailProps {
@@ -92,7 +91,7 @@ export default function ReceiptDetail({ id, token }: ReceiptDetailProps) {
 
   return (
     <div className="relative">
-      <div className="absolute left-4 top-6 mx-4">
+      <div className="flex items-center justify-between mt-6 mx-4">
         <Button
           variant="outline"
           onClick={() => {
@@ -103,15 +102,15 @@ export default function ReceiptDetail({ id, token }: ReceiptDetailProps) {
         >
           Volver
         </Button>
+        <div
+          className={hasNavigatedBack ? "pointer-events-none opacity-50" : ""}
+        >
+          <PrintButton onClick={handlePrintReceipt} isLoading={isPrinting} />
+        </div>
       </div>
       <div className="p-6 max-w-4xl mx-auto">
         <div className="flex items-center justify-between mt-12 mb-6">
           <h1 className="text-2xl font-bold">Detalle del Recibo</h1>
-          <div
-            className={hasNavigatedBack ? "pointer-events-none opacity-50" : ""}
-          >
-            <PrintButton onClick={handlePrintReceipt} isLoading={isPrinting} />
-          </div>
         </div>
         <div className="bg-white shadow rounded-lg p-6 space-y-6">
           <section className="space-y-4">
