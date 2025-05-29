@@ -18,6 +18,8 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/lib/toast";
 import { useTranslations } from "next-intl";
 
+const MAX_TAGS_SELECTED = 5;
+
 const ProductCatalog = ({ token }: { token?: string }) => {
     const [products, setProducts] = useState<Product[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -132,6 +134,13 @@ const ProductCatalog = ({ token }: { token?: string }) => {
     };
 
     const onTagsChange = (tags: string[]) => {
+        if (tags.length > MAX_TAGS_SELECTED) {
+            toast(
+                "warning",
+                `Solo puedes seleccionar hasta ${MAX_TAGS_SELECTED} etiquetas para filtrar.`
+            );
+            return;
+        }
         setSelectedTags(tags);
         setCurrentPage(1);
     };

@@ -9,7 +9,7 @@ export const Header = ({ fullName }: HeaderProps) => {
     <header className="bg-[#606060] p-2 xs:p-3 sm:p-4 md:p-6 flex items-center text-white w-full">
       <Avatar className="flex-shrink-0 w-8 h-8 xs:w-10 xs:h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 ml-1 xs:ml-2 sm:ml-6 md:ml-20">
         <AvatarImage
-          src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+          src="/blank-profile-picture-973460_1280.png"
           alt="Usuario"
         />
       </Avatar>

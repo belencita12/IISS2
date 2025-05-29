@@ -75,7 +75,7 @@ export default function ProductDetail({ token }: ProductDetailProps) {
       toast("error", error?.message || e("noDelete", {field: "producto"}));
     } else {
       toast("success", s("successDelete", {field: "Producto"}));
-      router.back();
+      router.push('/dashboard/products')
     }
     setIsDeleteModalOpen(false);
   };

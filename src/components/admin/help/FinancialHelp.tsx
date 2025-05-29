@@ -134,24 +134,28 @@ export default function FinancialHelp({ searchTerm }: FinancialHelpProps) {
       title: "Compras",
       description: "Gestión de compras a proveedores",
       questions: financialQuestions.compras.filter(filter),
+      videoId: "R3lpahy9PdM"
     },
     {
       icon: <HandCoinsIcon />,
       title: "Ventas",
       description: "Proceso de ventas y facturación",
       questions: financialQuestions.ventas.filter(filter),
+      videoId: "hWgGIQ-gLEc"
     },
     {
       icon: <FileIcon />,
       title: "Facturas",
       description: "Gestión de documentos fiscales",
       questions: financialQuestions.facturas.filter(filter),
+      videoId: "792dwdK3_4k"
     },
     {
       icon: <BookUserIcon />,
       title: "Empleados",
       description: "Gestión de personal y usuarios del sistema",
       questions: financialQuestions.empleados.filter(filter),
+      videoId: "38N5B9hITEw"
     },
   ].filter((card) => card.questions.length > 0);
 
@@ -169,6 +173,7 @@ export default function FinancialHelp({ searchTerm }: FinancialHelpProps) {
           description={card.description}
           questions={card.questions}
           isSingle={false}
+          videoId={card.videoId}
         />
       ))}
     </div>
