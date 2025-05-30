@@ -57,6 +57,12 @@ const settingsOptions = [
     icon: "🧾",
     link: "/dashboard/settings/receipts",
   },
+  {
+    name: "Timbrado",
+    description: "Gestionar el listado de timbrado con depósitos y fechas.",
+    icon: "📋",
+    link: "/dashboard/settings/stamped",
+  },
 ];
 
 export function SettingsList() {

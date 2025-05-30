@@ -1,111 +1,40 @@
 "use client";
 
-type InputProps = {
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+
+interface Props {
   id: string;
-  required?: boolean;
+  type: "formattedNumber";
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
   className?: string;
-  type: "text" | "number" | "formattedNumber";
-  placeholder: string;
-  value?: string | number;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  error?: string;
-  disabled?: boolean;
-};
+  label?: string;
+}
 
-export default function NumericInput({
-  id,
-  required,
-  className = "",
-  type,
-  placeholder,
-  value,
-  onChange,
-  onKeyDown,
-  error,
-  disabled,
-}: InputProps) {
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (
-      !/[0-9,]/.test(e.key) &&
-      e.key !== "Backspace" &&
-      e.key !== "Tab" &&
-      e.key !== "ArrowLeft" &&
-      e.key !== "ArrowRight" &&
-      e.key !== "Delete"
-    ) {
-      e.preventDefault();
-    }
+export function NumericInput({ id, type, value, onChange, placeholder, className, label }: Props) {
+  const formatNumber = (value: string) => {
+    return value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
 
-  const handleFormattedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value;
-    const cleaned = raw.replace(/[^\d,]/g, "");
-    const parts = cleaned.split(",");
-  
-    if (parts.length > 2) return;
-  
-    const integerPart = parts[0].replace(/\./g, "");
-    const decimalPart = parts[1] || "";
-  
-    if (integerPart === "") {
-      onChange?.({
-        ...e,
-        target: { ...e.target, value: "" },  // Mantenemos el valor vacío
-      });
-      return;
-    }
-  
-    const cleanValue =
-      decimalPart !== ""
-        ? `${parseInt(integerPart)}.${decimalPart}`
-        : `${parseInt(integerPart)}`;
-  
-    onChange?.({
-      ...e,
-      target: { ...e.target, value: cleanValue },
-    });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formattedValue = formatNumber(e.target.value);
+    onChange({ ...e, target: { ...e.target, value: formattedValue } });
   };
-
-  const getFormattedValue = () => {
-    if (value === undefined || value === "" || value === 0) return "";
-    const [intPart, decPart] = String(value).split(".");
-    const formatted = Number(intPart).toLocaleString("es-PY");
-    return decPart ? `${formatted},${decPart}` : formatted;
-  };
-
-  const val = type === "formattedNumber" ? getFormattedValue() : value;
-
-  const inputBaseClasses =
-    "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm";
 
   return (
-    <div>
-      <input
+    <div className="space-y-2">
+      {label && <Label htmlFor={id}>{label}</Label>}
+      <Input
         id={id}
-        name={id}
-        type={type === "formattedNumber" ? "text" : type}
-        placeholder={disabled ? "" : placeholder}
-        disabled={disabled}
-        value={val}
-        required={required}
-        min={type === "number" ? 1 : undefined}
-        onChange={type === "formattedNumber" ? handleFormattedChange : onChange}
-        onKeyDown={
-          type === "formattedNumber" || type === "number"
-            ? handleKeyDown
-            : onKeyDown
-        }
-        className={`${inputBaseClasses} ${className} ${
-          error ? "border-red-500" : ""
-        }`}
-        maxLength={20}
+        type="text"
+        value={value}
+        onChange={handleChange}
+        placeholder={placeholder}
+        className={cn("w-full", className)}
       />
-      {error && (
-        <p title="mensaje de error" className="text-red-500 text-sm mt-1">
-          {error}
-        </p>
-      )}
     </div>
   );
 }
