@@ -37,7 +37,17 @@ export default function DateFilter({
             const value = e.target.value;
             setDateFrom(value);
           }}
+          min="1900-01-01"
           max={new Date().toISOString().split("T")[0]}
+          onBlur={(e) => {
+            const min = "1900-01-01";
+            const max = new Date().toISOString().split("T")[0];
+            let value = e.target.value;
+            if (value && (value < min || value > max)) {
+              value = value < min ? min : max;
+              setDateFrom(value);
+            }
+          }}
         />
       </div>
       <div className="space-y-2">
@@ -51,7 +61,17 @@ export default function DateFilter({
           )}
           value={to || ""}
           onChange={(e) => setDateTo(e.target.value)}
+          min="1900-01-01"
           max={new Date().toISOString().split("T")[0]}
+          onBlur={(e) => {
+            const min = "1900-01-01";
+            const max = new Date().toISOString().split("T")[0];
+            let value = e.target.value;
+            if (value && (value < min || value > max)) {
+              value = value < min ? min : max;
+              setDateTo(value);
+            }
+          }}
         />
         {toDateError && (
           <p className="text-red-600 text-sm mt-1">{toDateError}</p>

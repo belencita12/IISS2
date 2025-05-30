@@ -110,6 +110,17 @@ export default function VaccineRegistryDateFilter({
                 setToDate("");
               }
             }}
+            min="1900-01-01"
+            max={new Date().toISOString().split("T")[0]}
+            onBlur={(e) => {
+              const min = "1900-01-01";
+              const max = new Date().toISOString().split("T")[0];
+              let value = e.target.value;
+              if (value && (value < min || value > max)) {
+                value = value < min ? min : max;
+                setFromDate(value);
+              }
+            }}
             className="w-full border px-3 py-2 rounded pr-10"
           />
           {fromDate && (
@@ -134,6 +145,16 @@ export default function VaccineRegistryDateFilter({
             value={toDate}
             onChange={(e) => setToDate(e.target.value)}
             min={fromDate || undefined}
+            max={new Date().toISOString().split("T")[0]}
+            onBlur={(e) => {
+              const min = "1900-01-01";
+              const max = new Date().toISOString().split("T")[0];
+              let value = e.target.value;
+              if (value && (value < min || value > max)) {
+                value = value < min ? min : max;
+                setToDate(value);
+              }
+            }}
             className={clsx(
               "w-full border px-3 py-2 rounded pr-10",
               errorMessage && "border-red-500"
