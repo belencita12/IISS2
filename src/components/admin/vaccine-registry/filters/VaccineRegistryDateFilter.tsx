@@ -111,10 +111,10 @@ export default function VaccineRegistryDateFilter({
               }
             }}
             min="1900-01-01"
-            max={new Date().toISOString().split("T")[0]}
+            max={(() => { const d = new Date(); d.setFullYear(d.getFullYear() + 5); return d.toISOString().split('T')[0]; })()}
             onBlur={(e) => {
               const min = "1900-01-01";
-              const max = new Date().toISOString().split("T")[0];
+              const max = (() => { const d = new Date(); d.setFullYear(d.getFullYear() + 5); return d.toISOString().split('T')[0]; })();
               let value = e.target.value;
               if (value && (value < min || value > max)) {
                 value = value < min ? min : max;
@@ -144,11 +144,11 @@ export default function VaccineRegistryDateFilter({
             type="date"
             value={toDate}
             onChange={(e) => setToDate(e.target.value)}
-            min={fromDate || undefined}
-            max={new Date().toISOString().split("T")[0]}
+            min={fromDate || "1900-01-01"}
+            max={(() => { const d = new Date(); d.setFullYear(d.getFullYear() + 5); return d.toISOString().split('T')[0]; })()}
             onBlur={(e) => {
               const min = "1900-01-01";
-              const max = new Date().toISOString().split("T")[0];
+              const max = (() => { const d = new Date(); d.setFullYear(d.getFullYear() + 5); return d.toISOString().split('T')[0]; })();
               let value = e.target.value;
               if (value && (value < min || value > max)) {
                 value = value < min ? min : max;
