@@ -53,7 +53,7 @@ const StockDetailCard: React.FC<StockDetailCardProps> = ({ product, amount, onCl
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             <div className="flex flex-col">
-              <p className="text-sm text-gray-500">{p("name")}</p>
+              <p className="text-sm text-gray-500">{p("code")}</p>
               <p className="text-sm text-gray-500 mt-2">{p("provider")}</p>
               <p className="text-sm text-gray-500 mt-2">{p("category")}</p>
               <p className="text-sm text-gray-500 mt-2">{p("price")}</p>

@@ -12,7 +12,6 @@ import { deleteStockById } from "@/lib/stock/deleteStockById";
 import GenericPagination from "../global/GenericPagination";
 import DepositListSkeleton from "./skeleton/DepositListSkeleton";
 import { useTranslations } from "next-intl";
-import { FileDiff } from "lucide-react";
 
 interface DepositListProps {
   token?: string;
@@ -92,7 +91,7 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
 
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold mb-4">{s("title")}</h2>
-        <Button className="border border-gray-300 hover:bg-gray-800" onClick={handleAddDeposit}>
+        <Button variant="outline" className="px-6" onClick={handleAddDeposit}>
           {b("register")}
         </Button>
       </div>
@@ -102,17 +101,22 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
       )}
       {!isLoading && (
         <div className="space-y-4">
-          {deposits.map((deposit) => (
-            <DepositCard
-              key={deposit.id}
-              nombre={deposit.name}
-              ubicacion={deposit.address}
-              id={deposit.id}
-              onEdit={(id) => {
-                const selected = deposits.find((d) => d.id === id);
-                if(selected) {
-                  setSelectedDeposit(selected);
-                  setIsModalOpen(true);
+          {deposits.length === 0 ? (
+            <div className="flex flex-col items-center justify-center">
+              <p>No se encontraron depósitos.</p>
+            </div>
+          ) : (
+            deposits.map((deposit) => (
+              <DepositCard
+                key={deposit.id}
+                nombre={deposit.name}
+                ubicacion={deposit.address}
+                id={deposit.id}
+                onEdit={(id) => {
+                  const selected = deposits.find((d) => d.id === id);
+                  if (selected) {
+                    setSelectedDeposit(selected);
+                    setIsModalOpen(true);
                 }
               }}
               onDelete={async (id) => {
@@ -129,7 +133,7 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
                   toast("error", error instanceof Error ? error.message : e("noDelete", {field: deposit.name}));
                 }
               }}
-            />
+            />)
           ))}
         </div>
       )}
