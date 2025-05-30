@@ -54,7 +54,7 @@ export default async function RootLayout({
             <Navbar links={clientLinks} />
             {children}
               {/* Agregado del DynamicFooter*/}
-            <DynamicFooter session={session} />
+            <DynamicFooter />
             <Toaster theme="light" />
 
             <Script
