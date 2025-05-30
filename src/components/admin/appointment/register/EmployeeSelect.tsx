@@ -46,9 +46,7 @@ export default function EmployeeSelect({
 
   const { data, get, loading } = useFetch<EmployeeResponse>("", token);
 
-  const p = useTranslations("Placeholder");
-  const b = useTranslations("Button");
-  const e = useTranslations("Error");
+  const t = useTranslations();
 
   useEffect(() => {
     if (debouncedSearch) {
@@ -77,7 +75,7 @@ export default function EmployeeSelect({
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder={p("name")}
+            placeholder={t("search.searchByName")}
             className="pl-8"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -88,7 +86,7 @@ export default function EmployeeSelect({
               <Command className="rounded-lg border shadow-md">
                 <CommandList>
                   <CommandEmpty>
-                    {loading ? b("loading") : e("notFoundField", { field: "empleados"})}
+                    {loading ? t("button.loading") : t("error.notFoundEmployee")}
                   </CommandEmpty>
                   <CommandGroup>
                     {employees.map((employee) => (

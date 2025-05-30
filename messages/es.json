@@ -556,7 +556,9 @@
     "uploadImage": "Subir imagen",
     "changeImage": "Cambiar imagen",
     "searching": "Buscando...",
-    "updating": "Actualizando..."
+    "updating": "Actualizando...",
+    "finish": "Finalizar",
+    "confirm": "Confirmar"
     
   },
 
@@ -570,7 +572,8 @@
     "select": "Seleccionar",
     "selectSpecieFirst": "Debes seleccionar una especie primero",
     "details": "Ingrese los detalles",
-    "tag": "Etiqueta"
+    "tag": "Etiqueta",
+    "reason": "Ingrese el motivo"
 
   },
   "error": {
@@ -578,6 +581,7 @@
     "noSpecified": "No especificado",
     "unknown": "Desconocido",
     "notGetRuc": "No se pudo obtener el RUC.",
+    "errorRegisterAppointment": "Ocurrió un error al registrar la cita",
     "errorLoadAppointments": "No se pudieron cargar las citas",
     "withoutServices": "Sin servicios",
     "noAsigned": "No asignado",
@@ -596,7 +600,12 @@
     "notFoundServices": "No se encontraron servicios",
     "errorLoadProducts": "Error al cargar productos",
     "notFoundProducts": "No se encontraron productos",
-    "errorUnknown": "Error desconocido"
+    "errorUnknown": "Error desconocido",
+    "errorLimitDate":"Se necesitan fechas límites para generar el reporte",
+    "errorEndDate":"No se puede finalizar una cita antes de su fecha programada",
+    "notFoundAppointments":"No se encontraron citas.",
+    "errorDate": "La fecha hasta no puede ser menor que la fecha desde."
+    
   },
   "profileTabs": {
     "myProfile": "Mis datos",
@@ -675,12 +684,13 @@
       "hour": "Hora"
     },
     "employeeSelectedd":{
-      "employee": "Encargado",
-      "workPosition": "Puesto"
+      "employee": "Encargado: {employee}",
+      "workPosition": "Puesto: {workPosition}"
     },
     "selectedPet": {
-      "pet": "Mascota",
-      "race": "Raza"
+      "pet": "Mascota: {pet}",
+      "race": "Raza: {race}",
+      "owner": "Dueño: {owner}"
     },
     "selectedService": {
       "service" : "Servicio: {service}",
@@ -751,7 +761,8 @@
     }
   },
   "search": {
-    "searchByName": "Buscar por nombre..."
+    "searchByName": "Buscar por nombre...",
+    "searchByNameOrRuc": "Buscar por nombre o ruc del cliente..."
   },
   "productCatalog": {
     "selectedTags": "Etiquetas seleccionadas:",
@@ -778,6 +789,19 @@
     },
     "category": "Categoría",
     "price": "Precio",
-    "tags": "Etiquetas"
+    "tags": "Etiquetas",
+    "date": {
+      "from": "Fecha desde",
+      "to" :"Fecha hasta"
+    },
+    "appointmentStatus": "Estado de la cita",
+    "all": "Todos"
+  },
+  "confirmationModal":{
+    "appointment": {
+      "confirmFinish": "Confirmar finalización",
+      "confirmFinishDescription": "¿Estás seguro de que deseas finalizar la cita?",
+      "cancelTitle": "Cancelar cita"
+    }
   }
 }

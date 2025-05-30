@@ -28,22 +28,22 @@ const AppointmentStatusFilter: React.FC<AppointmentStatusFilterProps> = ({
     });
   };
 
-  const f = useTranslations("Filters")
+  const t = useTranslations();
   return (
     <div className="space-y-2">
-      <Label>{f("statusAppointment")}</Label>
+      <Label>{t("filters.appointmentStatus")}</Label>
       <Select
         value={filters.status ?? "ALL"}
         onValueChange={handleChange}
       >
         <SelectTrigger className="max-w-full ">
-          <SelectValue placeholder="Seleccione estado" />
+          <SelectValue placeholder={t("placeholder.select")}/>
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="ALL">{f("all")}</SelectItem>
-          <SelectItem value="PENDING">{f("pending")}</SelectItem>
-          <SelectItem value="COMPLETED">{f("finished")}</SelectItem>
-          <SelectItem value="CANCELLED">{f("cancelled")}</SelectItem>
+          <SelectItem value="ALL">{t("filters.all")}</SelectItem>
+          <SelectItem value="PENDING">{t("appointmentStatus.pending")}</SelectItem>
+          <SelectItem value="COMPLETED">{t("appointmentStatus.completed")}</SelectItem>
+          <SelectItem value="CANCELLED">{t("appointmentStatus.cancelled")}</SelectItem>
         </SelectContent>
       </Select>
     </div>

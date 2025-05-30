@@ -43,7 +43,7 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
       setLoading(true);
       try {
         const results = await fetchEmployees(page, query, token);
-        if (!results?.data?.length && query) toast("info", e("notFoundField", {field: "empleados"}));
+        if (!results?.data?.length && query) toast("info", err("notFoundField", {field: "empleados"}));
         setData({
           employees: results?.data || [],
           pagination: {

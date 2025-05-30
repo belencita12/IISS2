@@ -27,17 +27,14 @@ import useDebounce from "@/hooks/useDebounce";
 import { downloadFromBlob, normalizeText } from "@/lib/utils";
 import ExportButton from "@/components/global/ExportButton";
 import { getAppointmentReport } from "@/lib/appointment/getAppointmentReport";
-import { unknown } from "zod";
 
 interface AppointmentListProps {
     token: string;
 }
 
 const AppointmentList = ({ token }: AppointmentListProps) => {
-    const a = useTranslations("AppointmentDetail");
-  const b = useTranslations("Button");
-  const e = useTranslations("Error");
-  const ph= useTranslations("Placeholder");
+
+  const t = useTranslations();
 
     const router = useRouter();
     const [filters, setFilters] = useState<AppointmentQueryParams>({
@@ -122,7 +119,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
         if (!from || !to) {
             toast(
                 "error",
-                e("errorLimitDate")
+                t("error.errorLimitDate")
             );
             return;
         }
@@ -160,7 +157,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
             if (appointmentDate > currentDate) {
                 toast(
                     "error",
-                    e("errorEndDate")
+                    t("error.errorEndDate")
                 );
                 return;
             }
@@ -192,7 +189,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
             toast(
                 "success",
                 `Cita ${
-                    modalAction === b("") ? a("completed") : a("canceled")
+                    modalAction === "complete" ? t("appointmentStatus.completed") : t("appointmentStatus.cancelled")
                 } con éxito`
             );
             refresh();
@@ -214,7 +211,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
         <div className="p-4 mx-auto">
             <div className="max-w-8xl mx-auto p-4 space-y-6">
                 <SearchBar
-                    placeholder={ph("getBy", {field: "nombre o ruc del cliente"})}
+                    placeholder={t("search.searchByNameOrRuc")}
                     onSearch={handleSearch}
                 />
                 <div className="flex flex-col md:flex-row gap-4">
@@ -234,7 +231,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
             </div>
 
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-3xl font-bold">{a("title")}</h2>
+                <h2 className="text-3xl font-bold">{t("appointmentTable.title")}</h2>
                 <div className="flex justify-between items-center mb-4">
                     <Button
                         variant="outline"
@@ -243,7 +240,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
                             router.push("/dashboard/appointment/register")
                         }
                     >
-                        {b("schedule")}
+                        {t("button.schedule")}
                     </Button>
                     <ExportButton
                         handleGetReport={handleGetAppointmentReport}
@@ -269,7 +266,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
                             />
                         ))
                     ) : (
-                        <p>{e("notFoundField", {field: "citas"})}</p>
+                        <p>{t("error.notFoundAppointments")}</p>
                     )}
                 </div>
             )}
@@ -287,10 +284,10 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
                     onConfirm={handleConfirmAction}
-                    title={a("titleFinish")}
-          message={a("finishDescription")}
-          confirmText={b("confirm")}
-          cancelText={b("cancel")}
+                    title={t("confirmationModal.appointment.confirmFinish")}
+                    message={t("confirmationModal.appointment.confirmFinishDescription")}
+                    confirmText={t("button.confirm")}
+                    cancelText={t("button.cancel")}
                     isLoading={isProcessing}
                 />
             )}
@@ -299,12 +296,12 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
                 <Modal
                     isOpen={cancelModalOpen}
                     onClose={() => setCancelModalOpen(false)}
-                    title={a("titleCancel")}
+                    title={t("confirmationModal.appointment.cancelTitle")}
                     size="md"
                 >
                     <textarea
                         className="w-full h-32 p-2 border border-gray-300 rounded"
-                        placeholder={ph("reason")}
+                        placeholder={t("placeholder.reason")}
                         value={cancelDescription}
                         onChange={(e) => setCancelDescription(e.target.value)}
                     />
@@ -314,14 +311,14 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
                             onClick={() => setCancelModalOpen(false)}
                             disabled={isProcessing}
                         >
-                            {b("cancel")}
+                            {t("button.cancel")}
                         </Button>
                         <Button
                             className="bg-red-600 text-white px-4 py-2 rounded border hover:bg-red-700"
                             onClick={handleConfirmAction}
                             disabled={isProcessing || !cancelDescription.trim()}
                         >
-                            {isProcessing ? b("canceling") : b("confirm")}
+                            {isProcessing ? t("button.cancelling") : t("button.confirm")}
                         </Button>
                     </div>
                 </Modal>

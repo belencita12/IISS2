@@ -13,10 +13,10 @@ export default function PetSelected({ pet }: PetSelectedProps) {
       <div className="flex items-start gap-3">
         <div>
           <p className="text-myPurple-focus/70 mt-1">
-            {t("appointmentForm.selectedPet.pet")}: {pet.name}
+            {t("appointmentForm.selectedPet.pet", {pet: pet.name})}
           </p>
           <p className="text-myPurple-focus/70 mt-1">
-            {t("appointmentForm.selectedPet.race")}: {pet.race.name}
+            {t("appointmentForm.selectedPet.race", {race: pet.race.name})}
           </p>
         </div>
       </div>
