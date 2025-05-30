@@ -8,17 +8,17 @@ type ServiceSelectedProps = {
 };
 
 export default function ServiceSelected({ service, onRemove }: ServiceSelectedProps) {
-  const a = useTranslations("AppointmentForm");
+  const t = useTranslations();
 
   return (
     <div className="mt-3 p-4 rounded-md bg-gray-100 border border-gray-200 text-myPurple-focus text-sm shadow-sm">
       <div className="flex justify-between items-start gap-3">
         <div>
           <p className="text-myPurple-focus/70">
-            {a("serviceSelected")}: {service.name}
+            {t("appointmentForm.selectedService.service", {service: service.name })}
           </p>
           <p className="text-myPurple-focus/70 mt-1">
-            {a("price")}: {service.price.toLocaleString()} Gs.
+            {t("appointmentForm.selectedService.price", {price : service.price.toLocaleString()})}
           </p>
         </div>
         {onRemove && (

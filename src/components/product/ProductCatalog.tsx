@@ -27,7 +27,7 @@ const ProductCatalog = ({ token }: { token?: string }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isFiltering, setIsFiltering] = useState(false);
-    const t = useTranslations("ProductCatalog");
+    const t = useTranslations();
 
     const [inputValues, setInputValues] = useState({
         category: "",
@@ -56,7 +56,7 @@ const ProductCatalog = ({ token }: { token?: string }) => {
         if (debouncedMinPrice === "0") {
             toast(
                 "warning",
-                "El precio mínimo no puede ser 0. Por favor ingrese un valor mayor."
+                t("filters.warning.minPrice")
             );
             return;
         }
@@ -64,7 +64,7 @@ const ProductCatalog = ({ token }: { token?: string }) => {
         if (debouncedMaxPrice === "0") {
             toast(
                 "warning",
-                "El precio máximo no puede ser 0. Por favor ingrese un valor mayor."
+                 t("filters.warning.maxPrice")
             );
             return;
         }
@@ -72,7 +72,7 @@ const ProductCatalog = ({ token }: { token?: string }) => {
         if (minPrice && maxPrice && Number(minPrice) > Number(maxPrice)) {
             toast(
                 "warning",
-                "El precio máximo debe ser mayor o igual al precio mínimo."
+                 t("filters.warning.priceError")
             );
             return;
         }
@@ -105,15 +105,12 @@ const ProductCatalog = ({ token }: { token?: string }) => {
             setProducts(response.data || []);
             setTotalPages(response.totalPages || 1);
         } catch (err: unknown) {
-            console.error(err);
             if (err instanceof Error) {
                 setError(err.message);
-            } else {
-                setError("Error al obtener los productos.");
             }
             toast(
                 "error",
-                "Error al cargar los productos. Por favor intente nuevamente."
+                 t("error.errorLoadProducts")
             );
         } finally {
             setLoading(false);
@@ -189,7 +186,7 @@ const ProductCatalog = ({ token }: { token?: string }) => {
         setFilters({ category: "", minPrice: "", maxPrice: "", name: "" });
         setSelectedTags([]);
         setCurrentPage(1);
-        toast("info", "Todos los filtros han sido eliminados");
+        toast("info", t("filetrs.allFiltersDeleted"));
     };
 
     const handleRemoveTag = (tag: string) => {
@@ -220,13 +217,13 @@ const ProductCatalog = ({ token }: { token?: string }) => {
                             fetchProducts();
                             toast(
                                 "info",
-                                "Intentando cargar productos nuevamente..."
+                                t("button.loading")
                             );
                         }}
                         className="mx-auto"
                     >
                         <RefreshCw className="w-4 h-4 mr-2" />
-                        {t("Reintentar")}
+                        {t("button.refresh")}
                     </Button>
                 </div>
             </div>
@@ -242,7 +239,7 @@ const ProductCatalog = ({ token }: { token?: string }) => {
                         <div className="bg-gray-50/90 rounded-full shadow-md py-2 px-4 flex items-center gap-2 border border-gray-100">
                             <RefreshCw className="w-4 h-4 text-myPurple-tertiary animate-spin" />
                             <p className="text-sm text-myPurple-tertiary">
-                                {t("updating")}
+                                {t("button.updating")}
                             </p>
                         </div>
                     </div>
@@ -250,7 +247,7 @@ const ProductCatalog = ({ token }: { token?: string }) => {
             )}
 
             <div className="max-w-7xl mx-auto space-y-6">
-                <h1 className="text-3xl font-bold mb-4 text-myPurple-primary">{t("searchProducts")}</h1>
+                <h1 className="text-3xl font-bold mb-4 text-myPurple-primary">{t("productCatalog.searchProducts")}</h1>
                 <div className="w-full mx-auto bg-gray-50 py-2">
                     <SearchBar onSearch={handleSearch} />
 
@@ -259,7 +256,7 @@ const ProductCatalog = ({ token }: { token?: string }) => {
                             <div className="flex items-center gap-2 mb-2">
                                 <Tag className="h-5 w-5 text-myPurple-primary" />
                                 <span className="text-md font-medium text-black">
-                                    {t("selectedTags")}
+                                    {t("productCatalog.selectedTags")}
                                 </span>
                             </div>
                             <div className="flex flex-wrap gap-2">
@@ -273,7 +270,7 @@ const ProductCatalog = ({ token }: { token?: string }) => {
                                             onClick={() => handleRemoveTag(tag)}
                                             className="inline-flex items-center justify-center rounded-full w-4 h-4 bg-myPink-tertiary bg-opacity-20 text-myPurple-tertiary hover:bg-myPink-tertiary hover:bg-opacity-30 transition-colors"
                                             disabled={isFiltering}
-                                            aria-label={`Eliminar etiqueta ${tag}`}
+                                            aria-label={t("filters.delete.label", {tag: tag})}
                                         >
                                             <X className="w-3 h-3" />
                                         </button>
@@ -284,7 +281,7 @@ const ProductCatalog = ({ token }: { token?: string }) => {
                                     className="text-xs text-myPurple-tertiary hover:text-myPink-tertiary hover:underline px-2 py-1"
                                     disabled={isFiltering}
                                 >
-                                    {t("clearAll")}
+                                    {t("filters.delete.clearAll")}
                                 </button>
                             </div>
                         </div>
@@ -295,7 +292,7 @@ const ProductCatalog = ({ token }: { token?: string }) => {
                     <aside className="w-full lg:w-[30%] bg-gray-50 rounded-lg border shadow-sm p-5 space-y-5 h-fit max-h-screen overflow-auto">
                         <div className="flex items-center justify-between mb-2">
                             <h2 className="text-lg font-semibold mb-[10px] text-myPurple-primary">
-                                {t("filters")}
+                                {t("filters.title")}
                             </h2>
                             {hasActiveFilters && (
                                 <Button
@@ -305,18 +302,18 @@ const ProductCatalog = ({ token }: { token?: string }) => {
                                     className="text-xs h-8 px-2 text-myPurple-tertiary hover:text-myPink-tertiary"
                                     disabled={isFiltering}
                                 >
-                                    {t("clear")}
+                                    {t("filters.delete.clear")}
                                 </Button>
                             )}
                         </div>
-                        <label className="text-myPink-primary">{t("category")}</label>
+                        <label className="text-myPink-primary">{t("filters.category")}</label>
                         <CategoryFilter
                             category={inputValues.category}
                             onCategoryChange={handleCategoryChange}
                             onClearCategory={handleClearCategory}
                         />
                         <br />
-                        <label className="text-myPink-primary">{t("price")}</label>
+                        <label className="text-myPink-primary">{t("filters.price")}</label>
                         <NumericFilter
                             label=""
                             minValue={inputValues.minPrice}
@@ -330,10 +327,10 @@ const ProductCatalog = ({ token }: { token?: string }) => {
 
                         <div>
                             <label className="block text-sm font-medium mb-2 text-myPink-primary">
-                                {t("tags")}
+                                {t("filters.tags")}
                             </label>
                             <TagFilter
-                                title="Etiqueta"
+                                title={t("placeholder.tag")}
                                 selectedTags={selectedTags}
                                 onChange={onTagsChange}
                                 token={token || ""}
@@ -349,12 +346,12 @@ const ProductCatalog = ({ token }: { token?: string }) => {
                                         <Card
                                             key={product.id}
                                             title={product.name}
-                                            price={`${product.price.toLocaleString()} Gs.`}
+                                            price={t("productCatalog.productCard.price", {price: product.price.toLocaleString()})}
                                             image={
                                                 product.image?.originalUrl ??
                                                 NotImageNicoPets.src
                                             }
-                                            ctaText={t("seeDetails")}
+                                            ctaText={t("button.seeDetails")}
                                             ctaLink={`/shop/product/${product.id}`}
                                             tags={product.tags}
                                         />
@@ -365,10 +362,10 @@ const ProductCatalog = ({ token }: { token?: string }) => {
                             <div className="flex flex-col items-center justify-center lg:w-[970px] bg-gray-50 border rounded-lg shadow-sm p-10 text-center min-h-[400px]">
                                 <SearchX className="w-16 h-16 text-myPurple-tertiary opacity-30 mb-4" />
                                 <h3 className="text-xl font-medium text-myPurple-tertiary mb-2">
-                                    {t("notFoundProducts")}
+                                    {t("error.notFoundProducts")}
                                 </h3>
                                 <p className="text-myPurple-tertiary opacity-70 max-w-md mb-6">
-                                    {t("notFoundFilteredProducts")}
+                                    {t("filters.warning.notFoundFilteredProducts")}
                                 </p>
                                 {hasActiveFilters && (
                                     <Button
@@ -376,7 +373,7 @@ const ProductCatalog = ({ token }: { token?: string }) => {
                                         className="flex items-center text-myPurple-tertiary hover:text-myPink-tertiary"
                                     >
                                         <Filter className="w-4 h-4 mr-2" />
-                                        {t("clearAllFilters")}
+                                        {t("filters.delete.clearAllFilters")}
                                     </Button>
                                 )}
                             </div>

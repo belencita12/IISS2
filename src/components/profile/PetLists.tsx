@@ -22,9 +22,7 @@ interface PetsListProps {
 export const PetsList = ({ clientId, token, onFetchError }: PetsListProps) => {
   const [pets, setPets] = useState<PetData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const t = useTranslations("PetLists");
-  const b = useTranslations("Button");
-  const e = useTranslations("Error");
+  const t = useTranslations();
   const defaultImageSrc = "/NotImageNicoPets.png";
 
   useEffect(() => {
@@ -61,23 +59,23 @@ export const PetsList = ({ clientId, token, onFetchError }: PetsListProps) => {
     <>
       <section className="w-full mt-10 bg-white text-center px-4">
         <h3 className="text-3xl font-bold mt-2 text-purple-600">
-          {t("pets")}
+          {t("myPetsSection.registeredPets")}
         </h3>
         <p className="text-gray-500 mt-2 text-sm">
-          {t("petsDescription")}
+          {t("myPetsSection.managePets")}
         </p>
 
         <div className="flex gap-4 mt-4 justify-center flex-wrap">
           <Link href="/user-profile/pet/register">
             <Button className="bg-pink-500 text-white flex items-center gap-2 hover:bg-pink-600">
               <Plus className="w-5 h-5" />
-              {b("add")}
+              {t("myPetsSection.addPetBtn")}
             </Button>
           </Link>
           <Link href="/user-profile/pet/list-pets">
             <Button className="bg-white text-pink-500 border border-pink-500 flex items-center gap-2 hover:bg-pink-600 hover:text-white">
               <List className="w-5 h-5" />
-              {t("petListBtn")}
+              {t("myPetsSection.petListBtn")}
             </Button>
           </Link>
         </div>
@@ -85,7 +83,7 @@ export const PetsList = ({ clientId, token, onFetchError }: PetsListProps) => {
         {loading ? (
           <PetListsSkeleton />
         ) : pets.length === 0 ? (
-          <p className="mt-4 text-gray-500">{e("notFoundPets")}</p>
+          <p className="mt-4 text-gray-500">{t("error.notFound")}</p>
         ) : (
           <div className="mt-8 flex flex-wrap justify-center gap-2 md:gap-3">
             {pets.map((pet) => (
@@ -109,7 +107,7 @@ export const PetsList = ({ clientId, token, onFetchError }: PetsListProps) => {
                       {pet.name}
                     </h3>
                     <p className="text-sm text-gray-500">
-                      {pet.race?.name || "Raza desconocida"}
+                      {pet.race?.name || t("error.unknown")}
                     </p>
                     {pet.dateOfBirth && (
                       <div className="flex flex-wrap justify-center gap-1 mt-1">
@@ -125,13 +123,13 @@ export const PetsList = ({ clientId, token, onFetchError }: PetsListProps) => {
           </div>
         )}
         <h2 className="text-3xl font-bold text-purple-600 mt-20">
-          {t("vetProducts")}
+          {t("myPetsSection.vetProducts")}
         </h2>
         <p className="text-gray-500 mt-1 text-sm">
-          {t("exploreProducts")}
+          {t("myPetsSection.exploreProducts")}
         </p>
         <Button className="bg-white text-pink-500 border border-pink-500 mt-3 hover:bg-pink-600 hover:text-white">
-          <Link href="/shop">{b("seeMore")}</Link>
+          <Link href="/shop">{t("button.seeMore")}</Link>
         </Button>
       </section>
 
