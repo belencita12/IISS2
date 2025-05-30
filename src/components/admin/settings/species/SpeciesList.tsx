@@ -91,11 +91,12 @@ export default function SpeciesList({ token }: SpeciesListProps) {
 
     const handleSearch = (query: string) => {
         setSearchQuery(query);
-        const newShowDeleted = showDeleted; //obtenemos el valor más actual de showDeleted
-        loadSpecies(1, query, newShowDeleted);
+        setPagination(prev => ({ ...prev, currentPage: 1 }));
+        loadSpecies(1, query, showDeleted);
     }
     const handlePageChange = (page: number) => {
-        loadSpecies(page, searchQuery);
+        setPagination(prev => ({ ...prev, currentPage: page }));
+        loadSpecies(page, searchQuery, showDeleted);
     };
     const handleRestore = async (specie: Species) => {
         setIsRestoring(true)
@@ -111,9 +112,9 @@ export default function SpeciesList({ token }: SpeciesListProps) {
     };
 
     const toggleDeletedSpecies =  () => {
-        setIsRestoring(false)
-        setShowDeleted(!showDeleted)
-        loadSpecies(1, searchQuery, !showDeleted)
+        setShowDeleted(!showDeleted);
+        setPagination(prev => ({ ...prev, currentPage: 1 }));
+        loadSpecies(1, searchQuery, !showDeleted);
     }
 
     const columns: Column<Species>[] = [{ header: "Nombre", accessor: "name" }];

@@ -115,7 +115,7 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
 
   const [isCancelling, setIsCancelling] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>("/NotImageNicoPets.png");
 
   const p = useTranslations("PetForm");
   const b = useTranslations("Button");
@@ -283,16 +283,16 @@ export default function PetUpdateForm({ token }: AdminPetDetailsProps) {
                   <Image
                     src={previewImage}
                     alt={pet.name}
-                    width={100}
-                    height={100}
+                    width={400}
+                    height={400}
                     className="object-cover object-center w-full h-full"
                   />
                 ) : pet.profileImg ? (
                   <Image
                     src={pet.profileImg.originalUrl}
                     alt={pet.name}
-                    width={100}
-                    height={100}
+                    width={400}
+                    height={400}
                     className="object-cover object-center w-full h-full"
                   />
                 ) : (

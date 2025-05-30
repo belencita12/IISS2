@@ -5,6 +5,7 @@ import DepositInfo from "../deposit/DepositInfo";
 import ProductFilters from "../admin/product/filter/ProductFilter";
 import ProductStockCard from "./ProductStockCard";
 import GenericPagination from "@/components/global/GenericPagination";
+import { useTranslations } from "next-intl";
 
 const apiUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -53,6 +54,8 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
   });
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
+  const t = useTranslations();
+
   useEffect(() => {
     const filtered = products.filter((product) => {
       const searchTerm = filters.searchTerm.toLowerCase();
@@ -85,8 +88,10 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
         const response = await fetch(`${apiUrl}/stock-details?page=${currentPage}&stockId=${depositoId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (!response.ok) {
-          throw new Error("Error al obtener los productos");
+            if (!response.ok) {
+            const errorData = await response.json().catch(() => ({})); 
+            const message = errorData?.message || `Error HTTP: ${response.status}`;
+            throw new Error(message);
         }
         const data = await response.json();
         const productDetails: ProductDetail[] = data.data;
@@ -96,9 +101,11 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
             const productRes = await fetch(`${apiUrl}/product/${detail.productId}`, {
               headers: { Authorization: `Bearer ${token}` },
             });
-            if (!productRes.ok) {
-              throw new Error("Error al obtener detalles del producto");
-            }
+                if (!productRes.ok) {
+            const errorData = await productRes.json().catch(() => ({})); 
+            const message = errorData?.message || `Error HTTP: ${productRes.status}`;
+            throw new Error(message);
+        }
             const productData = await productRes.json();
             return {
               id: productData.id,
@@ -121,7 +128,7 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
         if (err instanceof Error) {
           setError(err.message);
         } else {
-          setError("Error desconocido");
+          setError(t("error.errorUnknown"));
         }
       } finally {
         setLoading(false);
@@ -147,7 +154,7 @@ const ProductList: React.FC<Props> = ({ token, depositoId }) => {
     setSelectedTags(tags);
   };
 
-  if (loading) return <p>Cargando...</p>;
+  if (loading) return <p>{t("button.loading")}</p>;
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (

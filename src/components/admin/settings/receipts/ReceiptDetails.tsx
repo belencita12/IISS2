@@ -7,7 +7,10 @@ import { getReceiptById } from "@/lib/receipts/getReceiptById";
 import { getInvoiceById } from "@/lib/invoices/getInvoiceById";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
-
+import { toast } from "@/lib/toast";
+import { getReceiptDetailPdf } from "@/lib/receipts/getReceiptDetailPdf";
+import PrintButton from "@/components/global/PrintButton";
+import ReceiptDetailSkeleton from "./skeleton/ReceiptDetailSkeleton";
 
 interface ReceiptDetailProps {
   id: string;
@@ -19,6 +22,8 @@ export default function ReceiptDetail({ id, token }: ReceiptDetailProps) {
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isPrinting, setIsPrinting] = useState(false);
+  const [hasNavigatedBack, setHasNavigatedBack] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -26,11 +31,16 @@ export default function ReceiptDetail({ id, token }: ReceiptDetailProps) {
         setLoading(true);
         const receiptData = await getReceiptById(id, token);
         setReceipt(receiptData);
-        
-        const invoiceData = await getInvoiceById(receiptData.invoiceId.toString(), token);
+
+        const invoiceData = await getInvoiceById(
+          receiptData.invoiceId.toString(),
+          token
+        );
         setInvoice(invoiceData);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Error al cargar los datos");
+        setError(
+          err instanceof Error ? err.message : "Error al cargar los datos"
+        );
       } finally {
         setLoading(false);
       }
@@ -39,23 +49,69 @@ export default function ReceiptDetail({ id, token }: ReceiptDetailProps) {
     fetchData();
   }, [id, token]);
 
-  if (loading) return <div>Cargando...</div>;
+  if (loading) return <ReceiptDetailSkeleton />;
   if (error) return <div>Error: {error}</div>;
   if (!receipt || !invoice) return <div>No se encontraron datos</div>;
 
+  const handlePrintReceipt = async () => {
+    if (!receipt) return;
+    setIsPrinting(true);
+
+    try {
+      const result = await getReceiptDetailPdf(receipt.id.toString(), token);
+
+      if ("message" in result) {
+        toast("error", result.message);
+        return;
+      }
+
+      const blobUrl = URL.createObjectURL(result);
+      const printWindow = window.open(blobUrl, "_blank");
+      if (printWindow) {
+        printWindow.addEventListener("load", () => {
+          printWindow.focus();
+          printWindow.print();
+
+          printWindow.addEventListener("afterprint", () => {
+            URL.revokeObjectURL(blobUrl);
+            setIsPrinting(false);
+          });
+          setTimeout(() => {
+            setIsPrinting(false);
+          }, 3000);
+        });
+      } else {
+        toast("error", "No se pudo abrir la ventana de impresión.");
+        setIsPrinting(false);
+      }
+    } catch {
+      toast("error", "Error al imprimir el recibo.");
+    }
+  };
+
   return (
     <div className="relative">
-      <div className="absolute left-4 top-6 mx-4">
-        <Button 
+      <div className="flex items-center justify-between mt-6 mx-4">
+        <Button
           variant="outline"
-          onClick={() => window.location.href = "/dashboard/settings/receipts"}
+          onClick={() => {
+            setHasNavigatedBack(true);
+            window.location.href = "/dashboard/settings/receipts";
+          }}
+          disabled={isPrinting}
         >
           Volver
         </Button>
+        <div
+          className={hasNavigatedBack ? "pointer-events-none opacity-50" : ""}
+        >
+          <PrintButton onClick={handlePrintReceipt} isLoading={isPrinting} />
+        </div>
       </div>
       <div className="p-6 max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold mb-6 mt-12">Detalle del Recibo</h1>
-        
+        <div className="flex items-center justify-between mt-12 mb-6">
+          <h1 className="text-2xl font-bold">Detalle del Recibo</h1>
+        </div>
         <div className="bg-white shadow rounded-lg p-6 space-y-6">
           <section className="space-y-4">
             <h2 className="text-xl font-semibold">Información del Recibo</h2>
@@ -68,8 +124,11 @@ export default function ReceiptDetail({ id, token }: ReceiptDetailProps) {
                 <p className="text-gray-600">Fecha de emisión</p>
                 <p className="font-medium">
                   {(() => {
-                      const [year, month, day] = receipt.issueDate.split("-");
-                      return `${day.padStart(2, '0')} - ${month.padStart(2, '0')} - ${year}`;
+                    const [year, month, day] = receipt.issueDate.split("-");
+                    return `${day.padStart(2, "0")} - ${month.padStart(
+                      2,
+                      "0"
+                    )} - ${year}`;
                   })()}
                 </p>
               </div>
@@ -81,7 +140,10 @@ export default function ReceiptDetail({ id, token }: ReceiptDetailProps) {
             <h2 className="text-xl font-semibold">Métodos de Pago</h2>
             <div className="space-y-2">
               {receipt.paymentMethods.map((pm, index) => (
-                <div key={index} className="grid grid-cols-2 gap-4 border-b pb-2">
+                <div
+                  key={index}
+                  className="grid grid-cols-2 gap-4 border-b pb-2"
+                >
                   <span>{pm.method}</span>
                   <span className="font-medium">
                     {pm.amount.toLocaleString("es-PY", {
@@ -90,7 +152,7 @@ export default function ReceiptDetail({ id, token }: ReceiptDetailProps) {
                     })}
                   </span>
                 </div>
-              ))}            
+              ))}
             </div>
           </section>
 
@@ -113,9 +175,11 @@ export default function ReceiptDetail({ id, token }: ReceiptDetailProps) {
               <div>
                 <p className="text-gray-600">Tipo</p>
                 <p className="font-medium">
-                  {invoice.type === "CASH" ? "Contado"
-                  : invoice.type === "CREDIT" ? "Crédito"
-                  : invoice.type}
+                  {invoice.type === "CASH"
+                    ? "Contado"
+                    : invoice.type === "CREDIT"
+                    ? "Crédito"
+                    : invoice.type}
                 </p>
               </div>
               <div>

@@ -43,11 +43,9 @@ export default function PetForm({ clientId, token }: PetFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const router = useRouter();
-  const e = useTranslations("Error")
-  const b= useTranslations("Button");
-  const p= useTranslations("PetForm");
-  const ph= useTranslations("Placeholder");
-  const s = useTranslations("Success");
+
+  const t = useTranslations();
+
   const {
     register,
     handleSubmit,
@@ -72,8 +70,8 @@ export default function PetForm({ clientId, token }: PetFormProps) {
       try {
         const speciesData = await getSpecies(token);
         setSpecies(speciesData);
-      } catch {
-        toast("error", "Error al obtener las especies.");
+      } catch(error: unknown) {
+        if (error instanceof Error) toast("error", error.message);
       }
     };
     fetchSpecies();
@@ -85,8 +83,8 @@ export default function PetForm({ clientId, token }: PetFormProps) {
     try {
       const racesData = await getRacesBySpecies(parseInt(speciesId), token);
       setRaces(racesData);
-    } catch {
-      toast("error", "Error al obtener las razas.");
+    } catch(error: unknown) {
+      if (error instanceof Error) toast("error", error.message);
     }
   };
 
@@ -105,7 +103,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
 
   const onSubmit = async (data: PetFormValues) => {
     if (!clientId || !token) {
-      toast("error", "Debes estar autenticado para registrar una mascota.");
+      toast("error", t("error.auth"));
       return;
     }
     const formData = new FormData();
@@ -123,10 +121,10 @@ export default function PetForm({ clientId, token }: PetFormProps) {
     try {
       await registerPet(formData, token);
       reset();
-      toast("success", "Mascota registrada con éxito!");
+      toast("success", t("success.successRegisterPet"));
       router.push(`/user-profile`);
-    } catch {
-      toast("error", "Hubo un error al registrar la mascota.");
+    } catch(error: unknown) {
+      if (error instanceof Error) toast("error", error.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -135,10 +133,10 @@ export default function PetForm({ clientId, token }: PetFormProps) {
     <div className="max-w-6xl mx-auto p-6 md:p-8">
       <CardHeader className="relative pb-2">
         <CardTitle className="text-3xl font-bold text-myPurple-focus p-2">
-          Registro de Mascota
+          {t("pet.form.title")}
         </CardTitle>
         <CardDescription className="text-myPurple-focus/70 ml-6 p-2">
-          Ingresa los datos de la mascota
+          {t("pet.form.description")}
         </CardDescription>
       </CardHeader>
       <CardContent className="relative">
@@ -158,10 +156,10 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                   <div className="text-center p-6">
                     <PawPrint className="w-16 h-16 mx-auto mb-2 text-myPurple-primary" />
                     <p className="text-myPurple-focus font-medium">
-                      Imagen de tu mascota
+                      {t("pet.form.image")}
                     </p>
                     <p className="text-sm text-myPurple-focus/70 mt-1">
-                      Opcional
+                      {t("pet.form.optional")}
                     </p>
                   </div>
                 )}
@@ -174,7 +172,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                 }
               >
                 <Upload className="w-4 h-4 mr-2" />
-                {previewImage ? "Cambiar imagen" : "Subir imagen"}
+                {previewImage ? t("button.changeImage") : t("button.uploadImage")}
                 <Input
                   id="pet-image-upload"
                   type="file"
@@ -200,12 +198,12 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                 <div className="space-y-2">
                   <Label className="flex items-center text-myPurple-focus">
                     <Info className="w-4 h-4 mr-2 text-myPurple-primary" />
-                    Nombre
+                    {t("pet.form.name")}
                   </Label>
                   <Input
                     id="petName"
                     {...register("petName")}
-                    placeholder="Ej. Luna"
+                    placeholder={t("placeholder.name")}
                     className="border-myPurple-tertiary focus-visible:ring-myPurple-primary"
                   />
                   {errors.petName && (
@@ -217,7 +215,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                 <div className="space-y-2">
                   <Label className="flex items-center text-myPurple-focus">
                     <Calendar className="w-4 h-4 mr-2 text-myPurple-primary" />
-                    Fecha de nacimiento
+                    {t("pet.form.born")}
                   </Label>
                   <Input
                     id="birthDate"
@@ -235,7 +233,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                 <div className="space-y-2">
                   <Label className="flex items-center text-myPurple-focus">
                     <PawPrint className="w-4 h-4 mr-2 text-myPurple-primary" />
-                    Animal
+                    {t("pet.form.specie")}
                   </Label>
                   <Select
                     onValueChange={(value) => {
@@ -247,7 +245,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                       id="animalType"
                       className="border-myPurple-tertiary focus:ring-myPurple-primary"
                     >
-                      <SelectValue placeholder="Seleccionar" />
+                      <SelectValue placeholder={t("placeholder.select")} />
                     </SelectTrigger>
                     <SelectContent className="border-myPurple-tertiary">
                       {species.map((specie) => (
@@ -269,7 +267,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                 <div className="space-y-2">
                   <Label className="flex items-center text-myPurple-focus">
                     <PawPrint className="w-4 h-4 mr-2 text-myPurple-primary" />
-                    Raza
+                    {t("pet.form.race")}
                   </Label>
                   <Select
                     onValueChange={(value) =>
@@ -283,8 +281,8 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                       <SelectValue
                         placeholder={
                           races.length > 0
-                            ? "Seleccionar raza"
-                            : "Selecciona una especie primero"
+                            ? t("placeholder.select")
+                            : t("placeholder.selectSpecieFirst")
                         }
                       />
                     </SelectTrigger>
@@ -305,7 +303,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                 <div className="space-y-2">
                   <Label className="flex items-center text-myPurple-focus">
                     <Weight className="w-4 h-4 mr-2 text-myPurple-primary" />
-                    Peso (kg)
+                    {t("pet.form.weight")}
                   </Label>
                   <Input
                     id="weight"
@@ -324,7 +322,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                 </div>
                 <div className="space-y-2">
                   <Label className="flex items-center text-myPurple-focus">
-                    Género
+                    {t("pet.form.sex")}
                   </Label>
                   <div className="flex gap-4">
                     <Button
@@ -340,7 +338,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                           : "border-myPink-tertiary text-myPink-primary hover:bg-myPink-disabled hover:text-myPink-focus w-full transition-all duration-200"
                       }
                     >
-                      Hembra
+                      {t("pet.form.female")}
                     </Button>
                     <Button
                       id="genderMale"
@@ -355,7 +353,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                           : "border-myPurple-tertiary text-myPurple-primary hover:bg-myPurple-disabled hover:text-myPurple-focus w-full transition-all duration-200"
                       }
                     >
-                      Macho
+                      {t("pet.form.male")}
                     </Button>
                   </div>
                   {errors.gender && (
@@ -377,7 +375,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
           onClick={() => router.push("/user-profile")}
           className="border-myPurple-tertiary text-myPurple-primary hover:bg-myPurple-disabled hover:text-myPurple-focus transition-all duration-200"
         >
-          Cancelar
+          {t("button.cancel")}
         </Button>
         <Button
           type="submit"
@@ -385,7 +383,7 @@ export default function PetForm({ clientId, token }: PetFormProps) {
           disabled={isSubmitting}
           className="bg-gradient-to-r from-myPurple-primary to-myPink-primary hover:from-myPurple-hover hover:to-myPink-hover text-white transition-all duration-200"
         >
-          {isSubmitting ? "Registrando..." : "Registrar Mascota"}
+          {isSubmitting ? t("button.registering") : t("button.register")}
         </Button>
       </CardFooter>
     </div>

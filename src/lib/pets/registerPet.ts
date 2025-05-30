@@ -11,8 +11,11 @@ export const registerPet = async (petData: FormData, token: string) => {
             body: petData,
         });
 
-        if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
-
+            if (!response.ok) {
+            const errorData = await response.json().catch(() => ({})); // fallback si no es JSON
+            const message = errorData?.message || `Error HTTP: ${response.status}`;
+            throw new Error(message);
+        }
         return await response.json();
     } catch (error) {
         throw error;
