@@ -16,12 +16,11 @@ const FormImgUploader = ({
   onChange,
   error,
   prevClassName,
-  prevWidth = 256,
+  prevWidth = 160,
   defaultImage,
 }: FormImgUploaderProps) => {
   const [previewImage, setPreviewImage] = useState<string | null>(defaultImage || null);
-
-  const b = useTranslations("Button");
+  const t = useTranslations();
 
   useEffect(() => {
     setPreviewImage(defaultImage || null);
@@ -29,7 +28,6 @@ const FormImgUploader = ({
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-
     if (!file) {
       onChange(undefined);
       setPreviewImage(defaultImage || null);
@@ -44,32 +42,34 @@ const FormImgUploader = ({
   };
 
   return (
-    <div className="w-full flex flex-col items-center relative">
-      <Label className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-md text-sm font-medium text-center cursor-pointer">
+    <div className="w-full flex flex-col items-center">
+      <div className="relative w-40 h-40 mb-4">
+  {previewImage ? (
+    <Image
+      src={previewImage}
+      alt="Vista previa"
+      width={prevWidth}
+      height={prevWidth}
+      className={`object-cover shadow-lg border-2 border-gray-200 ${prevClassName || ""}`}
+    />
+  ) : (
+    <div className="w-full h-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-sm">
+      {t("error.noImage")}
+    </div>
+  )}
+</div>
+
+      <Label className="bg-primary text-white px-4 py-2 rounded-md text-sm font-medium cursor-pointer hover:bg-primary/90 transition-colors duration-200">
         <Input
           type="file"
           accept="image/jpeg, image/png, image/webp"
           onChange={handleImageChange}
           className="hidden"
         />
-        {previewImage ? b("change") : b("upload")}
+        {previewImage ? t("button.change") : t("button.upload")}
       </Label>
 
-      {(previewImage || defaultImage) && (
-        <div className="w-full flex justify-center mt-4">
-          <Image
-            src={previewImage || defaultImage || ""}
-            className={prevClassName}
-            alt="Vista previa de la imagen"
-            width={prevWidth}
-            height={prevWidth}
-            quality={100}
-            priority
-          />
-        </div>
-      )}
-
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+      {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
     </div>
   );
 };

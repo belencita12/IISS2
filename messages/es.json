@@ -558,7 +558,11 @@
     "searching": "Buscando...",
     "updating": "Actualizando...",
     "finish": "Finalizar",
-    "confirm": "Confirmar"
+    "confirm": "Confirmar",
+    "delete": "Eliminar",
+    "add": "Agregar",
+    "change": "Cambiar",
+    "upload": "Subir"
     
   },
 
@@ -573,7 +577,8 @@
     "selectSpecieFirst": "Debes seleccionar una especie primero",
     "details": "Ingrese los detalles",
     "tag": "Etiqueta",
-    "reason": "Ingrese el motivo"
+    "reason": "Ingrese el motivo",
+    "lastName": "Ingrese el apellido"
 
   },
   "error": {
@@ -604,7 +609,11 @@
     "errorLimitDate":"Se necesitan fechas límites para generar el reporte",
     "errorEndDate":"No se puede finalizar una cita antes de su fecha programada",
     "notFoundAppointments":"No se encontraron citas.",
-    "errorDate": "La fecha hasta no puede ser menor que la fecha desde."
+    "errorDate": "La fecha hasta no puede ser menor que la fecha desde.",
+    "notFoundClients": "No se encontraron clientes",
+    "errorDelete": "Ocurrió un error al intentar eliminar a {field}.",
+    "errorRegisterClient": "Ocurrió un error al intentar registrar cliente.",
+    "errorGetData": "Ocurrió un error al obtener los datos."
     
   },
   "profileTabs": {
@@ -743,7 +752,10 @@
   "success": {
     "successRegisterPet": "Mascota registrada con éxito",
     "successUpdatePet": "Mascota actualizada correctamente",
-    "successRegisterAppointment": "Cita agendada con éxito"
+    "successRegisterAppointment": "Cita agendada con éxito",
+    "successDeleteClient": "{client} fue eliminado correctamente",
+    "successRegisterClient": "Cliente registrado con éxito",
+    "successUpdateClient": "Cliente actualizado correctamente"
   },
   "vaccine": {
     "table": {
@@ -762,7 +774,8 @@
   },
   "search": {
     "searchByName": "Buscar por nombre...",
-    "searchByNameOrRuc": "Buscar por nombre o ruc del cliente..."
+    "searchByNameOrRuc": "Buscar por nombre o ruc del cliente...",
+    "searchByNameOrRucOrEmail": "Buscar por nombre, ruc o correo del cliente..."
   },
   "productCatalog": {
     "selectedTags": "Etiquetas seleccionadas:",
@@ -772,6 +785,34 @@
     }
     
   },
+  "client":{
+    "table": {
+      "title": "Clientes",
+      "actions":"Acciones",
+      "emptyMessage": "No hay clientes registrados."
+    },
+    "details":{
+      "fullName": "Nombre",
+      "email":"Correo electrónico",
+      "ruc": "RUC",
+      "address": "Dirección",
+      "phone": "Teléfono",
+      "profileTitle": "Perfil de Cliente",
+      "pets": "Mascotas",
+      "appointments": "Citas agendadas"
+    },
+    "form":{
+      "title": "Registro de Cliente",
+      "titleUpdate": "Actualizar datos de Cliente",
+      "name": "Nombre",
+      "lastName":"Apellido",
+      "address": "Dirección",
+      "email": "Correo electrónico",
+      "phone": "Teléfono",
+      "ruc": "RUC"
+    }
+  },
+
   "filters": {
     "title": "Filtros",
     "warning": {
@@ -802,6 +843,10 @@
       "confirmFinish": "Confirmar finalización",
       "confirmFinishDescription": "¿Estás seguro de que deseas finalizar la cita?",
       "cancelTitle": "Cancelar cita"
+    },
+    "client": {
+      "titleDelete": "Eliminar cliente",
+      "messageDelete": "¿Estás seguro de que deseas eliminar a {client}?"
     }
   }
 }
