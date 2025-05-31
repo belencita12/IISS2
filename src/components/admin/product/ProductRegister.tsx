@@ -68,11 +68,8 @@ interface ProductRegisterFormProps {
 export default function ProductRegisterForm({
   token,
 }: ProductRegisterFormProps) {
-  const p = useTranslations("ProductForm");
-  const e = useTranslations("Error");
-  const b = useTranslations("Button");
-  const s = useTranslations("Success");
-  const ph = useTranslations("Placeholder");
+
+  const t = useTranslations();
 
   const { providers } = useInitialData(token || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -121,7 +118,7 @@ export default function ProductRegisterForm({
 
   const onSubmit = async (data: ProductFormValues) => {
     if (!token) {
-      toast("error", e("authError"));
+      toast("error", t("error.authError"));
       return;
     }
 
@@ -146,13 +143,13 @@ export default function ProductRegisterForm({
 
     try {
       await registerProduct(formData, token);
-      toast("success", s("successRegister", {field: "Producto"}), {
+      toast("success", t("success.successRegisterProduct"), {
         duration: 2000,
         onAutoClose: () => router.back(),
         onDismiss: () => router.back(),
       });
     } catch (error : unknown) {
-      toast("error", error instanceof Error ? error.message : e("error"));
+      toast("error", error instanceof Error ? error.message : t("error.errorRegisterProduct"));
     } finally {
       setIsSubmitting(false);
     }
@@ -160,25 +157,25 @@ export default function ProductRegisterForm({
 
   return (
     <div className="max-w-5xl mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-6">{p("title")}</h1>
-      <div className="md:w-2/3 w-80">
+      <h1 className="text-3xl font-bold mb-6">{t("product.form.titleRegister")}</h1>
+      
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Nombre */}
           <div>
-            <Label>{p("name")}</Label>
+            <Label>{t("product.form.name")}</Label>
             <Input
               {...register("productName")}
-              placeholder={ph("name")}
+              placeholder={t("placeholder.name")}
             />
             {errors.productName && (
               <p className="text-red-500">{errors.productName.message}</p>
             )}
           </div>
           <div>
-            <Label>{p("description")}</Label>
+            <Label>{t("product.form.description")}</Label>
             <textarea
               {...register("description")}
-              placeholder={ph("description")}
+              placeholder={t("placeholder.description")}
               className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm placeholder:text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-black"
             />
             {errors.description && (
@@ -188,11 +185,11 @@ export default function ProductRegisterForm({
 
           {/* Costo */}
           <div>
-            <Label>{p("cost")}</Label>
+            <Label>{t("product.form.cost")}</Label>
             <NumericInput
               id="cost"
               type="formattedNumber"
-              placeholder={ph("cost")}
+              placeholder={t("placeholder.cost")}
               value={watch("cost") ?? ""}
               onChange={(e) =>
                 setValue("cost", Number(e.target.value), {
@@ -206,11 +203,11 @@ export default function ProductRegisterForm({
 
           {/* Precio */}
           <div>
-            <Label>{p("price")}</Label>
+            <Label>{t("product.form.price")}</Label>
             <NumericInput
               id="price"
               type="formattedNumber"
-              placeholder={ph("price")}
+              placeholder={t("placeholder.price")}
               value={watch("price") ?? ""}
               onChange={(e) =>
                 setValue("price", Number(e.target.value), {
@@ -224,11 +221,11 @@ export default function ProductRegisterForm({
 
           {/* IVA */}
           <div>
-            <Label>{p("iva")}</Label>
+            <Label>{t("product.form.iva")}</Label>
             <NumericInput
               id="iva"
               type="formattedNumber"
-              placeholder={ph("iva")}
+              placeholder={t("placeholder.iva")}
               value={watch("iva") ?? ""}
               onChange={(e) =>
                 setValue("iva", Number(e.target.value), {
@@ -243,7 +240,7 @@ export default function ProductRegisterForm({
           <div className="flex flex-col md:flex-row gap-4">
             {/* Proveedor */}
             <div className="w-full md:w-1/2">
-            <Label>{p("provider")}</Label>
+            <Label>{t("product.form.provider")}</Label>
               <Controller
                 name="providerId"
                 control={control}
@@ -257,7 +254,7 @@ export default function ProductRegisterForm({
                         errors.providerId ? "border-red-500" : ""
                       }`}
                     >
-                      <SelectValue placeholder={b("select")} />
+                      <SelectValue placeholder={t("placeholder.select")} />
                     </SelectTrigger>
                     <SelectContent>
                       {providers.map((p) => (
@@ -278,7 +275,7 @@ export default function ProductRegisterForm({
 
             {/* Etiquetas */}
             <div className="w-full md:w-1/2">
-             <Label>{p("tags")}</Label>
+             <Label>{t("product.form.tags")}</Label>
               <TagFilter
                 token={token || ""}
                 selectedTags={tags}
@@ -317,7 +314,7 @@ export default function ProductRegisterForm({
 
           {/* Imagen */}
           <div className="w-full flex flex-col items-start relative">
-            <Label className="pb-2">{p("image")}</Label>
+            <Label className="pb-2">{t("product.form.image")}</Label>
             <Label className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-md text-sm font-medium text-center cursor-pointer">
               <Input
                 type="file"
@@ -325,7 +322,7 @@ export default function ProductRegisterForm({
                 onChange={handleImageChange}
                 className="hidden"
               />
-              {previewImage ? b("change") : b("upload")}
+              {previewImage ? t("button.change") : t("button.upload")}
             </Label>
             {previewImage && (
               <div className="w-1/2 mt-4">
@@ -347,21 +344,21 @@ export default function ProductRegisterForm({
           </div>
 
           {/* Botones */}
-          <div className="flex justify-start gap-4 mt-8">
+          <div className="flex justify-end gap-4">
             <Button
               type="button"
               variant="outline"
               onClick={() => router.back()}
               disabled={isSubmitting}
             >
-              {b("cancel")}
+              {t("button.cancel")}
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? b("saving") : b("save")}
+              {isSubmitting ? t("button.registering") : t("button.register")}
             </Button>
           </div>
         </form>
-      </div>
+     
     </div>
   );
 }

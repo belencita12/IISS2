@@ -578,7 +578,11 @@
     "details": "Ingrese los detalles",
     "tag": "Etiqueta",
     "reason": "Ingrese el motivo",
-    "lastName": "Ingrese el apellido"
+    "lastName": "Ingrese el apellido",
+    "price": "Ingrese el precio",
+    "cost": "Ingrese el costo",
+    "iva":"Ingrese el IVA",
+    "description": "Ingrese una descripción"
 
   },
   "error": {
@@ -605,6 +609,7 @@
     "notFoundServices": "No se encontraron servicios",
     "errorLoadProducts": "Error al cargar productos",
     "notFoundProducts": "No se encontraron productos",
+    "notFoundProduct": "No se encontró el producto",
     "errorUnknown": "Error desconocido",
     "errorLimitDate":"Se necesitan fechas límites para generar el reporte",
     "errorEndDate":"No se puede finalizar una cita antes de su fecha programada",
@@ -613,7 +618,9 @@
     "notFoundClients": "No se encontraron clientes",
     "errorDelete": "Ocurrió un error al intentar eliminar a {field}.",
     "errorRegisterClient": "Ocurrió un error al intentar registrar cliente.",
-    "errorGetData": "Ocurrió un error al obtener los datos."
+    "errorGetData": "Ocurrió un error al obtener los datos.",
+    "authError": "Error, debes estar autenticado para acceder a esta sección",
+    "errorRegisterProduct": "Ocurrió un error al intentar registrar el producto."
     
   },
   "profileTabs": {
@@ -755,7 +762,9 @@
     "successRegisterAppointment": "Cita agendada con éxito",
     "successDeleteClient": "{client} fue eliminado correctamente",
     "successRegisterClient": "Cliente registrado con éxito",
-    "successUpdateClient": "Cliente actualizado correctamente"
+    "successUpdateClient": "Cliente actualizado correctamente",
+    "successRegisterProduct": "Producto agregado correctamente",
+    "successDeleteProduct": "Producto eliminado correctamente"
   },
   "vaccine": {
     "table": {
@@ -775,7 +784,8 @@
   "search": {
     "searchByName": "Buscar por nombre...",
     "searchByNameOrRuc": "Buscar por nombre o ruc del cliente...",
-    "searchByNameOrRucOrEmail": "Buscar por nombre, ruc o correo del cliente..."
+    "searchByNameOrRucOrEmail": "Buscar por nombre, ruc o correo del cliente...",
+    "searchByCodeOrName": "Buscar por código o nombre..."
   },
   "productCatalog": {
     "selectedTags": "Etiquetas seleccionadas:",
@@ -813,6 +823,60 @@
     }
   },
 
+  "product":{
+    "list": {
+      "title": "Productos"
+    },
+    "card": {
+      "name": "Nombre:",
+      "code": "Código:",
+      "provider": "Proveedor:",
+      "category": "Categoría:",
+      "price": "Precio:",
+      "cost": "Costo:",
+      "gs": "Gs.",
+      "quantity": "Cantidad"
+    },
+    "details": {
+      "quantityDeposit":"Cantidad por depósitos",
+      "name": "Nombre",
+      "description": "Descripción",
+      "price": "Precio",
+      "cost": "Costo",
+      "category": "Categoría",
+      "code": "Código",
+      "tags": "Etiqueta/s",
+      "quantity": "Cantidad"
+    },
+    "form": {
+      "titleRegister": "Registro de Producto",
+      "name": "Nombre",
+      "description": "Descripción",
+      "price": "Precio",
+      "cost": "Costo",
+      "category": "Categoría",
+      "code": "Código",
+      "tags": "Etiqueta/s",
+      "quantity": "Cantidad",
+      "iva": "IVA",
+      "provider": "Proveedor",
+      "image": "Imagen (Opcional)"
+    }
+  },
+
+  "stock":{
+    "details": {
+      "name": "Nombre",
+      "address": "Dirección",
+      "quantity": "Cantidad",
+      "uds": "{quantity} Unids."
+    },
+    "table":{
+      "actions": "Acciones",
+      "emptyMessage": "Producto no disponible en ninguna sucursal."
+    }
+  },
+
   "filters": {
     "title": "Filtros",
     "warning": {
@@ -836,7 +900,18 @@
       "to" :"Fecha hasta"
     },
     "appointmentStatus": "Estado de la cita",
-    "all": "Todos"
+    "all": "Todos",
+    "none": "Ninguno",
+    "productFiltersCategory": {
+      "vaccine": "Vacuna",
+      "service": "Servicio",
+      "product": "Producto"
+    },
+    "priceRange": {
+      "from": "Desde",
+      "to":"Hasta",
+      "errorNumericMin": "No puede ser menor al mínimo"
+    }
   },
   "confirmationModal":{
     "appointment": {
@@ -847,6 +922,10 @@
     "client": {
       "titleDelete": "Eliminar cliente",
       "messageDelete": "¿Estás seguro de que deseas eliminar a {client}?"
+    },
+    "product": {
+      "titleDelete": "Eliminar producto",
+      "messageDelete": "¿Estás seguro de que deseas eliminar {product}?"
     }
   }
 }

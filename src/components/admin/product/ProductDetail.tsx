@@ -31,12 +31,7 @@ export default function ProductDetail({ token }: ProductDetailProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-
-  const b = useTranslations("Button");
-  const m = useTranslations("ModalConfirmation");
-  const e = useTranslations("Error");
-  const s = useTranslations("Success");
-  const p = useTranslations("ProductDetail");
+  const t = useTranslations();
 
   const { delete: deleteReq, loading: isDelLoading } = useFetch<void, null>(
     PRODUCT_API,
@@ -60,7 +55,7 @@ export default function ProductDetail({ token }: ProductDetailProps) {
         setStockDetails(stockResponse.data);
         setStocks(stocksResponse.data);
       } catch (err: unknown) {
-        toast("error", err instanceof Error ? err.message : e("noGetData"));
+        toast("error", err instanceof Error ? err.message : t("error.notGetData"));
       } finally {
         setIsLoading(false);
       }
@@ -72,30 +67,31 @@ export default function ProductDetail({ token }: ProductDetailProps) {
     if (!id) return;
     const { ok, error } = await deleteReq(null, `${PRODUCT_API}/${id}`);
     if (!ok) {
-      toast("error", error?.message || e("noDelete", {field: "producto"}));
+      toast("error", error?.message || t("error.errorDelete", {field: product?.name ?? ""}));
     } else {
-      toast("success", s("successDelete", {field: "Producto"}));
+      toast("success", t("success.successDeleteProduct"));
       router.back();
     }
     setIsDeleteModalOpen(false);
   };
 
+  if (product?.category != "VACCINE" && "SERVICE")
   if (isLoading) return <ProductDetailSkeleton />;
   if (!product)
-    return <div className="text-center mt-8">{e("notFound")}</div>;
+    return <div className="text-center mt-8">{t("error.notFoundProduct")}</div>;
 
   // URL por defecto si no hay imagen
   const defaultImageSrc = "/NotImageNicoPets.png";
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
-      <div className="mb-6 mt-6">
+    <div className="w-full mx-auto p-6">
+      <div className="mb-6 ">
         <Button
           variant="outline"
           onClick={() => router.push('/dashboard/products')}
           className="border-black border-solid"
         >
-          {b("toReturn")}
+          {t("button.toReturn")}
         </Button>
       </div>
 
@@ -130,7 +126,7 @@ export default function ProductDetail({ token }: ProductDetailProps) {
           onClick={() => setIsDeleteModalOpen(true)}
           className="px-6"
         >
-          {b("delete")}
+          {t("button.delete")}
         </Button>
 
         <Button
@@ -140,32 +136,34 @@ export default function ProductDetail({ token }: ProductDetailProps) {
           }
           className="px-6"
         >
-          {b("edit")}
+          {t("button.edit")}
         </Button>
       </div>
 
       <hr className="my-8 border-t border-gray-200" />
 
-      <div className="mt-8">
-        <h3 className="text-2xl font-semibold text-center mb-4">
-          {p("quantityDeposit")}
-        </h3>
-        <StockList
-          stockDetails={stockDetails}
-          stocks={stocks}
-          isLoading={isLoading}
-        />
-      </div>
+     {product.category != "SERVICE" && (
+  <div className="mt-8">
+    <h3 className="text-2xl font-semibold text-center mb-4">
+      {t("product.details.quantityDeposit")}
+    </h3>
+    <StockList
+      stockDetails={stockDetails}
+      stocks={stocks}
+      isLoading={isLoading}
+    />
+  </div>
+)}
 
       <ConfirmationModal
         isOpen={isDeleteModalOpen}
         isLoading={isDelLoading}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
-        title={m("titleDelete", {field: "producto"})}
-        message={m("deleteMessage", {field: product.name})}
-        confirmText={b("delete")}
-        cancelText={b("cancel")}
+        title={t("confirmationModal.product.titleDelete")}
+        message={t("confirmationModal.product.messageDelete", {product: product.name})}
+        confirmText={t("button.delete")}
+        cancelText={t("button.cancel")}
         variant="danger"
       />
     </div>
