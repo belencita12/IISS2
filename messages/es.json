@@ -620,7 +620,9 @@
     "errorRegisterClient": "Ocurrió un error al intentar registrar cliente.",
     "errorGetData": "Ocurrió un error al obtener los datos.",
     "authError": "Error, debes estar autenticado para acceder a esta sección",
-    "errorRegisterProduct": "Ocurrió un error al intentar registrar el producto."
+    "errorRegisterProduct": "Ocurrió un error al intentar registrar el producto.",
+    "errorGetProduct": "Ocurrió un error al obtener el producto",
+    "notFoundProviders": "No se encontraron proveedores"
     
   },
   "profileTabs": {
@@ -764,7 +766,8 @@
     "successRegisterClient": "Cliente registrado con éxito",
     "successUpdateClient": "Cliente actualizado correctamente",
     "successRegisterProduct": "Producto agregado correctamente",
-    "successDeleteProduct": "Producto eliminado correctamente"
+    "successDeleteProduct": "Producto eliminado correctamente",
+    "successUpdateProduct": "Producto actualizado correctamente"
   },
   "vaccine": {
     "table": {
@@ -850,6 +853,7 @@
     },
     "form": {
       "titleRegister": "Registro de Producto",
+      "titleUpdate": "Editar Producto",
       "name": "Nombre",
       "description": "Descripción",
       "price": "Precio",

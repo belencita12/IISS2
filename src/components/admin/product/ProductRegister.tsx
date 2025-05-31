@@ -23,6 +23,7 @@ import {
 import { useInitialData } from "@/hooks/purchases/useProviderStock";
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
+import FormImgUploader from "@/components/global/FormImgUploader";
 
 const MAX_FILE_SIZE = 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -313,34 +314,37 @@ export default function ProductRegisterForm({
           </div>
 
           {/* Imagen */}
-          <div className="w-full flex flex-col items-start relative">
-            <Label className="pb-2">{t("product.form.image")}</Label>
-            <Label className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-md text-sm font-medium text-center cursor-pointer">
-              <Input
-                type="file"
-                accept="image/jpeg, image/png, image/webp"
-                onChange={handleImageChange}
-                className="hidden"
-              />
-              {previewImage ? t("button.change") : t("button.upload")}
-            </Label>
-            {previewImage && (
-              <div className="w-1/2 mt-4">
-                <Image
-                  src={previewImage}
-                  className="w-full h-auto rounded-md"
-                  alt="Vista previa del producto"
-                  width={200}
-                  height={200}
-                  priority
-                />
-              </div>
-            )}
-            {errors.imageFile && (
-              <p className="text-red-500 text-sm mt-2">
-                {errors.imageFile.message}
-              </p>
-            )}
+          <div className="w-full flex flex-col gap-2">
+             <Label className="pb-1">{t("product.form.image")}</Label>
+
+  <label
+    htmlFor="imageFile"
+    className="cursor-pointer w-40 h-40 border border-dashed border-gray-400 rounded-lg flex items-center justify-center hover:bg-gray-100 relative overflow-hidden"
+  >
+    {previewImage ? (
+      <Image
+        src={previewImage}
+        alt="Vista previa"
+        layout="fill"
+        objectFit="cover"
+      />
+    ) : (
+      <span className="text-sm text-gray-500 text-center">
+        {t("button.upload") ?? t("button.change")}
+      </span>
+    )}
+    <Input
+      id="imageFile"
+      type="file"
+      accept="image/*"
+      className="hidden"
+      onChange={handleImageChange}
+    />
+  </label>
+
+  {errors.imageFile && (
+    <p className="text-red-500 text-sm">{errors.imageFile.message}</p>
+  )}
           </div>
 
           {/* Botones */}

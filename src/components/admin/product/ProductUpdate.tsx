@@ -27,6 +27,8 @@ import { useInitialData } from "@/hooks/purchases/useProviderStock";
 
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
+import FormImgUploader from "@/components/global/FormImgUploader"; // Asegúrate que el path es correcto
+
 
 const MAX_FILE_SIZE = 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -80,11 +82,10 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
   const router = useRouter();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [tags, setTags] = useState<string[]>([]);
-  const p = useTranslations("ProductForm");
-  const b = useTranslations("Button");
-  const ph = useTranslations("Placeholder");
-  const s = useTranslations("Success");
-  const e = useTranslations("Error");
+
+
+  const t = useTranslations();
+
 
   const {
     register,
@@ -141,8 +142,8 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
         setIsLoading(false);
       } catch(error: unknown) {
         setIsLoading(false);
-        setError("No se pudo cargar el producto");
-        toast("error", error instanceof Error ? error.message : e("errorGet", {field: "producto"}));
+        if (error instanceof Error) setError(error.message);
+        toast("error", error instanceof Error ? error.message : t("error.errorGetData"));
       }
     };
     fetchProduct();
@@ -153,26 +154,14 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
     setValue("tags", selectedTags.length > 0 ? selectedTags.join(",") : "");
   };
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPreviewImage(null);
-    const file = event.target.files?.[0];
-    if (!file) {
-      setValue("imageFile", undefined);
-      return;
-    }
-    setValue("imageFile", file);
-    const reader = new FileReader();
-    reader.onload = (e) => setPreviewImage(e.target?.result as string);
-    reader.readAsDataURL(file);
-  };
-
+ 
   const onSubmit = async (data: ProductFormValues) => {
     if (!token) {
-      toast("error", e("errorAuth"));
+      toast("error", t("error.errorAuth"));
       return;
     }
     if (!id) {
-      toast("error", e("notFound"));
+      toast("error", t("error.notGetData"));
       return;
     }
     const formData = new FormData();
@@ -194,7 +183,7 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
 
     try {
       await updateProduct(id as string, formData, token);
-      toast("success", s("successEdit", {field: "Producto"}), {
+      toast("success", t("success.successUpdateProduct"), {
         duration: 2000,
         onAutoClose: () => {
           router.push(`/dashboard/products/${id}`);
@@ -202,7 +191,7 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
         onDismiss: () => router.push(`/dashboard/products/${id}`),
       });
     } catch (error: unknown){
-      toast("error", error instanceof Error ? error.message : e("errorUpdate", {field: "producto"}));
+      if (error instanceof Error) toast("error", error.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -210,34 +199,34 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
   return (
     <div className="max-w-5xl mx-auto p-8">
       {isLoading ? (
-        <div className="text-center mt-8">{b("loading")}</div>
+        <div className="text-center mt-8">{t("button.loading")}</div>
       ) : error ? (
         <div className="text-center mt-8 text-red-500">{error}</div>
       ) : !product ? (
-        <div className="text-center mt-8">{e("notGetData")}</div>
+        <div className="text-center mt-8">{t("error.notGetData")}</div>
       ) : (
-        <div className="md:w-2/3 w-80">
-          <h1 className="text-3xl font-bold mb-6">{p("titleEdit")}</h1>
+        <>
+          <h1 className="text-3xl font-bold mb-6">{t("product.form.titleUpdate")}</h1>
           <form
             id="productForm"
             onSubmit={handleSubmit(onSubmit)}
             className="space-y-6"
           >
             <div>
-              <Label>{p("name")}</Label>
+              <Label>{t("product.form.name")}</Label>
               <Input
                 {...register("productName")}
-                placeholder={ph("name")}
+                placeholder={t("placeholder.name")}
               />
               {errors.productName && (
                 <p className="text-red-500">{errors.productName.message}</p>
               )}
             </div>
             <div>
-              <Label>{p("description")}</Label>
+              <Label>{t("product.form.description")}</Label>
               <textarea
                 {...register("description")}
-                placeholder={ph("description")}
+                placeholder={t("placeholder.description")}
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black placeholder:text-sm placeholder:text-gray-500"
               />
               {errors.description && (
@@ -245,11 +234,11 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
               )}
             </div>
             <div>
-              <Label>{p("cost")}</Label>
+              <Label>{t("product.form.cost")}</Label>
               <NumericInput
                 id="cost"
                 type="formattedNumber"
-                placeholder={ph("cost")}
+                placeholder={t("placeholder.cost")}
                 value={watch("cost") ?? ""}
                 onChange={(e) =>
                   setValue("cost", Number(e.target.value), {
@@ -261,11 +250,11 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
               />
             </div>
             <div>
-              <Label>{p("price")}</Label>
+              <Label>{t("product.form.price")}</Label>
               <NumericInput
                 id="price"
                 type="formattedNumber"
-                placeholder={ph("price")}
+                placeholder={t("placeholder.price")}
                 value={watch("price") ?? ""}
                 onChange={(e) =>
                   setValue("price", Number(e.target.value), {
@@ -277,11 +266,11 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
               />
             </div>
             <div>
-              <Label>{p("iva")}</Label>
+              <Label>{t("product.form.iva")}</Label>
               <NumericInput
                 id="iva"
                 type="formattedNumber"
-                placeholder={ph("iva")}
+                placeholder={t("placeholder.iva")}
                 value={watch("iva") ?? ""}
                 onChange={(e) =>
                   setValue("iva", Number(e.target.value), {
@@ -295,7 +284,7 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
             <div className="flex flex-col md:flex-row gap-4">
               {/* Proveedor */}
               <div className="w-full md:w-1/2">
-                <Label>{p("provider")}</Label>
+                <Label>{t("product.form.provider")}</Label>
                 <Controller
                   name="providerId"
                   control={control}
@@ -309,7 +298,7 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
                           errors.providerId ? "border-red-500" : ""
                         }`}
                       >
-                        <SelectValue placeholder={b("select")} />
+                        <SelectValue placeholder={t("placeholder.select")} />
                       </SelectTrigger>
                       <SelectContent>
                         {providers.map((p) => (
@@ -319,7 +308,7 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
                         ))}
                         {providers.length === 0 && (
                           <SelectItem disabled value="none">
-                            {e("notFoundField", {field: "proveedores"})}
+                            {t("error.notFoundProviders")}
                           </SelectItem>
                         )}
                       </SelectContent>
@@ -334,7 +323,7 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
               </div>
               {/* Etiquetas */}
               <div className="w-full md:w-1/2">
-                <Label>{p("tags")}</Label>
+                <Label>{t("product.form.tags")}</Label>
                 <TagFilter
                   token={token || ""}
                   selectedTags={tags}
@@ -371,36 +360,30 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
                 )}
               </div>
             </div>
-            <div className="w-full flex flex-col items-start relative">
-              <Label className="pb-2">{p("image")}</Label>
-              <Label className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-md text-sm font-medium text-center cursor-pointer">
-                <Input
-                  type="file"
-                  accept="image/jpeg, image/png, image/webp"
-                  onChange={handleImageChange}
-                  className="hidden"
-                />
-                {previewImage ? b("change") : b("upload")}
-              </Label>
-              {previewImage && (
-                <div className="w-1/2 mt-4">
-                  <Image
-                    src={previewImage}
-                    className="w-full h-auto rounded-md"
-                    alt="Vista previa del producto"
-                    width={200}
-                    height={200}
-                    priority
-                  />
-                </div>
-              )}
-              {errors.imageFile && (
-                <p className="text-red-500 text-sm mt-2">
-                  {errors.imageFile.message}
-                </p>
-              )}
+            <div className="w-full flex flex-col gap-2">
+              <Label>{t("product.form.image")}</Label>
+  <FormImgUploader
+            onChange={(file) => {
+              if (file) {
+                try {
+                  setValue("imageFile", file, { shouldValidate: false });
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    setPreviewImage(reader.result as string);
+                  };
+                  reader.readAsDataURL(file);
+                } catch (error: unknown) {
+                  if (error instanceof Error) toast("error", error.message);
+                }
+              }
+            }}
+            error={errors.imageFile?.message?.toString()}
+            prevClassName="w-40 h-40  object-cover shadow-md border-2 border-gray-300"
+            prevWidth={160}
+            defaultImage={previewImage}
+          />
             </div>
-            <div className="flex justify-start gap-4 mt-8">
+            <div className="flex justify-end gap-4 mt-8">
               <Button
                   type="button"
                   variant="outline"
@@ -415,14 +398,14 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
                   }}
                   disabled={isSubmitting || isCanceling}
               >
-                  {isCanceling ? b("canceling") : b("cancel")}
+                  {isCanceling ? t("button.cancelling") : t("button.cancel")}
               </Button>
               <Button type="submit" disabled={isSubmitting || isCanceling}>
-                {isSubmitting ? b("saving") : b("save")}
+                {isSubmitting ? t("button.saving") : t("button.save")}
               </Button>
             </div>
           </form>
-        </div>
+        </>
       )}
     </div>
   );
