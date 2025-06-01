@@ -7,7 +7,7 @@ interface ExtendedProductQueryParams extends ProductQueryParams {
   name?: string;
 }
 
-export const useProductSearch = (token: string) => {
+export const useProductSearch = (token: string, excludeServices: boolean = true) => {
   const [searchProducts, setSearchProducts] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [quantities, setQuantities] = useState<{ [id: string]: number }>({});
@@ -25,11 +25,17 @@ export const useProductSearch = (token: string) => {
           name: query,
         };
         const res = await getProducts(params, token);
-        const productList = res.data
+        let productList = res.data
           ? Array.isArray(res.data)
             ? res.data
             : []
           : [];
+        
+        // Filtrar servicios si se especifica
+        if (excludeServices) {
+          productList = productList.filter((p) => p.category !== "SERVICE");
+        }
+        
         setSearchProducts(productList);
       } catch (error) {
         toast(
@@ -43,7 +49,7 @@ export const useProductSearch = (token: string) => {
         setIsLoading(false);
       }
     },
-    [token]
+    [token, excludeServices]
   );
 
   useEffect(() => {
