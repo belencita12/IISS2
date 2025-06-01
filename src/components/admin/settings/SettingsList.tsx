@@ -57,6 +57,12 @@ const settingsOptions = [
     icon: "🧾",
     link: "/dashboard/settings/receipts",
   },
+  {
+    name: "Timbrado",
+    description: "Configura el timbrado de las facturas electrónicas.",
+    icon: "📜",
+    link: "/dashboard/settings/stamped",
+  }  
 ];
 
 export function SettingsList() {
