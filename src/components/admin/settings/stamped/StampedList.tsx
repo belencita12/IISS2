@@ -46,15 +46,39 @@ export function StampedList({ token }: StampedListProps) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await getStampedList({
-          page: currentPage,
-          size: 10,
-          stamped: debouncedSearch ? normalizeText(debouncedSearch) : undefined,
-          fromDate,
-          toDate,
-          includeDeleted: isActive === false,
-        });
-        setData(result);
+        if(debouncedSearch.length > 0){
+          let result = await getStampedList({
+            page: 1,
+            size: 1000,
+            fromDate,
+            toDate,
+            includeDeleted: isActive === false,
+          });
+          let filteredData = result.data.filter((s) => s.stampedNum.includes(debouncedSearch) || s.stock.name.includes(debouncedSearch) || s.stock.address.includes(debouncedSearch));
+          if(isActive === true){
+            filteredData = filteredData.filter((s) => s.isActive === true);
+          }else if(isActive === false){
+            filteredData = filteredData.filter((s) => s.isActive === false);
+          }
+          result.data = filteredData;
+          setData(result);
+        }else{
+          let result = await getStampedList({
+            page: currentPage,
+            size: 10,
+            fromDate,
+            toDate,
+            includeDeleted: isActive === false,
+          });
+          let filteredData = result.data;
+          if(isActive === true){
+            filteredData = filteredData.filter((s) => s.isActive === true);
+          }else if(isActive === false){
+            filteredData = filteredData.filter((s) => s.isActive === false);
+          }
+          result.data = filteredData;
+          setData(result);
+        }
         setError(null);
       } catch (error) {
         if (error instanceof Error) {

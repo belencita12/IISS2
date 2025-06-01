@@ -11,16 +11,14 @@ export const useStampedList = (token: string) => {
     try {
       setIsLoading(true);
       const queryParams = new URLSearchParams();
-      
+
       if (params.page) queryParams.append('page', params.page.toString());
       if (params.size) queryParams.append('size', params.size.toString());
-      if (params.search) queryParams.append('search', params.search);
+      if (params.stamped) queryParams.append('stamped', params.stamped);
       if (params.fromDate) queryParams.append('fromDate', params.fromDate);
       if (params.toDate) queryParams.append('toDate', params.toDate);
-      if (params.fromNum) queryParams.append('fromNum', params.fromNum.toString());
-      if (params.toNum) queryParams.append('toNum', params.toNum.toString());
-      if (params.isActive !== undefined) queryParams.append('isActive', params.isActive.toString());
-
+      if (params.includeDeleted) queryParams.append('includeDeleted', params.includeDeleted.toString());
+      console.log(queryParams.toString());
       const response = await apiFetch<PaginationResponse<Stamped>>(`${STAMPED_API}?${queryParams.toString()}`, token);
       if (!response.data) {
         throw new Error("No se pudo obtener la lista de timbrados");
