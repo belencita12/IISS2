@@ -31,7 +31,6 @@ export function StampedList({ token }: StampedListProps) {
   const [isActive, setIsActive] = useState<boolean | undefined>(undefined);
   const [selectedStamped, setSelectedStamped] = useState<Stamped | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const debouncedSearch = useDebounce(query, 300);
 
   const {
@@ -47,7 +46,7 @@ export function StampedList({ token }: StampedListProps) {
     const fetchData = async () => {
       try {
         if(debouncedSearch.length > 0){
-          let result = await getStampedList({
+          const result = await getStampedList({
             page: 1,
             size: 1000,
             fromDate,
@@ -63,7 +62,7 @@ export function StampedList({ token }: StampedListProps) {
           result.data = filteredData;
           setData(result);
         }else{
-          let result = await getStampedList({
+          const result = await getStampedList({
             page: currentPage,
             size: 10,
             fromDate,
@@ -113,7 +112,7 @@ export function StampedList({ token }: StampedListProps) {
 
   const handleEdit = (stamped: Stamped) => {
     setSelectedStamped(stamped);
-    setIsFormModalOpen(true);
+    // setIsFormModalOpen(true);
   };
 
   const handleDelete = (stamped: Stamped) => {
@@ -151,7 +150,7 @@ export function StampedList({ token }: StampedListProps) {
   };
 
   const handleFormSuccess = async () => {
-    setIsFormModalOpen(false);
+    // setIsFormModalOpen(false);
     setSelectedStamped(null);
     const result = await getStampedList({
       page: currentPage,
@@ -242,7 +241,9 @@ export function StampedList({ token }: StampedListProps) {
 
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Timbrado</h1>
-        <Button variant="outline" className="px-6" onClick={() => setIsFormModalOpen(true)}>
+        <Button variant="outline" className="px-6" onClick={() => {
+          // setIsFormModalOpen(true);
+        }}>
           Agregar
         </Button>
       </div>
