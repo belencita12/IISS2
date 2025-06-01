@@ -34,9 +34,12 @@ const StampedTable = ({
   isLoading,
   ...props
 }: StampedTableProps) => {
-  if (isLoading) return <StampedTableSkeleton />;
 
   const t = useTranslations("Stamped");
+  
+  if (isLoading) return <StampedTableSkeleton />;
+
+  
 
   const columns: Column<Stamped>[] = [
     {
