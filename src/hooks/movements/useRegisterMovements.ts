@@ -99,10 +99,18 @@ export const useRegisterMovement = (token: string) => {
       reset();
       return true;
     } catch (error: unknown) {
-      toast(
-        "error",
-        error instanceof Error ? error.message : "Error al registrar movimiento"
-      );
+      const errorMessage =
+        error instanceof Error ? error.message : "Error al registrar movimiento";
+
+      if (
+        typeof errorMessage === "string" &&
+        errorMessage.includes("Stock insuficiente")
+      ) {
+        toast("error", "No hay suficiente cantidad en el depósito.");
+      } else {
+        toast("error", errorMessage);
+      }
+
       return false;
     }
   };
