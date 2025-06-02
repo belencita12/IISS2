@@ -24,12 +24,14 @@ interface Props {
 
 export default function PurchaseList({ token }: Props) {
   const router = useRouter();
-  const { data, query, setQuery, isLoading, error } = useGetPurchases({
-    token,
-  });
   const [from, setFrom] = useState<string | undefined>();
   const [to, setTo] = useState<string | undefined>();
   const [isGettingReport, setIsGettingReport] = useState(false);
+
+  const { data, query, setQuery, isLoading, error } = useGetPurchases({
+    token,
+    init: { from, to, page: 1 },
+  });
 
   const handleGetPurchaseReport = async () => {
     if (!from || !to) {
@@ -67,8 +69,14 @@ export default function PurchaseList({ token }: Props) {
         <DateFilter
           to={to}
           from={from}
-          setDateTo={setTo}
-          setDateFrom={setFrom}
+          setDateTo={(val) => {
+            setTo(val);
+            setQuery((prev) => ({ ...prev, to: val }));
+          }}
+          setDateFrom={(val) => {
+            setFrom(val);
+            setQuery((prev) => ({ ...prev, from: val }));
+          }}
         />
       </div>
       <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
