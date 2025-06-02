@@ -5,9 +5,10 @@ import { toast } from "@/lib/toast";
 
 interface ExtendedProductQueryParams extends ProductQueryParams {
   name?: string;
+  providerId?: number;
 }
 
-export const useProductSearch = (token: string) => {
+export const useProductSearch = (token: string, providerId?: number) => {
   const [searchProducts, setSearchProducts] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [quantities, setQuantities] = useState<{ [id: string]: number }>({});
@@ -23,6 +24,7 @@ export const useProductSearch = (token: string) => {
           page: 1,
           size: 10,
           name: query,
+          providerId,
         };
         const res = await getProducts(params, token);
         const productList = res.data
@@ -43,7 +45,7 @@ export const useProductSearch = (token: string) => {
         setIsLoading(false);
       }
     },
-    [token]
+    [token, providerId]
   );
 
   useEffect(() => {
