@@ -98,6 +98,13 @@ const {
     }
   };
 
+  const minDate = "1900-01-01";
+  const maxDate = (() => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() + 1);
+    return d.toISOString().split("T")[0];
+  })();
+
   return (
     <div className="flex flex-col justify-center">
       <form
@@ -141,7 +148,20 @@ const {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex flex-col">
             <label className="text-sm font-medium mb-1">{m("date")}</label>
-            <Input type="date" {...register("dateMovement")} max={new Date().toISOString().split("T")[0]} className={errors.dateMovement ? "border-red-500" : ""} />
+            <Input
+              type="date"
+              {...register("dateMovement")}
+              min={minDate}
+              max={maxDate}
+              className={errors.dateMovement ? "border-red-500" : ""}
+              onBlur={(e) => {
+                let value = e.target.value;
+                if (value && (value < minDate || value > maxDate)) {
+                  value = value < minDate ? minDate : maxDate;
+                  setValue("dateMovement", value, { shouldValidate: true });
+                }
+              }}
+            />
             {errors.dateMovement && <p className="text-red-500 text-sm">{errors.dateMovement.message}</p>}
           </div>
 
