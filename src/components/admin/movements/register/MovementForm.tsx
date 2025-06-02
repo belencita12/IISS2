@@ -40,8 +40,9 @@ export default function MovementForm({ token }: { token: string }) {
     submitMovement,
   } = useRegisterMovement(token);
 
-  const { stocks } = useInitialData(token);
-  const selectedStockId = watch("originStockId") ?? null;
+const { stocks } = useInitialData(token);
+const selectedStockId = watch("originStockId") ?? null;
+const movementType = watch("type"); // Obtener el tipo de movimiento
 
 const {
   searchProducts,
@@ -52,7 +53,7 @@ const {
   setProductQuantity,
   resetSearch,
   isLoading: isLoadingProduct,
-} = useProductStock(token, selectedStockId);
+} = useProductStock(token, selectedStockId, movementType); 
 
 
   const {
@@ -66,6 +67,7 @@ const {
   const router = useRouter();
   const details = watch("details") || [];
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeData | null>(null);
+  
 
   const m = useTranslations("MovementForm");
   const b = useTranslations("Button");
