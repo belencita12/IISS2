@@ -12,7 +12,7 @@ import { useTranslations } from "next-intl";
 import { getInvoiceDetailReport } from "@/lib/invoices/getInvoiceDetailReport";
 import PrintButton from "@/components/global/PrintButton";
 import { usePaymentForm } from "@/hooks/invoices/usePaymentForm";
-import PaymentForm from "@/components/admin/invoices/InvoicePaymentForm";
+import PaymentForm from "@/components/admin/invoices/invoicePayment/InvoicePaymentForm";
 
 interface Props {
   token: string;
