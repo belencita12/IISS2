@@ -14,6 +14,7 @@ import { BarChart2 } from "lucide-react";
 import { useFetch } from "@/hooks/api/useFetch";
 import { STOCK_API } from "@/lib/urls";
 import { useDebounce } from "@/hooks/product/useDebounce";
+import { useTranslations } from "next-intl";
 
 interface Stock {
   id: number;
@@ -48,6 +49,7 @@ export default function DepositSearch({
   const [deposits, setDeposits] = useState<Stock[]>([]);
   const [isCommandOpen, setIsCommandOpen] = useState(false);
   const [selectedDeposit, setSelectedDeposit] = useState<Stock | null>(null); // 💡 Nuevo estado
+  const t = useTranslations();
 
   const debouncedSearch = useDebounce(searchQuery, 300);
 
@@ -81,12 +83,12 @@ export default function DepositSearch({
         <BarChart2 className="h-5 w-5 text-muted-foreground" />
         <div className="flex-1">
           <Label htmlFor="deposit-search" className="text-sm font-medium">
-            Buscar Depósito
+            {t("sales.searchStock")}
           </Label>
           <div className="relative mt-1">
             <Input
               id="deposit-search"
-              placeholder="Buscar por nombre de depósito..."
+              placeholder={t("search.searchByName")}
               className="pl-3 pr-3"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -97,7 +99,7 @@ export default function DepositSearch({
                 <Command className="rounded-lg border shadow-md">
                   <CommandList>
                     <CommandEmpty>
-                      {loading ? "Cargando..." : "No se encontraron depósitos."}
+                      {loading ? t("button.loading") : t("error.notFoundStock")}
                     </CommandEmpty>
                     <CommandGroup>
                       {deposits.map((deposit) => (

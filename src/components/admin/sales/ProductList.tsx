@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { ProductWithExtraData as Product } from "@/lib/products/IProducts"
+import { useTranslations } from "next-intl"
 
 type ProductListProps = {
   products: Product[]
@@ -13,10 +14,13 @@ type ProductListProps = {
 }
 
 export default function ProductList({ products, onRemove, onUpdateQuantity }: ProductListProps) {
+
+  const t = useTranslations();
+
   if (products.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground">
-        No hay productos agregados. Busca y agrega productos a la venta.
+        {t("error.noAddedProducts")}
       </div>
     )
   }
@@ -26,10 +30,10 @@ export default function ProductList({ products, onRemove, onUpdateQuantity }: Pr
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Producto</TableHead>
-            <TableHead className="text-right">Precio</TableHead>
-            <TableHead className="text-center">Cantidad</TableHead>
-            <TableHead className="text-right">Total</TableHead>
+            <TableHead>{t("product.details.product")}</TableHead>
+            <TableHead className="text-right">{t("product.details.price")}</TableHead>
+            <TableHead className="text-center">{t("product.details.quantity")}</TableHead>
+            <TableHead className="text-right">{t("sales.total")}</TableHead>
             <TableHead className="w-[50px]"></TableHead>
           </TableRow>
         </TableHeader>
@@ -37,7 +41,7 @@ export default function ProductList({ products, onRemove, onUpdateQuantity }: Pr
           {products.map((product) => (
             <TableRow key={product.id}>
               <TableCell className="font-medium">{product.name}</TableCell>
-              <TableCell className="text-right">{product.price.toLocaleString("ES-PY")} Gs.</TableCell>
+              <TableCell className="text-right">{product.price.toLocaleString("ES-PY")} {t("sales.create.gs")}</TableCell>
               <TableCell>
                 <div className="flex items-center justify-center">
                   <Button
@@ -74,7 +78,7 @@ export default function ProductList({ products, onRemove, onUpdateQuantity }: Pr
                   </Button>
                 </div>
               </TableCell>
-              <TableCell className="text-right">{product.total.toLocaleString("ES-PY")}  Gs.</TableCell>
+              <TableCell className="text-right">{product.total.toLocaleString("ES-PY")}  {t("sales.create.gs")}</TableCell>
               <TableCell>
                 <Button
                   variant="ghost"

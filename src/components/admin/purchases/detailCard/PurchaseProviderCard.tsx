@@ -21,7 +21,7 @@ const PurchaseProviderCard: React.FC<PurchaseProviderCardProps> = ({
   date,
 }) => {
 
-  const p = useTranslations("PurchaseDetail");
+  const t = useTranslations();
 
   return (
     <Card className="mb-4 p-4 sm:p-6 lg:p-7 border-border/100 shadow-sm">
@@ -35,14 +35,14 @@ const PurchaseProviderCard: React.FC<PurchaseProviderCardProps> = ({
         
         <div className="space-y-2 sm:space-y-3 flex-1 order-2 sm:order-1">
           <h2 className="text-lg sm:text-xl font-bold">
-            {providerName || "Proveedor"}
+            {providerName || t("error.noAsigned")}
           </h2>
           <div className="space-y-1 sm:space-y-2">
             <p className="text-xs sm:text-sm text-gray-500">
-              {p("totalCost")}: {total?.toLocaleString() || 0} {p("gs")}
+              {t("purchase.card.totalCost", { totalCost: total !== undefined ? total.toLocaleString() : "0" })}
             </p>
             <p className="text-xs sm:text-sm text-gray-500">
-              {p("totalCostIva")}: {ivaTotal?.toLocaleString() || 0} {p("gs")}
+              {t("purchase.card.totalCostIva", { totalCostIva: ivaTotal !== undefined ? ivaTotal.toLocaleString() : "0" })}
             </p>
           </div>
         </div>

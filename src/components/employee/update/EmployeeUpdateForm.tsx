@@ -61,10 +61,7 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
   const [positions, setPositions] = useState<Position[]>([]);
   const [formSubmitting, setFormSubmitting] = useState(false);
 
-  const e = useTranslations("EmployeeTable");
-  const s = useTranslations("Success");
-  const b = useTranslations("Button");
-  const ph = useTranslations("Placeholder");
+  const t = useTranslations();
 
   const {
     register,
@@ -166,7 +163,7 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
     try {
       const response = await updateEmployee(employeeId, formData);
       if(response.ok){
-        toast("success", s("successEdit", {field: "Empleado"}));
+        toast("success", t("success.successUpdateEmployee"));
         router.push(`/dashboard/employee/${employeeId}`);
       }
     } catch (e : unknown) {
@@ -187,9 +184,9 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
 
   return (
     <div className="mx-auto p-4" style={{ maxWidth: "70vw" }}>
-      <h1 className="text-3xl font-bold mb-6">{e("titleUpdate")}</h1>
+      <h1 className="text-3xl font-bold mb-6">{t("employee.form.titleUpdate")}</h1>
       {!ready ? (
-        <div className="text-center">{b("loading")}</div>
+        <div className="text-center">{t("button.loading")}</div>
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 flex flex-col w-full">
           <div className="w-full">
@@ -198,7 +195,7 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
               name="positionId"
               id="positionId"
               options={positionOptions}
-              placeholder={ph("select")}
+              placeholder={t("placeholder.select")}
               error={errors.positionId?.message}
               onChange={(value) => setValue("positionId", value, {shouldValidate: true})}
               register={register("positionId")}
@@ -207,28 +204,28 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
             />
           </div>
           <div className="w-full">
-            <Label>{e("name")}</Label>
-            <Input {...register("name")} placeholder={ph("name")} disabled={formSubmitting}/>
+            <Label>{t("employee.form.name")}</Label>
+            <Input {...register("name")} placeholder={t("placeholder.name")} disabled={formSubmitting}/>
             {errors.name && <p className="text-red-500">{errors.name.message}</p>}
           </div>
           <div className="w-full">
-            <Label>{e("email")}</Label>
-            <Input {...register("email")} placeholder={ph("email")} disabled={formSubmitting}/>
+            <Label>{t("employee.form.email")}</Label>
+            <Input {...register("email")} placeholder={t("placeholder.email")} disabled={formSubmitting}/>
             {errors.email && <p className="text-red-500">{errors.email.message}</p>}
           </div>
           <div className="w-full">
-            <Label>{e("ruc")}</Label>
-            <Input {...register("ruc")} placeholder={ph("ruc")} disabled={formSubmitting}/>
+            <Label>{t("employee.form.ruc")}</Label>
+            <Input {...register("ruc")} placeholder={t("placeholder.ruc")} disabled={formSubmitting}/>
             {errors.ruc && <p className="text-red-500">{errors.ruc.message}</p>}
           </div>
           <div className="w-full">
-            <Label>{e("address")}</Label>
-            <Input {...register("address")} placeholder={ph("address")} disabled={formSubmitting}/>
+            <Label>{t("employee.form.address")}</Label>
+            <Input {...register("address")} placeholder={t("placeholder.address")} disabled={formSubmitting}/>
             {errors.address && <p className="text-red-500">{errors.address.message}</p>}
           </div>
           <div className="w-full">
-            <Label>{e("phone")}</Label>
-            <Input {...register("phoneNumber")} placeholder={ph("phone")} disabled={formSubmitting}/>
+            <Label>{t("employee.form.phone")}</Label>
+            <Input {...register("phoneNumber")} placeholder={t("placeholder.phone")} disabled={formSubmitting}/>
             {errors.phoneNumber && <p className="text-red-500">{errors.phoneNumber.message}</p>}
           </div>
                     {/* Imagen de perfil */}
@@ -255,11 +252,11 @@ export default function EmployeeUpdateForm({ token, employeeId }: Props) {
               onClick={() => router.push("/dashboard/employee")}
               disabled={formSubmitting}
             >
-              {b("cancel")}
+              {t("button.cancel")}
             </Button>
             <Button type="submit"
               disabled={formSubmitting}>
-              {formSubmitting ? b("updating") : b("update")}
+              {formSubmitting ? t("button.updating") : t("button.update")}
             </Button>
           </div>
         </form>

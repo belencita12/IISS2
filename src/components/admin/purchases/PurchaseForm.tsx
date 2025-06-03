@@ -46,8 +46,7 @@ export default function PurchaseForm({ token }: { token: string }) {
   const details = watch("details") || [];
   const router = useRouter();
 
-  const p = useTranslations("PurchaseForm");
-  const b = useTranslations("Button");
+  const t = useTranslations();
   
   const handleAddProduct = (product: Product, quantity: number) => {
     if (quantity > 0) {
@@ -63,13 +62,13 @@ export default function PurchaseForm({ token }: { token: string }) {
     await submitPurchase(formattedData);
   };
   return (
-    <div className="flex flex-col justify-center items-center p-6">
+    <div className="flex justify-center items-center p-6">
       <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-4xl p-6">
       <fieldset disabled={isSubmitting}>
-        <h2 className="text-2xl font-bold mb-6">{p("title")}</h2>
+        <h2 className="text-2xl font-bold mb-6">{t("purchase.form.title")}</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="flex flex-col space-y-1">
-            <label className="text-sm font-medium">{p("provider")}</label>
+            <label className="text-sm font-medium">{t("purchase.form.provider")}</label>
             <Controller
               name="providerId"
               control={control}
@@ -83,7 +82,7 @@ export default function PurchaseForm({ token }: { token: string }) {
                       errors.providerId ? "border-red-500" : ""
                     }`}
                   >
-                    <SelectValue placeholder={b("select")} />
+                    <SelectValue placeholder={t("placeholder.select")} />
                   </SelectTrigger>
                   <SelectContent>
                     {providers.map((provider) => (
@@ -102,7 +101,7 @@ export default function PurchaseForm({ token }: { token: string }) {
             )}
           </div>
           <div className="flex flex-col space-y-1">
-            <label className="text-sm font-medium">{p("stock")}</label>
+            <label className="text-sm font-medium">{t("purchase.form.stock")}</label>
             <Controller
               name="stockId"
               control={control}
@@ -116,7 +115,7 @@ export default function PurchaseForm({ token }: { token: string }) {
                       errors.stockId ? "border-red-500" : ""
                     }`}
                   >
-                    <SelectValue placeholder={b("select")} />
+                    <SelectValue placeholder={t("placeholder.select")} />
                   </SelectTrigger>
                   <SelectContent>
                     {stocks.map((stock) => (
@@ -133,7 +132,7 @@ export default function PurchaseForm({ token }: { token: string }) {
             )}
           </div>
           <div className="flex flex-col space-y-1">
-            <label className="text-sm font-medium">{p("date")}</label>
+            <label className="text-sm font-medium">{t("purchase.form.date")}</label>
             <Input
               type="date"
               max={new Date().toISOString().split("T")[0]}
@@ -158,15 +157,15 @@ export default function PurchaseForm({ token }: { token: string }) {
         />
         {details.length > 0 && (
           <>
-            <h2 className="p-4 font-bold">{p("productSelected")}</h2>
+            <h2 className="p-4 font-bold">{t("purchase.form.selectedProducts")}</h2>
             <ProductList details={details} onRemove={removeProduct} onUpdateQuantity={updateQuantity}
             />
           </>
         )}
         {errors.details && (<p className="text-red-500 text-sm mt-2">{errors.details.message}</p>)}
         <div className="flex justify-end gap-4 mt-6">
-        <Button variant="outline" type="button" onClick={() => router.push("/dashboard/purchases")}>{b("cancel")}</Button>
-        <Button type="submit" disabled={isSubmitting}>{isSubmitting ? b("registering") : b("register")}</Button>
+        <Button variant="outline" type="button" onClick={() => router.push("/dashboard/purchases")}>{t("button.cancel")}</Button>
+        <Button type="submit" disabled={isSubmitting}>{isSubmitting ? t("button.registering") : t("button.register")}</Button>
         </div>
         </fieldset>
       </form>

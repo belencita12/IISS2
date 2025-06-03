@@ -544,6 +544,7 @@
     "edit": "Editar",
     "editing": "Editando...",
     "save":"Guardar",
+    "update": "Actualizar",
     "cancel": "Cancelar",
     "saving": "Guardando...",
     "cancelling": "Cancelando...",
@@ -560,6 +561,7 @@
     "searching": "Buscando...",
     "updating": "Actualizando...",
     "finish": "Finalizar",
+    "finalizing": "Finalizando...",
     "confirm": "Confirmar",
     "delete": "Eliminar",
     "add": "Agregar",
@@ -641,7 +643,15 @@
     "unexpectedError": "Ocurrió un error inesperado",
     "errorLoadStock": "Ocurrió un error al cargar los depósitos",
     "notFoundStock": "No se encontraron depósitos",
-    "errorDeleteStock": "No se pudo eliminar el depósito"
+    "errorDeleteStock": "No se pudo eliminar el depósito",
+    "noSelectProduct": "No se seleccionó producto",
+    "noPrint": "No se pudo abrir la ventana de impresión.",
+    "errorPrintInvoice": "No se pudo imprimir la factura",
+    "selectStock": "Debe seleccionar un depósito",
+    "selectCustomer": "Debe seleccionar un cliente",
+    "selectProduct": "Debe seleccionar al menos un producto",
+    "amountNotCovered": "El pago total debe cubrir el monto completo de la venta",
+    "noAddedProducts": "No hay productos agregados. Busca y agrega productos a la venta."
     
   },
   "profileTabs": {
@@ -773,8 +783,36 @@
     "table": {
       "emptyMessage": "No hay mascotas registradas"
     }
-
-
+  },
+  "paymentMethods":{
+    "title": "Métodos de Pago",
+    "amount": "Monto",
+    "method": "Método"
+  },
+  "sales":{
+    "searchStock": "Buscar Depósito",
+    "total": "Total",
+    "category":{
+      "service": "Servicio",
+      "product": "Producto"
+    },
+    "type":{
+      "cash": "Contado",
+      "credit":"Crédito"
+    },
+    "create":{
+      "condition": "Condición de venta",
+      "client": "Cliente",
+      "products": "Productos",
+      "summary": "Resumen de venta",
+      "total": "Total:",
+      "gs": "Gs.",
+      "selectACustomer": "Selecciona un cliente para continuar.",
+      "selectStock": "Selecciona un depósito para continuar",
+      "paymentMissing": "Faltan {total} Gs. para completar el pago.",
+      "exceededAmount": "El monto excede por",
+      "totalPaid": "Total Pagado"
+    }
   },
   
   "success": {
@@ -793,7 +831,10 @@
     "successDeleteManufacturer": "Fabricante eliminado correctamente",
     "successUpdateManufacturer": "Fabricante actualizado correctamente",
     "successRegisterManufacturer": "Fabricante registrado correctamente",
-    "successDeleteStock": "Depósito eliminado correctamente"
+    "successDeleteStock": "Depósito eliminado correctamente",
+    "successCreateSales":"Venta finalizada con éxito",
+    "successRegisterEmployee": "Empleado registrado con éxito",
+    "successUpdateEmployee": "Empleado actualizado correctamente"
   },
   "vaccine": {
     "table": {
@@ -899,6 +940,7 @@
       "quantity": "Cantidad"
     },
     "details": {
+      "product":"Producto",
       "quantityDeposit":"Cantidad por depósitos",
       "name": "Nombre",
       "description": "Descripción",
@@ -969,6 +1011,17 @@
       "workPosition": "Puesto",
       "title": "Empleados",
       "emptyMessage": "No hay empleados registrados"
+    },
+    "form":{
+      "titleRegister": "Registro de Empleado",
+      "titleUpdate": "Actualizar datos de Empleado",
+      "ruc": "RUC",
+      "name": "Nombre",
+      "email": "Correo electrónico",
+      "phone": "Teléfono",
+      "workPosition": "Puesto",
+      "address": "Dirección",
+      "image": "Foto del empleado (Opcional)"
     }
   },
   "purchase": {
@@ -980,6 +1033,17 @@
     "list":{
       "title": "Compras",
       "emptyMessage": "No hay compras registradas"
+    },
+    "details":{
+      "title": "Detalles de Compra"
+    },
+    "form": {
+      "title": "Registrar Compra",
+      "provider": "Proveedor",
+      "stock": "Depósito",
+      "date": "Fecha",
+      "selectedProducts":"Productos seleccionados",
+      "titleEditQuantity": "Actualizar cantidad"
     }
   },
 
@@ -990,6 +1054,7 @@
       "cash": "Contado"
     },
     "table": {
+      "titleDetails":"Detalle de factura",
       "title": "Facturas",
       "invoiceNumber": "Factura N°",
       "client": "Cliente",
@@ -999,7 +1064,24 @@
       "total": "Total",
       "totalPayed": "Total pagado",
       "actions": "Acciones",
-      "emptyMessage": "No hay facturas registradas"
+      "emptyMessage": "No hay facturas registradas",
+      "product": "Producto",
+      "unitCost": "Costo unitario",
+      "iva": "IVA",
+      "subTotal": "Sub. Total",
+      "quantity": "Cantidad"
+    },
+    "card":{
+      "stamped": "Timbrado:",
+      "customerInformation": "Información del Cliente",
+      "payInformation": "Información de Pago",
+      "client": "Cliente",
+      "ruc": "RUC",
+      "total": "Total",
+      "totalPayed": "Total pagado",
+      "condition": "Condición de venta",
+      "iva": "IVA"
+
     }
   },
 
@@ -1043,6 +1125,7 @@
   },
 
   "filters": {
+    "clearFilters": "Limpiar filtros",
     "title": "Filtros",
     "type": "Tipo",
     "provider": "Proveedor",

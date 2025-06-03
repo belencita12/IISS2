@@ -21,6 +21,7 @@ import {
 } from "@/lib/sales/IPaymentMethod";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"; // Importando el RadioGroupItem y RadioGroup
 import PaymentMethodsSkeleton from "./skeleton/PaymentMethodsSkeleton";
+import { useTranslations } from "next-intl";
 
 type Props = {
   token: string;
@@ -46,6 +47,7 @@ export default function PaymentMethods({
   >([]);
 
   const { data, get, loading } = useFetch<PaymentMethodResponse>("", token);
+  const t = useTranslations();
 
   useEffect(() => {
     get(undefined, `${PAYMENT_METHOD_API}?page=1&size=5`);
@@ -105,7 +107,7 @@ export default function PaymentMethods({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Métodos de Pago</CardTitle>
+        <CardTitle>{t("paymentMethods.title")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex-col items-end gap-4">
@@ -132,7 +134,7 @@ export default function PaymentMethods({
 
           <div className="flex-1 flex items-end gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Monto</label>
+              <label className="block text-sm font-medium mb-1">{t("paymentMethods.amount")}</label>
               <NumericInput
                 id="payment-amount"
                 type="formattedNumber"
@@ -143,7 +145,7 @@ export default function PaymentMethods({
               />
             </div>
             <Button onClick={handleAdd} disabled={!thereIsProducts}>
-              Agregar
+              {t("button.add")}
             </Button>
           </div>
         </div>
@@ -151,8 +153,8 @@ export default function PaymentMethods({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Método</TableHead>
-              <TableHead>Monto</TableHead>
+              <TableHead>{t("paymentMethods.method")}</TableHead>
+              <TableHead>{t("paymentMethods.amount")}</TableHead>
               <TableHead></TableHead>
             </TableRow>
           </TableHeader>
