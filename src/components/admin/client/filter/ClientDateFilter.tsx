@@ -2,12 +2,9 @@
 
 import { Label } from "@/components/ui/label";
 import clsx from "clsx";
-<<<<<<< HEAD
 import { useTranslations } from "next-intl";
-=======
 import { useEffect, useState } from "react";
 import useDebounce from "@/hooks/useDebounce";
->>>>>>> 45702c94b9804e72771fcfdd0f9da22afe60e37e
 
 interface Props {
   to: string | undefined;
@@ -22,10 +19,8 @@ export default function DateFilter({
   setDateFrom,
   setDateTo,
 }: Props) {
-<<<<<<< HEAD
 
   const t = useTranslations();
-=======
   const [startDate, setStartDate] = useState(from ?? "");
   const [endDate, setEndDate] = useState(to ?? "");
   const debouncedStartDate = useDebounce(startDate, 500);
@@ -40,7 +35,6 @@ export default function DateFilter({
     if (to !== debouncedEndDate) setDateTo(debouncedEndDate || undefined);
     // eslint-disable-next-line
   }, [debouncedEndDate]);
->>>>>>> 45702c94b9804e72771fcfdd0f9da22afe60e37e
 
   const isEndDateBeforeStart = from && to && to < from;
   const toDateError = isEndDateBeforeStart
