@@ -8,7 +8,7 @@ const ProductosBanner = () => {
         {/* Imagen a la izquierda */}
         <div className="w-full sm:w-2/5 relative">
           <div className="relative w-full aspect-square max-w-[280px] mx-auto">
-            <div className="relative w-full h-full">
+            <div className="absolute inset-0 rounded-full border-4 border-myPink-primary shadow-xl">
               <Image
                 src="/productos9.jpg"
                 alt="Productos"
@@ -28,7 +28,7 @@ const ProductosBanner = () => {
             <p className="text-black mt-4 text-xs sm:text-sm pl-24">@NicoPetspy</p>
           </div>
           {/* Íconos decorativos */}
-          <div className="absolute -top-4 right-1/4 w-16 h-16">
+          <div className="absolute -top-8 right-0 w-16 h-16 sm:-top-4 sm:right-1/4 md:-top-8 md:right-1/3">
             <div className="transform -rotate-30">
               <PawPrint className="w-full h-full text-gray-300 fill-current drop-shadow-lg" />
             </div>

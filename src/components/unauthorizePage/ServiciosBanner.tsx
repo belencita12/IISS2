@@ -28,7 +28,7 @@ const ServiciosBanner = () => {
             <p className="text-gray-600 mt-4 text-sm sm:text-base pl-24">@NicoPetspy</p>
           </div>
           {/* Íconos decorativos */}
-          <div className="absolute -top-4 right-1/4 w-16 h-16">
+          <div className="absolute -top-8 right-0 w-16 h-16 sm:-top-4 sm:right-1/4 md:-top-8 md:right-1/3">
             <div className="transform -rotate-30">
               <PawPrint className="w-full h-full text-gray-300 fill-current drop-shadow-lg" />
             </div>
