@@ -11,6 +11,8 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { getInvoiceDetailReport } from "@/lib/invoices/getInvoiceDetailReport";
 import PrintButton from "@/components/global/PrintButton";
+import { usePaymentForm } from "@/hooks/invoices/usePaymentForm";
+import PaymentForm from "@/components/admin/invoices/InvoicePaymentForm";
 
 interface Props {
   token: string;
@@ -20,20 +22,21 @@ export default function InvoiceDetail({ token }: Props) {
   const params = useParams<{ id: string }>();
   const invoiceId = params?.id || "";
   const { invoice, invoiceDetails, loading, error } = useInvoiceDetail(
-    invoiceId, 
+    invoiceId,
     token
   );
   const [isPrinting, setIsPrinting] = useState(false);
 
   const i = useTranslations("InvoiceTable");
   const b = useTranslations("Button");
+  const { isFormOpen, selectedInvoice, onOpen, onClose } = usePaymentForm();
 
   useEffect(() => {
     if (error && typeof error === "object" && "message" in error) {
       toast("error", (error as Error).message);
     }
   }, [error]);
-  
+
   const handlePrintInvoice = async () => {
     if (!invoiceId) return;
 
@@ -78,7 +81,12 @@ export default function InvoiceDetail({ token }: Props) {
           </Button>
         </Link>
 
-        <div className="flex-grow-0">
+        <div className="flex gap-2 mt-4">
+          {invoice &&
+            invoice.type === "CREDIT" &&
+            invoice.total !== invoice.totalPayed && (
+              <Button onClick={() => onOpen(invoice)}>Pagar Factura</Button>
+            )}
           <PrintButton onClick={handlePrintInvoice} isLoading={isPrinting} />
         </div>
       </div>
@@ -92,6 +100,13 @@ export default function InvoiceDetail({ token }: Props) {
       <div className="w-full">
         <InvoiceDetailTable details={invoiceDetails} />
       </div>
+
+      <PaymentForm
+        init={selectedInvoice}
+        isOpen={isFormOpen}
+        token={token}
+        onClose={onClose}
+      />
     </div>
   );
 }
