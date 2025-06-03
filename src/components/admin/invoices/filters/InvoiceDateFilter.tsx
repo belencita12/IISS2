@@ -71,14 +71,23 @@ export default function InvoiceDateFilter({ filters, setFilters }: Props) {
       "w-full border px-3 py-2 rounded",
       startDateError && "border-red-500"
     )}
-    value={startDate}
+    value={startDate || ""}
+    min="1900-01-01"
     max={today}
     onChange={(e) => {
       const value = e.target.value;
       setStartDate(value);
-
       if (endDate && value > endDate) {
         setEndDate("");
+      }
+    }}
+    onBlur={(e) => {
+      const min = "1900-01-01";
+      const max = today;
+      let value = e.target.value;
+      if (value && (value < min || value > max)) {
+        value = value < min ? min : max;
+        setStartDate(value);
       }
     }}
   />
@@ -96,10 +105,19 @@ export default function InvoiceDateFilter({ filters, setFilters }: Props) {
       "w-full border px-3 py-2 rounded",
       endDateError && "border-red-500"
     )}
-    value={endDate}
-    min={startDate || undefined}
+    value={endDate || ""}
+    min={startDate || "1900-01-01"}
     max={today}
     onChange={(e) => setEndDate(e.target.value)}
+    onBlur={(e) => {
+      const min = startDate || "1900-01-01";
+      const max = today;
+      let value = e.target.value;
+      if (value && (value < min || value > max)) {
+        value = value < min ? min : max;
+        setEndDate(value);
+      }
+    }}
   />
   {endDateError && (
     <p className="text-red-600 text-sm mt-1">{endDateError}</p>

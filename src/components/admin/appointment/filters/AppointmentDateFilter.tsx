@@ -70,12 +70,23 @@ export default function AppointmentDateFilter({ filters, setFilters }: Props) {
           className={clsx(
             "w-full border px-3 py-2 rounded",
           )}
-          value={startDate}
+          min="1900-01-01"
+          max={(() => { const d = new Date(); d.setFullYear(d.getFullYear() + 5); return d.toISOString().split('T')[0]; })()}
+          value={startDate || ""}
           onChange={(e) => {
             const value = e.target.value;
             setStartDate(value);
             if (endDate && value > endDate) {
               setEndDate("");
+            }
+          }}
+          onBlur={(e) => {
+            const min = "1900-01-01";
+            const max = (() => { const d = new Date(); d.setFullYear(d.getFullYear() + 5); return d.toISOString().split('T')[0]; })();
+            let value = e.target.value;
+            if (value && (value < min || value > max)) {
+              value = value < min ? min : max;
+              setStartDate(value);
             }
           }}
         />
@@ -90,9 +101,19 @@ export default function AppointmentDateFilter({ filters, setFilters }: Props) {
             "w-full border px-3 py-2 rounded",
             endDateError && "border-red-500"
           )}
-          value={endDate}
-          min={startDate || undefined}
+          min={startDate || "1900-01-01"}
+          max={(() => { const d = new Date(); d.setFullYear(d.getFullYear() + 5); return d.toISOString().split('T')[0]; })()}
+          value={endDate || ""}
           onChange={(e) => setEndDate(e.target.value)}
+          onBlur={(e) => {
+            const min = startDate || "1900-01-01";
+            const max = (() => { const d = new Date(); d.setFullYear(d.getFullYear() + 5); return d.toISOString().split('T')[0]; })();
+            let value = e.target.value;
+            if (value && (value < min || value > max)) {
+              value = value < min ? min : max;
+              setEndDate(value);
+            }
+          }}
         />
         {endDateError && (
           <p className="text-red-600 text-sm mt-1">{endDateError}</p>

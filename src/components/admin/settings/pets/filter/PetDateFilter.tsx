@@ -31,10 +31,21 @@ export default function PetDateFilter({
             "w-full border px-3 py-2 rounded",
             toDateError && "border-red-500"
           )}
+          min="1900-01-01"
+          max={new Date().toISOString().split("T")[0]}
           value={from || ""}
           onChange={(e) => {
             const value = e.target.value;
             setDateFrom(value);
+          }}
+          onBlur={(e) => {
+            const min = "1900-01-01";
+            const max = new Date().toISOString().split("T")[0];
+            let value = e.target.value;
+            if (value && (value < min || value > max)) {
+              value = value < min ? min : max;
+              setDateFrom(value);
+            }
           }}
         />
       </div>
@@ -47,8 +58,19 @@ export default function PetDateFilter({
             "w-full border px-3 py-2 rounded",
             toDateError && "border-red-500"
           )}
+          min="1900-01-01"
+          max={new Date().toISOString().split("T")[0]}
           value={to || ""}
           onChange={(e) => setDateTo(e.target.value)}
+          onBlur={(e) => {
+            const min = "1900-01-01";
+            const max = new Date().toISOString().split("T")[0];
+            let value = e.target.value;
+            if (value && (value < min || value > max)) {
+              value = value < min ? min : max;
+              setDateTo(value);
+            }
+          }}
         />
         {toDateError && (
           <p className="text-red-600 text-sm mt-1">{toDateError}</p>

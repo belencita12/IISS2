@@ -108,24 +108,28 @@ export default function InventoryHelp({ searchTerm }: { searchTerm: string }) {
       title: "Productos",
       description: "Gestión de productos y servicios",
       questions: productQuestions.filter(filter),
+      videoId: "l2JQjgj9-BI"
     },
     {
       icon: <SyringeIcon />,
       title: "Vacunas",
       description: "Control y registro de vacunaciones",
       questions: vaccineQuestions.filter(filter),
+      videoId: "laZi1g-s528"
     },
     {
       icon: <StoreIcon />,
       title: "Depósitos",
       description: "Gestión de múltiples ubicaciones de inventario",
       questions: warehouseQuestions.filter(filter),
+      videoId: "zf4qMQNyM58"
     },
     {
       icon: <BoxIcon />,
       title: "Movimientos",
       description: "Registro de entradas, salidas y transferencias",
       questions: movementQuestions.filter(filter),
+      videoId: "j1sLZWj0dEw"
     },
   ].filter((card) => card.questions.length > 0);
 
@@ -143,6 +147,7 @@ export default function InventoryHelp({ searchTerm }: { searchTerm: string }) {
           description={card.description}
           questions={card.questions}
           isSingle={isSingle}
+          videoId={card.videoId}
         />
       ))}
     </div>

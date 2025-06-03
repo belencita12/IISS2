@@ -211,19 +211,15 @@ export default function ListPets({ token }: ListPetsProps) {
     {
       header: "",
       accessor: (pet) =>
-        pet.profileImg ? (
-          <div className="w-10 h-10 rounded-full overflow-hidden">
+          (<div className="w-10 h-10 rounded-full overflow-hidden">
             <Image
-              src={pet.profileImg.previewUrl}
+              src={pet.profileImg?.previewUrl || "/NotImageNicoPets.png"}
               alt={pet.name}
               width={40}
               height={40}
               className="object-cover w-full h-full"
             />
-          </div>
-        ) : (
-          <Skeleton className="w-10 h-10 rounded-full" />
-        ),
+          </div>),
       className: "w-12",
     },
 

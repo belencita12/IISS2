@@ -1077,6 +1077,37 @@
     "movement": {
       "titleRevert": "Revertir movimiento",
       "messageRevert": "¿Estás seguro de que deseas eliminar el movimiento?"
-    }
+    },
+    "tags": "Etiquetas"
+  },
+   "Stamped": {
+    "title": "Timbrado",
+    "stampedNumber": "Número de timbrado",
+    "deposit": "Depósito",
+    "address": "Dirección",
+    "startDate": "Fecha de inicio",
+    "endDate": "Fecha de fin",
+    "numberRange": "Rango de números",
+    "status": "Estado",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "searchPlaceholder": "Buscar por número o depósito",
+    "selectStatus": "Seleccionar estado",
+    "all": "Todos",
+    "add": "Agregar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "view": "Ver",
+    "cancel": "Cancelar",
+    "deleteTitle": "Eliminar Timbrado",
+    "deleteMessage": "¿Estás seguro que deseas eliminar el timbrado {number}?",
+    "success": {
+      "delete": "Timbrado eliminado exitosamente"
+    },
+    "error": {
+      "loading": "Error al cargar los timbrados",
+      "delete": "Error al eliminar el timbrado"
+    },
+    "noStampedFound": "No se encontraron timbrados"
   }
 }
