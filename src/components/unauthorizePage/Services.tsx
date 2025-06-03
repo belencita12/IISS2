@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import ServiciosBanner from "./ServiciosBanner";
 import { ServiceType } from "@/lib/service-types/IServiceType";
@@ -22,6 +22,28 @@ interface ServiceResponse {
 
 export default function Services() {
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [itemsToShow, setItemsToShow] = useState(3);
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth < 640) {
+                setItemsToShow(1);
+            } else if (window.innerWidth < 1024) {
+                setItemsToShow(2);
+            } else {
+                setItemsToShow(3);
+            }
+        };
+
+        // Establecer el valor inicial
+        handleResize();
+
+        // Agregar el event listener
+        window.addEventListener('resize', handleResize);
+
+        // Limpiar el event listener
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     // Construir la URL con parámetros de paginación porque el que existe no tiene
     const queryParams = new URLSearchParams({
@@ -44,7 +66,6 @@ export default function Services() {
     const services = data?.data || [];
     const displayServices = services.length > 0 ? services : staticServices;
     
-    const itemsToShow = 3;
     const maxIndex = Math.max(0, displayServices.length - itemsToShow);
 
     const nextSlide = () => {
@@ -60,7 +81,13 @@ export default function Services() {
     return (
         <div className="flex flex-col w-full">
             <section className="relative w-full min-h-[300px]">
-                <ServiciosBanner />
+                <div className="absolute top-0 left-0 right-0 h-80 bg-gradient-to-r from-myPurple-primary to-myPink-primary opacity-90">
+                    <div className="absolute inset-0 bg-[url('/placeholder.svg?height=200&width=200')] bg-repeat opacity-10"></div>
+                    <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent"></div>
+                </div>
+                <div className="relative z-10">
+                    <ServiciosBanner />
+                </div>
             </section>
 
             {loading && (
@@ -82,7 +109,7 @@ export default function Services() {
             )}
 
             {!loading && !error && displayServices.length > 0 && (
-                <div className="relative">
+                <section className="relative py-9 bg-white mt-9">
                     {/* Botones de navegación */}
                     {displayServices.length > itemsToShow && (
                         <>
@@ -102,7 +129,7 @@ export default function Services() {
                     )}
 
                     {/* Grid */}
-                    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 py-9 bg-white mt-9">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {visibleServices.map((service) => (
                             <div 
                                 key={'id' in service ? service.id : service.name} 
@@ -123,8 +150,8 @@ export default function Services() {
                                 <h3 className="font-semibold text-sm sm:text-base text-myPink-primary">{service.name}</h3>
                             </div>
                         ))}
-                    </section>
-                </div>
+                    </div>
+                </section>
             )}
         </div>
     );

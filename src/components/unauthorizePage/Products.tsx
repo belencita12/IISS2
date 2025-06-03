@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import ProductosBanner from "./ProductosBanner";
 import { Product } from "@/lib/products/IProducts";
@@ -22,6 +22,28 @@ interface ProductResponse {
 
 export default function Products() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [itemsToShow, setItemsToShow] = useState(3);
+  
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setItemsToShow(1);
+      } else if (window.innerWidth < 1024) {
+        setItemsToShow(2);
+      } else {
+        setItemsToShow(3);
+      }
+    };
+
+    // Establecer el valor inicial
+    handleResize();
+
+    // Agregar el event listener
+    window.addEventListener('resize', handleResize);
+
+    // Limpiar el event listener
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   // Construir la URL con parámetros de paginación
   const queryParams = new URLSearchParams({
@@ -49,7 +71,6 @@ export default function Products() {
 
   const displayProducts = filteredProducts.length > 0 ? filteredProducts : staticProducts;
   
-  const itemsToShow = 3;
   const maxIndex = Math.max(0, displayProducts.length - itemsToShow);
 
   const nextSlide = () => {
@@ -117,11 +138,14 @@ export default function Products() {
             {visibleProducts.map((product) => (
               <div 
                 key={'id' in product ? product.id : product.name} 
-                className="bg-myPurple-disabled p-5 rounded-lg shadow-lg text-center transition-all duration-200 hover:scale-105 cursor-pointer flex flex-col items-center gap-4"
+                className="bg-myPink-disabled p-5 rounded-lg shadow-lg text-center transition-all duration-200 hover:scale-105 cursor-pointer flex flex-col items-center gap-4"
               >
                 <div className="w-full aspect-square relative max-w-[300px] mx-auto">
                   <Image 
-                    src={'id' in product ? (product.image?.originalUrl || NotImageNicoPets.src) : product.image} 
+                    src={'id' in product ? 
+                      (product.image?.originalUrl || NotImageNicoPets.src) : 
+                      product.image
+                    } 
                     alt={product.name} 
                     fill
                     quality={100}
