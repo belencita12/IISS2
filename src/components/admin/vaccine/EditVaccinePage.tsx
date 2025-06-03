@@ -18,6 +18,8 @@ export default function EditVaccinePage({ token, id }: EditVaccinePageProps) {
     null
   );
   const [loading, setLoading] = useState(true);
+
+  const t = useTranslations();
   const e = useTranslations("Error");
 
   useEffect(() => {
@@ -53,7 +55,7 @@ export default function EditVaccinePage({ token, id }: EditVaccinePageProps) {
         setVaccineData(adaptedData);
       })
       .catch((error : unknown) => {
-        toast("error", error instanceof Error ? error.message : e("errorLoad", {field: vaccineData?.name || ""}));
+        toast("error", error instanceof Error ? error.message : t("error.errorLoadVaccine"));
       })
       .finally(() => setLoading(false));
   }, [token, id]);
@@ -65,7 +67,7 @@ export default function EditVaccinePage({ token, id }: EditVaccinePageProps) {
       </div>
     );
 
-  if (!vaccineData) return <p>{e("notFound")}</p>;
+  if (!vaccineData) return <p>{t("error.notFound")}</p>;
 
   return <VaccineForm token={token} initialData={vaccineData} />;
 }

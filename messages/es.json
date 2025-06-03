@@ -628,13 +628,20 @@
     "errorDelete": "Ocurrió un error al intentar eliminar a {field}.",
     "errorRegisterClient": "Ocurrió un error al intentar registrar cliente.",
     "errorGetData": "Ocurrió un error al obtener los datos.",
-    "authError": "Error, debes estar autenticado para acceder a esta sección",
+    "authError": "Debes estar autenticado para acceder a esta sección",
     "errorRegisterProduct": "Ocurrió un error al intentar registrar el producto.",
     "errorGetProduct": "Ocurrió un error al obtener el producto",
     "notFoundProviders": "No se encontraron proveedores",
     "errorDeleteVaccine": "Ocurrió un error al intentar eliminar la vacuna.",
     "errorDeleteEmployee": "No se pudo eliminar empleado",
-    "isMaxLessThanMin": "El total máximo no puede ser menor al mínimo."
+    "isMaxLessThanMin": "El total máximo no puede ser menor al mínimo.",
+    "errorLoadVaccine":"Ocurrió un error al cargar datos de la vacuna",
+    "apiResponseIsNotArray": "La respuesta de la API no es un array",
+    "errorContentType": "Error: La API devolvió una respuesta no válida (posible HTML en lugar de JSON)",
+    "unexpectedError": "Ocurrió un error inesperado",
+    "errorLoadStock": "Ocurrió un error al cargar los depósitos",
+    "notFoundStock": "No se encontraron depósitos",
+    "errorDeleteStock": "No se pudo eliminar el depósito"
     
   },
   "profileTabs": {
@@ -782,7 +789,11 @@
     "successUpdateProduct": "Producto actualizado correctamente",
     "successDeleteVaccine": "Vacuna eliminada correctamente",
     "successRevertMovement": "Movimiento revertido con éxito",
-    "successDeleteEmployee": "{employee} fue eliminado correctamente"
+    "successDeleteEmployee": "{employee} fue eliminado correctamente",
+    "successDeleteManufacturer": "Fabricante eliminado correctamente",
+    "successUpdateManufacturer": "Fabricante actualizado correctamente",
+    "successRegisterManufacturer": "Fabricante registrado correctamente",
+    "successDeleteStock": "Depósito eliminado correctamente"
   },
   "vaccine": {
     "table": {
@@ -794,9 +805,13 @@
       "name": "Nombre",
       "manufacturer": "Fabricante",
       "specie": "Especie",
+      "price": "Precio",
       "manufacturersVaccine": "Fabricantes de vacunas",
       "vaccineTitle": "Vacunas",
-      "emptyMessage": "No hay vacunas registradas"
+      "emptyMessage": "No hay vacunas registradas",
+      "priceGs": "{price} Gs.",
+      "vaccineAsociated": "Vacunas asociadas",
+      "emptyMessageForManufacturer": "No hay vacunas registradas para este fabricante"
     },
     "details": {
       "manufacturer":"Fabricante",
@@ -892,7 +907,10 @@
       "category": "Categoría",
       "code": "Código",
       "tags": "Etiqueta/s",
-      "quantity": "Cantidad"
+      "quantity": "Cantidad",
+      "priceGs": "{price} Gs.",
+      "costGs": "{cost} Gs.",
+      "provider": "Proveedor"
     },
     "form": {
       "titleRegister": "Registro de Producto",
@@ -910,17 +928,36 @@
       "image": "Imagen (Opcional)"
     }
   },
+  "manufacturer": {
+    "table": {
+      "name": "Nombre",
+      "emptyMessage": "No hay fabricantes registrados",
+      "title": "Fabricantes de vacunas"
+    },
+    "form": {
+      "name": "Nombre del fabricante",
+      "titleRegister": "Registrar fabricante",
+      "titleEdit": "Editar fabricante"
+    }
+
+  },
 
   "stock":{
     "details": {
       "name": "Nombre",
       "address": "Dirección",
       "quantity": "Cantidad",
-      "uds": "{quantity} Unids."
+      "uds": "{quantity} Unids.",
+      "title": "Depósito",
+      "stockProducts": "Productos en depósito"
     },
     "table":{
       "actions": "Acciones",
-      "emptyMessage": "Producto no disponible en ninguna sucursal."
+      "emptyMessage": "Producto no disponible en ninguna sucursal.",
+      "title": "Depósitos"
+    },
+    "card": {
+      "address": "Dirección: {address}"
     }
   },
   "employee": {
@@ -1053,6 +1090,10 @@
     }
   },
   "confirmationModal":{
+    "stock":{
+      "titleDelete": "Eliminar depósito",
+      "messageDelete":"¿Estás seguro de que deseas eliminar el {stock}?"
+    },
     "employee": {
       "titleDelete": "Eliminar empleado",
       "messageDelete": "¿Estás seguro de que deseas eliminar al empleado {employee}?"
@@ -1077,6 +1118,10 @@
     "movement": {
       "titleRevert": "Revertir movimiento",
       "messageRevert": "¿Estás seguro de que deseas eliminar el movimiento?"
+    },
+    "manufacturer":{
+      "titleDelete": "Eliminar fabricante",
+      "messageDelete":"¿Estás seguro de que deseas eliminar al fabricante {manufacturer}?"
     },
     "tags": "Etiquetas"
   },

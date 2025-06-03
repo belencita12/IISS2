@@ -13,6 +13,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "@/lib/toast";
+import { useTranslations } from "next-intl";
 
 const vaccineManufacturerSchema = z.object({
     name: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
@@ -40,6 +41,8 @@ export default function ManufacturerFormModal({
 }: ManufacturerFormModalProps) {
     const [loading, setLoading] = useState(false);
     const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
+    const t = useTranslations();
 
     const {
         register,
@@ -79,36 +82,30 @@ export default function ManufacturerFormModal({
             const contentType = response.headers.get("content-type");
             if (!contentType || !contentType.includes("application/json")) {
                 throw new Error(
-                    "Error: La API devolvió una respuesta no válida (posible HTML en lugar de JSON)"
+                    t("error.errorContentType")
                 );
             }
-
-            const responseData = await response.json();
-            if (!response.ok) {
-                throw new Error(
-                    `Error: ${response.status} - ${
-                        responseData.message || "No se pudo guardar"
-                    }`
-                );
-            }
-
+           if (!response.ok) {
+            const errorData = await response.json().catch(() => ({})); 
+            const message = errorData?.message || `Error HTTP: ${response.status}`;
+            throw new Error(message);
+        }
             toast(
                 "success",
                 initialData?.id
-                    ? "Fabricante actualizado correctamente"
-                    : "Fabricante creado correctamente"
+                    ? t("success.successUpdateManufacturer")
+                    : t("success.successRegisterManufacturer")
             );
 
             reset();
             onSuccess();
             onClose();
         } catch (error) {
-            console.error(error);
             toast(
                 "error",
                 error instanceof Error
                     ? error.message
-                    : "Ocurrió un error inesperado"
+                    : t("error.unexpectedError")
             );
         } finally {
             setLoading(false);
@@ -128,19 +125,19 @@ export default function ManufacturerFormModal({
                 <DialogHeader>
                     <DialogTitle>
                         {initialData?.id
-                            ? "Editar Fabricante"
-                            : "Registrar Fabricante"}
+                            ? t("manufacturer.form.titleEdit")
+                            : t("manufacturer.form.titleRegister")}
                     </DialogTitle>
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     <div className="text-left space-y-2">
                         <label className="block text-sm font-medium">
-                            Nombre
+                            {t("manufacturer.form.name")}
                         </label>
                         <Input
                             {...register("name")}
-                            placeholder="Nombre del fabricante"
+                            placeholder={t("placeholder.name")}
                             className="p-2 border rounded-md w-full"
                             disabled={loading}
                         />
@@ -158,7 +155,7 @@ export default function ManufacturerFormModal({
                             onClick={onClose}
                             disabled={loading}
                         >
-                            Cancelar
+                            {t("button.cancel")}
                         </Button>
                         <Button
                             type="submit"
@@ -167,13 +164,13 @@ export default function ManufacturerFormModal({
                             {loading ? (
                                 <>
                                     {initialData?.id
-                                        ? "Guardando..."
-                                        : "Registrando..."}
+                                        ? t("button.saving")
+                                        : t("button.registering")}
                                 </>
                             ) : initialData?.id ? (
-                                "Guardar cambios"
+                                t("button.save")
                             ) : (
-                                "Registrar"
+                                t("button.register")
                             )}
                         </Button>
                     </div>

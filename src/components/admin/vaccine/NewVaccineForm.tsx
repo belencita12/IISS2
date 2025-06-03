@@ -58,7 +58,7 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
   return (
     <div className="p-4 mx-auto max-w-4xl">
       <h2 className="text-3xl font-bold mb-6">
-        {isEdit ? t("vaccine.form.titleEdit") : t("vaccine.form.titleRegister")}
+        {isEdit ? t("vaccine.form.titleUpdate") : t("vaccine.form.titleRegister")}
       </h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Nombre */}
