@@ -11,13 +11,13 @@ export default async function Hero() {
   return (
     <section className="flex flex-col sm:flex-row items-center justify-around py-6 sm:py-10 px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-0 w-full">
       <div className="text-center sm:text-left sm:mr-8 mb-6 sm:mb-0 w-full max-w-xl">
-        <h2 className="text-xl sm:text-2xl lg:text-4xl font-bold mb-4 text-myPurple-primary relative">
-          <span className="relative z-10 bg-white/90 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg shadow-sm inline-block whitespace-nowrap text-sm sm:text-base lg:text-3xl">¡Bienvenido a nuestra plataforma!</span>
+        <h2 className="text-xl sm:text-2xl lg:text-4xl font-bold mb-4 text-white relative">
+          <span className="relative z-10  backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg shadow-sm inline-block whitespace-nowrap text-sm sm:text-base lg:text-3xl">¡Bienvenido a nuestra plataforma!</span>
         </h2>
 
         {!isAuthenticated && (
           <>
-            <p className="text-gray-600 mb-6 text-xs sm:text-sm lg:text-base">
+            <p className="text-white mb-6 text-xs sm:text-sm lg:text-base">
               Regístrate con nosotros y accede a una amplia gama de servicios para tu mascota.
             </p>
             <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 w-full">

@@ -8,6 +8,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import NotImageNicoPets from "../../../public/NotImageNicoPets.png";
 import { useFetch } from "@/hooks/api/useFetch";
 import { PRODUCT_API } from "@/lib/urls"; 
+import { Button } from "@/components/ui/button";  
 
 const staticProducts = [
   { name: "Alimentos", image: "/veterinaria6.png" },
@@ -96,18 +97,18 @@ export default function Products() {
           {/* Botones de navegación */}
           {displayProducts.length > itemsToShow && (
             <>
-              <button
+              <Button
                 onClick={prevSlide}
                 className="absolute -left-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full p-2 shadow-lg transition-all duration-200"
               >
                 <ChevronLeft className="w-5 h-5 text-myPurple-primary" />
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={nextSlide}
                 className="absolute -right-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full p-2 shadow-lg transition-all duration-200"
               >
                 <ChevronRight className="w-5 h-5 text-myPurple-primary" />
-              </button>
+              </Button>
             </>
           )}
 
