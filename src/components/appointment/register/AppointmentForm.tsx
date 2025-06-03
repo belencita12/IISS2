@@ -38,6 +38,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useTranslations } from "next-intl"
+import { Textarea } from "@/components/ui/textarea";
 
 type AppointmentFormProps = {
   token: string;
@@ -322,7 +323,7 @@ export const AppointmentForm = ({
                 <h3 className="font-medium">{t("appointmentForm.details")}</h3>
               </div>
               <div>
-                <textarea
+                <Textarea
                   {...register("details")}
                   className="w-full border border-myPurple-tertiary rounded-md p-3 focus:ring-myPurple-primary focus:border-myPurple-primary transition-all duration-200"
                   rows={4}

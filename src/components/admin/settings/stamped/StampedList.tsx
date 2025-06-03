@@ -17,6 +17,7 @@ import GenericPagination from "@/components/global/GenericPagination";
 import { useStampedList } from "@/hooks/stamped/useStampedList";
 import { PaginationResponse } from "@/lib/types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { StampedForm } from "./StampedForm";
 
 interface StampedListProps {
   token: string;
@@ -31,6 +32,7 @@ export function StampedList({ token }: StampedListProps) {
   const [isActive, setIsActive] = useState<boolean | undefined>(undefined);
   const [selectedStamped, setSelectedStamped] = useState<Stamped | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const debouncedSearch = useDebounce(query, 300);
 
   const {
@@ -41,6 +43,7 @@ export function StampedList({ token }: StampedListProps) {
   const [data, setData] = useState<PaginationResponse<Stamped> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  console.log(currentPage)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -111,8 +114,8 @@ export function StampedList({ token }: StampedListProps) {
   };
 
   const handleEdit = (stamped: Stamped) => {
-    setSelectedStamped(stamped);
-    // setIsFormModalOpen(true);
+   // setSelectedStamped(stamped);
+   // setIsFormModalOpen(true);
   };
 
   const handleDelete = (stamped: Stamped) => {
@@ -150,7 +153,7 @@ export function StampedList({ token }: StampedListProps) {
   };
 
   const handleFormSuccess = async () => {
-    // setIsFormModalOpen(false);
+    setIsFormModalOpen(false);
     setSelectedStamped(null);
     const result = await getStampedList({
       page: currentPage,
@@ -242,7 +245,8 @@ export function StampedList({ token }: StampedListProps) {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Timbrado</h1>
         <Button variant="outline" className="px-6" onClick={() => {
-          // setIsFormModalOpen(true);
+          setSelectedStamped(null);
+          setIsFormModalOpen(true);
         }}>
           Agregar
         </Button>
@@ -274,24 +278,16 @@ export function StampedList({ token }: StampedListProps) {
         />
       )}
 
-      {/* <Dialog open={isFormModalOpen} onOpenChange={setIsFormModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {selectedStamped ? t("editTitle") : t("createTitle")}
-            </DialogTitle>
-          </DialogHeader>
-          <StampedForm
-            token={token}
-            stamped={selectedStamped || undefined}
-            onSuccess={handleFormSuccess}
-            onCancel={() => {
-              setIsFormModalOpen(false);
-              setSelectedStamped(null);
-            }}
-          />
-        </DialogContent>
-      </Dialog> */}
+      <StampedForm
+        isOpen={isFormModalOpen}
+        onClose={() => {
+          setIsFormModalOpen(false);
+          setSelectedStamped(null);
+        }}
+        token={token}
+        onSuccess={handleFormSuccess}
+        defaultValues={selectedStamped}
+      />
 
       <ConfirmationModal
         isOpen={isDeleteModalOpen}

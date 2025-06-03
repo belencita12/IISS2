@@ -27,6 +27,8 @@ import useDebounce from "@/hooks/useDebounce";
 import { downloadFromBlob, normalizeText } from "@/lib/utils";
 import ExportButton from "@/components/global/ExportButton";
 import { getAppointmentReport } from "@/lib/appointment/getAppointmentReport";
+import { unknown } from "zod";
+import { Textarea } from "@/components/ui/textarea";
 
 interface AppointmentListProps {
     token: string;
@@ -299,7 +301,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
                     title={t("confirmationModal.appointment.cancelTitle")}
                     size="md"
                 >
-                    <textarea
+                    <Textarea
                         className="w-full h-32 p-2 border border-gray-300 rounded"
                         placeholder={t("placeholder.reason")}
                         value={cancelDescription}
