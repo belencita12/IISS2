@@ -93,7 +93,7 @@ export default function Services() {
 
             {!loading && !error && displayServices.length > 0 && (
                 <div className="relative">
-                    {/* Botones de navegación - Solo si hay más elementos que mostrar */}
+                    {/* Botones de navegación */}
                     {displayServices.length > itemsToShow && (
                         <>
                             <button
@@ -111,7 +111,7 @@ export default function Services() {
                         </>
                     )}
 
-                    {/* Grid exactamente igual al original */}
+                    {/* Grid */}
                     <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 py-10 bg-white mt-10">
                         {visibleServices.map((service) => (
                             <div 
