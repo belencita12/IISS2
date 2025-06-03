@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Modal } from "@/components/global/Modal";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -14,6 +13,19 @@ import { useTranslations } from "next-intl";
 import { useStockList } from "@/hooks/stamped/useStockList";
 import NumericInput from "@/components/global/NumericInput";
 import { StockData } from "@/lib/stock/IStock";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface StampedFormProps {
   isOpen: boolean;
@@ -98,7 +110,6 @@ export function StampedForm({
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const selectedDate = new Date(date);
-        //selectedDate.setHours(0, 0, 0, 0);
         return selectedDate >= today;
       }, "La fecha de inicio debe ser desde el siguiente día en adelante"),
     toDate: z.string()
@@ -129,6 +140,20 @@ export function StampedForm({
   }, {
     message: "La fecha final debe ser hasta el último día del mes siguiente del año siguiente",
     path: ["toDate"],
+  }).refine((data) => {
+    const fromDate = new Date(data.fromDate);
+    const toDate = new Date(data.toDate);
+    return fromDate <= toDate;
+  }, {
+    message: "La fecha de inicio no puede ser mayor que la fecha final",
+    path: ["fromDate"],
+  }).refine((data) => {
+    const fromDate = new Date(data.fromDate);
+    const toDate = new Date(data.toDate);
+    return toDate >= fromDate;
+  }, {
+    message: "La fecha final no puede ser menor que la fecha de inicio",
+    path: ["toDate"],
   });
 
   type StampedFormData = z.infer<typeof stampedSchema>;
@@ -151,6 +176,28 @@ export function StampedForm({
       toNum: defaultValues?.toNum || 0,
     },
   });
+
+  const fromDate = watch("fromDate");
+  const toDate = watch("toDate");
+
+  // Calcular la fecha máxima para la fecha final
+  const getMaxToDate = () => {
+    if (!fromDate) return "";
+    const maxDate = new Date(fromDate);
+    maxDate.setFullYear(maxDate.getFullYear() + 1); // Año siguiente
+    maxDate.setMonth(maxDate.getMonth() + 1); // Mes siguiente
+    maxDate.setDate(0); // Último día del mes
+    return maxDate.toISOString().split('T')[0];
+  };
+
+  // Calcular la fecha mínima para la fecha final
+  const getMinToDate = () => {
+    if (!fromDate) return minDate;
+    const minToDate = new Date(fromDate);
+    minToDate.setFullYear(minToDate.getFullYear() + 1); // Año siguiente
+    minToDate.setMonth(minToDate.getMonth()); // Mismo mes
+    return minToDate.toISOString().split('T')[0];
+  };
 
   useEffect(() => {
     if (defaultValues) {
@@ -224,144 +271,179 @@ export function StampedForm({
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={defaultValues ? "Editar Timbrado" : "Registrar Timbrado"}
-      size="md"
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!isSubmitting && !open) {
+          onClose();
+        }
+      }}
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 px-1 py-2" noValidate>
-        <div>
-          <Label htmlFor="stampedNum">Número de Timbrado</Label>
-          <Input
-            id="stampedNum"
-            {...register("stampedNum")}
-            placeholder="Ingrese el número de timbrado (8 dígitos)"
-            maxLength={8}
-            pattern="[0-9]*"
-            inputMode="numeric"
-            onKeyDown={(e) => {
-              if (e.key === '-' || e.key === 'e' || e.key === 'E' || e.key === '.') {
-                e.preventDefault();
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>
+            {defaultValues ? "Editar Timbrado" : "Registrar Timbrado"}
+          </DialogTitle>
+        </DialogHeader>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 px-1 py-2" noValidate>
+          <div>
+            <Label htmlFor="stampedNum">Número de Timbrado</Label>
+            <Input
+              id="stampedNum"
+              {...register("stampedNum")}
+              placeholder="Ingrese el número de timbrado (8 dígitos)"
+              maxLength={8}
+              pattern="[0-9]*"
+              inputMode="numeric"
+              onKeyPress={(e) => {
+                // Solo permitir números
+                if (!/[0-9]/.test(e.key)) {
+                  e.preventDefault();
+                }
+              }}
+              onKeyDown={(e) => {
+                // Prevenir teclas especiales
+                if (e.key === '-' || e.key === 'e' || e.key === 'E' || e.key === '.' || e.key === '+' || e.key === ' ') {
+                  e.preventDefault();
+                }
+              }}
+              onChange={(e) => {
+                // Remover cualquier carácter que no sea número
+                const value = e.target.value.replace(/[^0-9]/g, '');
+                setValue('stampedNum', value);
+              }}
+              disabled={isSubmitting || isLoadingActiveNumbers}
+            />
+            {errors.stampedNum && (
+              <p className="text-sm text-red-600 mt-1">{errors.stampedNum.message}</p>
+            )}
+          </div>
+
+          <div>
+            <Label htmlFor="stockId">Depósito</Label>
+            <Select
+              value={watch("stockId")?.toString()}
+              onValueChange={(value) => setValue("stockId", Number(value), { shouldValidate: true })}
+              disabled={isLoadingStocks || isSubmitting}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Depósitos" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="0">Todos</SelectItem>
+                {stocks.map((stock: StockData) => (
+                  <SelectItem key={stock.id || ''} value={(stock.id || 0).toString()}>
+                    {stock.name} - {stock.address}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {isLoadingStocks && (
+              <p className="text-sm text-gray-500 mt-1">Cargando depósitos...</p>
+            )}
+            {error && (
+              <p className="text-sm text-red-600 mt-1">Error al cargar los depósitos</p>
+            )}
+            {!isLoadingStocks && stocks.length === 0 && (
+              <p className="text-sm text-yellow-600 mt-1">No hay depósitos disponibles</p>
+            )}
+            {errors.stockId && (
+              <p className="text-sm text-red-600 mt-1">{errors.stockId.message}</p>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="fromDate">Fecha Desde</Label>
+              <Input
+                id="fromDate"
+                type="date"
+                min={minDate}
+                {...register("fromDate", {
+                  onChange: (e) => {
+                    const value = e.target.value;
+                    if (value && toDate && value > toDate) {
+                      setValue("toDate", value);
+                    }
+                  }
+                })}
+                disabled={isSubmitting}
+              />
+              {errors.fromDate && (
+                <p className="text-sm text-red-600 mt-1">{errors.fromDate.message}</p>
+              )}
+            </div>
+
+            <div>
+              <Label htmlFor="toDate">Fecha Hasta</Label>
+              <Input
+                id="toDate"
+                type="date"
+                min={getMinToDate()}
+                max={getMaxToDate()}
+                {...register("toDate")}
+                disabled={isSubmitting}
+              />
+              {errors.toDate && (
+                <p className="text-sm text-red-600 mt-1">{errors.toDate.message}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="fromNum">Número Inicial</Label>
+              <NumericInput
+                id="fromNum"
+                type="number"
+                placeholder="Ingrese el número inicial"
+                value={watch("fromNum") ?? ""}
+                onChange={(e) => setValue("fromNum", Number(e.target.value), { shouldValidate: true })}
+                error={errors.fromNum?.message}
+                disabled={isSubmitting}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="toNum">Número Final</Label>
+              <NumericInput
+                id="toNum"
+                type="number"
+                placeholder="Ingrese el número final"
+                value={watch("toNum") ?? ""}
+                onChange={(e) => setValue("toNum", Number(e.target.value), { shouldValidate: true })}
+                error={errors.toNum?.message}
+                disabled={isSubmitting}
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={onClose}
+              disabled={isSubmitting || isLoadingStocks || isLoadingActiveNumbers}
+            >
+              Cancelar
+            </Button>
+            <Button 
+              type="submit" 
+              disabled={isSubmitting || isLoadingStocks || isLoadingActiveNumbers}
+            >
+              {isSubmitting 
+                ? defaultValues 
+                  ? "Actualizando..." 
+                  : "Registrando..."
+                : defaultValues 
+                  ? "Actualizar" 
+                  : "Registrar"
               }
-            }}
-            disabled={isSubmitting || isLoadingActiveNumbers}
-          />
-          {errors.stampedNum && (
-            <p className="text-sm text-red-600 mt-1">{errors.stampedNum.message}</p>
-          )}
-        </div>
-
-        <div>
-          <Label htmlFor="stockId">Depósito</Label>
-          <select
-            id="stockId"
-            {...register("stockId", { valueAsNumber: true })}
-            className="w-full p-2 border rounded"
-            disabled={isLoadingStocks || isSubmitting}
-          >
-            <option value="">Seleccione un depósito</option>
-            {stocks.map((stock: StockData) => (
-              <option key={stock.id} value={stock.id}>
-                {stock.name} - {stock.address}
-              </option>
-            ))}
-          </select>
-          {isLoadingStocks && (
-            <p className="text-sm text-gray-500 mt-1">Cargando depósitos...</p>
-          )}
-          {error && (
-            <p className="text-sm text-red-600 mt-1">Error al cargar los depósitos</p>
-          )}
-          {!isLoadingStocks && stocks.length === 0 && (
-            <p className="text-sm text-yellow-600 mt-1">No hay depósitos disponibles</p>
-          )}
-          {errors.stockId && (
-            <p className="text-sm text-red-600 mt-1">{errors.stockId.message}</p>
-          )}
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="fromDate">Fecha Desde</Label>
-            <Input
-              id="fromDate"
-              type="date"
-              min={minDate}
-              {...register("fromDate")}
-              disabled={isSubmitting}
-            />
-            {errors.fromDate && (
-              <p className="text-sm text-red-600 mt-1">{errors.fromDate.message}</p>
-            )}
+            </Button>
           </div>
-
-          <div>
-            <Label htmlFor="toDate">Fecha Hasta</Label>
-            <Input
-              id="toDate"
-              type="date"
-              {...register("toDate")}
-              disabled={isSubmitting}
-            />
-            {errors.toDate && (
-              <p className="text-sm text-red-600 mt-1">{errors.toDate.message}</p>
-            )}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="fromNum">Número Inicial</Label>
-            <NumericInput
-              id="fromNum"
-              type="number"
-              placeholder="Ingrese el número inicial"
-              value={watch("fromNum") ?? ""}
-              onChange={(e) => setValue("fromNum", Number(e.target.value), { shouldValidate: true })}
-              error={errors.fromNum?.message}
-              disabled={isSubmitting}
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="toNum">Número Final</Label>
-            <NumericInput
-              id="toNum"
-              type="number"
-              placeholder="Ingrese el número final"
-              value={watch("toNum") ?? ""}
-              onChange={(e) => setValue("toNum", Number(e.target.value), { shouldValidate: true })}
-              error={errors.toNum?.message}
-              disabled={isSubmitting}
-            />
-          </div>
-        </div>
-
-        <div className="flex justify-end gap-2 pt-2">
-          <Button 
-            type="button" 
-            variant="outline" 
-            onClick={onClose}
-            disabled={isSubmitting || isLoadingStocks || isLoadingActiveNumbers}
-          >
-            Cancelar
-          </Button>
-          <Button 
-            type="submit" 
-            disabled={isSubmitting || isLoadingStocks || isLoadingActiveNumbers}
-          >
-            {isSubmitting 
-              ? defaultValues 
-                ? "Actualizando..." 
-                : "Registrando..."
-              : defaultValues 
-                ? "Actualizar" 
-                : "Registrar"
-            }
-          </Button>
-        </div>
-      </form>
-    </Modal>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 } 
