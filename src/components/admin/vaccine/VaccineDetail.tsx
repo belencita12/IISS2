@@ -14,11 +14,9 @@ interface Props {
 export const VaccineDetail = ({ id, token }: Props) => {
   const router = useRouter();
   const { vaccine, loading, error } = useVaccineDetail(id, token);
+  const t = useTranslations();
 
-  const v = useTranslations("VaccineDetail");
-  const b = useTranslations("Button");
-
-  if (loading) return <p className="text-center mt-10">{b("loading")}</p>;
+  if (loading) return <p className="text-center mt-10">{t("button.loading")}</p>;
   if (error || !vaccine)
     return notFound();
 
@@ -45,23 +43,23 @@ export const VaccineDetail = ({ id, token }: Props) => {
         {/* Detalles */}
         <div className="w-full md:w-3/4 space-y-4 mr-4">
           <h1 className="text-2xl font-bold">{vaccine.name}</h1>
-          <Detail label={v("manufacturer")} value={vaccine.manufacturer.name} />
-          <Detail label={v("specie")} value={vaccine.species.name} />
+          <Detail label={t("vaccine.details.manufacturer")} value={vaccine.manufacturer.name} />
+          <Detail label={t("vaccine.details.specie")} value={vaccine.species.name} />
           <Detail
-            label={v("cost")}
-            value={`Gs. ${vaccine.product.cost.toLocaleString("es-PY")}`}
+            label={t("vaccine.details.cost")}
+            value={t("vaccine.details.priceGs", {price: vaccine.product.cost.toLocaleString("es-PY")})}
           />
           <Detail
-            label={v("iva")}
-            value={`${(vaccine.product.iva ).toLocaleString("es-PY")} %`}
+            label={t("vaccine.details.iva")}
+            value={t("vaccine.details.ivaPercentage", {iva: vaccine.product.iva.toLocaleString("es-PY")})}
           />
           <Detail
-            label={v("price")}
-            value={`Gs. ${vaccine.product.price.toLocaleString("es-PY")}`}
+            label={t("vaccine.details.price")}
+            value={t("vaccine.details.priceGs", {price: vaccine.product.price.toLocaleString("es-PY")})}
           />
           <Detail
-            label={v("quantity")}
-            value={`${vaccine.product.quantity} Uds.`}
+            label={t("vaccine.details.quantity")}
+            value={t("vaccine.details.uds", {quantity: vaccine.product.quantity})}
           />
         </div>
       </div>
@@ -69,10 +67,10 @@ export const VaccineDetail = ({ id, token }: Props) => {
       {/* Botones */}
       <div className="flex gap-4 mt-6 justify-end">
         <Button variant="outline" onClick={() => router.push("/dashboard/vaccine")}>
-          {b("toReturn")}
+          {t("button.toReturn")}
         </Button>
         <Button onClick={() => router.push(`/dashboard/vaccine/edit/${vaccine.id}`)}>
-          {b("edit")}
+          {t("button.edit")}
         </Button>
       </div>
     </div>

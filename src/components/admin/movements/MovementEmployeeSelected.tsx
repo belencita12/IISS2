@@ -17,9 +17,7 @@ export default function MovementEmployeeSelected({
   isSubmitting = false,
 }: MovementEmployeeSelectedProps) {
 
-    const em = useTranslations("EmployeeTable");
-    const b = useTranslations("Button");
-    const e = useTranslations("Error");
+    const t = useTranslations();
 
   if (!employee) return null;
 
@@ -27,18 +25,18 @@ export default function MovementEmployeeSelected({
 
   const columns: Column<EmployeeData>[] = [
     {
-      header: em("name"),
+      header: t("employee.table.name"),
       accessor: "fullName",
     },
     {
-      header: em("ruc"),
+      header: t("employee.table.ruc"),
       accessor: "ruc",
     },
   ];
 
   const actions: TableAction<EmployeeData>[] = [
     {
-      label: b("delete"),
+      label: t("button.delete"),
       icon: <Trash className={isSubmitting ? "cursor-not-allowed disabled>opacity-50" : "w-5 h-5"} />,
       onClick: () => onRemove(),
     },
@@ -49,8 +47,8 @@ export default function MovementEmployeeSelected({
       data={[employee]}
       columns={columns}
       actions={actions}
-      actionsTitle={b("actions")}
-      emptyMessage={e("noSelect", {field: "empleado"})}
+      actionsTitle={t("employee.table.actions")}
+      emptyMessage={t("error.notFoundEmployee")}
       pagination={undefined}
       className="mt-4"
     />

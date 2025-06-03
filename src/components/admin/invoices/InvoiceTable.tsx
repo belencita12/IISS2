@@ -20,35 +20,33 @@ import { useTranslations } from "next-intl";
  const InvoiceTable = ({ ...props }: InvoiceTableProps) => {
   
  const router = useRouter();
+ const t = useTranslations();
 
- const i = useTranslations("InvoiceTable");
- const e = useTranslations("Error");
- const b = useTranslations("Button");
 
   const actions: TableAction<Invoice>[] = [
     {
       icon: <Eye className="w-4 h-4" />,
       onClick: (invoice) => {
         if (!invoice.id || isNaN(Number(invoice.id))) {
-          toast("error", e("notGetData"));
+          toast("error", t("error.notGetData"));
           return;
         }
         router.push(`/dashboard/invoices/${invoice.id}`);
       },
-      label: b("seeDetails"),
+      label: t("button.seeDetails"),
     },
     
 
   ];
 
   const columns: Column<Invoice>[] = [
-    { header: i("invoiceNumber"), accessor: "invoiceNumber" },
-    { header: i("client"), accessor: "clientName" },
-    { header: i("ruc"), accessor: "ruc" },
-    { header: i("date"), accessor: (i) => formatDate(i.issueDate) },
-    { header: i("type"), accessor: (i) => (i.type === "CASH" ? "Contado" : "Crédito") },
-    { header: i("total"), accessor: (i) => `${i.total.toLocaleString()} Gs.` },
-    { header: i("totalPayed"), accessor: (i) => `${i.totalPayed.toLocaleString()} Gs.` },
+    { header: t("invoices.table.invoiceNumber"), accessor: "invoiceNumber" },
+    { header: t("invoices.table.client"), accessor: "clientName" },
+    { header: t("invoices.table.ruc"), accessor: "ruc" },
+    { header: t("invoices.table.date"), accessor: (i) => formatDate(i.issueDate) },
+    { header: t("invoices.table.type"), accessor: (i) => (i.type === "CASH" ? t("invoices.type.cash") : t("invoices.type.credit")) },
+    { header: t("invoices.table.total"), accessor: (i) => `${i.total.toLocaleString()} ${t("invoices.gs")}` },
+    { header: t("invoices.table.totalPayed"), accessor: (i) => `${i.totalPayed.toLocaleString()} ${t("invoices.gs")}` },
   ];
 
  

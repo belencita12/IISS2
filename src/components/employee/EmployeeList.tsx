@@ -31,11 +31,7 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
   });
   const [loading, setLoading] = useState(false);
 
-  const e = useTranslations("EmployeeTable");
-  const b = useTranslations("Button");
-  const m = useTranslations("ModalConfirmation");
-  const s = useTranslations("Success");
-  const err= useTranslations("Error");
+  const t = useTranslations();
 
   const loadEmployees = useCallback(
     async (page: number = 1, query: string = "") => {
@@ -43,7 +39,7 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
       setLoading(true);
       try {
         const results = await fetchEmployees(page, query, token);
-        if (!results?.data?.length && query) toast("info", err("notFoundField", {field: "empleados"}));
+        if (!results?.data?.length && query) toast("info", t("error.notFoundEmployees"));
         setData({
           employees: results?.data || [],
           pagination: {
@@ -96,10 +92,10 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
         : false;
     
       if (success) {
-        toast("success", s("successDelete", {field: selectedEmployee.fullName}));
+        toast("success", t("success.successDeleteEmployee", {employee: selectedEmployee.fullName}));
         loadEmployees(data.pagination.currentPage);
       } else {
-        toast("error", e("noDelete", {field : selectedEmployee.fullName}));
+        toast("error", t("error.errorDeleteEmployee"));
       }
     
       setIsModalOpen(false);
@@ -108,10 +104,10 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
     
 
   const columns: Column<EmployeeData>[] = [
-    { header: e("name"), accessor: "fullName" },
-    { header: e("email"), accessor: "email" },
-    { header: e("ruc"), accessor: "ruc" },
-    { header: e("position"), accessor: (employee) => employee.position.name },
+    { header: t("employee.table.name"), accessor: "fullName" },
+    { header: t("employee.table.email"), accessor: "email" },
+    { header: t("employee.table.ruc"), accessor: "ruc" },
+    { header: t("employee.table.workPosition"), accessor: (employee) => employee.position.name },
   
   ];
 
@@ -120,38 +116,38 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
       icon: <Eye className="w-4 h-4" />,
       onClick: (employee) => {
         if (!employee.id || isNaN(Number(employee.id))) {
-          toast("error", e("invalidID"));
+          toast("error", t("error.notFoundEmployee"));
           return;
         }
         router.push(`/dashboard/employee/${employee.id}`);
       },
-      label: b("seeDetails"),
+      label: t("button.seeDetails"),
     },
     {
       icon: <Pencil className="w-4 h-4" />,
       onClick: (employee) => {
         if (!employee.id || isNaN(Number(employee.id))) {
-          toast("error", e("invalidID"));
+          toast("error", t("error.notFoundEmployee"));
           return;
         }
         router.push(`/dashboard/employee/update/${employee.id}`);
       },
-      label: b("edit"),
+      label: t("button.edit"),
     },
     {
       icon: <Trash className="w-4 h-4" />,
       onClick: confirmDelete, 
-      label: b("delete"),
+      label: t("button.delete"),
     },
   ];
 
   return (
     <div className="p-4 mx-auto">
-        <SearchBar onSearch={handleSearch} />
+        <SearchBar onSearch={handleSearch} placeholder={t("search.searchByNameOrRucEmployee")} />
         <div className="flex justify-between items-center mb-4">
-            <h2 className="text-3xl font-bold">{e("title")}</h2>
+            <h2 className="text-3xl font-bold">{t("employee.table.title")}</h2>
             <Button variant="outline" className="px-6" onClick={() => router.push("/dashboard/employee/register")}>
-                    {b("register")}
+                    {t("button.register")}
             </Button>
         </div>
         <GenericTable
@@ -162,16 +158,16 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
           onPageChange={handlePageChange}
           isLoading={loading}
           skeleton={<EmployeeTableSkeleton />}
-          emptyMessage={e("emptyMessage")}
+          emptyMessage={t("employee.table.emptyMessage")}
       />
       <ConfirmationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleDelete}
-        title={m("titleDelete", {field: "empleado"})}
-        message={m("deleteMessagePerson", {field: selectedEmployee?.fullName ?? ""})}
-        confirmText={b("delete")}
-        cancelText={b("cancel")}
+        title={t("confirmationModal.employee.titleDelete")}
+        message={t("confirmationModal.employee.messageDelete", {employee: selectedEmployee?.fullName ?? ""})}
+        confirmText={t("button.delete")}
+        cancelText={t("button.cancel")}
         variant="danger"
       />
     </div>

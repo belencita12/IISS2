@@ -69,6 +69,7 @@
     "noAvailabilityHour": "No hay horarios disponibles para esta fecha",
     "notGetRuc": "No se pudo obtener el RUC del cliente",
     "notFound": "No se encontraron datos.",
+    "notFoundEmployees": "No se encontraron empleados",
     "notFoundField": "No se encontraron {field}.",
     "notFoundPets": "No se encontraron mascotas.",
     "notFoundProducts": "No se encontraron productos.",
@@ -87,7 +88,8 @@
     "numericMin": "No puede ser menor al mínimo",
     "selectOne": "Debes seleccionar al menos un {field}",
     "errorEndDate": "No se puede finalizar una cita antes de su fecha programada",
-    "errorLimitDate": "Se necesitan fechas límites para generar el reporte"
+    "errorLimitDate": "Se necesitan fechas límites para generar el reporte",
+    "startDateError": "La fecha no puede ser posterior a la actual."
   },
   "Filters":{
     "from": "Deste",
@@ -562,7 +564,10 @@
     "delete": "Eliminar",
     "add": "Agregar",
     "change": "Cambiar",
-    "upload": "Subir"
+    "upload": "Subir",
+    "adding": "Agregando...",
+    "revert": "Revertir",
+    "reversing":"Revirtiendo..."
     
   },
 
@@ -582,10 +587,13 @@
     "price": "Ingrese el precio",
     "cost": "Ingrese el costo",
     "iva":"Ingrese el IVA",
-    "description": "Ingrese una descripción"
+    "description": "Ingrese una descripción",
+    "minAmount":"Ej: 100.000",
+    "maxAmount":"Ej: 1.000.000"
 
   },
   "error": {
+    "error": "Error",
     "notFound": "No se encontraron datos",
     "noSpecified": "No especificado",
     "unknown": "Desconocido",
@@ -596,7 +604,8 @@
     "noAsigned": "No asignado",
     "noDetails": "No hay detalles disponibles",
     "notGetData": "No se pudo obtener la información",
-    "notFoundEmployee": "No se encontró empleado",
+    "notFoundEmployee": "No se encontró el empleado",
+    "notFoundEmployees": "No se encontraron empleados",
     "noUpdate": "Ocurrió un error al actualizar los datos",
     "auth": "Debes estar autenticado para realizar esta acción.",
     "noEmpty": "El campo no puede ser vacío",
@@ -622,7 +631,10 @@
     "authError": "Error, debes estar autenticado para acceder a esta sección",
     "errorRegisterProduct": "Ocurrió un error al intentar registrar el producto.",
     "errorGetProduct": "Ocurrió un error al obtener el producto",
-    "notFoundProviders": "No se encontraron proveedores"
+    "notFoundProviders": "No se encontraron proveedores",
+    "errorDeleteVaccine": "Ocurrió un error al intentar eliminar la vacuna.",
+    "errorDeleteEmployee": "No se pudo eliminar empleado",
+    "isMaxLessThanMin": "El total máximo no puede ser menor al mínimo."
     
   },
   "profileTabs": {
@@ -767,7 +779,10 @@
     "successUpdateClient": "Cliente actualizado correctamente",
     "successRegisterProduct": "Producto agregado correctamente",
     "successDeleteProduct": "Producto eliminado correctamente",
-    "successUpdateProduct": "Producto actualizado correctamente"
+    "successUpdateProduct": "Producto actualizado correctamente",
+    "successDeleteVaccine": "Vacuna eliminada correctamente",
+    "successRevertMovement": "Movimiento revertido con éxito",
+    "successDeleteEmployee": "{employee} fue eliminado correctamente"
   },
   "vaccine": {
     "table": {
@@ -782,13 +797,41 @@
       "manufacturersVaccine": "Fabricantes de vacunas",
       "vaccineTitle": "Vacunas",
       "emptyMessage": "No hay vacunas registradas"
+    },
+    "details": {
+      "manufacturer":"Fabricante",
+      "specie": "Especie",
+      "cost": "Costo",
+      "iva": "IVA",
+      "price": "Precio",
+      "quantity": "Cantidad",
+      "uds":"{quantity} Unids.",
+      "ivaPercentage": "{iva} %",
+      "priceGs": "{price} Gs."
+    },
+    "form":{
+      "titleRegister": "Agregar vacuna",
+      "titleUpdate": "Editar vacuna",
+      "manufacturer":"Fabricante",
+      "specie": "Especie",
+      "cost": "Costo",
+      "iva": "IVA",
+      "price": "Precio",
+      "quantity": "Cantidad",
+      "name": "Nombre",
+      "image": "Imagen (Opcional)",
+      "provider": "Proveedor",
+      "description": "Descripción"
     }
   },
   "search": {
     "searchByName": "Buscar por nombre...",
     "searchByNameOrRuc": "Buscar por nombre o ruc del cliente...",
     "searchByNameOrRucOrEmail": "Buscar por nombre, ruc o correo del cliente...",
-    "searchByCodeOrName": "Buscar por código o nombre..."
+    "searchByCodeOrName": "Buscar por código o nombre...",
+    "searchByEmployeeRuc": "Buscar por RUC del encargado...",
+    "searchByProductName": "Buscar por nombre del producto...",
+    "searchByNameOrRucEmployee": "Buscar por nombre o RUC del empleado..."
   },
   "productCatalog": {
     "selectedTags": "Etiquetas seleccionadas:",
@@ -880,9 +923,93 @@
       "emptyMessage": "Producto no disponible en ninguna sucursal."
     }
   },
+  "employee": {
+    "table": {
+      "name": "Nombre",
+      "ruc": "RUC",
+      "actions": "Acciones",
+      "email":"Correo electrónico",
+      "workPosition": "Puesto",
+      "title": "Empleados",
+      "emptyMessage": "No hay empleados registrados"
+    }
+  },
+  "purchase": {
+    "card": {
+      "totalCost": "Costo total: {totalCost} Gs.",
+      "totalCostIva": "Costo total IVA: {totalCostIva} Gs.",
+      "stock": "Depósito"
+    },
+    "list":{
+      "title": "Compras",
+      "emptyMessage": "No hay compras registradas"
+    }
+  },
+
+  "invoices": {
+    "gs": "Gs.",
+    "type": {
+      "credit": "Crédito",
+      "cash": "Contado"
+    },
+    "table": {
+      "title": "Facturas",
+      "invoiceNumber": "Factura N°",
+      "client": "Cliente",
+      "ruc": "RUC",
+      "date": "Fecha",
+      "type": "Tipo",
+      "total": "Total",
+      "totalPayed": "Total pagado",
+      "actions": "Acciones",
+      "emptyMessage": "No hay facturas registradas"
+    }
+  },
+
+
+  "movement" : {
+    "form": {
+      "title": "Registrar Movimiento",
+      "typeOfMovement": "Tipo de movimiento",
+      "originStock":"Depósito origen",
+      "destinationStock": "Depósito destino",
+      "selectOrigin": "Seleccionar origen",
+      "selectDestination": "Seleccionar destino",
+      "date": "Fecha",
+      "description": "Descripción",
+      "selectEmployee": "Seleccionar encargado",
+      "movementProducts": "Productos del movimiento",
+      "selectedProducts": "Productos seleccionados"
+    },
+    "card": {
+      "originStock": "Depósito origen: {origin}",
+      "destinationStock": "Depósito destino: {destination}"
+    },
+    "type": {
+      "inbound": "Entrante",
+      "outbound": "Saliente",
+      "transfer": "Transferencia"
+    },
+    "details": {
+      "movementOf": "Movimiento de {movement}",
+      "employee": "Encargado",
+      "originStock": "Depósito origen",
+      "destinationStock": "Depósito destino",
+      "description":"Descripción",
+      "productsTitle": "Productos"
+    },
+    "table": {
+      "title": "Movimientos",
+      "emptyMessage": "No hay movimientos registrados"
+  
+    }
+  },
 
   "filters": {
     "title": "Filtros",
+    "type": "Tipo",
+    "provider": "Proveedor",
+    "stock": "Depósito",
     "warning": {
       "minPrice": "El precio mínimo no puede ser 0. Por favor ingrese un valor mayor.",
       "maxPrice": "El precio máximo no puede ser 0. Por favor ingrese un valor mayor.",
@@ -903,6 +1030,10 @@
       "from": "Fecha desde",
       "to" :"Fecha hasta"
     },
+    "movement":{
+      "origin": "Origen",
+      "destination": "Destino"
+    },
     "appointmentStatus": "Estado de la cita",
     "all": "Todos",
     "none": "Ninguno",
@@ -915,9 +1046,17 @@
       "from": "Desde",
       "to":"Hasta",
       "errorNumericMin": "No puede ser menor al mínimo"
+    },
+    "total": {
+      "minTotal": "Total mínimo",
+      "maxTotal": "Total máximo"
     }
   },
   "confirmationModal":{
+    "employee": {
+      "titleDelete": "Eliminar empleado",
+      "messageDelete": "¿Estás seguro de que deseas eliminar al empleado {employee}?"
+    },
     "appointment": {
       "confirmFinish": "Confirmar finalización",
       "confirmFinishDescription": "¿Estás seguro de que deseas finalizar la cita?",
@@ -925,11 +1064,19 @@
     },
     "client": {
       "titleDelete": "Eliminar cliente",
-      "messageDelete": "¿Estás seguro de que deseas eliminar a {client}?"
+      "messageDelete": "¿Estás seguro de que deseas eliminar al cliente {client}?"
     },
     "product": {
       "titleDelete": "Eliminar producto",
-      "messageDelete": "¿Estás seguro de que deseas eliminar {product}?"
+      "messageDelete": "¿Estás seguro de que deseas eliminar el producto {product}?"
+    },
+    "vaccine": {
+      "titleDelete": "Eliminar vacuna",
+      "messageDelete":"¿Estás seguro de que deseas eliminar la vacuna {vaccine}?"
+    },
+    "movement": {
+      "titleRevert": "Revertir movimiento",
+      "messageRevert": "¿Estás seguro de que deseas eliminar el movimiento?"
     }
   }
 }

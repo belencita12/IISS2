@@ -64,8 +64,7 @@ export default function MovementForm({ token }: { token: string }) {
   const details = watch("details") || [];
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeData | null>(null);
 
-  const m = useTranslations("MovementForm");
-  const b = useTranslations("Button");
+  const t = useTranslations();
 
   const handleAddProduct = (product: Product, quantity: number) => {
     if (quantity > 0) {
@@ -100,23 +99,23 @@ export default function MovementForm({ token }: { token: string }) {
         className="w-full  bg-white p-8  space-y-8"
       >
          <fieldset disabled={isSubmitting} className="space-y-8">
-        <h2 className="text-3xl font-bold mb-4 text-start">{m("title")}</h2>
+        <h2 className="text-3xl font-bold mb-4 text-start">{t("movement.form.title")}</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="flex flex-col">
-            <label className="text-sm font-medium mb-1">{m("typeOfMovement")}</label>
+            <label className="text-sm font-medium mb-1">{t("movement.form.typeOfMovement")}</label>
             <Controller
               name="type"
               control={control}
               render={({ field }) => (
                 <Select onValueChange={field.onChange} value={field.value}>
                   <SelectTrigger className={errors.type ? "border-red-500" : ""}>
-                    <SelectValue placeholder={b("select")} />
+                    <SelectValue placeholder={t("placeholder.select")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="INBOUND">{m("inbound")}</SelectItem>
-                    <SelectItem value="OUTBOUND">{m("outbound")}</SelectItem>
-                    <SelectItem value="TRANSFER">{m("transfer")}</SelectItem>
+                    <SelectItem value="INBOUND">{t("movement.type.inbound")}</SelectItem>
+                    <SelectItem value="OUTBOUND">{t("movement.type.outbound")}</SelectItem>
+                    <SelectItem value="TRANSFER">{t("movement.type.transfer")}</SelectItem>
                   </SelectContent>
                 </Select>
               )}
@@ -135,13 +134,13 @@ export default function MovementForm({ token }: { token: string }) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex flex-col">
-            <label className="text-sm font-medium mb-1">{m("date")}</label>
+            <label className="text-sm font-medium mb-1">{t("movement.form.date")}</label>
             <Input type="date" {...register("dateMovement")} max={new Date().toISOString().split("T")[0]} className={errors.dateMovement ? "border-red-500" : ""} />
             {errors.dateMovement && <p className="text-red-500 text-sm">{errors.dateMovement.message}</p>}
           </div>
 
           <div className="flex flex-col">
-            <label className="text-sm font-medium mb-1">{m("description")}</label>
+            <label className="text-sm font-medium mb-1">{t("movement.form.description")}</label>
             <Input placeholder="Descripción del movimiento" {...register("description")}
               className={errors.description ? "border-red-500" : ""} />
             {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
@@ -149,7 +148,7 @@ export default function MovementForm({ token }: { token: string }) {
         </div>
 
         <div className="p-6 border rounded-xl bg-gray-50">
-          <h3 className="font-semibold text-lg mb-4">{m("selectEmployee")}</h3>
+          <h3 className="font-semibold text-lg mb-4">{t("movement.form.selectEmployee")}</h3>
           <MovementEmployeeSearch
             searchEmployees={employees}
             onSearch={searchEmployees}
@@ -171,7 +170,7 @@ export default function MovementForm({ token }: { token: string }) {
         </div>
 
         <div className="p-6 border rounded-xl bg-gray-50">
-          <h3 className="font-semibold text-lg mb-4">{m("products")}</h3>
+          <h3 className="font-semibold text-lg mb-4">{t("movement.form.movementProducts")}</h3>
           <ProductSearch
             searchProducts={searchProducts}
             searchQuery={searchQuery}
@@ -186,7 +185,7 @@ export default function MovementForm({ token }: { token: string }) {
 
           {details.length > 0 && (
             <>
-              <h4 className="font-medium text-sm mt-6 mb-2">{m("productSelected")}</h4>
+              <h4 className="font-medium text-sm mt-6 mb-2">{t("movement.form.selectedProducts")}</h4>
               <ProductList
                 details={details}
                 onRemove={removeProduct}
@@ -198,9 +197,9 @@ export default function MovementForm({ token }: { token: string }) {
         </div>
         </fieldset>
         <div className="flex justify-end gap-4">
-          <Button variant="outline" type="button" onClick={() => router.push("/dashboard/movement")} disabled={isSubmitting} >{b("cancel")}</Button>
+          <Button variant="outline" type="button" onClick={() => router.push("/dashboard/movement")} disabled={isSubmitting} >{t("button.cancel")}</Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? b("registering") : b("register")}
+            {isSubmitting ? t("button.registering") : t("button.register")}
           </Button>
         </div>
       </form>
