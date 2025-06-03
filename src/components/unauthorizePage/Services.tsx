@@ -26,7 +26,7 @@ export default function Services() {
 
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth < 640) {
+            if (window.innerWidth < 768) {
                 setItemsToShow(1);
             } else if (window.innerWidth < 1024) {
                 setItemsToShow(2);
@@ -129,7 +129,7 @@ export default function Services() {
                     )}
 
                     {/* Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {visibleServices.map((service) => (
                             <div 
                                 key={'id' in service ? service.id : service.name} 

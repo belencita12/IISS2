@@ -26,7 +26,7 @@ export default function Products() {
   
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 640) {
+      if (window.innerWidth < 768) {
         setItemsToShow(1);
       } else if (window.innerWidth < 1024) {
         setItemsToShow(2);
@@ -35,13 +35,8 @@ export default function Products() {
       }
     };
 
-    // Establecer el valor inicial
     handleResize();
-
-    // Agregar el event listener
     window.addEventListener('resize', handleResize);
-
-    // Limpiar el event listener
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   
@@ -134,11 +129,11 @@ export default function Products() {
           )}
 
           {/* Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {visibleProducts.map((product) => (
               <div 
                 key={'id' in product ? product.id : product.name} 
-                className="bg-myPink-disabled p-5 rounded-lg shadow-lg text-center transition-all duration-200 hover:scale-105 cursor-pointer flex flex-col items-center gap-4"
+                className="bg-myPurple-disabled p-5 rounded-lg shadow-lg text-center transition-all duration-200 hover:scale-105 cursor-pointer flex flex-col items-center gap-4"
               >
                 <div className="w-full aspect-square relative max-w-[300px] mx-auto">
                   <Image 
