@@ -28,6 +28,7 @@ import { downloadFromBlob, normalizeText } from "@/lib/utils";
 import ExportButton from "@/components/global/ExportButton";
 import { getAppointmentReport } from "@/lib/appointment/getAppointmentReport";
 import { unknown } from "zod";
+import { Textarea } from "@/components/ui/textarea";
 
 interface AppointmentListProps {
     token: string;
@@ -302,7 +303,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
                     title={a("titleCancel")}
                     size="md"
                 >
-                    <textarea
+                    <Textarea
                         className="w-full h-32 p-2 border border-gray-300 rounded"
                         placeholder={ph("reason")}
                         value={cancelDescription}

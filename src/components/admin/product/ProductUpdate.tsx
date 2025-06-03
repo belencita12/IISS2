@@ -27,6 +27,7 @@ import { useInitialData } from "@/hooks/purchases/useProviderStock";
 
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Textarea } from "@/components/ui/textarea";
 
 const MAX_FILE_SIZE = 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -235,7 +236,7 @@ export default function ProductUpdateForm({ token }: ProductUpdateFormProps) {
             </div>
             <div>
               <Label>{p("description")}</Label>
-              <textarea
+              <Textarea
                 {...register("description")}
                 placeholder={ph("description")}
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black placeholder:text-sm placeholder:text-gray-500"

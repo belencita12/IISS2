@@ -23,6 +23,7 @@ import EmployeeSelected from "./EmployeeSelected";
 import { AvailabilityPicker } from "./AvailabilityPicker";
 import { Trash } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Textarea } from "@/components/ui/textarea";
 
 type AppointmentFormProps = {
   token: string;
@@ -210,7 +211,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
         <label className="block text-sm font-medium text-gray-700">
           {a("details")}
         </label>
-        <textarea
+        <Textarea
           {...register("details")}
           className="w-full border border-gray-300 rounded-md p-2"
           rows={4}

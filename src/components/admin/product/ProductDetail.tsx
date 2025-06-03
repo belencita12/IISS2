@@ -89,7 +89,7 @@ export default function ProductDetail({ token }: ProductDetailProps) {
 
   return (
     <div className="max-w-5xl mx-auto p-6">
-      <div className="mb-6 mt-6">
+      <div className="mb-3">
         <Button
           variant="outline"
           onClick={() => router.push('/dashboard/products')}
