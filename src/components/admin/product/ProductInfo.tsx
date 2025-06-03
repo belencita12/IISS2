@@ -15,46 +15,46 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
   product,
   isStockLoading = false,
 }) => {
-  const p = useTranslations("ProductDetail");
+  const t = useTranslations();
 
   return (
     <div className="space-y-4">
       {product.description && (
         <div>
-          <h3 className="text-sm font-medium text-gray-500">{p("description")}</h3>
+          <h3 className="text-sm font-medium text-gray-500">{t("product.details.description")}</h3>
           <p>{product.description}</p>
         </div>
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <h3 className="text-sm font-medium text-gray-500 ">{p("code")}</h3>
+          <h3 className="text-sm font-medium text-gray-500 ">{t("product.details.code")}</h3>
           <p>{getCategoryLabel(product.code)}</p>
         </div>
 
         <div className="justify-self-end">
           <h3 className="text-sm font-medium text-gray-500 text-right">
-            {p("price")}
+            {t("product.details.price")}
           </h3>
-          <p>{product.price?.toLocaleString()} {p("gs")}</p>
+          <p>{product.price?.toLocaleString()} {t("product.card.gs")}</p>
         </div>
 
         <div>
-          <h3 className="text-sm font-medium text-gray-500 ">{p("category")}</h3>
+          <h3 className="text-sm font-medium text-gray-500 ">{t("product.details.category")}</h3>
           <p>{getCategoryLabel(product.category)}</p>
         </div>
 
         <div className="justify-self-end">
           <h3 className="text-sm font-medium text-gray-500 text-right">
-            {p("cost")}
+            {t("product.details.cost")}
           </h3>
-          <p>{product.cost?.toLocaleString()} {p("gs")}</p>
+          <p>{product.cost?.toLocaleString()} {t("product.card.gs")}</p>
         </div>
 
         <div>
           {product.tags && product.tags.length > 0 && (
             <>
-              <h3 className="text-sm font-medium text-gray-500 ">{p("tags")}</h3>
+              <h3 className="text-sm font-medium text-gray-500 ">{t("product.details.tags")}</h3>
               <div className="flex flex-wrap gap-2 mt-1">
                 {product.tags.map((tag, idx) => (
                   <span
@@ -71,7 +71,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
 
         <div className="justify-self-end">
           <h3 className="text-sm font-medium text-gray-500 text-right">
-            {p("quantity")}
+           {t("product.details.quantity")}
           </h3>
           <p className="text-right">
             {isStockLoading ? <ProductDetailSkeleton/>: product.quantity.toString()}

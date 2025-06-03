@@ -21,7 +21,6 @@ import ServiceSelected from "./ServiceSelected";
 import EmployeeSelect from "./EmployeeSelect";
 import EmployeeSelected from "./EmployeeSelected";
 import { AvailabilityPicker } from "./AvailabilityPicker";
-import { Trash } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -42,10 +41,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
 
   const router = useRouter();
 
-  const a = useTranslations("AppointmentForm");
-  const b = useTranslations("Button");
-  const e = useTranslations("Error");
-  const s = useTranslations("Success");
+  const t = useTranslations();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeData | null>(
@@ -65,13 +61,12 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
 
   const onSubmit = async (data: AppointmentRegister) => {
     setIsSubmitting(true);
-    console.log("Data to submit:", data);
     try {
       await createAppointment(token, data);
-      toast("success", s("successAppointment"));
+      toast("success", t("success.successRegisterAppointment"));
       router.push("/dashboard/appointment");
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : e("errorRegister", {field: "cita"});
+      const errorMessage = error instanceof Error ? error.message : t("error.errorRegisterAppointment");
       toast("error", errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -109,7 +104,11 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
   const handleRemoveService = (serviceId: number) => {
     const updatedServices = selectedServices.filter((s) => s.id !== serviceId);
     setSelectedServices(updatedServices);
-    setValue("serviceIds", updatedServices.map((s) => s.id), { shouldValidate: true });
+    setValue(
+      "serviceIds",
+      updatedServices.map((s) => s.id),
+      { shouldValidate: true }
+    );
   };
 
   return (
@@ -119,7 +118,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{a("selectPet")}</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t("appointmentForm.selectPet")}</label>
           <PetSearch token={token} onSelectPet={handleSelectPet} />
           <input type="hidden" {...register("petId")} />
           {errors.petId && (
@@ -129,7 +128,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{a("selectService")}</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t("appointmentForm.selectService")}</label>
           <ServiceSelect token={token} onSelectService={handleSelectService} />
           <input type="hidden" {...register("serviceIds")} />
           {errors.serviceIds && (
@@ -137,24 +136,18 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
               {errors.serviceIds.message}
             </p>
           )}
-          {selectedServices.map((service) => (
-            <div key={service.id} className="border rounded-md flex justify-between items-center px-4 py-2">
-              <ServiceSelected service={service} />
-              <Button
-                variant="outline"
-                type="button"
-                onClick={() => handleRemoveService(service.id)}
-                className="text-black"
-              >
-                <Trash/>
-              </Button>
-            </div>
+          <div className="max-h-28 overflow-y-auto space-y-2">
+            {selectedServices.map((service) => (
+              <div key={service.id}>
+                <ServiceSelected service={service} onRemove={() => handleRemoveService(service.id)} />
+              </div>
           ))}
+          </div>
         </div>
 
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            {a("selectEmployee")}
+            {t("appointmentForm.selectEmployee")}
           </label>
           <EmployeeSelect
             token={token}
@@ -172,7 +165,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
         <div className="md:col-span-2 flex flex-col md:flex-row gap-6">
           <div className="w-full">
             <label className="block text-sm font-medium text-gray-700">
-              {a("selectDate")}
+              {t("appointmentForm.selectDate")}
             </label>
             <input
               type="date"
@@ -209,7 +202,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
 
       <div>
         <label className="block text-sm font-medium text-gray-700">
-          {a("details")}
+          {t("appointmentForm.details")}
         </label>
         <Textarea
           {...register("details")}
@@ -226,7 +219,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
           onClick={() => router.push("/dashboard/appointment")}
           disabled={isSubmitting}
         >
-          {b("cancel")}
+          {t("button.cancel")}
         </Button>
         <Button
           type="submit"
@@ -239,7 +232,7 @@ export const AppointmentForm = ({ token }: AppointmentFormProps) => {
             isSubmitting
           }
         >
-          {isSubmitting ? b("scheduleing") : b("schedule")}
+          {isSubmitting ? t("button.scheduleing") : t("button.schedule")}
         </Button>
       </div>
     </form>

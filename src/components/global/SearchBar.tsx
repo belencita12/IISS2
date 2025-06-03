@@ -41,6 +41,7 @@ export default function SearchBar({
           className="pr-10"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => e.stopPropagation()} 
         />
         {query && (
           <button

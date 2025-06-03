@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import ProductFilters from "@/components/admin/product/filter/ProductFilter";
 import { getStockDetailsByStock } from "@/lib/stock/getStockDetailsByStock";
-import { StockData, StockDetailsResponse, StockDetailsData } from "@/lib/stock/IStock";
 import { Product } from "@/lib/products/IProducts";
 import { toast } from "@/lib/toast";
 import { getStockById } from "@/lib/stock/getStockById";
@@ -25,6 +24,8 @@ interface ProductWithAmount extends Product {
 
 export default function DepositDetails({ token, stockId }: DepositDetailsProps) {
   const router = useRouter();
+
+  const t = useTranslations();
 
   const [products, setProducts] = useState<ProductWithAmount[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -48,11 +49,6 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
   const preventInvalidKeys = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "-" || e.key === "e") e.preventDefault();
   };
-
-  const st= useTranslations("StockDetail");
-  const b = useTranslations("Button");
-  const e = useTranslations("Error");
-
 
   const fetchStockProducts = useCallback(async () => {
     try {
@@ -80,7 +76,7 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
       setProducts(productList);
       setTotalPages(stockDetails.totalPages || 1);
     } catch (error: unknown) {
-      toast("error", error instanceof Error ? error.message : e("notGetData"));
+      if (error instanceof Error) toast("error", error.message)
     } finally {
       setIsLoading(false);
     }
@@ -117,14 +113,14 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-4">
+    <div className=" mx-auto p-4">
       <div className="mb-3">
         <Button
           variant="outline"
           onClick={() => router.push('/dashboard/stock')}
           className="border-black border-solid"
         >
-          {b("toReturn")}
+          {t("button.toReturn")}
         </Button>
       </div>
 
@@ -136,8 +132,8 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
           </div>
         ) : (
           <div>
-            <h2 className="text-3xl font-bold">{st("title")}</h2>
-            <p className="text-gray-400">{b("loading")}</p>
+            <h2 className="text-3xl font-bold">{t("stock.details.title")}</h2>
+            <p className="text-gray-400">{t("button.loading")}</p>
           </div>
         )}
       </div>
@@ -151,14 +147,14 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
         token={token}
       />
       <div className="flex justify-between items-center mb-6 mt-6">
-        <h1 className="text-2xl font-bold">{st("productStock")}</h1>
+        <h1 className="text-2xl font-bold">{t("stock.details.stockProducts")}</h1>
         <div className="flex gap-4">
           <Button
             variant="outline"
             onClick={() => router.push(`/dashboard/products/register`)}
             className="px-6"
           >
-            {b("add")}
+            {t("button.add")}
           </Button>
         </div>
       </div>
@@ -166,7 +162,7 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
       {isLoading ? (
         <StockDetailCardskeleton />
       ) : products.length === 0 ? (
-        <p className="text-center py-4">{e("notFound")}</p>
+        <p className="text-center py-4">{t("error.notFound")}</p>
       ) : (
         products.map((product) => (
           <StockDetailCard

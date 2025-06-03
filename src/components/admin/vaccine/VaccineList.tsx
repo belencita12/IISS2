@@ -34,12 +34,7 @@ export default function VaccineList({ token }: VaccineListProps) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [vaccineToDelete, setVaccineToDelete] = useState<IVaccine | null>(null);
 
-  const v = useTranslations("VaccuneTable");
-  const b = useTranslations("Button");
-  const s = useTranslations("Success");
-  const e = useTranslations("Error");
-  const m = useTranslations("ModalConfirmation");
-  const ph = useTranslations("Placeholder");
+  const t = useTranslations();
 
   useEffect(() => {
     if (token) loadVaccines(data.pagination.currentPage);
@@ -50,14 +45,14 @@ export default function VaccineList({ token }: VaccineListProps) {
 
     try {
       await deleteVaccineById(vaccineToDelete.id, token);
-      toast("success", s("successDelete", { field : vaccineToDelete.name }));
+      toast("success", t("success.successDeleteVaccine"));
 
       const currentPage = data.pagination.currentPage;
       const isLastItemOnPage = data.vaccines.length === 1;
       const newPage = isLastItemOnPage && currentPage > 1 ? currentPage - 1 : currentPage;
       await loadVaccines(newPage);
     } catch (error) {
-      const message = error instanceof Error ? error.message : e("noDelete", {field: vaccineToDelete.name});
+      const message = error instanceof Error ? error.message : t("error.errorDeleteVaccine");
       toast("error", message);
     } finally {
       setIsDeleteModalOpen(false);
@@ -66,21 +61,21 @@ export default function VaccineList({ token }: VaccineListProps) {
   };
 
   const columns: Column<IVaccine>[] = [
-    { header: v("name"), accessor: "name" },
-    { header: v("manufacturer"), accessor: (vaccine) => vaccine.manufacturer.name },
-    { header: v("specie"), accessor: (vaccine) => vaccine.species.name },
+    { header: t("vaccine.table.name"), accessor: "name" },
+    { header: t("vaccine.table.manufacturer"), accessor: (vaccine) => vaccine.manufacturer.name },
+    { header: t("vaccine.table.specie"), accessor: (vaccine) => vaccine.species.name },
   ];
 
   const actions: TableAction<IVaccine>[] = [
     {
       icon: <Eye className="w-4 h-4" />,
       onClick: (vaccine) => router.push(`/dashboard/vaccine/${vaccine.id}`),
-      label: b("seeDetails"),
+      label: t("button.seeDetails"),
     },
     {
       icon: <Pencil className="w-4 h-4" />,
       onClick: (vaccine) => router.push(`/dashboard/vaccine/edit/${vaccine.id}`),
-      label: b("edit"),
+      label: t("button.edit"),
     },
     {
       icon: <Trash className="w-4 h-4" />,
@@ -88,7 +83,7 @@ export default function VaccineList({ token }: VaccineListProps) {
         setVaccineToDelete(vaccine);
         setIsDeleteModalOpen(true);
       },
-      label: b("delete"),
+      label: t("button.delete"),
     },
   ];
 
@@ -96,25 +91,25 @@ export default function VaccineList({ token }: VaccineListProps) {
     <div className="p-4 mx-auto">
       <SearchBar
         onSearch={handleSearch}
-        placeholder={ph("getBy", {field: "nombre"})}
+        placeholder={t("search.searchByName")}
         debounceDelay={400}
       />
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-3xl font-bold">{v("vaccineTitle")}</h2>
+        <h2 className="text-3xl font-bold">{t("vaccine.table.vaccineTitle")}</h2>
         <div className="flex gap-2">
           <Button
             variant="outline"
             className="px-6"
             onClick={() => router.push("/dashboard/vaccine/manufacturer")}
           >
-            {v("manufacturersVaccine")}
+            {t("vaccine.table.manufacturersVaccine")}
           </Button>
           <Button
             variant="outline"
             className="px-6"
             onClick={() => router.push("/dashboard/vaccine/new")}
           >
-            {b("add")}
+            {t("button.add")}
           </Button>
         </div>
       </div>
@@ -126,16 +121,16 @@ export default function VaccineList({ token }: VaccineListProps) {
         onPageChange={handlePageChange}
         isLoading={loading}
         skeleton={<VaccineTableSkeleton />}
-        emptyMessage={v("emptyMessage")}
+        emptyMessage={t("vaccine.table.emptyMessage")}
       />
       <ConfirmationModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
-        title={m("titleDelete", { field: "vacuna"})}
-        message={m("deleteMessage", { field: vaccineToDelete?.name ?? "" })}
-        confirmText={b("delete")}
-        cancelText={b("cancel")}
+        title={t("confirmationModal.vaccine.titleDelete")}
+        message={t("confirmationModal.vaccine.messageDelete", {vaccine: vaccineToDelete?.name ?? ""})}
+        confirmText={t("button.delete")}
+        cancelText={t("button.cancel")}
         variant="danger"
       />
     </div>

@@ -18,9 +18,7 @@ interface ProductListProps {
 export default function ProductListPage({ token }: ProductListProps) {
   const router = useRouter();
 
-  const b = useTranslations("Button");
-  const p = useTranslations("ProductDetail");
-  const e = useTranslations("Error");
+  const t = useTranslations();
 
   // Hook para filtrado normal
   const {
@@ -149,20 +147,20 @@ export default function ProductListPage({ token }: ProductListProps) {
         />
       </div>
       <div className="mt-8 mb-6 flex justify-between items-center">
-        <h1 className="text-2xl font-bold">{p("titleProducts")}</h1>
+        <h1 className="text-2xl font-bold">{t("product.list.title")}</h1>
         <Button
           variant="outline"
           onClick={() => router.push(`/dashboard/products/register`)}
           className="px-6"
         >
-          {b("add")}
+          {t("button.add")}
         </Button>
       </div>
 
       {loading ? (
         <ProductListSkeleton />
       ) : displayedProducts.length === 0 ? (
-        <p className="text-center py-4">{e("notFoundField", {field: "productos"})}</p>
+        <p className="text-center py-4">{t("error.notFoundProducts")}</p>
       ) : (
         <div className="flex flex-wrap justify-between gap-y-4">
           {displayedProducts.map((product) => (

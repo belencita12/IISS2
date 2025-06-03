@@ -12,10 +12,10 @@ export default function EmployeeSelected({ employee }: EmployeeSelectedProps) {
       <div className="flex items-start gap-3">
         <div>
           <p className="text-myPurple-focus/70 mt-1">
-            {t("appointmentForm.employeeSelectedd.employee")}: {employee.fullName}
+            {t("appointmentForm.employeeSelectedd.employee", {employee : employee.fullName})}
           </p>
           <p className="text-myPurple-focus/70 mt-1">
-             {t("appointmentForm.employeeSelectedd.workPosition")}: {employee.position.name}
+             {t("appointmentForm.employeeSelectedd.workPosition", {workPosition: employee.position.name})}
           </p>
         </div>
       </div>

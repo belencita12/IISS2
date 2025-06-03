@@ -12,7 +12,11 @@ export const fetchUsers = async (page: number, query: string, token: string | nu
             headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (!response.ok) throw new Error("Error al obtener los usuarios");
+            if (!response.ok) {
+            const errorData = await response.json().catch(() => ({})); 
+            const message = errorData?.message || `Error HTTP: ${response.status}`;
+            throw new Error(message);
+        }
 
         const data = await response.json();
         return data;

@@ -13,9 +13,8 @@ interface Props {
 }
 
 export default function InvoiceNumericFilter({ filters, setFilters }: Props) {
-  const f = useTranslations("Filters");
-  const ph = useTranslations("Placeholder");
-
+  const t = useTranslations();
+  
   const [min, setMin] = useState(filters.fromTotal?.toString() ?? "");
   const [max, setMax] = useState(filters.toTotal?.toString() ?? "");
 
@@ -42,29 +41,29 @@ export default function InvoiceNumericFilter({ filters, setFilters }: Props) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div className="space-y-2">
-        <Label htmlFor="totalMin">{f("minTotal")}</Label>
+        <Label htmlFor="totalMin">{t("filters.total.minTotal")}</Label>
         <NumericInput
           id="totalMin"
           type="formattedNumber"
           value={min}
-          placeholder={ph("minAmount")}
+          placeholder={t("placeholder.minAmount")}
           onChange={(e) => setMin(e.target.value)} 
           className="w-full border px-3 py-2 rounded"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="totalMax">{f("maxTotal")}</Label>
+        <Label htmlFor="totalMax">{t("filters.total.maxTotal")}</Label>
         <NumericInput
           id="totalMax"
           type="formattedNumber"
           value={max}
-          placeholder={ph("maxAmount")}
+          placeholder={t("placeholder.maxAmount")}
           onChange={(e) => setMax(e.target.value)} 
           className="w-full border px-3 py-2 rounded"
         />
         {isMaxLessThanMin && (
-          <p className="text-sm text-red-500">{f("isMaxLessThanMin")}</p>
+          <p className="text-sm text-red-500">{t("error.isMaxLessThanMin")}</p>
         )}
       </div>
     </div>

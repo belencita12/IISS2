@@ -23,6 +23,7 @@ import {
 import { useInitialData } from "@/hooks/purchases/useProviderStock";
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
+import FormImgUploader from "@/components/global/FormImgUploader";
 import { Textarea } from "@/components/ui/textarea";
 
 const MAX_FILE_SIZE = 1024 * 1024;
@@ -69,11 +70,8 @@ interface ProductRegisterFormProps {
 export default function ProductRegisterForm({
   token,
 }: ProductRegisterFormProps) {
-  const p = useTranslations("ProductForm");
-  const e = useTranslations("Error");
-  const b = useTranslations("Button");
-  const s = useTranslations("Success");
-  const ph = useTranslations("Placeholder");
+
+  const t = useTranslations();
 
   const { providers } = useInitialData(token || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -122,7 +120,7 @@ export default function ProductRegisterForm({
 
   const onSubmit = async (data: ProductFormValues) => {
     if (!token) {
-      toast("error", e("authError"));
+      toast("error", t("error.authError"));
       return;
     }
 
@@ -147,13 +145,13 @@ export default function ProductRegisterForm({
 
     try {
       await registerProduct(formData, token);
-      toast("success", s("successRegister", {field: "Producto"}), {
+      toast("success", t("success.successRegisterProduct"), {
         duration: 2000,
         onAutoClose: () => router.back(),
         onDismiss: () => router.back(),
       });
     } catch (error : unknown) {
-      toast("error", error instanceof Error ? error.message : e("error"));
+      toast("error", error instanceof Error ? error.message : t("error.errorRegisterProduct"));
     } finally {
       setIsSubmitting(false);
     }
@@ -161,25 +159,25 @@ export default function ProductRegisterForm({
 
   return (
     <div className="max-w-5xl mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-6">{p("title")}</h1>
-      <div className="md:w-2/3 w-80">
+      <h1 className="text-3xl font-bold mb-6">{t("product.form.titleRegister")}</h1>
+      
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Nombre */}
           <div>
-            <Label>{p("name")}</Label>
+            <Label>{t("product.form.name")}</Label>
             <Input
               {...register("productName")}
-              placeholder={ph("name")}
+              placeholder={t("placeholder.name")}
             />
             {errors.productName && (
               <p className="text-red-500">{errors.productName.message}</p>
             )}
           </div>
           <div>
-            <Label>{p("description")}</Label>
+            <Label>{t("product.form.description")}</Label>
             <Textarea
               {...register("description")}
-              placeholder={ph("description")}
+              placeholder={t("placeholder.description")}
               className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm placeholder:text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-black"
             />
             {errors.description && (
@@ -189,11 +187,11 @@ export default function ProductRegisterForm({
 
           {/* Costo */}
           <div>
-            <Label>{p("cost")}</Label>
+            <Label>{t("product.form.cost")}</Label>
             <NumericInput
               id="cost"
               type="formattedNumber"
-              placeholder={ph("cost")}
+              placeholder={t("placeholder.cost")}
               value={watch("cost") ?? ""}
               onChange={(e) =>
                 setValue("cost", Number(e.target.value), {
@@ -207,11 +205,11 @@ export default function ProductRegisterForm({
 
           {/* Precio */}
           <div>
-            <Label>{p("price")}</Label>
+            <Label>{t("product.form.price")}</Label>
             <NumericInput
               id="price"
               type="formattedNumber"
-              placeholder={ph("price")}
+              placeholder={t("placeholder.price")}
               value={watch("price") ?? ""}
               onChange={(e) =>
                 setValue("price", Number(e.target.value), {
@@ -225,11 +223,11 @@ export default function ProductRegisterForm({
 
           {/* IVA */}
           <div>
-            <Label>{p("iva")}</Label>
+            <Label>{t("product.form.iva")}</Label>
             <NumericInput
               id="iva"
               type="formattedNumber"
-              placeholder={ph("iva")}
+              placeholder={t("placeholder.iva")}
               value={watch("iva") ?? ""}
               onChange={(e) =>
                 setValue("iva", Number(e.target.value), {
@@ -244,7 +242,7 @@ export default function ProductRegisterForm({
           <div className="flex flex-col md:flex-row gap-4">
             {/* Proveedor */}
             <div className="w-full md:w-1/2">
-            <Label>{p("provider")}</Label>
+            <Label>{t("product.form.provider")}</Label>
               <Controller
                 name="providerId"
                 control={control}
@@ -258,7 +256,7 @@ export default function ProductRegisterForm({
                         errors.providerId ? "border-red-500" : ""
                       }`}
                     >
-                      <SelectValue placeholder={b("select")} />
+                      <SelectValue placeholder={t("placeholder.select")} />
                     </SelectTrigger>
                     <SelectContent>
                       {providers.map((p) => (
@@ -279,7 +277,7 @@ export default function ProductRegisterForm({
 
             {/* Etiquetas */}
             <div className="w-full md:w-1/2">
-             <Label>{p("tags")}</Label>
+             <Label>{t("product.form.tags")}</Label>
               <TagFilter
                 token={token || ""}
                 selectedTags={tags}
@@ -317,52 +315,55 @@ export default function ProductRegisterForm({
           </div>
 
           {/* Imagen */}
-          <div className="w-full flex flex-col items-start relative">
-            <Label className="pb-2">{p("image")}</Label>
-            <Label className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-md text-sm font-medium text-center cursor-pointer">
-              <Input
-                type="file"
-                accept="image/jpeg, image/png, image/webp"
-                onChange={handleImageChange}
-                className="hidden"
-              />
-              {previewImage ? b("change") : b("upload")}
-            </Label>
-            {previewImage && (
-              <div className="w-1/2 mt-4">
-                <Image
-                  src={previewImage}
-                  className="w-full h-auto rounded-md"
-                  alt="Vista previa del producto"
-                  width={200}
-                  height={200}
-                  priority
-                />
-              </div>
-            )}
-            {errors.imageFile && (
-              <p className="text-red-500 text-sm mt-2">
-                {errors.imageFile.message}
-              </p>
-            )}
+          <div className="w-full flex flex-col gap-2">
+             <Label className="pb-1">{t("product.form.image")}</Label>
+
+  <label
+    htmlFor="imageFile"
+    className="cursor-pointer w-40 h-40 border border-dashed border-gray-400 rounded-lg flex items-center justify-center hover:bg-gray-100 relative overflow-hidden"
+  >
+    {previewImage ? (
+      <Image
+        src={previewImage}
+        alt="Vista previa"
+        layout="fill"
+        objectFit="cover"
+      />
+    ) : (
+      <span className="text-sm text-gray-500 text-center">
+        {t("button.upload") ?? t("button.change")}
+      </span>
+    )}
+    <Input
+      id="imageFile"
+      type="file"
+      accept="image/*"
+      className="hidden"
+      onChange={handleImageChange}
+    />
+  </label>
+
+  {errors.imageFile && (
+    <p className="text-red-500 text-sm">{errors.imageFile.message}</p>
+  )}
           </div>
 
           {/* Botones */}
-          <div className="flex justify-start gap-4 mt-8">
+          <div className="flex justify-end gap-4">
             <Button
               type="button"
               variant="outline"
               onClick={() => router.back()}
               disabled={isSubmitting}
             >
-              {b("cancel")}
+              {t("button.cancel")}
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? b("saving") : b("save")}
+              {isSubmitting ? t("button.registering") : t("button.register")}
             </Button>
           </div>
         </form>
-      </div>
+     
     </div>
   );
 }
