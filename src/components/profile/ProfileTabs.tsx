@@ -29,14 +29,13 @@ export default function ProfileTabs({
     avatarSrc: initialAvatarSrc,
     ruc: ruc
   });
-  const t = useTranslations("ProfileTabs");
-  const e = useTranslations("Error");
+  const t = useTranslations();
   const [fetchErrors, setFetchErrors] = useState<string[]>([]);
 
   useEffect(() => {
     // Mostrar un solo toast si hay errores de fetch
     if (fetchErrors.length > 0) {
-      toast("error", e("notGetData"));
+      toast("error", t("error.notFound"));
     }
   }, [fetchErrors]);
 
@@ -79,21 +78,21 @@ export default function ProfileTabs({
             className={tabClasses("datos")}
           >
             <User className="w-4 h-4" />
-            {t("myProfile")}
+            {t("profileTabs.myProfile")}
           </div>
           <div
             onClick={() => setSelected("mascotas")}
             className={tabClasses("mascotas")}
           >
             <Dog className="w-4 h-4" />
-            {t("myPets")}
+            {t("profileTabs.myPets")}
           </div>
           <div
             onClick={() => setSelected("citas")}
             className={tabClasses("citas")}
           >
             <Calendar className="w-4 h-4" />
-            {t("myAppointments")}
+            {t("profileTabs.myAppointments")}
           </div>
         </div>
       </div>

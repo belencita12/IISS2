@@ -38,10 +38,8 @@ export default function PetDetails({ token }: Props) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [activeTab, setActiveTab] = useState("info")
   const [activeSubTab, setActiveSubTab] = useState("vacunas")
-  const b = useTranslations("Button");
-  const p = useTranslations("PetDetail");
-  const v = useTranslations("Vaccune");
-  const e = useTranslations("Error");
+
+  const t = useTranslations();
 
   const handleSelectImage = (file: File, url: string) => {
     if (previewUrl) URL.revokeObjectURL(previewUrl)
@@ -66,18 +64,20 @@ export default function PetDetails({ token }: Props) {
         setEditedName(data?.name ?? "")
       })
       .catch((error: unknown) => {
-        toast("error", error instanceof Error ? error.message : e("error"));
+        if (error instanceof Error) {
+          toast("error", error.message);
+        } 
         setPet(null);
       });
   }, [id, token]);
 
   const handleSave = async () => {
     if (!editedName.trim()) {
-      setError(e("noEmpty"));
+      setError(t("error.noEmpty"));
       return;
     }
     if (!pet || pet.id === undefined) {
-      setError(e("noUpdate"));
+      setError(t("error.noUpdate"));
       return;
     }
     setIsSaving(true)
@@ -90,21 +90,20 @@ export default function PetDetails({ token }: Props) {
       }
       const updatedPet = await updatePet(pet.id, formData, token)
       if (!updatedPet || !updatedPet.id) {
-        throw new Error("Respuesta inválida de la API")
+        toast("error", t("error.invalidResponse"))
       }
       setPet(updatedPet)
       setIsEditingName(false)
       if (previewUrl) URL.revokeObjectURL(previewUrl)
       setPreviewUrl(null)
       setSelectedFile(null)
-      toast("success", "Mascota actualizada correctamente")
+      toast("success", t("success.successUpdatePet"))
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message)
-      } else {
-        setError(e("noSave"));
+        toast("error", error.message)
       }
-      toast("error", "Error al actualizar la mascota")
+      toast("error", t("error.errorUpdatePet"))
     } finally {
       setIsSaving(false)
     }
@@ -113,33 +112,33 @@ export default function PetDetails({ token }: Props) {
   const petInfoItems = pet
     ? [
         {
-          label: "Fecha de Nacimiento",
+          label: t("pet.details.name"),
           value: formatDate(pet.dateOfBirth),
           icon: <Calendar className="h-4 w-4" />,
         },
         {
-          label: "Peso",
+          label: t("pet.details.weight"),
           value: `${pet.weight} kg`,
           icon: <Weight className="h-4 w-4" />,
         },
         {
-          label: "Raza",
+          label: t("pet.details.race"),
           value: pet.race?.name || "No especificada",
           icon: <Paw className="h-4 w-4" />,
         },
         {
-          label: "Especie",
-          value: pet.species?.name || "No especificada",
+          label: t("pet.details.specie"),
+          value: pet.species?.name || t("error.noSpecified"),
           icon: <Paw className="h-4 w-4" />,
         },
         {
-          label: "Género",
+          label: t("pet.details.sex"),
           value:
             pet.sex === "F"
-              ? "Hembra"
+              ? t("pet.details.female")
               : pet.sex === "M"
-              ? "Macho"
-              : "No especificado",
+              ? t("pet.details.male")
+              : t("error.noSpecified"),
           icon: <CircleDot className="h-4 w-4" />,
         },
       ]
@@ -151,7 +150,7 @@ export default function PetDetails({ token }: Props) {
         <PetDetailsSkeleton />
       ) : pet === null ? (
         <div className="flex justify-center items-center h-64">
-          <p className="text-lg text-gray-500">No se encontró la mascota</p>
+          <p className="text-lg text-gray-500">{t("error.notFound")}</p>
         </div>
       ) : (
         <>
@@ -165,7 +164,7 @@ export default function PetDetails({ token }: Props) {
               className="absolute top-4 left-4 z-10 bg-white/90 backdrop-blur-sm text-purple-600 hover:bg-white hover:text-pink-500 transition-all duration-300 shadow-sm border-purple-200 flex items-center gap-2 rounded-full px-3 py-2 font-medium"
             >
               <ArrowLeft className="h-4 w-4" />
-              <span className="hidden sm:inline">Volver</span>
+              <span className="hidden sm:inline">{t("button.toReturn")}</span>
             </Button>
 
             {/* Tarjeta principal */}
@@ -229,7 +228,7 @@ export default function PetDetails({ token }: Props) {
                                 disabled={isSaving}
                                 className="border-myPurple-tertiary text-myPurple-primary hover:bg-myPurple-disabled hover:text-myPurple-focus transition-all duration-200"
                               >
-                                Cancelar
+                                {t("button.cancel")}
                               </Button>
                               <Button
                                 onClick={handleSave}
@@ -237,7 +236,7 @@ export default function PetDetails({ token }: Props) {
                                 size="sm"
                                 className="bg-gradient-to-r from-myPurple-primary to-myPink-primary hover:from-myPurple-hover hover:to-myPink-hover text-white transition-all duration-200"
                               >
-                                {isSaving ? "Editando..." : "Editar"}
+                                {isSaving ? t("button.editing") : t("button.edit")}
                               </Button>
                             </div>
                           </motion.div>
@@ -260,7 +259,7 @@ export default function PetDetails({ token }: Props) {
                               className="px-3 py-1 h-auto text-xs bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:from-purple-700 hover:to-pink-600 hover:text-white"
                             >
                               <Edit className="h-3 w-3 mr-1" />
-                              Editar
+                              {t("button.edit")}
                             </Button>
                           </motion.div>
                         )}
@@ -309,13 +308,13 @@ export default function PetDetails({ token }: Props) {
                         value="vacunas"
                         className="bg-gray-200 text-gray-700 data-[state=active]:bg-purple-600 data-[state=active]:text-white"
                       >
-                        Control de Vacunas
+                        {t("pet.details.vaccineControl")}
                       </TabsTrigger>
                       <TabsTrigger
                         value="citas"
                         className="bg-gray-200 text-gray-700 data-[state=active]:bg-pink-500 data-[state=active]:text-white"
                       >
-                        Citas
+                        {t("appointmentTable.title")}
                       </TabsTrigger>
                     </TabsList>
                     <TabsContent value="vacunas" className="mt-0">

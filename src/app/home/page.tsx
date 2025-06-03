@@ -2,6 +2,8 @@ import Hero from "@/components/unauthorizePage/Hero";
 import Products from "@/components/unauthorizePage/Products";
 import Services from "@/components/unauthorizePage/Services";
 import Image from "next/image";
+import ProductosBanner from "@/components/unauthorizePage/ProductosBanner";
+import ServiciosBanner from "@/components/unauthorizePage/ServiciosBanner";
 
 export default async function HomePublic() {
   return (

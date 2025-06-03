@@ -27,7 +27,7 @@ export const RecommendedProducts = ({
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  const b = useTranslations("Button");
+  const t = useTranslations();
   useEffect(() => {
     const fetchRecommendations = async () => {
       try {
@@ -50,8 +50,8 @@ export const RecommendedProducts = ({
         );
 
         setRecommended(unique);
-      } catch (err) {
-        const errorMessage = "No se pudieron cargar recomendaciones";
+      } catch (err:unknown) {
+        const errorMessage = err instanceof Error ? err.message : t("myPetsSection.recommendedProducts.errorLoading")
         onFetchError?.(errorMessage);
       } finally {
         setLoading(false);
@@ -82,7 +82,7 @@ export const RecommendedProducts = ({
               title={product.name}
               price={`${product.price.toLocaleString()} Gs.`}
               image={product.image?.originalUrl ?? NotImageNicoPets.src}
-              ctaText={b("seeDetails")}
+              ctaText={t("button.seeDetails")}
               ctaLink={`/shop/product/${product.id}`}
               tags={product.tags}
             />

@@ -70,11 +70,7 @@ export const AppointmentForm = ({
 
   const router = useRouter();
 
-  const a = useTranslations("AppointmentForm");
-  const e = useTranslations("Error");
-  const s = useTranslations("Success");
-  const b = useTranslations("Button");
-  const ph = useTranslations("Placeholder");
+  const t = useTranslations();
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeData | null>(
     null
   );
@@ -89,6 +85,13 @@ export const AppointmentForm = ({
       ? selectedDate.trim()
       : null;
 
+  const minDate = new Date().toISOString().split("T")[0];
+  const maxDate = (() => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() + 1);
+    return d.toISOString().split("T")[0];
+  })();
+
   const onSubmit = async (data: AppointmentRegister) => {
     // Solo mostrar error de horario si hay empleado y fecha seleccionados pero no horario
     if (selectedEmployee && formattedDate && !selectedTime) {
@@ -99,11 +102,10 @@ export const AppointmentForm = ({
 
     try {
       await createAppointment(token, data)
-      toast("success", s("successAppointment"))
+      toast("success", t("success.successRegisterAppointment"))
       router.push("/user-profile")
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : e("errorRegister", {field: "cita"})
-      toast("error", errorMessage)
+      if(error instanceof Error) toast("error", error.message);
     }
   };
 
@@ -164,9 +166,9 @@ export const AppointmentForm = ({
     <div className="max-w-6xl mx-auto">
       <Card className="shadow-lg border-0">
         <CardHeader className="from-myPurple-primary to-myPink-primary text-white text-center py-6">
-          <CardTitle className="text-3xl font-bold text-myPurple-focus">{a("title")}</CardTitle>
+          <CardTitle className="text-3xl font-bold text-myPurple-focus">{t("appointmentForm.title")}</CardTitle>
           <CardDescription className="text-myPurple-focus/70 text-sm mt-2">
-            {a("descriptionClient")}
+            {t("appointmentForm.description")}
           </CardDescription>
         </CardHeader>
         <CardContent className="p-6 md:p-8">
@@ -176,7 +178,7 @@ export const AppointmentForm = ({
               <div className="space-y-4 bg-white p-4 rounded-lg border border-myPurple-tertiary/30 shadow-sm">
                 <div className="flex items-center gap-2 text-myPurple-focus border-b border-myPurple-tertiary/30 pb-2 mb-3">
                   <PawPrint className="w-5 h-5" />
-                  <h3 className="font-medium">{a("selectPet")}</h3>
+                  <h3 className="font-medium">{t("appointmentForm.selectPet")}</h3>
                 </div>
                 <div>
                   <PetSelect
@@ -198,7 +200,7 @@ export const AppointmentForm = ({
               <div className="space-y-4 bg-white p-4 rounded-lg border border-myPurple-tertiary/30 shadow-sm">
                 <div className="flex items-center gap-2 text-myPurple-focus border-b border-myPurple-tertiary/30 pb-2 mb-3">
                   <User className="w-5 h-5" />
-                  <h3 className="font-medium">{a("selectService")}</h3>
+                  <h3 className="font-medium">{t("appointmentForm.selectService")}</h3>
                 </div>
                 <div>
                   <ServiceSelect
@@ -232,7 +234,7 @@ export const AppointmentForm = ({
               <div className="bg-white p-4 rounded-lg border border-myPurple-tertiary/30 shadow-sm">
                 <div className="flex items-center gap-2 text-myPurple-focus border-b border-myPurple-tertiary/30 pb-2 mb-3">
                   <Stethoscope className="w-5 h-5" />
-                  <h3 className="font-medium">{a("selectEmployee")}</h3>
+                  <h3 className="font-medium">{t("appointmentForm.selectEmployee")}</h3>
                 </div>
                 <div>
                   <EmployeeSelect
@@ -255,14 +257,22 @@ export const AppointmentForm = ({
               <div className="bg-white p-4 rounded-lg border border-myPurple-tertiary/30 shadow-sm">
                 <div className="flex items-center gap-2 text-myPurple-focus border-b border-myPurple-tertiary/30 pb-2 mb-3">
                   <Calendar className="w-5 h-5" />
-                  <h3 className="font-medium">{a("selectDate")}</h3>
+                  <h3 className="font-medium">{t("appointmentForm.selectDate")}</h3>
                 </div>
                 <div>
                   <input
                     type="date"
                     {...register("designatedDate")}
                     className="w-full border border-myPurple-tertiary rounded-md p-2 focus:ring-myPurple-primary focus:border-myPurple-primary transition-all duration-200"
-                    min={new Date().toISOString().split("T")[0]}
+                    min={minDate}
+                    max={maxDate}
+                    onBlur={(e) => {
+                      let value = e.target.value;
+                      if (value && (value < minDate || value > maxDate)) {
+                        value = value < minDate ? minDate : maxDate;
+                        setValue("designatedDate", value, { shouldValidate: true });
+                      }
+                    }}
                   />
                   {errors.designatedDate && (
                     <p className="text-myPink-focus text-sm mt-1">
@@ -284,7 +294,7 @@ export const AppointmentForm = ({
               <div className="bg-white p-4 rounded-lg border border-myPurple-tertiary/30 shadow-sm">
                 <div className="flex items-center gap-2 text-myPurple-focus border-b border-myPurple-tertiary/30 pb-2 mb-3">
                   <Clock className="w-5 h-5" />
-                  <h3 className="font-medium">{a("availabilityHour")}</h3>
+                  <h3 className="font-medium">{t("appointmentForm.availabilityHour")}</h3>
                 </div>
                 <div>
                   <AvailabilityPicker
@@ -298,7 +308,7 @@ export const AppointmentForm = ({
                   {shouldShowTimeError && (
                     <p className="text-myPink-focus text-sm mt-1">
                       {errors.designatedTime?.message ||
-                        "Seleccione un horario"}
+                        t("appointmentForm.selectHour")}
                     </p>
                   )}
                 </div>
@@ -309,14 +319,14 @@ export const AppointmentForm = ({
             <div className="bg-white p-4 rounded-lg border border-myPurple-tertiary/30 shadow-sm">
               <div className="flex items-center gap-2 text-myPurple-focus border-b border-myPurple-tertiary/30 pb-2 mb-3">
                 <FileText className="w-5 h-5" />
-                <h3 className="font-medium">{a("details")}</h3>
+                <h3 className="font-medium">{t("appointmentForm.details")}</h3>
               </div>
               <div>
                 <textarea
                   {...register("details")}
                   className="w-full border border-myPurple-tertiary rounded-md p-3 focus:ring-myPurple-primary focus:border-myPurple-primary transition-all duration-200"
                   rows={4}
-                  placeholder={ph("description")}
+                  placeholder={t("placeholder.details")}
                 />
               </div>
             </div>
@@ -330,14 +340,14 @@ export const AppointmentForm = ({
                 onClick={() => router.push("/user-profile")}
                 disabled={isSubmitting}
               >
-                {b("cancel")}
+                {t("button.cancel")}
               </Button>
               <Button
                 type="submit"
                 className="bg-gradient-to-r from-myPurple-primary to-myPink-primary hover:from-myPurple-hover hover:to-myPink-hover text-white transition-all duration-200 shadow-md hover:shadow-lg"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? b("scheduleing") : b("schedule")}
+                {isSubmitting ? t("button.scheduleing") : t("button.schedule")}
               </Button>
             </div>
           </form>

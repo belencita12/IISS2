@@ -41,7 +41,8 @@
     "male": "Macho",
     "female": "Hembra",
     "revert": "Revertir",
-    "reversing": "Revirtiendo..."
+    "reversing": "Revirtiendo...",
+    "refresh": "Reintentar"
   },
   "Success": {
     "success": "Éxito",
@@ -517,6 +518,296 @@
     "unitCost": "Costo unitario",
     "iva": "IVA",
     "subTotal": "Sub. Total"
-  }
+  },
+  "header": {
+    "name": "{field}",
+    "description": "Bienvenido a nuestro sistema de veterinaria",
+    "heart": "Veterinaria cliente fiel"
+  },
+  "profile":{
+    "name": "{field}",
+    "phone": "Teléfono",
+    "ruc": "RUC",
+    "address": "Dirección",
+    "email": "{field}",
+    "form": {
+      "name": "Nombre",
+      "address": "Dirección",
+      "ruc": "RUC",
+      "email": "Correo electrónico",
+      "phone": "Teléfono"
+    }
+  },
+  "button": {
+    "edit": "Editar",
+    "editing": "Editando...",
+    "save":"Guardar",
+    "cancel": "Cancelar",
+    "saving": "Guardando...",
+    "cancelling": "Cancelando...",
+    "seeMore": "Ver más",
+    "seeDetails": "Ver detalles",
+    "schedule": "Agendar",
+    "scheduleing": "Agendando...",
+    "loading": "Cargando...",
+    "toReturn": "Volver",
+    "register": "Registrar",
+    "registering": "Registrando...",
+    "uploadImage": "Subir imagen",
+    "changeImage": "Cambiar imagen",
+    "searching": "Buscando...",
+    "updating": "Actualizando..."
+    
+  },
 
+  "placeholder":{
+    "name": "Ingrese el nombre",
+    "address": "Ingrese la dirección",
+    "ruc": "Ingrese el RUC",
+    "email": "Ingrese el correo electrónico",
+    "phone": "Ingrese el número de teléfono",
+    "exampleEmail": "ejemplo@gmail.com",
+    "select": "Seleccionar",
+    "selectSpecieFirst": "Debes seleccionar una especie primero",
+    "details": "Ingrese los detalles",
+    "tag": "Etiqueta"
+
+  },
+  "error": {
+    "notFound": "No se encontraron datos",
+    "noSpecified": "No especificado",
+    "unknown": "Desconocido",
+    "notGetRuc": "No se pudo obtener el RUC.",
+    "errorLoadAppointments": "No se pudieron cargar las citas",
+    "withoutServices": "Sin servicios",
+    "noAsigned": "No asignado",
+    "noDetails": "No hay detalles disponibles",
+    "notGetData": "No se pudo obtener la información",
+    "notFoundEmployee": "No se encontró empleado",
+    "noUpdate": "Ocurrió un error al actualizar los datos",
+    "auth": "Debes estar autenticado para realizar esta acción.",
+    "noEmpty": "El campo no puede ser vacío",
+    "invalidResponse":"Respuesta inválida de la API",
+    "errorUpdatePet": "Error al actualizar la mascota",
+    "noImage": "Sin imagen",
+    "errorLoadSchedule": "Error al cargar horarios",
+    "noAvailabilityHour":"No hay horarios disponibles para esta fecha",
+    "notFoundPets": "No se encontraron mascotas",
+    "notFoundServices": "No se encontraron servicios",
+    "errorLoadProducts": "Error al cargar productos",
+    "notFoundProducts": "No se encontraron productos",
+    "errorUnknown": "Error desconocido"
+  },
+  "profileTabs": {
+    "myProfile": "Mis datos",
+    "myPets": "Mis mascotas",
+    "myAppointments": "Mis citas"
+  },
+  "myPetsSection": {
+    "registeredPets": "Mascotas registradas",
+    "managePets": "Administra la información de tus mascotas",
+    "petListBtn": "Lista de mascotas",
+    "addPetBtn": "Agregar mascota",
+    "vetProducts": "Productos veterinarios",
+    "exploreProducts": "Explora los productos disponibles",
+    "recommendedProducts": {
+      "errorLoading": "No se pudieron cargar los productos recomendados"
+    }
+  },
+  "myAppointmentsSection": {
+    "title": "Mis citas",
+    "description": "Consulta y agenda nuevas citas médicas para tus mascotas"
+  },
+  "appointmentStatus": {
+    "pending": "Pendiente",
+    "completed": "Finalizada",
+    "cancelled": "Cancelada",
+    "inProgress": "En progreso"
+  },
+  "appointmentTable": {
+    "title": "Citas",
+    "date": "Fecha",
+    "time": "Hora",
+    "pet": "Mascota",
+    "employee": "Encargado",
+    "services": "Servicio/s",
+    "status": "Estado",
+    "actions": "Acciones",
+    "details": "Detalles",
+    "emptyMessage": "No hay citas agendadas"
+  },
+  "appointmentDetails": {
+    "title": "Detalles de la cita",
+    "pet": "Mascota",
+    "petDetails": {
+      "name": "Nombre",
+      "race": "Raza",
+      "owner": "Dueño"
+    },
+    "status": "Estado",
+    "date": "Fecha y hora designada",
+    "employee": "Encargado",
+    "details": "Detalles",
+    "service":"Servicio",
+    "services": "Servicios"
+
+  },
+  "appointmentForm": {
+    "selectPet": "Seleccionar mascota",
+    "selectService": "Seleccionar servicio/s",
+    "selectEmployee": "Seleccionar empleado",
+    "selectDate": "Fecha de la cita",
+    "details": "Detalles de la cita",
+    "selectHour": "Seleccionar horario de la cita",
+    "employeeSelected": "Empleado",
+    "workPosition": "Puesto",
+    "owner": "Dueño",
+    "petSelected": "Mascota",
+    "race": "Raza",
+    "serviceSelected": "Servicio",
+    "price": "Precio",
+    "title": "Agendar cita",
+    "description": "Ingresa los datos para agendar tu cita veterinaria",
+    "availabilityHour": "Horario disponible",
+    "otherService": "Selecciona otro servicio",
+    "dateSelected": {
+      "date": "Fecha",
+      "hour": "Hora"
+    },
+    "employeeSelectedd":{
+      "employee": "Encargado",
+      "workPosition": "Puesto"
+    },
+    "selectedPet": {
+      "pet": "Mascota",
+      "race": "Raza"
+    },
+    "selectedService": {
+      "service" : "Servicio: {service}",
+      "price": "Precio: {price} Gs."
+    },
+    "employeeSelect": {
+      "select": "Seleccionar un empleado"
+    },
+    "serviceSelect": {
+      "otherService":"Selecciona otro servicio",
+      "selectOneService": "Debes seleccionar al menos un servicio"
+    }
+  },
+
+  "pet": {
+    "form": {
+      "title": "Registro de Mascota",
+      "description": "Ingrese los datos de la mascota",
+      "name": "Nombre",
+      "specie": "Animal",
+      "race": "Raza",
+      "weight": "Peso (Kg)",
+      "born": "Fecha de nacimiento",
+      "sex" : "Género",
+      "female": "Hembra",
+      "male": "Macho",
+      "image": "Imagen de tu mascota",
+      "optional": "Opcional"
+    },
+    "details": {
+      "name": "Nombre",
+      "weight": "Peso",
+      "race": "Raza",
+      "born": "Fecha de nacimiento",
+      "specie": "Animal",
+      "sex": "Género",
+      "female": "Hembra",
+      "male": "Macho",
+      "vaccineControl": "Control de vacunas"
+    },
+    "myPets": "Mis mascotas",
+    "addPet": "Comienza agregando una nueva mascota",
+    "table": {
+      "emptyMessage": "No hay mascotas registradas"
+    }
+
+
+  },
+  
+  "success": {
+    "successRegisterPet": "Mascota registrada con éxito",
+    "successUpdatePet": "Mascota actualizada correctamente",
+    "successRegisterAppointment": "Cita agendada con éxito"
+  },
+  "vaccine": {
+    "table": {
+      "date": "Fecha",
+      "details": "Detalles de la vacuna",
+      "expectedDate": "Fecha prevista",
+      "dosis": "Dosis",
+      "actions": "Acciones",
+      "name": "Nombre",
+      "manufacturer": "Fabricante",
+      "specie": "Especie",
+      "manufacturersVaccine": "Fabricantes de vacunas",
+      "vaccineTitle": "Vacunas",
+      "emptyMessage": "No hay vacunas registradas"
+    }
+  },
+  "search": {
+    "searchByName": "Buscar por nombre..."
+  },
+  "productCatalog": {
+    "selectedTags": "Etiquetas seleccionadas:",
+    "searchProducts":"Buscar Productos",
+    "productCard" : {
+      "price": "{price} Gs."
+    }
+    
+  },
+  "filters": {
+    "title": "Filtros",
+    "warning": {
+      "minPrice": "El precio mínimo no puede ser 0. Por favor ingrese un valor mayor.",
+      "maxPrice": "El precio máximo no puede ser 0. Por favor ingrese un valor mayor.",
+      "priceError": "El precio máximo debe ser mayor o igual al precio mínimo.",
+      "notFoundFilteredProducts": "No hay productos que coincidan con los filtros seleccionados. Intenta modificar tus criterios de búsqueda."
+    },
+    "allFiltersDeleted": "Todos los filtros han sido eliminados",
+    "delete": {
+      "label": "Eliminar etiqueta {tag}",
+      "clearAll": "Limpiar todas",
+      "clear":"Limpiar todo",
+      "clearAllFilters": "Limpiar todos los filtros"
+    },
+    "category": "Categoría",
+    "price": "Precio",
+    "tags": "Etiquetas"
+  },
+   "Stamped": {
+    "title": "Timbrado",
+    "stampedNumber": "Número de timbrado",
+    "deposit": "Depósito",
+    "address": "Dirección",
+    "startDate": "Fecha de inicio",
+    "endDate": "Fecha de fin",
+    "numberRange": "Rango de números",
+    "status": "Estado",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "searchPlaceholder": "Buscar por número o depósito",
+    "selectStatus": "Seleccionar estado",
+    "all": "Todos",
+    "add": "Agregar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "view": "Ver",
+    "cancel": "Cancelar",
+    "deleteTitle": "Eliminar Timbrado",
+    "deleteMessage": "¿Estás seguro que deseas eliminar el timbrado {number}?",
+    "success": {
+      "delete": "Timbrado eliminado exitosamente"
+    },
+    "error": {
+      "loading": "Error al cargar los timbrados",
+      "delete": "Error al eliminar el timbrado"
+    },
+    "noStampedFound": "No se encontraron timbrados"
+  }
 }

@@ -43,7 +43,7 @@ const b = useTranslations("Button");
       {/* Datos generales de la mascota */}
       <section className="flex flex-col md:flex-row items-center gap-6 bg-white p-6 rounded-lg shadow-md max-w-5xl mx-auto">
         <Image
-          src={pet.profileImg?.originalUrl || "/imagen-mascota/default.jpg"}
+          src={pet.profileImg?.originalUrl || "/NotImageNicoPets.png"}
           alt={pet.name}
           width={250}
           height={250}

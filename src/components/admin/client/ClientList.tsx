@@ -54,7 +54,7 @@ export default function ClientList({ token }: ClientListProps) {
             setLoading(true);
 
             try {
-                const results = await fetchUsers(page, query, token);
+                const results = await fetchUsers(page, query, token, from, to);
                 if (!results.data.length && query)
                     toast("info", e("notFound"));
 
@@ -74,12 +74,12 @@ export default function ClientList({ token }: ClientListProps) {
                 setLoading(false);
             }
         },
-        [token]
+        [token, from, to]
     );
 
     useEffect(() => {
         if (token) loadUsers(data.pagination.currentPage);
-    }, [token, data.pagination.currentPage, loadUsers]);
+    }, [token, data.pagination.currentPage, loadUsers, from, to]);
 
     const handleSearch = useCallback(
         (query: string) => {
