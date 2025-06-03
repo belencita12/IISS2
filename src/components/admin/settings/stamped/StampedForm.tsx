@@ -14,6 +14,7 @@ import { useTranslations } from "next-intl";
 import { useStockList } from "@/hooks/stamped/useStockList";
 import NumericInput from "@/components/global/NumericInput";
 import { StockData } from "@/lib/stock/IStock";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface StampedFormProps {
   isOpen: boolean;
@@ -32,7 +33,10 @@ export function StampedForm({
 }: StampedFormProps) {
   const t = useTranslations("Stamped");
   const ph = useTranslations("Placeholder");
+  console.log("StampedForm - defaultValues:", defaultValues);
+  console.log("StampedForm - currentStockId:", defaultValues?.stock?.id);
   const { stocks, isLoading: isLoadingStocks, error } = useStockList(token, defaultValues?.stock?.id);
+  console.log("StampedForm - stocks:", stocks);
   const [minDate, setMinDate] = useState("");
   const [activeStampedNumbers, setActiveStampedNumbers] = useState<string[]>([]);
   const [isLoadingActiveNumbers, setIsLoadingActiveNumbers] = useState(false);
@@ -44,7 +48,7 @@ export function StampedForm({
 
     // Obtener números de timbrado activos
     const fetchActiveStampedNumbers = async () => {
-      if (defaultValues) return; // No necesitamos verificar si estamos editando
+      if (defaultValues && !defaultValues.isActive) return; // No necesitamos verificar si el timbrado está inactivo
       
       setIsLoadingActiveNumbers(true);
       try {
@@ -87,6 +91,11 @@ export function StampedForm({
       .refine(
         (num) => {
           if (!num || isLoadingActiveNumbers) return true;
+          // Si estamos editando y el número es el mismo que el original, permitirlo
+          if (defaultValues && num === defaultValues.stampedNum) return true;
+          // Si el timbrado está inactivo, permitir cualquier número
+          if (defaultValues && !defaultValues.isActive) return true;
+          // En otros casos, verificar que no exista
           return !activeStampedNumbers.includes(num);
         },
         "Este número de timbrado ya está activo"
@@ -98,7 +107,6 @@ export function StampedForm({
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const selectedDate = new Date(date);
-        //selectedDate.setHours(0, 0, 0, 0);
         return selectedDate >= today;
       }, "La fecha de inicio debe ser desde el siguiente día en adelante"),
     toDate: z.string()
@@ -112,6 +120,7 @@ export function StampedForm({
       .refine((val) => !isNaN(val), "El número final debe ser un número válido")
       .refine((val) => val >= 1, "El número final debe ser mayor o igual a 1")
       .refine((val) => val <= 2001, "El número final no puede ser mayor a 2001"),
+    isActive: z.boolean().optional(),
   }).refine((data) => data.fromNum <= data.toNum, {
     message: "El número final no puede ser menor que el número inicial",
     path: ["toNum"],
@@ -149,8 +158,11 @@ export function StampedForm({
       toDate: defaultValues?.toDate ? new Date(defaultValues.toDate).toISOString().split('T')[0] : "",
       fromNum: defaultValues?.fromNum || 0,
       toNum: defaultValues?.toNum || 0,
+      isActive: defaultValues?.isActive ?? true,
     },
   });
+
+  const isActive = watch("isActive");
 
   useEffect(() => {
     if (defaultValues) {
@@ -161,6 +173,7 @@ export function StampedForm({
         toDate: new Date(defaultValues.toDate).toISOString().split('T')[0],
         fromNum: defaultValues.fromNum,
         toNum: defaultValues.toNum,
+        isActive: defaultValues.isActive,
       });
     } else {
       reset({
@@ -170,6 +183,7 @@ export function StampedForm({
         toDate: "",
         fromNum: 0,
         toNum: 0,
+        isActive: true,
       });
     }
   }, [defaultValues, reset, minDate]);
@@ -194,7 +208,8 @@ export function StampedForm({
           fromDate: data.fromDate,
           toDate: data.toDate,
           fromNum: data.fromNum,
-          toNum: data.toNum
+          toNum: data.toNum,
+          isActive: data.isActive
         }),
       });
 
@@ -245,7 +260,7 @@ export function StampedForm({
                 e.preventDefault();
               }
             }}
-            disabled={isSubmitting || isLoadingActiveNumbers}
+            disabled={isSubmitting || isLoadingActiveNumbers || (!!defaultValues && isActive)}
           />
           {errors.stampedNum && (
             <p className="text-sm text-red-600 mt-1">{errors.stampedNum.message}</p>
@@ -258,7 +273,7 @@ export function StampedForm({
             id="stockId"
             {...register("stockId", { valueAsNumber: true })}
             className="w-full p-2 border rounded"
-            disabled={isLoadingStocks || isSubmitting}
+            disabled={isLoadingStocks || isSubmitting || !!defaultValues}
           >
             <option value="">Seleccione un depósito</option>
             {stocks.map((stock: StockData) => (
@@ -337,6 +352,18 @@ export function StampedForm({
             />
           </div>
         </div>
+
+        {defaultValues && (
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="isActive"
+              checked={watch("isActive")}
+              onCheckedChange={(checked: boolean) => setValue("isActive", checked)}
+              disabled={isSubmitting}
+            />
+            <Label htmlFor="isActive">Estado Activo</Label>
+          </div>
+        )}
 
         <div className="flex justify-end gap-2 pt-2">
           <Button 

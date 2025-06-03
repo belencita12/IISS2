@@ -114,8 +114,8 @@ export function StampedList({ token }: StampedListProps) {
   };
 
   const handleEdit = (stamped: Stamped) => {
-   // setSelectedStamped(stamped);
-   // setIsFormModalOpen(true);
+    setSelectedStamped(stamped);
+    setIsFormModalOpen(true);
   };
 
   const handleDelete = (stamped: Stamped) => {

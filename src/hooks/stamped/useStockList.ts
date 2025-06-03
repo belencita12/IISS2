@@ -13,6 +13,8 @@ export function useStockList(token: string, currentStockId?: number) {
   const getStockList = async (page: number = 1, includeDeleted: boolean = false) => {
     setIsLoading(true);
     try {
+      console.log("Fetching stocks with currentStockId:", currentStockId);
+      
       // Primero obtenemos todos los depósitos
       const stockResponse = await fetch(`${STOCK_API}?page=${page}&size=10&includeDeleted=${includeDeleted}`, {
         headers: {
@@ -27,8 +29,9 @@ export function useStockList(token: string, currentStockId?: number) {
 
       const stockData: StockResponse = await stockResponse.json();
       const allStocks = stockData.data || [];
+      console.log("All stocks:", allStocks);
 
-      // Luego obtenemos los timbrados activos
+      // Obtenemos los timbrados activos
       const stampedResponse = await fetch(`${STAMPED_API}?page=${page}&size=10&includeDeleted=${includeDeleted}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -42,14 +45,28 @@ export function useStockList(token: string, currentStockId?: number) {
 
       const stampedData = await stampedResponse.json();
       const activeStamped = Array.isArray(stampedData) ? stampedData : stampedData.data || [];
+      console.log("Active stamped:", activeStamped);
 
-      // Filtramos los depósitos que ya tienen timbrados activos, pero incluimos el depósito actual si se está editando
-      const availableStocks = allStocks.filter((stock: StockData) => 
-        !activeStamped.some((stamped: Stamped) => 
-          stamped.stock.id === stock.id && (!currentStockId || stamped.stock.id !== currentStockId)
-        )
-      );
+      // Filtramos los depósitos:
+      // 1. Si estamos editando, incluimos el depósito actual
+      // 2. Incluimos los depósitos que no tienen timbrados activos
+      const availableStocks = allStocks.filter((stock: StockData) => {
+        // Si es el depósito actual del timbrado que estamos editando, lo incluimos
+        if (currentStockId && stock.id === currentStockId) {
+          console.log("Including current stock:", stock);
+          return true;
+        }
+        // Si no es el depósito actual, solo lo incluimos si no tiene timbrados activos
+        const hasActiveStamped = activeStamped.some((stamped: Stamped) => 
+          stamped.stock.id === stock.id && stamped.isActive
+        );
+        if (!hasActiveStamped) {
+          console.log("Including stock without active stamped:", stock);
+        }
+        return !hasActiveStamped;
+      });
 
+      console.log("Available stocks:", availableStocks);
       setStocks(availableStocks);
       setTotalPages(stockData.totalPages || 1);
       setCurrentPage(page);
