@@ -37,7 +37,7 @@ export function Modal({
   const sizeClasses = {
     sm: 'max-w-sm',
     md: 'max-w-md',
-    lg: 'max-w-xl',
+    lg: 'max-w-2xl',
   }[size];
 
   const handleBackdropClick = () => {

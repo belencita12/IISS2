@@ -1,7 +1,7 @@
 import { Modal } from "@/components/admin/invoices/invoicePayment/ModalInvoice";
 import { Button } from "@/components/ui/button";
 import FormInput from "@/components/global/FormInput";
-import PaymentMethods from "@/components/admin/sales/PaymentMethods";
+import PaymentMethods from "./InvoicePaymentMethods";
 import { Invoice } from "@/lib/invoices/IInvoice";
 import { useCreatePayment } from "@/hooks/invoices/useRegisterInvoicePay";
 
@@ -44,15 +44,15 @@ export default function PaymentForm({
       title="Registrar Pago"
       isOpen={isOpen || loading}
       onClose={onClose}
-      size="md"
+      size="lg"
     >
-      <div className="p-2 space-y-2">
+      <div className="p-2">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-          <div className="ml-6">
-            <p className="text-sm font-medium text-muted-foreground">
+          <div>
+            <p className="text-md font-medium text-muted-foreground ml-6">
               Monto pendiente
             </p>
-            <p className="text-sm font-bold text-gray-600">
+            <p className="text-sm font-bold text-gray-600 ml-6">
               {formatCurrency(remainingAmount)} Gs.
             </p>
           </div>
@@ -73,24 +73,22 @@ export default function PaymentForm({
           onPaymentMethodsChange={setPaymentMethods}
           onSelectedMethodChange={setSelectedMethod}
           selectedMethod={selectedMethod}
-          thereIsProducts={true}
         />
 
-        <div>
-          <div className="flex justify-end items-center gap-2">
-            <p className="text-md font-medium text-muted-foreground">
-              Monto a pagar:
-            </p>
-            <p className="text-md font-semibold text-gray-900">
-              {formatCurrency(amount)} Gs.
-            </p>
-          </div>
-          {exceedsTotal && (
-            <p className="text-sm mt-1 text-red-600 text-right">
-              Excede en {formatCurrency(amount - totalAmount)} Gs.
-            </p>
-          )}
+        <div className="flex justify-start items-center gap-2 ml-8 mt-4">
+          <p className="text-md font-medium text-muted-foreground">
+            Monto a pagar:
+          </p>
+          <p className="text-md font-semibold text-gray-900">
+            {formatCurrency(amount)} Gs.
+          </p>
         </div>
+
+        {exceedsTotal && (
+          <p className="text-sm text-red-600 ml-8 mt-1">
+            Excede en {formatCurrency(amount - totalAmount)} Gs.
+          </p>
+        )}
 
         <div className="flex justify-end items-center gap-2 p-2">
           <Button
