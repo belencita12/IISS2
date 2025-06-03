@@ -63,17 +63,12 @@ export default function Products() {
 
   return (
     <div className="flex flex-col w-full">
-      <section className="relative flex flex-col sm:flex-row gap-5 py-5 bg-white w-full min-h-[300px]">
-        <div className="sm:w-1/4 w-full">
-          <Image
-            src="/productos9.jpg"
-            alt="Productos"
-            width={150}
-            height={150}
-            className="object-contain rounded-md aspect-square w-full h-full"
-          />
+      <section className="relative w-full min-h-[300px]">
+        <div className="absolute top-0 left-0 right-0 h-80 bg-gradient-to-r from-myPurple-primary to-myPink-primary opacity-90">
+          <div className="absolute inset-0 bg-[url('/placeholder.svg?height=200&width=200')] bg-repeat opacity-10"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent"></div>
         </div>
-        <div className="sm:w-3/4 w-full">
+        <div className="relative z-10">
           <ProductosBanner />
         </div>
       </section>
@@ -97,7 +92,7 @@ export default function Products() {
       )}
 
       {!loading && !error && displayProducts.length > 0 && (
-        <section className="relative py-10 bg-white mt-10">
+        <section className="relative py-9 bg-white mt-9">
           {/* Botones de navegación */}
           {displayProducts.length > itemsToShow && (
             <>
@@ -121,9 +116,9 @@ export default function Products() {
             {visibleProducts.map((product) => (
               <div 
                 key={'id' in product ? product.id : product.name} 
-                className="bg-myPurple-disabled p-4 rounded-lg shadow-lg text-center transition-all duration-200 hover:scale-105 cursor-pointer flex flex-col items-center gap-4"
+                className="bg-myPurple-disabled p-5 rounded-lg shadow-lg text-center transition-all duration-200 hover:scale-105 cursor-pointer flex flex-col items-center gap-4"
               >
-                <div className="w-full aspect-square relative">
+                <div className="w-full aspect-square relative max-w-[300px] mx-auto">
                   <Image 
                     src={'id' in product ? (product.image?.originalUrl || NotImageNicoPets.src) : product.image} 
                     alt={product.name} 

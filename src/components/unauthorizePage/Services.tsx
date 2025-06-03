@@ -21,7 +21,7 @@ interface ServiceResponse {
 
 export default function Services() {
     const [currentIndex, setCurrentIndex] = useState(0);
-    
+
     // Construir la URL con parámetros de paginación porque el que existe no tiene
     const queryParams = new URLSearchParams({
         page: '1',
@@ -58,19 +58,8 @@ export default function Services() {
 
     return (
         <div className="flex flex-col w-full">
-            <section className="relative flex flex-col sm:flex-row gap-5 py-5 bg-white w-full min-h-[300px]">
-                <div className="sm:w-1/4 w-full">
-                    <Image
-                        src="/veterinarios1.jpg"
-                        alt="Service"
-                        width={150}
-                        height={150}
-                        className="object-contain rounded-md aspect-square w-full h-full"
-                    />
-                </div>
-                <div className="sm:w-3/4 w-full">
-                    <ServiciosBanner />
-                </div>
+            <section className="relative w-full min-h-[300px]">
+                <ServiciosBanner />
             </section>
 
             {loading && (
@@ -112,13 +101,13 @@ export default function Services() {
                     )}
 
                     {/* Grid */}
-                    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 py-10 bg-white mt-10">
+                    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 py-9 bg-white mt-9">
                         {visibleServices.map((service) => (
                             <div 
                                 key={'id' in service ? service.id : service.name} 
-                                className="bg-myPink-disabled p-4 rounded-lg shadow-lg text-center transition-all duration-200 hover:scale-105 cursor-pointer flex flex-col items-center gap-4"
+                                className="bg-myPink-disabled p-5 rounded-lg shadow-lg text-center transition-all duration-200 hover:scale-105 cursor-pointer flex flex-col items-center gap-4"
                             >
-                                <div className="w-full aspect-square relative">
+                                <div className="w-full aspect-square relative max-w-[300px] mx-auto">
                                     <Image 
                                         src={'id' in service ? 
                                             (service.img?.originalUrl || NotImageNicoPets.src) : 

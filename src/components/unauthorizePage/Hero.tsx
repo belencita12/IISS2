@@ -11,8 +11,8 @@ export default async function Hero() {
   return (
     <section className="flex flex-col sm:flex-row items-center justify-around py-10 sm:align-middle space-y-6 sm:space-y-0 w-full">
       <div className="text-center sm:mr-8 mb-6 sm:mb-0 w-full">
-        <h2 className="text-3xl font-bold mb-4 text-myPurple-primary">
-          ¡Bienvenido a nuestra plataforma!
+        <h2 className="text-3xl font-bold mb-4 text-myPurple-primary relative">
+          <span className="relative z-10 bg-white/90 backdrop-blur-sm px-6 py-2 rounded-lg shadow-sm">¡Bienvenido a nuestra plataforma!</span>
         </h2>
 
         {!isAuthenticated && (

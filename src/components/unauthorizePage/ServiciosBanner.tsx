@@ -1,16 +1,45 @@
 import { PawPrint, Heart } from "lucide-react";
+import Image from "next/image";
 
 const ServiciosBanner = () => {
   return (
-    <section className="relative bg-white overflow-hidden py-16 px-6 text-center">
-      {/* Texto principal */}
-      <div className="relative z-10">
-        <h3 className="text-myPink-primary text-sm sm:text-lg font-semibold tracking-widest uppercase">Nuestros</h3>
-        <h1 className="text-[40px] sm:text-[50px] md:text-[60px] font-extrabold text-myPurple-primary leading-none">SERVICIOS</h1>
-        <p className="text-black mt-4 text-xs sm:text-sm">@NicoPetspy</p>
+    <section className="relative bg-white overflow-hidden py-12 px-6">
+      <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center gap-8 relative z-10">
+        {/* Imagen a la izquierda */}
+        <div className="w-full sm:w-2/5 relative">
+          <div className="relative w-full aspect-square max-w-[280px] mx-auto">
+            <div className="absolute inset-0 rounded-full border-4 border-myPink-primary shadow-xl">
+              <Image
+                src="/veterinarios1.jpg"
+                alt="Servicios"
+                fill
+                className="object-cover rounded-full"
+                priority
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Contenido a la derecha */}
+        <div className="w-full sm:w-3/5 text-center sm:text-left relative">
+          <div>
+            <h3 className="text-myPink-primary text-sm sm:text-lg font-semibold tracking-widest uppercase pl-12">Nuestros</h3>
+            <h1 className="text-[40px] sm:text-[50px] md:text-[60px] font-extrabold text-myPurple-primary leading-none mt-2">SERVICIOS</h1>
+            <p className="text-gray-600 mt-4 text-sm sm:text-base pl-24">@NicoPetspy</p>
+          </div>
+          {/* Íconos decorativos */}
+          <div className="absolute -top-4 right-1/4 w-16 h-16">
+            <div className="transform -rotate-30">
+              <PawPrint className="w-full h-full text-gray-300 fill-current drop-shadow-lg" />
+            </div>
+            <div className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-myPink-primary flex items-center justify-center shadow-lg">
+              <Heart className="w-3 h-3 text-white" />
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Formas decorativas */}
+      {/* Formas decorativas de fondo */}
       <div className="absolute bottom-0 left-0 w-full z-0">
         <svg
           viewBox="0 0 1440 320"
@@ -27,20 +56,6 @@ const ServiciosBanner = () => {
             d="M0,288L120,256C240,224,480,160,720,138.7C960,117,1200,139,1320,149.3L1440,160L1440,320L1320,320C1200,320,960,320,720,320C480,320,240,320,120,320L0,320Z"
           />
         </svg>
-      </div>
-
-      {/* Íconos de huella y corazón */}
-      <div className="absolute top-6 left-6 z-10">
-        <div className="relative w-16 h-16">
-          {/* Huella */}
-          <div className="transform -rotate-30">
-            <PawPrint className="w-full h-full text-gray-300 fill-current" />
-          </div>
-          {/* Círculo rosado con corazón blanco */}
-          <div className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-myPink-primary flex items-center justify-center">
-            <Heart className="w-3 h-3 text-white" />
-          </div>
-        </div>
       </div>
     </section>
   );
