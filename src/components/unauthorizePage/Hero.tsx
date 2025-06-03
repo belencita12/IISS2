@@ -9,26 +9,26 @@ export default async function Hero() {
   const isAuthenticated = !!session;
 
   return (
-    <section className="flex flex-col sm:flex-row items-center justify-around py-10 sm:align-middle space-y-6 sm:space-y-0 w-full">
-      <div className="text-center sm:mr-8 mb-6 sm:mb-0 w-full">
-        <h2 className="text-3xl font-bold mb-4 text-myPurple-primary relative">
-          <span className="relative z-10 bg-white/90 backdrop-blur-sm px-6 py-2 rounded-lg shadow-sm">¡Bienvenido a nuestra plataforma!</span>
+    <section className="flex flex-col sm:flex-row items-center justify-around py-6 sm:py-10 px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-0 w-full">
+      <div className="text-center sm:text-left sm:mr-8 mb-6 sm:mb-0 w-full max-w-xl">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 text-myPurple-primary relative">
+          <span className="relative z-10 bg-white/90 backdrop-blur-sm px-4 sm:px-6 py-2 rounded-lg shadow-sm inline-block">¡Bienvenido a nuestra plataforma!</span>
         </h2>
 
         {!isAuthenticated && (
           <>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 mb-6 text-sm sm:text-base lg:text-lg">
               Regístrate con nosotros y accede a una amplia gama de servicios para tu mascota.
             </p>
-            <div className="flex justify-center items-center gap-5 w-full">
-              <Link href="/register" className="w-full max-w-[160px]">
-                <Button className="bg-white text-myPink-primary px-2 py-2 rounded-lg border border-myPink-primary hover:bg-gray-100 cursor-pointer transition-all duration-300 text-sm sm:text-lg w-full text-center">
+            <div className="flex flex-col sm:flex-row justify-center sm:justify-start items-center gap-4 sm:gap-5 w-full">
+              <Link href="/register" className="w-full sm:w-auto">
+                <Button className="bg-white text-myPink-primary px-4 py-2 rounded-lg border border-myPink-primary hover:bg-gray-100 cursor-pointer transition-all duration-300 text-sm sm:text-base w-full sm:w-[160px] text-center">
                   Registrarse
                 </Button>
               </Link>
 
-              <Link href="/login" className="w-full max-w-[160px]">
-                <Button className="bg-myPink-primary text-white px-2 py-2 rounded-lg hover:bg-myPink-hover cursor-pointer transition-all duration-300 text-sm sm:text-lg w-full text-center">
+              <Link href="/login" className="w-full sm:w-auto">
+                <Button className="bg-myPink-primary text-white px-4 py-2 rounded-lg hover:bg-myPink-hover cursor-pointer transition-all duration-300 text-sm sm:text-base w-full sm:w-[160px] text-center">
                   Iniciar Sesión
                 </Button>
               </Link>
@@ -36,14 +36,19 @@ export default async function Hero() {
           </>
         )}
       </div>
-      <Image
-        src="/image.png"
-        alt="Logo1"
-        width={300}
-        height={300}
-        style={{ width: 'auto', height: 'auto' }}
-        className="object-contain mt-6 sm:mt-0"
-      />
+      <div className="relative p-1 w-full max-w-[300px] sm:max-w-[350px] lg:max-w-[400px]">
+        <div className="absolute inset-0 bg-gradient-to-r from-myPurple-primary to-myPink-primary rounded-lg"></div>
+        <div className="relative bg-white p-1 rounded-lg">
+          <Image
+            src="/image.png"
+            alt="Logo1"
+            width={300}
+            height={300}
+            style={{ width: '100%', height: 'auto' }}
+            className="object-contain mt-6 sm:mt-0 rounded-lg"
+          />
+        </div>
+      </div>
     </section>
   );
 }
