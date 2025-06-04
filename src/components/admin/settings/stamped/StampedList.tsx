@@ -17,6 +17,7 @@ import GenericPagination from "@/components/global/GenericPagination";
 import { useStampedList } from "@/hooks/stamped/useStampedList";
 import { PaginationResponse } from "@/lib/types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { StampedForm } from "./StampedForm";
 
 interface StampedListProps {
   token: string;
@@ -31,6 +32,7 @@ export function StampedList({ token }: StampedListProps) {
   const [isActive, setIsActive] = useState<boolean | undefined>(undefined);
   const [selectedStamped, setSelectedStamped] = useState<Stamped | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const debouncedSearch = useDebounce(query, 300);
 
   const {
@@ -41,32 +43,18 @@ export function StampedList({ token }: StampedListProps) {
   const [data, setData] = useState<PaginationResponse<Stamped> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [stockId, setStockId] = useState<number|undefined>(undefined);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if(debouncedSearch.length > 0){
-          const result = await getStampedList({
-            page: 1,
-            size: 1000,
-            fromDate,
-            toDate,
-            includeDeleted: isActive === false,
-          });
-          let filteredData = result.data.filter((s) => s.stampedNum.includes(debouncedSearch) || s.stock.name.includes(debouncedSearch) || s.stock.address.includes(debouncedSearch));
-          if(isActive === true){
-            filteredData = filteredData.filter((s) => s.isActive === true);
-          }else if(isActive === false){
-            filteredData = filteredData.filter((s) => s.isActive === false);
-          }
-          result.data = filteredData;
-          setData(result);
-        }else{
           const result = await getStampedList({
             page: currentPage,
             size: 10,
             fromDate,
             toDate,
+            stockId: stockId,
+            stamped: debouncedSearch ? normalizeText(debouncedSearch) : undefined,
             includeDeleted: isActive === false,
           });
           let filteredData = result.data;
@@ -77,7 +65,6 @@ export function StampedList({ token }: StampedListProps) {
           }
           result.data = filteredData;
           setData(result);
-        }
         setError(null);
       } catch (error) {
         if (error instanceof Error) {
@@ -94,7 +81,7 @@ export function StampedList({ token }: StampedListProps) {
     if (token) {
       fetchData();
     }
-  }, [currentPage, debouncedSearch, fromDate, toDate, isActive, token]);
+  }, [currentPage, debouncedSearch, fromDate, toDate, isActive, token, stockId]);
 
   if (error) {
     toast("error", error || t("error.loading"));
@@ -111,8 +98,8 @@ export function StampedList({ token }: StampedListProps) {
   };
 
   const handleEdit = (stamped: Stamped) => {
-    setSelectedStamped(stamped);
-    // setIsFormModalOpen(true);
+   // setSelectedStamped(stamped);
+   // setIsFormModalOpen(true);
   };
 
   const handleDelete = (stamped: Stamped) => {
@@ -150,7 +137,7 @@ export function StampedList({ token }: StampedListProps) {
   };
 
   const handleFormSuccess = async () => {
-    // setIsFormModalOpen(false);
+    setIsFormModalOpen(false);
     setSelectedStamped(null);
     const result = await getStampedList({
       page: currentPage,
@@ -218,14 +205,6 @@ export function StampedList({ token }: StampedListProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row w-full gap-4">
-        <div className="w-full">
-          <SearchBar 
-            onSearch={handleSearch} 
-            placeholder="Buscar por deposito, dirección o número de timbrado" 
-          /> 
-        </div>
-      </div>
 
       <StampedFilters
         fromDate={fromDate}
@@ -237,12 +216,24 @@ export function StampedList({ token }: StampedListProps) {
           setIsActive(value);
           setCurrentPage(1);
         }}
+        stockId={stockId}
+        setStockId={(value) => {
+          setStockId(value);
+          setCurrentPage(1);
+        }}
+        stampedNumber={query}
+        setStampedNumber={(value) => {
+          setQuery(value || "");
+          setCurrentPage(1);
+        }}
+        token={token}
       />
 
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Timbrado</h1>
         <Button variant="outline" className="px-6" onClick={() => {
-          // setIsFormModalOpen(true);
+          setSelectedStamped(null);
+          setIsFormModalOpen(true);
         }}>
           Agregar
         </Button>
@@ -274,24 +265,16 @@ export function StampedList({ token }: StampedListProps) {
         />
       )}
 
-      {/* <Dialog open={isFormModalOpen} onOpenChange={setIsFormModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {selectedStamped ? t("editTitle") : t("createTitle")}
-            </DialogTitle>
-          </DialogHeader>
-          <StampedForm
-            token={token}
-            stamped={selectedStamped || undefined}
-            onSuccess={handleFormSuccess}
-            onCancel={() => {
-              setIsFormModalOpen(false);
-              setSelectedStamped(null);
-            }}
-          />
-        </DialogContent>
-      </Dialog> */}
+      <StampedForm
+        isOpen={isFormModalOpen}
+        onClose={() => {
+          setIsFormModalOpen(false);
+          setSelectedStamped(null);
+        }}
+        token={token}
+        onSuccess={handleFormSuccess}
+        defaultValues={selectedStamped}
+      />
 
       <ConfirmationModal
         isOpen={isDeleteModalOpen}

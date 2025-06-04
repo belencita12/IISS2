@@ -13,10 +13,8 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
   const defaultImageSrc = "/NotImageNicoPets.png";
-  const providerName = product.provider?.name ?? "–";
 
-  const p = useTranslations("ProductDetail");
-  const b = useTranslations("Button");
+  const t = useTranslations();
 
   return (
     <div
@@ -53,35 +51,35 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
 
           <div className="grid grid-cols-[1fr_0.6fr] gap-x-10 gap-y-2 text-xs">
             <div className="truncate">
-              <span className="text-gray-600">{p("code")}:</span>
+              <span className="text-gray-600">{t("product.card.code")}</span>
               <p className="font-medium truncate">{product.code || "-"}</p>
             </div>
             <div className="flex flex-col truncate">
-              <span className="text-gray-600">{p("price")}:</span>
+              <span className="text-gray-600">{t("product.card.price")}</span>
               <p className="font-medium truncate">
-                {product.price.toLocaleString()} {p("gs")}
+                {product.price.toLocaleString()} {t("product.card.gs")}
               </p>
             </div>
             {product.provider && (
               <div className="truncate">
-                <span className="text-gray-600">{p("provider")}:</span>
+                <span className="text-gray-600">{t("product.card.provider")}</span>
                 <p className="font-medium truncate">{product.provider.name}</p>
               </div>
             )}
             <div className="flex flex-col truncate">
-              <span className="text-gray-600">{p("cost")}:</span>
+              <span className="text-gray-600">{t("product.card.cost")}</span>
               <p className="font-medium truncate">
-                {product.cost?.toLocaleString() || "-"} {p("gs")}
+                {product.cost?.toLocaleString() || "-"} {t("product.card.gs")}
               </p>
             </div>
             <div className="truncate">
-              <span className="text-gray-600">{p("category")}:</span>
+              <span className="text-gray-600">{t("product.card.category")}</span>
               <p className="font-medium truncate">
                 {getCategoryLabel(product.category)}
               </p>
             </div>
             <div className="flex flex-col truncate">
-              <span className="text-gray-600">{p("quantity")}:</span>
+              <span className="text-gray-600">{t("product.card.quantity")}</span>
               <p className="font-medium truncate">{product.quantity}</p>
             </div>
           </div>
@@ -92,7 +90,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
           className="mt-2 w-full py-1 text-xs bg-gray-900 hover:bg-gray-800
                      text-white rounded-md"
         >
-          {b("seeDetails")}
+          {t("button.seeDetails")}
         </Button>
       </div>
     </div>

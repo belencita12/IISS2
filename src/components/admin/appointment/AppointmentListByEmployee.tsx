@@ -21,17 +21,18 @@ import {
 import { Modal } from "@/components/global/Modal";
 import { Button } from "@/components/ui/button";
 import AppointmentListSkeleton from "./Skeleton/AppointmentListSkeleton";
+import { Textarea } from "@/components/ui/textarea";
 
 interface AppointmentListProps {
     token: string;
-    employeeRuc: string;
+    searchEmployee: string;
 }
 
-const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
+const AppointmentList = ({ token, searchEmployee }: AppointmentListProps) => {
     const [filters, setFilters] = useState<AppointmentQueryParams>({
         page: 1,
         search: undefined,
-        employeeRuc: employeeRuc,
+        searchEmployee: searchEmployee,
         fromDesignatedDate: undefined,
         toDesignatedDate: undefined,
         status: undefined,
@@ -76,7 +77,7 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
         const newFilters = {
             ...filters,
             ...updatedFilters,
-            employeeRuc,
+            searchEmployee,
             page: 1,
         };
         performSearchWithFilters(newFilters);
@@ -86,7 +87,7 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
         const newFilters = {
             ...filters,
             search: value,
-            employeeRuc,
+            searchEmployee,
             page: 1,
         };
         performSearchWithFilters(newFilters);
@@ -134,7 +135,7 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
                     modalAction === "complete" ? "finalizada" : "cancelada"
                 } con éxito`
             );
-            await fetchData(filters.page || 1, { employeeRuc });
+            await fetchData(filters.page || 1);
         } catch (error) {
             toast("error", "Ocurrió un error al actualizar la cita");
         } finally {
@@ -259,7 +260,7 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
                     title="Motivo de cancelación"
                     size="md"
                 >
-                    <textarea
+                    <Textarea
                         className="w-full h-32 p-2 border border-gray-300 rounded"
                         placeholder="Escribe una razón para cancelar la cita"
                         value={cancelDescription}

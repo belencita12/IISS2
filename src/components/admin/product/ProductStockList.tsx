@@ -29,8 +29,7 @@ export default function ProductStockList({
   isLoading,
 }: StockListProps) {
   const router = useRouter();
-  const s = useTranslations("StockList");
-  const b = useTranslations("Button");
+  const t = useTranslations();
 
   const rows: Row[] = stockDetails
     .map((detail) => {
@@ -46,11 +45,11 @@ export default function ProductStockList({
     .filter((r): r is Row => r !== null);
 
   const columns: Column<Row>[] = [
-    { header: s("name"), accessor: "name", className: "text-left" },
-    { header: s("address"), accessor: "address", className: "text-left" },
+    { header: t("stock.details.name"), accessor: "name", className: "text-left" },
+    { header: t("stock.details.address"), accessor: "address", className: "text-left" },
     {
-      header: s("quantity"),
-      accessor: (item) => `${item.amount} Unids.`,
+      header: t("stock.details.quantity"),
+      accessor: (item) => t("stock.details.uds", {quantity: item.amount}),
       className: "text-right",
     },
   ];
@@ -59,7 +58,7 @@ export default function ProductStockList({
     {
       icon: <Eye size={16} />,
       onClick: (item) => router.push(`/dashboard/stock/${item.id}`),
-      label: b("seeDetails"),
+      label: t("button.seeDetails"),
     },
   ];
 
@@ -68,9 +67,9 @@ export default function ProductStockList({
       data={rows}
       columns={columns}
       actions={actions}
-      actionsTitle={b("actions")}
+      actionsTitle={t("stock.table.actions")}
       isLoading={isLoading}
-      emptyMessage={s("empty")}
+      emptyMessage={t("stock.table.emptyMessage")}
       className="w-full table-auto"
     />
   );

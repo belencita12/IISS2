@@ -6,11 +6,11 @@ type PetSelectedProps = {
 };
 
 export default function PetSelected({ pet }: PetSelectedProps) {
-  const a = useTranslations("AppointmentForm");
+  const t = useTranslations();
   return (
     <div className="mt-2 p-3 border rounded-md bg-slate-50 text-black text-sm">
-      <p><strong>{a("petSelected")}:</strong> {pet.name}</p>
-      <p><strong>{a("owner")}:</strong> {pet.owner.name}</p>
+      <p>{t("appointmentForm.selectedPet.pet", {pet: pet.name})} </p>
+      <p>{t("appointmentForm.selectedPet.owner", {owner: pet.owner.name})}</p>
     </div>
   );
 }

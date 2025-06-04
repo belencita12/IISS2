@@ -28,6 +28,7 @@ export default function PurchaseList({ token }: Props) {
   const [to, setTo] = useState<string | undefined>();
   const [isGettingReport, setIsGettingReport] = useState(false);
 
+  const t = useTranslations();
   const { data, query, setQuery, isLoading, error } = useGetPurchases({
     token,
     init: { from, to, page: 1 },
@@ -35,7 +36,7 @@ export default function PurchaseList({ token }: Props) {
 
   const handleGetPurchaseReport = async () => {
     if (!from || !to) {
-      toast("error", "Se necesitan fechas limites para generar el reporte");
+      toast("error", t("error.errorLimitDate"));
     } else {
       setIsGettingReport(true);
       const result = await getPurchaseReport({
@@ -49,9 +50,6 @@ export default function PurchaseList({ token }: Props) {
     }
   };
 
-  const p = useTranslations("PurchaseDetail");
-  const b = useTranslations("Button");
-  const e = useTranslations("Error");
 
   const purchases = data?.data || [];
 
@@ -80,14 +78,14 @@ export default function PurchaseList({ token }: Props) {
         />
       </div>
       <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
-        <h1 className="text-2xl font-bold">{p("title")}</h1>
+        <h1 className="text-2xl font-bold">{t("purchase.list.title")}</h1>
         <div className="flex gap-2">
           <Button
             variant="outline"
             disabled={isGettingReport}
             onClick={() => router.push("/dashboard/purchases/register")}
           >
-            {b("register")}
+            {t("button.register")}
           </Button>
           <ExportButton
             handleGetReport={handleGetPurchaseReport}
@@ -101,7 +99,7 @@ export default function PurchaseList({ token }: Props) {
       {isLoading ? (
         <PurchaseListSkeleton />
       ) : purchases.length === 0 ? (
-        <p className="text-center">{e("notFoundField", { field: "compras" })}</p>
+        <p className="text-center">{t("purchase.list.emptyMessage")}</p>
       ) : (
         purchases.map((purchase) => (
           <PurchaseCard key={purchase.id} purchase={purchase} />

@@ -27,11 +27,7 @@ interface ClientListProps {
 }
 
 export default function ClientList({ token }: ClientListProps) {
-    const c = useTranslations("ClientList");
-    const b = useTranslations("Button");
-    const e = useTranslations("Error");
-    const m = useTranslations("ModalConfirmation");
-    const p = useTranslations("Placeholder")
+    const t = useTranslations();
 
     const router = useRouter();
     const [data, setData] = useState<{
@@ -56,7 +52,7 @@ export default function ClientList({ token }: ClientListProps) {
             try {
                 const results = await fetchUsers(page, query, token, from, to);
                 if (!results.data.length && query)
-                    toast("info", e("notFound"));
+                    toast("info", t("error.notFoundClients"));
 
                 setData({
                     users: results.data,
@@ -69,7 +65,7 @@ export default function ClientList({ token }: ClientListProps) {
                 });
                 setFilteredData(results.data);
             } catch (error: unknown) {
-                toast("error", error instanceof Error ? error.message : e("errorLoad", {field: "clientes"}));
+                if (error instanceof Error) toast("error", error.message);
             } finally {
                 setLoading(false);
             }
@@ -101,7 +97,7 @@ export default function ClientList({ token }: ClientListProps) {
 
     const handleGetClientReport = async () => {
         if (!from || !to) {
-            toast("error", "Se necesitan fechas limites para generar el reporte");
+            toast("error", t("error.errorLimitDate"));
         } else {
             setIsGettingReport(true);
             const result = await getClientReport({
@@ -119,7 +115,7 @@ export default function ClientList({ token }: ClientListProps) {
         if (!clientToDelete) return;
         try {
             await deleteClient(token, clientToDelete.id);
-            toast("success", e("successDelete", {field: "cliente"}));
+            toast("success", t("success.successDeleteClient", {client : clientToDelete.fullName}));
             setIsDeleteModalOpen(false);
             setClientToDelete(null);
             loadUsers(data.pagination.currentPage);
@@ -127,34 +123,34 @@ export default function ClientList({ token }: ClientListProps) {
             if (error instanceof Error) {
                 toast("error", error.message);
             } else {
-                toast("error", e("noDelete", {field: "cliente"}));
+                toast("error", t("error.errorDelete", {field: clientToDelete.fullName}));
             }
         }
     };
 
     const columns: Column<IUserProfile>[] = [
-        { header: c("fullName"), accessor: "fullName" },
-        { header: c("email"), accessor: "email" },
-        { header: c("ruc"), accessor: "ruc" },
-        { header: c("address"), accessor: "adress" },
-        { header: c("phone"), accessor: "phoneNumber" },
+        { header: t("client.details.fullName"), accessor: "fullName" },
+        { header: t("client.details.email"), accessor: "email" },
+        { header: t("client.details.ruc"), accessor: "ruc" },
+        { header: t("client.details.address"), accessor: "adress" },
+        { header: t("client.details.phone"), accessor: "phoneNumber" },
     ];
 
     const actions: TableAction<IUserProfile>[] = [
         {
             icon: <Eye className="w-4 h-4" />,
             onClick: (user) => router.push(`/dashboard/clients/${user.id}`),
-            label: b("seeDetails"),
+            label: t("button.seeDetails"),
         },
         {
             icon: <Pencil className="w-4 h-4" />,
             onClick: (user) => router.push(`/dashboard/clients/${user.id}/edit`),
-            label: b("edit"),
+            label: t("button.edit"),
         },
         {
             icon: <Trash className="w-4 h-4" />,
             onClick: handleDeleteClick,
-            label: b("delete"),
+            label: t("button.delete"),
         },
     ];
 
@@ -162,7 +158,7 @@ export default function ClientList({ token }: ClientListProps) {
         <div className="p-4 mx-auto">
             <SearchBar
                 onSearch={handleSearch}
-                placeholder={p("getBy", {field: "nombre, correo o ruc"})}
+                placeholder={t("search.searchByNameOrRucOrEmail")}
                 debounceDelay={400}
             />
             <div className="p-2 mb-2">
@@ -174,7 +170,7 @@ export default function ClientList({ token }: ClientListProps) {
                 />
             </div>
             <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
-                <h2 className="text-3xl font-bold text-gray-800">{c("title")}</h2>
+                <h2 className="text-3xl font-bold text-gray-800">{t("client.table.title")}</h2>
                 <div className="flex gap-2">
                     <Button
                         variant="outline"
@@ -182,7 +178,7 @@ export default function ClientList({ token }: ClientListProps) {
                         className="px-6"
                         onClick={() => router.push("/dashboard/clients/register")}
                     >
-                        {b("add")}
+                        {t("button.add")}
                     </Button>
                     <ExportButton
                         handleGetReport={handleGetClientReport}
@@ -199,16 +195,16 @@ export default function ClientList({ token }: ClientListProps) {
                 onPageChange={handlePageChange}
                 isLoading={loading}
                 skeleton={<ClientTableSkeleton />}
-                emptyMessage={e("notFoundField", {field: "clientes"})}
+                emptyMessage={t("client.table.emptyMessage")}
             />
             <ConfirmationModal
                 isOpen={isDeleteModalOpen}
                 onClose={() => setIsDeleteModalOpen(false)}
                 onConfirm={handleConfirmDelete}
-                title={m("titleDelete", {field: "cliente"})}
-                message={`¿Seguro que quieres eliminar a ${clientToDelete?.fullName}?`}
-                confirmText={b("delete")}
-                cancelText={b("cancel")}
+                title={t("confirmationModal.client.titleDelete")}
+                message={t("confirmationModal.client.messageDelete", {client: clientToDelete?.fullName ?? ""})}
+                confirmText={t("button.delete")}
+                cancelText={t("button.cancel")}
                 variant="danger"
             />
         </div>

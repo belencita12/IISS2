@@ -45,9 +45,7 @@ const InvoiceList = ({ token }: InvoiceListProps) => {
     },
   });
 
-  const i = useTranslations("InvoiceTable");
-  const ph = useTranslations("Placeholder");
-  const e = useTranslations("Error");
+  const t = useTranslations();
 
   const handleFilterChange = (updatedFilters: GetInvoiceQueryParams) => {
     const { page, size, ...safeFilters } = updatedFilters;
@@ -68,7 +66,7 @@ const InvoiceList = ({ token }: InvoiceListProps) => {
     const to = filters.toIssueDate;
 
     if (!from || !to) {
-      toast("error", e("errorLimitDate"));
+      toast("error", t("error.errorLimitDate"));
       return;
     }
 
@@ -93,7 +91,7 @@ const InvoiceList = ({ token }: InvoiceListProps) => {
     <div className="p-4 mx-auto">
       <div className="max-w-6xl mx-auto p-4 space-y-6">
         <SearchBar
-          placeholder={ph("getBy", {field: "RUC o nombre"})}
+          placeholder={t("search.searchByNameOrRuc")}
           onSearch={(value) => {
             setFilters((prev) => ({ ...prev, search: value }));
             search({ search: value });
@@ -112,7 +110,7 @@ const InvoiceList = ({ token }: InvoiceListProps) => {
         </div>
       </div>
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-3xl font-bold">{i("title")}</h2>
+        <h2 className="text-3xl font-bold">{t("invoices.table.title")}</h2>
         <ExportButton
           handleGetReport={handleGetInvoiceReport}
           isLoading={isGettingReport}
@@ -120,7 +118,7 @@ const InvoiceList = ({ token }: InvoiceListProps) => {
       </div>
 
       <InvoiceTable
-        emptyMessage={i("emptyMessage")}
+        emptyMessage={t("invoices.table.emptyMessage")}
         onPageChange={setPage}
         token={token}
         isLoading={isLoading}
