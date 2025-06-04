@@ -17,6 +17,7 @@ import { RaceForm } from "./register/RaceForm";
 import { useFetch } from "@/hooks/api";
 import { RACE_API } from "@/lib/urls";
 import { SpeciesFilter } from "@/components/admin/settings/pets/filter/SpeciesFilter";
+import { useTranslations } from "next-intl";
 
 interface RaceListProps {
     token: string | null;
@@ -37,13 +38,19 @@ export default function RaceList({ token }: RaceListProps) {
     const [showDeleted, setShowDeleted] = useState(false);
     const [isRestoring, setIsRestoring] = useState(false);
     const [searchQuery, setSearchQuery] = useState<string>("");
+
+    const t = useTranslations();
     
 
     useEffect(() => {
         if (token && species.length === 0) {
             getSpecies(token)
                 .then(setSpecies)
-                .catch(() => toast("error", "Error al cargar especies"));
+                .catch((error: unknown) => {
+                    if (error instanceof Error) {
+                        toast("error", error.message);
+                    }
+                });
         }
     }, [token, species.length]);
 
@@ -67,7 +74,7 @@ export default function RaceList({ token }: RaceListProps) {
                 totalPages: racesData.totalPages,
             }));
         } catch (error: unknown) {
-            toast("error", error instanceof Error ? error.message : "Error inesperado");
+            if (error instanceof Error) toast("error", error.message);
         } finally {
             setLoading(false);
         }
@@ -92,10 +99,10 @@ export default function RaceList({ token }: RaceListProps) {
 
         const success = await deleteRaceByID(token || "", selectedRace.id);
         if (success) {
-            toast("success", "Raza eliminada correctamente.");
+            toast("success", t("success.successDeleteRace"));
             loadRaces(pagination.pageSize, pagination.currentPage, searchQuery, showDeleted);
         } else {
-            toast("error", "No se pudo eliminar la raza.");
+            toast("error", t("error.errorDeleteRace"));
         }
 
         setIsModalOpen(false);
@@ -140,36 +147,36 @@ export default function RaceList({ token }: RaceListProps) {
         const { ok, error } = await restoreRace(null, `${RACE_API}/restore/${race.id}`);
 
         if (!ok) {
-            toast("error", error?.message || "Error al restaurar la raza");
+            toast("error", error?.message || t("error.errorRestoreRace"));
             setIsRestoring(false);
             return;
         }
 
-        toast("success", "Raza restaurada con éxito");
+        toast("success", t("success.successRestoreRace"));
         loadRaces(pagination.pageSize, pagination.currentPage, "", showDeleted);
         setIsRestoring(false);
     };
 
     const columns: Column<Race>[] = [
-        { header: "Nombre", accessor: "name" },
+        { header: t("races.table.name"), accessor: "name" },
         {
-            header: "Especie",
-            accessor: (race) => race.species?.name || "Desconocida",
+            header: t("races.table.specie"),
+            accessor: (race) => race.species?.name || t("error.noSpecified"),
         },
     ];
 
     const actions: TableAction<Race>[] = [
         ...(showDeleted ? [{
             icon: <Undo2 className={`w-4 h-4 ${isRestoring ? 'opacity-50' : ''}`} />,
-            label: isRestoring ? "Restaurando..." : "Restaurar",
+            label: isRestoring ? t("button.restoring") : t("button.restore"),
             onClick: (race: Race) => {
                 if (!isRestoring) {
                     handleRestore(race);
                 }
             },
         }] : [
-            { icon: <Pencil className="w-4 h-4" />, onClick: openEditRaceModal, label: "Editar" },
-            { icon: <Trash className="w-4 h-4" />, onClick: confirmDelete, label: "Eliminar" },
+            { icon: <Pencil className="w-4 h-4" />, onClick: openEditRaceModal, label: t("button.edit") },
+            { icon: <Trash className="w-4 h-4" />, onClick: confirmDelete, label:t("button.delete") },
         ]),
     ];
 
@@ -178,7 +185,7 @@ export default function RaceList({ token }: RaceListProps) {
             <div className="flex flex-col items-start gap-4 mb-4">
                 <SearchBar 
                     onSearch={handleSearch} 
-                    placeholder="Buscar raza..."  
+                    placeholder={t("search.searchByName")}  
                 />
                 <div className="w-48">
                     <SpeciesFilter
@@ -189,17 +196,17 @@ export default function RaceList({ token }: RaceListProps) {
                 </div>
             </div>
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center sm:gap-0 gap-4 my-4">
-                <h2 className="text-3xl font-bold">{showDeleted ? "Razas eliminadas" : "Razas"}</h2>
+                <h2 className="text-3xl font-bold">{showDeleted ? t("races.table.titleDeleted") : t("races.table.title")}</h2>
                 <div className="flex gap-2">
                     <Button 
                         variant={showDeleted ? "secondary" : "outline"}
                         onClick={toggleDeletedRaces}
                         disabled={isRestoring}
                     >
-                        {showDeleted ? "Ver activos" : "Ver eliminados"}
+                        {showDeleted ? t("button.seeActive") : t("button.seeDeleted")}
                     </Button>
                     <Button variant="default" className="px-6" disabled={isRestoring} onClick={openRaceModal}>
-                        Agregar
+                        {t("button.add")}
                     </Button>
                 </div>
             </div>
@@ -212,10 +219,10 @@ export default function RaceList({ token }: RaceListProps) {
                 onPageChange={handlePageChange}
                 isLoading={loading}
                 skeleton={<RaceTableSkeleton />}
-                emptyMessage="No se encontraron razas"
+                emptyMessage={t("races.table.emptyMessage")}
             />
 
-                <Modal isOpen={isRaceModalOpen} onClose={closeRaceModal} title={editingRace ? "Editar Raza" : "Agregar Raza"}>
+                <Modal isOpen={isRaceModalOpen} onClose={closeRaceModal} title={editingRace ? t("races.table.titleEdit"): t("races.table.titleRegister")}>
                 <RaceForm 
                     token={token || ""} 
                     isOpen={isRaceModalOpen} 
@@ -232,10 +239,10 @@ export default function RaceList({ token }: RaceListProps) {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onConfirm={handleDelete}
-                title="Eliminar Raza"
-                message={`¿Seguro que quieres eliminar la raza ${selectedRace?.name}?`}
-                confirmText="Eliminar"
-                cancelText="Cancelar"
+                title={t("confirmationModal.races.titleDelete")}
+                message={t("confirmationModal.races.messageDelete", {race : selectedRace?.name ?? ""})}
+                confirmText={t("button.delete")}
+                cancelText={t("button.cancel")}
                 variant="danger"
             />
         </div>

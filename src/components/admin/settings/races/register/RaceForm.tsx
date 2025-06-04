@@ -12,6 +12,7 @@ import { registerRace } from "@/lib/pets/registerRace";
 import { updateRace } from "@/lib/pets/updateRace";
 import { getSpecies } from "@/lib/pets/getRacesAndSpecies";
 import { Modal } from "@/components/global/Modal";
+import { useTranslations } from "next-intl";
 
 const raceFormSchema = z.object({
   name: z.string().min(1, "El nombre de la raza es obligatorio"),
@@ -37,6 +38,7 @@ export const RaceForm = ({
 }: RaceFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [species, setSpecies] = useState<{ id: number; name: string }[]>([]);
+  const t = useTranslations();
 
   const {
     register,
@@ -67,9 +69,10 @@ export const RaceForm = ({
                 }
           );
         } catch (error: unknown) {
+          if (error instanceof Error)
           toast(
             "error",
-            error instanceof Error ? error.message : "Error inesperado"
+            error.message
           );
         }
       }
@@ -83,10 +86,10 @@ export const RaceForm = ({
     try {
       if (initialData) {
         await updateRace(initialData.id, data, token);
-        toast("success", "Raza actualizada con éxito");
+        toast("success", t("success.successUpdateRace"));
       } else {
         await registerRace(data, token);
-        toast("success", "Raza registrada con éxito");
+        toast("success", t("success.successRegisterRace"));
       }
 
       onSuccess?.();
@@ -95,7 +98,7 @@ export const RaceForm = ({
       if (error instanceof Error) {
         toast("error", error.message);
       } else {
-        toast("error", "Error inesperado al procesar la solicitud.");
+        toast("error", t("error.unexpectedError"));
       }
     } finally {
       setIsSubmitting(false);
@@ -106,11 +109,11 @@ export const RaceForm = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={initialData ? "Editar Raza" : "Registro de Raza"}
+      title={initialData ? t("races.table.titleEdit") : t("races.table.titleRegister")}
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div>
-          <Label>Nombre</Label>
+          <Label>{t("races.form.name")}</Label>
           <Input
             {...register("name")}
             placeholder="Ingrese el nombre de la raza"
@@ -120,12 +123,12 @@ export const RaceForm = ({
           )}
         </div>
         <div>
-          <Label>Especie</Label>
+          <Label>{t("races.form.specie")}</Label>
           <select
             {...register("speciesId")}
             className="w-full p-2 border rounded"
           >
-            <option value="">Seleccione una especie</option>
+            <option value="">{t("races.form.selectASpeccie")}</option>
             {species.map((specie) => (
               <option key={specie.id} value={specie.id}>
                 {specie.name}
@@ -143,16 +146,16 @@ export const RaceForm = ({
             onClick={onClose}
             disabled={isSubmitting}
           >
-            Cancelar
+            {t("button.cancel")}
           </Button>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting
               ? initialData
-                ? "Actualizando..."
-                : "Registrando..."
+                ? t("button.saving")
+                : t("button.adding")
               : initialData
-              ? "Editar"
-              : "Registrar"}
+              ? t("button.save")
+              : t("button.add")}
           </Button>
         </div>
       </form>

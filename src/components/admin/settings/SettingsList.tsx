@@ -1,66 +1,69 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
+const t = await getTranslations()
+;
 const settingsOptions = [
+  
   {
-    name: "Razas",
+    name: t("settings.races.name"),
     description:
-      "Listar, crear, editar o eliminar las razas soportadas por el sistema.",
-    icon: "🐶",
+      t("settings.races.description"),
+    icon: t("settings.races.icon"),
     link: "/dashboard/settings/races",
   },
   {
-    name: "Especies",
-    description: "Gestionar las especies disponibles en el sistema.",
-    icon: "🐾",
+    name: t("settings.species.name"),
+    description: t("settings.species.description"),
+    icon: t("settings.species.icon"),
     link: "/dashboard/settings/species",
   },
   {
-    name: "Puestos",
-    description: "Administrar los puestos soportados en la veterinaria.",
-    icon: "🏥",
+    name: t("settings.position.name"),
+    description: t("settings.position.description"),
+    icon: t("settings.position.icon"),
     link: "/dashboard/settings/positions",
   },
   {
-    name: "Proveedores",
-    description: "Administrar los proveedores de productos y servicios.",
-    icon: "🚚",
+    name: t("settings.providers.name"),
+    description: t("settings.providers.description"),
+    icon: t("settings.providers.icon"),
     link: "/dashboard/settings/providers",
   },
   {
-    name: "Tags",
-    description:
-      "Administra las etiquetas que soporta el sistema para un mejor filtrado y busqueda de productos.",
-    icon: "🏷️",
+    name: t("settings.tags.name"),
+    description: t("settings.tags.description"),
+    icon: t("settings.tags.icon"),
     link: "/dashboard/settings/tags",
   },
   {
-    name: "Historial de Vacunación",
-    description: "Gestionar y revisar los registros de vacunación de las mascotas.",
-    icon: "💉",
+    name: t("settings.vaccineRegistry.name"),
+    description: t("settings.vaccineRegistry.description"),
+    icon: t("settings.vaccineRegistry.icon"),
     link: "/dashboard/settings/vaccine-registry",
   },
   {
-    name: "Tipos de servicio",
-    description: "Administrar los diferentes tipos de servicios disponibles en la veterinaria.",
-    icon: "🛁",
+    name: t("settings.serviceTypes.name"),
+    description: t("settings.serviceTypes.description"),
+    icon: t("settings.serviceTypes.icon"),
     link: "/dashboard/settings/service-types",
   },
   {
-    name: "Mascotas",
-    description: "Consulta y gestiona todas las mascotas registradas en el sistema.",
-    icon: "🦴",
+    name: t("settings.pets.name"),
+    description: t("settings.pets.description"),
+    icon: t("settings.pets.icon"),
     link: "/dashboard/settings/pets",
   },
   {
-    name: "Recibos",
-    description: "Consulta los recibos de las facturas registradas.",
-    icon: "🧾",
+    name: t("settings.receipts.name"),
+    description: t("settings.receipts.description"),
+    icon: t("settings.receipts.icon"),
     link: "/dashboard/settings/receipts",
   },
   {
-    name: "Timbrado",
-    description: "Configura el timbrado de las facturas electrónicas.",
-    icon: "📜",
+    name: t("settings.stamping.name"),
+    description: t("settings.stamping.description"),
+    icon: t("settings.stamping.icon"),
     link: "/dashboard/settings/stamped",
   }  
 ];
@@ -84,7 +87,7 @@ export function SettingsList() {
             </div>
             <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 mt-auto">
               <div className="text-sm text-emerald-600 text-center font-medium hover:text-emerald-700 transition-colors duration-200">
-                Configurar
+                {t("settings.configure")}
               </div>
             </div>
           </div>
