@@ -9,14 +9,12 @@ import { StampedFilters } from "./StampedFilters";
 import { toast } from "@/lib/toast";
 import { normalizeText } from "@/lib/utils";
 import useDebounce from "@/hooks/useDebounce";
-import SearchBar from "@/components/global/SearchBar";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import { deleteStamped } from "@/lib/stamped/stampedService";
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { Pencil } from "lucide-react";
 import GenericPagination from "@/components/global/GenericPagination";
 import { useStampedList } from "@/hooks/stamped/useStampedList";
 import { PaginationResponse } from "@/lib/types";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { StampedForm } from "./StampedForm";
 
 interface StampedListProps {
