@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import ServiciosBanner from "./ServiciosBanner";
 import { ServiceType } from "@/lib/service-types/IServiceType";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -20,7 +19,6 @@ interface ServiceResponse {
 export default function Services() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [itemsToShow, setItemsToShow] = useState(3);
-    const router = useRouter();
 
     useEffect(() => {
         const handleResize = () => {
@@ -68,9 +66,6 @@ export default function Services() {
         setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
     };
 
-    const handleServiceClick = (service: ServiceType) => {
-        router.push(`/services/${service.id}`);
-    };
 
     const visibleServices = displayServices.slice(currentIndex, currentIndex + itemsToShow);
 
