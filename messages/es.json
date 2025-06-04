@@ -141,6 +141,7 @@
     "transfer": "Transferencia",
     "minAmount": "Ej: 100.000",
     "maxAmount": "Ej: 1.000.000"
+   
   },
   "EmployeeTable": {
     "name": "Nombre",
@@ -541,6 +542,7 @@
     }
   },
   "button": {
+    "addSchedule": "Agregar horario",
     "seeActive": "Ver activos",
     "seeDeleted": "Ver eliminados",
     "restore": "Restaurar",
@@ -578,6 +580,10 @@
   },
 
   "placeholder":{
+    "colabs": "Ingrese el número máximo de colaboradores",
+    "durationExample": "Ej: 30",
+    "slugExample": "Ej: servicio-veterinario",
+    "businessNameExample": "Ej: Tech Supplies Inc.",
     "name": "Ingrese el nombre",
     "address": "Ingrese la dirección",
     "ruc": "Ingrese el RUC",
@@ -595,7 +601,8 @@
     "iva":"Ingrese el IVA",
     "description": "Ingrese una descripción",
     "minAmount":"Ej: 100.000",
-    "maxAmount":"Ej: 1.000.000"
+    "maxAmount":"Ej: 1.000.000",
+    "since": "Desde (HH:MM)"
 
   },
   "error": {
@@ -659,7 +666,17 @@
     "errorDeleteRace": "Ocurrió un error al intentar eliminar la raza",
     "errorRestoreRace": "Ocurrió un error al intentar restaurar la raza",
     "errorDeleteSpecie": "Ocurrió un error al intentar eliminar la especie",
-    "errorRestoreSpecie": "Ocurrió un error al intentar restaurar la especie"
+    "errorRestoreSpecie": "Ocurrió un error al intentar restaurar la especie",
+    "defaultValues": "Modifica los valores predeterminados antes de agregar un nuevo horario",
+    "maintainASchedule": "Debe mantener al menos un horario",
+    "defaultValuesBeforeSave": "Modifica los valores predeterminados antes de guardar",
+    "beforeEndTime": "La hora de finalización debe ser posterior a la de inicio {startTime}",
+    "errorLoadProviderDetails": "Error al cargar detalles del proveedor:",
+    "errorSaveProvider" : "Ocurrió un error al guardar el proveedor",
+    "errorLoadTags": "Error al cargar las etiquetas",
+    "errorRestoreTag": "Ocurrió un error al intentar restaurar la etiqueta",
+    "errorDeleteTag": "Ocurrió un error al intentar eliminar la etiqueta",
+    "errorSaveTag": "Ocurrió un error al agregar la etiqueta"
     
   },
   "profileTabs": {
@@ -850,7 +867,20 @@
     "successDeleteSpecie": "Especie eliminada correctamente",
     "successRestoreSpecie": "Especie restaurada correctamente",
     "successUpdateSpecie": "Especie actualizada con éxito",
-    "successRegisterSpecie": "Especie registrada correctamente"
+    "successRegisterSpecie": "Especie registrada correctamente",
+    "successDeletePosition": "Puesto eliminado correctamente",
+    "successUpdatePosition": "Puesto actualizado con éxito",
+    "successRegisterPosition": "Puesto registrado correctamente",
+    "successDeleteProvider": "Proveedor eliminado correctamente",
+    "successRegisterProvider": "Proveedor agregado correctamente",
+    "successUpdateProvider": "Proveedor actualizado con éxito",
+    "successRestoreTag": "Etiqueta restaurada correctamente",
+    "successDeleteTag": "Etiqueta eliminada correctamente",
+    "successRegisterTag": "Etiqueta agregada correctamente",
+    "successUpdateTag": "Etiqueta actualizada con éxito",
+    "successDeleteService": "Servicio eliminado correctamente",
+    "successRegisterService": "Servicio agregado correctamente",
+    "successUpdateService": "Servicio actualizado con éxito"
   },
   "vaccine": {
     "table": {
@@ -903,7 +933,8 @@
     "searchByCodeOrName": "Buscar por código o nombre...",
     "searchByEmployeeRuc": "Buscar por RUC del encargado...",
     "searchByProductName": "Buscar por nombre del producto...",
-    "searchByNameOrRucEmployee": "Buscar por nombre o RUC del empleado..."
+    "searchByNameOrRucEmployee": "Buscar por nombre o RUC del empleado...",
+    "searchByNameOrRucProvider": "Buscar por razón social o RUC del proveedor..."
   },
   "productCatalog": {
     "selectedTags": "Etiquetas seleccionadas:",
@@ -1189,6 +1220,22 @@
     }
   },
   "confirmationModal":{
+    "serviceTypes":{
+      "titleDelete": "Eliminar servicio",
+      "messageDelete":"¿Estás seguro de que deseas eliminar el servicio {service}?"
+    },
+    "tag": {
+      "titleDelete": "Eliminar etiqueta",
+      "messageDelete":"¿Estás seguro de que deseas eliminar la etiqueta {tag}?"
+    },
+    "providers":{
+      "titleDelete": "Eliminar proveedor",
+      "messageDelete": "¿Estás seguro de que deseas eliminar el proveedor {provider}?"
+    },
+    "positions":{
+      "titleDelete": "Eliminar puesto de trabajo",
+      "messageDelete": "¿Estás seguro de que deseas eliminar el puesto {position}?"
+    },
     "species":{
       "titleDelete": "Eliminar raza",
       "messageDelete":"¿Estás seguro de que deseas eliminar la especie {specie}?"
@@ -1290,6 +1337,93 @@
       "selectASpeccie": "Seleccione una especie",
       "specie": "Especie",
       "name": "Nombre"
+    }
+  },
+
+  "positions":{
+    "table":{
+      "name": "Nombre",
+      "title": "Puestos de trabajo",
+      "emptyMessage": "No hay puestos de trabajo registrados"
+    },
+    "details":{
+      "title": "Turnos",
+      "weekDay": "Día de la semana",
+      "startTime": "Inicio",
+      "endTime": "Fin"
+    },
+    "form":{
+      "name": "Nombre",
+      "schedule": "Horario",
+      "since": "Desde",
+      "until": "Hasta",
+      "mondayToFriday": "Lunes a Viernes",
+      "mondayToSaturday": "Lunes a Sábado"
+    }
+  },
+
+  "providers": {
+    "table": {
+      "name": "Razón social",
+      "ruc": "RUC",
+      "title": "Proveedores",
+      "emptyMessage": "No hay proveedores registrados"
+    },
+    "details": {
+      "description": "Descripción:",
+      "contact": "Contacto:",
+      "phone": "Teléfono",
+      "ruc": "RUC"
+    },
+    "form":{
+      "titleRegister": "Agregar Proveedor",
+      "titleUpdate": "Editar Proveedor",
+      "name": "Razón social",
+      "description": "Descripción",
+      "phone": "Teléfono",
+      "ruc": "RUC"
+    }
+  },
+
+  "tags": {
+    "table": {
+      "name": "Nombre",
+      "title": "Tags",
+      "titleDeleted": "Tags eliminados",
+      "emptyMessage": "No hay etiquetas registradas"
+    },
+    "form":{
+      "titleRegister": "Agregar etiqueta",
+      "titleUpdate": "Editar etiqueta"
+    }
+  },
+  "serviceTypes": {
+    "table":{
+      "title": "Tipos de Servicio",
+      "name": "Nombre",
+      "description": "Descripción",
+      "duration": "Duración (Min)",
+      "price": "Precio",
+      "priceGs": "{price} Gs.",
+      "tags": "Etiqueta/s",
+      "emptyMessage": "No hay servicios registrados"
+    },
+    "form":{
+      "titleRegister": "Agregar Tipo de Servicio",
+      "titleUpdate": "Editar Tipo de Servicio",
+      "enterTheData": "Ingrese los datos del Tipo de Servicio",
+      "updateTheData": "Modifique los datos del Tipo de Servicio",
+      "image": "Imagen (Opcional)",
+      "name": "Nombre",
+      "slug": "Identificador",
+      "description": "Descripción",
+      "durationMin": "Duración (Minutos)",
+      "price": "Precio",
+      "iva": "IVA (%)",
+      "cost": "Costo",
+      "colabs": "Número máximo de colaboradores (Opcional)",
+      "isPublic": "Público",
+      "tags": "Etiqueta/s"
     }
   },
 
