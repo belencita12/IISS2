@@ -125,7 +125,12 @@ export function StampedFilters({
               const value = e.target.value;
               // Solo permitir números y máximo 8 dígitos
               if (/^\d{0,8}$/.test(value)) {
-                setStampedNumber(value || undefined);
+                setStampedNumber(value);
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Backspace' || e.key === 'Delete') {
+                setStampedNumber('');
               }
             }}
             className="w-full"

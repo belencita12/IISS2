@@ -96,10 +96,12 @@ export function StampedForm({
 
   // Filtrar los depósitos disponibles
   const availableStocks = stocks.filter(stock => {
-    if (defaultValues && stock.id === defaultValues.stock.id) {
-      return true;
+    // Si estamos editando, solo mostrar el depósito actual y los que no tienen timbrado
+    if (defaultValues) {
+      return stock.id === defaultValues.stock.id || (stock.id !== undefined && !stocksWithActiveStamped.includes(stock.id));
     }
-    return stock.id !== undefined && !stocksWithActiveStamped.includes(stock.id);
+    // Si estamos agregando, mostrar todos los depósitos
+    return true;
   });
 
   const stampedSchema = z.object({
