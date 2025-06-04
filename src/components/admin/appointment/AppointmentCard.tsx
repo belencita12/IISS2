@@ -58,6 +58,7 @@ const AppointmentCard = ({
         <p>{t("appointmentDetails.petDetails.owner")}: {appointment.pet?.owner?.name ?? t("error.notFound")}</p>
         <p>{t("appointmentDetails.petDetails.race")}: {appointment.pet?.race ?? t("error.noSpecified")}</p>
         <p>{t("appointmentDetails.details")}: {appointment.details ?? t("error.noSpecified")}</p>
+        <p>Veterinario: {appointment.employee?.name}</p>
         <p className="text-sm text-gray-500 font-semibold">
           {t("appointmentDetails.status")}: {statusTranslations[appointment.status] ?? appointment.status}
         </p>
