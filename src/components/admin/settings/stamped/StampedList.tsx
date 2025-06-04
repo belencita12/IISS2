@@ -127,7 +127,7 @@ export function StampedList({ token }: StampedListProps) {
       });
       setData(result);
     } catch (error) {
-      //console.error("Error al eliminar timbrado:", error);
+      
       if (error instanceof Error) {
         toast("error", error.message);
       } else {

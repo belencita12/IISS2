@@ -56,58 +56,31 @@ export function StampedForm({
 
     // Obtener números de timbrado activos
     const fetchActiveStampedNumbers = async () => {
-      if (defaultValues) {
-        // Si estamos editando, excluimos el número actual del timbrado
-        setIsLoadingActiveNumbers(true);
-        try {
-          const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://iiss2-be.duckdns.org';
-          const response = await fetch(`${API_BASE_URL}/stamped?page=1&size=10&includeDeleted=false`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          
-          if (!response.ok) {
-            throw new Error("Error al obtener los timbrados activos");
-          }
-
-          const data = await response.json();
-          const activeNumbers = data.data
-            .filter((stamped: Stamped) => stamped.isActive && stamped.id !== defaultValues.id)
-            .map((stamped: Stamped) => stamped.stampedNum);
-          
-          setActiveStampedNumbers(activeNumbers);
-        } catch (error) {
-          console.error("Error al obtener timbrados activos:", error);
-        } finally {
-          setIsLoadingActiveNumbers(false);
+      if (defaultValues) return; // No necesitamos verificar si estamos editando
+      
+      setIsLoadingActiveNumbers(true);
+      try {
+        const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://iiss2-be.duckdns.org';
+        const response = await fetch(`${API_BASE_URL}/stamped?page=1&size=10&includeDeleted=false`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        if (!response.ok) {
+          throw new Error("Error al obtener los timbrados activos");
         }
-      } else {
-        // Si estamos creando, obtenemos todos los números activos
-        setIsLoadingActiveNumbers(true);
-        try {
-          const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://iiss2-be.duckdns.org';
-          const response = await fetch(`${API_BASE_URL}/stamped?page=1&size=10&includeDeleted=false`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          
-          if (!response.ok) {
-            throw new Error("Error al obtener los timbrados activos");
-          }
 
-          const data = await response.json();
-          const activeNumbers = data.data
-            .filter((stamped: Stamped) => stamped.isActive)
-            .map((stamped: Stamped) => stamped.stampedNum);
-          
-          setActiveStampedNumbers(activeNumbers);
-        } catch (error) {
-          console.error("Error al obtener timbrados activos:", error);
-        } finally {
-          setIsLoadingActiveNumbers(false);
-        }
+        const data = await response.json();
+        const activeNumbers = data.data
+          .filter((stamped: Stamped) => stamped.isActive)
+          .map((stamped: Stamped) => stamped.stampedNum);
+        
+        setActiveStampedNumbers(activeNumbers);
+      } catch (error) {
+        //console.error("Error al obtener timbrados activos:", error);
+      } finally {
+        setIsLoadingActiveNumbers(false);
       }
     };
 
@@ -289,7 +262,7 @@ export function StampedForm({
       onSuccess();
       onClose();
     } catch (error) {
-      console.error('Error completo:', error);
+      //console.error('Error completo:', error);
       toast(
         "error",
         error instanceof Error
@@ -362,8 +335,10 @@ export function StampedForm({
               <SelectContent className="max-h-[300px]">
                 <SelectItem value="0">Todos</SelectItem>
                 {stocks.map((stock: StockData) => (
-                  <SelectItem key={stock.id || ''} value={(stock.id || 0).toString()} className="whitespace-normal">
-                    {stock.name} - {stock.address}
+                  <SelectItem key={stock.id || ''} value={(stock.id || 0).toString()}>
+                    <div className="truncate">
+                      {stock.name} - {stock.address}
+                    </div>
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -389,11 +364,17 @@ export function StampedForm({
                 id="fromDate"
                 type="date"
                 min={minDate}
+                max="9999-12-31"
                 {...register("fromDate", {
                   onChange: (e) => {
                     const value = e.target.value;
-                    if (value && toDate && value > toDate) {
-                      setValue("toDate", value);
+                    console.log("fromDate onChange - value:", value);
+                    if (value) {
+                      if (toDate && value > toDate) {
+                        setValue("toDate", value);
+                      }else{
+                        setValue("toDate", "");
+                      }
                     }
                   }
                 })}
@@ -411,7 +392,15 @@ export function StampedForm({
                 type="date"
                 min={getMinToDate()}
                 max={getMaxToDate()}
-                {...register("toDate")}
+                {...register("toDate", {
+                  onChange: (e) => {
+                    const value = e.target.value;
+                    console.log("toDate onChange - value:", value);
+                    if (value) {
+                      setValue("toDate", value);
+                    }
+                  }
+                })}
                 disabled={isSubmitting}
               />
               {errors.toDate && (
