@@ -60,6 +60,11 @@ export default function AppointmentDateFilter({ filters, setFilters }: Props) {
     }
   }, [debouncedStartDate, debouncedEndDate]);
 
+  useEffect(() => {
+    setStartDate(filters.fromDesignatedDate ?? "");
+    setEndDate(filters.toDesignatedDate ?? "");
+  }, [filters.fromDesignatedDate, filters.toDesignatedDate]);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div className="space-y-2">

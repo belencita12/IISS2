@@ -27,7 +27,6 @@ import useDebounce from "@/hooks/useDebounce";
 import { downloadFromBlob, normalizeText } from "@/lib/utils";
 import ExportButton from "@/components/global/ExportButton";
 import { getAppointmentReport } from "@/lib/appointment/getAppointmentReport";
-import { unknown } from "zod";
 import { Textarea } from "@/components/ui/textarea";
 
 interface AppointmentListProps {
@@ -36,12 +35,13 @@ interface AppointmentListProps {
 
 const AppointmentList = ({ token }: AppointmentListProps) => {
 
-  const t = useTranslations();
+    const t = useTranslations();
 
     const router = useRouter();
     const [filters, setFilters] = useState<AppointmentQueryParams>({
         page: 1,
         search: undefined,
+        searchEmployee: undefined, 
         fromDesignatedDate: undefined,
         toDesignatedDate: undefined,
         status: undefined,
@@ -57,7 +57,11 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
     const [cancelModalOpen, setCancelModalOpen] = useState(false);
     const [cancelDescription, setCancelDescription] = useState("");
     const [searchValue, setSearchValue] = useState("");
+    const [employeeSearchValue, setEmployeeSearchValue] = useState("");
     const debouncedSearchValue = useDebounce(searchValue, 500);
+    const debouncedEmployeeSearchValue = useDebounce(employeeSearchValue, 500);
+    const [isFiltering, setIsFiltering] = useState(false);
+    const [resetCounter, setResetCounter] = useState(0);
 
     const [isGettingReport, setIsGettingReport] = useState(false);
 
@@ -79,20 +83,25 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
         autoFetch: true,
         extraParams: {
             search: filters.search,
+            searchEmployee: filters.employeeRuc,
             fromDesignatedDate: filters.fromDesignatedDate,
             toDesignatedDate: filters.toDesignatedDate,
             status: filters.status,
         },
     });
 
-    // Sincronizar search debounced con filtros
     useEffect(() => {
-        const normalizedSearch = debouncedSearchValue
+        const normalizedClientSearch = debouncedSearchValue
             ? normalizeText(debouncedSearchValue)
             : undefined;
 
+        const normalizedEmployeeSearch = debouncedEmployeeSearchValue
+            ? normalizeText(debouncedEmployeeSearchValue)
+            : undefined;
+
         const updatedFilters = {
-            search: normalizedSearch,
+            search: normalizedClientSearch,
+            searchEmployee: normalizedEmployeeSearch,
             fromDesignatedDate: filters.fromDesignatedDate,
             toDesignatedDate: filters.toDesignatedDate,
             status: filters.status,
@@ -101,6 +110,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
         search(updatedFilters);
     }, [
         debouncedSearchValue,
+        debouncedEmployeeSearchValue,
         filters.fromDesignatedDate,
         filters.toDesignatedDate,
         filters.status,
@@ -113,6 +123,22 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
             ...safeFilters,
             page: 1,
         }));
+    };
+
+    const resetFilters = () => {
+        setIsFiltering(true);
+        setFilters({
+            page: 1,
+            search: undefined,
+            searchEmployee: undefined,
+            fromDesignatedDate: undefined,
+            toDesignatedDate: undefined,
+            status: undefined,
+        });
+        setSearchValue("");
+        setEmployeeSearchValue("");
+        setIsFiltering(false);
+        setResetCounter((prev) => prev + 1);
     };
 
     const handleGetAppointmentReport = async () => {
@@ -142,9 +168,14 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
         setIsGettingReport(false);
     };
 
-    const handleSearch = (value: string) => {
-        setSearchValue(value);
-    };
+    const hasActiveFilters = Boolean(
+        searchValue ||
+        filters.fromDesignatedDate ||
+        filters.toDesignatedDate ||
+        filters.status ||
+        employeeSearchValue
+    );
+
 
     const openConfirmModal = (
         appointment: AppointmentData,
@@ -211,11 +242,34 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
 
     return (
         <div className="p-4 mx-auto">
+            {hasActiveFilters && (
+                <div className="flex justify-end">
+                    <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => resetFilters()}
+                    className="text-sm h-8 px-2 text-gray-600 mr-[10px]"
+                    disabled={isFiltering}
+                    >
+                    Limpiar filtros
+                    </Button>
+                </div>
+            )}
+
             <div className="max-w-8xl mx-auto p-4 space-y-6">
-                <SearchBar
-                    placeholder={t("search.searchByNameOrRuc")}
-                    onSearch={handleSearch}
-                />
+                <div className="flex space-x-4">
+                    <SearchBar
+                        placeholder={t("search.searchByNameOrRuc")}
+                        onSearch={setSearchValue}
+                        resetTrigger={resetCounter}
+                    />
+                    <SearchBar
+                        placeholder={t("search.searchByNameOrRucEmployee")}
+                        onSearch={setEmployeeSearchValue}
+                        resetTrigger={resetCounter}
+                    />
+                </div>
+
                 <div className="flex flex-col md:flex-row gap-4">
                     <div className="flex-1">
                         <AppointmentDateFilter
