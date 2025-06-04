@@ -124,14 +124,19 @@ export function StampedFilters({
             type="text"
             placeholder={"Buscar por número de timbrado"}
             onChange={(e) => {
-              console.log("Stamped number changed:", e.target.value);
-              setStampedNumber(e.target.value || undefined);
+              const value = e.target.value;
+              // Solo permitir números y máximo 8 dígitos
+              if (/^\d{0,8}$/.test(value)) {
+                console.log("Stamped number changed:", value);
+                setStampedNumber(value || undefined);
+              }
             }}
             className="w-full"
             value={stampedNumber || ""} // Controlled input
             autoComplete="off"
             autoCorrect="off"
             spellCheck="false"
+            maxLength={8}
           />
         </div>
       </div>
