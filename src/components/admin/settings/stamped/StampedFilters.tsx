@@ -30,8 +30,8 @@ export function StampedFilters({
   setToDate,
   //isActive,
   //setIsActive,
-  //stockId,
-  //setStockId,
+  stockId,
+  setStockId,
   stampedNumber,
   setStampedNumber,
   token
@@ -44,7 +44,7 @@ export function StampedFilters({
     const result = async () => {
       const stocks = await getStocks({
         page: 1,
-        size: 10,
+        size: 5,
         name: stockText,
         address: addressText,
       }, token); // Replace with actual token or context
@@ -71,7 +71,7 @@ export function StampedFilters({
           <Label>{"Deposito"}</Label>
           <DataList datas={stocks.map(stock => ({ text: stock.name, value: stock.id?.toString() ?? "" }))} 
             handleSelect={(value) => {
-              //setStockId(value ? parseInt(value) : undefined);
+              setStockId(value ? parseInt(value) : undefined);
             }}
             placeholder={"Buscar por Deposito"}
             className="w-full"
@@ -83,7 +83,7 @@ export function StampedFilters({
             }}
             handleReset={() => {
               setStockText("");
-              //setStockId(undefined);
+              setStockId(undefined);
             }}
             value={stockText} // Controlled input, can be set to a specific stock ID if needed
             type="text"
