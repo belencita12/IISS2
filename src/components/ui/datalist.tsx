@@ -30,14 +30,16 @@ const DataList = ({ className, handleSelect, datas, placeholder, onChange, handl
                     className
                 )}
             />
-            <div className="absolute inset-y-0 right-0 flex items-center pr-3 z-30 cursor-pointer" onClick={() => {
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3 z-30 cursor-pointer" onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 setIsShown(!isShown);
                 handleReset && handleReset();}} >
                 <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12a4 4 0 11-8 0 4 4 0 018 0zM12 6v6m0 0h6m-6 0H6"></path>
                 </svg>
             </div>
-            <div className="absolute bottom-0 left-0 w-full h-px cursor-pointer z-30">
+            <div className="absolute bottom-0 left-0 w-full h-px cursor-pointer z-30 shadow-md">
                 {datas && isShown && (datas.length > 0? datas.map((item, index) => 
                     <div onClick={()=>{
                         handleSelect && handleSelect(item.value)

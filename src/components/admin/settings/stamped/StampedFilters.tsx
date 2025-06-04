@@ -28,8 +28,8 @@ export function StampedFilters({
   setFromDate,
   toDate,
   setToDate,
-  isActive,
-  setIsActive,
+  //isActive,
+  //setIsActive,
   stockId,
   setStockId,
   stampedNumber,
@@ -39,16 +39,15 @@ export function StampedFilters({
 
   const [stocks, setStocks] = useState<StockData[]>([]);
   const [stockText, setStockText] = useState<string>("");
-  const [addressText, setAddressText] = useState<string>("");
+  const [addressText] = useState<string>("");
   useEffect(() => {
     const result = async () => {
       const stocks = await getStocks({
         page: 1,
-        size: 10,
+        size: 5,
         name: stockText,
         address: addressText,
       }, token); // Replace with actual token or context
-      console.log("Stocks fetched:", stocks);
       setStocks(stocks.data);
     }
 
@@ -57,13 +56,13 @@ export function StampedFilters({
   
   const t = useTranslations("Stamped");
 
-  const handleStatusChange = (value: string) => {
+ /*  const handleStatusChange = (value: string) => {
     if (value === "all") {
       setIsActive(undefined);
     } else {
       setIsActive(value === "true");
     }
-  };
+  }; */
 
   return (
     <div className="flex flex-col gap-4">
@@ -72,14 +71,13 @@ export function StampedFilters({
           <Label>{"Deposito"}</Label>
           <DataList datas={stocks.map(stock => ({ text: stock.name, value: stock.id?.toString() ?? "" }))} 
             handleSelect={(value) => {
-              console.log("Selected stock ID:", value);
               setStockId(value ? parseInt(value) : undefined);
             }}
             placeholder={"Buscar por Deposito"}
             className="w-full"
             onChange={(e) => {
               if(typeof e === "string") {
-                console.log("Input changed:", e);
+                //console.log("Input changed:", e);
                 setStockText(e);
               }
             }}
@@ -97,14 +95,14 @@ export function StampedFilters({
           <Label>{"Direccion"}</Label>
           <DataList datas={stocks.map(stock => ({ text: stock.address, value: stock.id?.toString() ?? "" }))} 
             handleSelect={(value) => {
-              console.log("Selected stock ID:", value);
+              
               setStockId(value ? parseInt(value) : undefined);
             }}
             placeholder={"Buscar por direccion del deposito"}
             className="w-full"
             onChange={(e) => { 
               if(typeof e === "string") {
-                console.log("Input changed:", e);
+                
                 setAddressText(e);
               }
             }}
@@ -127,7 +125,6 @@ export function StampedFilters({
               const value = e.target.value;
               // Solo permitir números y máximo 8 dígitos
               if (/^\d{0,8}$/.test(value)) {
-                console.log("Stamped number changed:", value);
                 setStampedNumber(value || undefined);
               }
             }}
