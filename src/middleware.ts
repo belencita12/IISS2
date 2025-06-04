@@ -11,7 +11,7 @@ export async function middleware(req: NextRequest) {
     }
 
     if (!token.roles.includes("ADMIN")) {
-      return NextResponse.redirect(new URL("/dashboard/unauthorized", req.url));
+      return NextResponse.redirect(new URL("/unauthorized", req.url));
     }
   }
  }
