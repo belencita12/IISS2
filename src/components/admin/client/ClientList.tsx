@@ -44,6 +44,10 @@ export default function ClientList({ token }: ClientListProps) {
     const [from, setFrom] = useState<string | undefined>();
     const [to, setTo] = useState<string | undefined>();
     const [isGettingReport, setIsGettingReport] = useState(false);
+    const [isFiltering, setIsFiltering] = useState(false);
+    const [resetCounter, setResetCounter] = useState(0);
+    const [searchQuery, setSearchQuery] = useState("");
+
     const loadUsers = useCallback(
         async (page: number = 1, query: string = "") => {
             if (!token) return;
@@ -79,6 +83,7 @@ export default function ClientList({ token }: ClientListProps) {
 
     const handleSearch = useCallback(
         (query: string) => {
+            setSearchQuery(query);
             loadUsers(data.pagination.currentPage, query);
         },
         [data.pagination.currentPage, loadUsers]
@@ -94,6 +99,20 @@ export default function ClientList({ token }: ClientListProps) {
         setClientToDelete(user);
         setIsDeleteModalOpen(true);
     };
+
+    const resetFilters = () => {
+        setIsFiltering(true);
+        setTo(undefined)
+        setFrom(undefined)
+        setResetCounter((prev) => prev + 1);
+        setIsFiltering(false);
+    };
+
+    const hasActiveFilters = Boolean(
+        to || 
+        from ||
+        searchQuery
+    );
 
     const handleGetClientReport = async () => {
         if (!from || !to) {
@@ -156,10 +175,24 @@ export default function ClientList({ token }: ClientListProps) {
 
     return (
         <div className="p-4 mx-auto">
+            {hasActiveFilters && (
+                <div className="flex justify-end">
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => resetFilters()}
+                        className="text-sm h-8 px-2 text-gray-600 mr-[10px]"
+                        disabled={isFiltering}
+                    >
+                        Limpiar filtros
+                    </Button>
+                </div>
+            )}
             <SearchBar
                 onSearch={handleSearch}
                 placeholder={t("search.searchByNameOrRucOrEmail")}
                 debounceDelay={400}
+                resetTrigger={resetCounter}
             />
             <div className="p-2 mb-2">
                 <DateFilter

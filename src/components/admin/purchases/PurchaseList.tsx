@@ -27,6 +27,7 @@ export default function PurchaseList({ token }: Props) {
   const [from, setFrom] = useState<string | undefined>();
   const [to, setTo] = useState<string | undefined>();
   const [isGettingReport, setIsGettingReport] = useState(false);
+  const [isFiltering, setIsFiltering] = useState(false);
 
   const t = useTranslations();
   const { data, query, setQuery, isLoading, error } = useGetPurchases({
@@ -50,11 +51,49 @@ export default function PurchaseList({ token }: Props) {
     }
   };
 
+  const hasActiveFilters = !!(
+    query.providerId ||
+    query.stockId ||
+    query.totalMin ||
+    query.totalMax ||
+    from ||
+    to
+  );
+
+  const resetFilters = () => {
+    setIsFiltering(true)
+    setQuery({
+      providerId: undefined,
+      stockId: undefined,
+      totalMin: undefined,
+      totalMax: undefined,
+      from: undefined,
+      to: undefined,
+      page: 1,
+    });
+    setFrom(undefined);
+    setTo(undefined);
+    setIsFiltering(false)
+  };
 
   const purchases = data?.data || [];
 
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-6">
+      {hasActiveFilters && (
+        <div className="flex justify-end">
+          <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => resetFilters()}
+          className="text-sm h-8 px-2 text-gray-600 mr-[10px]"
+          disabled={isFiltering}
+          >
+          Limpiar filtros
+          </Button>
+        </div>
+      )}
+
       <PurchaseSelectFilter
         token={token}
         filters={query}
