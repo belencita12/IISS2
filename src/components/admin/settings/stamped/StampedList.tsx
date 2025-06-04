@@ -194,6 +194,16 @@ export function StampedList({ token }: StampedListProps) {
       show: (stamped) => stamped.isActive && stamped.currentNum <= stamped.fromNum
     },
   ];
+  const hasFilters =
+    !!fromDate || !!toDate || !!stockId || !!query;
+
+  const resetFilters = () => {
+    setQuery("");
+    setFromDate(undefined);
+    setToDate(undefined);
+    setStockId(undefined);
+    setCurrentPage(1);
+  };
 
   return (
     <div className="space-y-4">
@@ -203,23 +213,18 @@ export function StampedList({ token }: StampedListProps) {
         toDate={toDate}
         setFromDate={setFromDate}
         setToDate={setToDate}
-        isActive={isActive}
-        setIsActive={(value) => {
-          setIsActive(value);
-          setCurrentPage(1);
-        }}
         stockId={stockId}
-        setStockId={(value) => {
-          setStockId(value);
-          setCurrentPage(1);
-        }}
+        setStockId={setStockId}
         stampedNumber={query}
         setStampedNumber={(value) => {
           setQuery(value || "");
           setCurrentPage(1);
         }}
         token={token}
+        onResetFilters={resetFilters}
+        hasFilters={hasFilters}
       />
+
 
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Timbrado</h1>
