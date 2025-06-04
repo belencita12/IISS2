@@ -362,11 +362,17 @@ export function StampedForm({
                 id="fromDate"
                 type="date"
                 min={minDate}
+                max="9999-12-31"
                 {...register("fromDate", {
                   onChange: (e) => {
                     const value = e.target.value;
-                    if (value && toDate && value > toDate) {
-                      setValue("toDate", value);
+                    console.log("fromDate onChange - value:", value);
+                    if (value) {
+                      if (toDate && value > toDate) {
+                        setValue("toDate", value);
+                      }else{
+                        setValue("toDate", "");
+                      }
                     }
                   }
                 })}
@@ -384,7 +390,15 @@ export function StampedForm({
                 type="date"
                 min={getMinToDate()}
                 max={getMaxToDate()}
-                {...register("toDate")}
+                {...register("toDate", {
+                  onChange: (e) => {
+                    const value = e.target.value;
+                    console.log("toDate onChange - value:", value);
+                    if (value) {
+                      setValue("toDate", value);
+                    }
+                  }
+                })}
                 disabled={isSubmitting}
               />
               {errors.toDate && (

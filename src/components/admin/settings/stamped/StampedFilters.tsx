@@ -146,7 +146,18 @@ export function StampedFilters({
           <Input
             type="date"
             value={fromDate || ""}
-            onChange={(e) => setFromDate(e.target.value || undefined)}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value) {
+                const year = new Date(value).getFullYear();
+                console.log("Year:", year);
+                if (year.toString().length === 4) {
+                  setFromDate(value);
+                }
+              } else {
+                setFromDate(undefined);
+              }
+            }}
             max={toDate}
           />
         </div>
@@ -156,7 +167,18 @@ export function StampedFilters({
           <Input
             type="date"
             value={toDate || ""}
-            onChange={(e) => setToDate(e.target.value || undefined)}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value) {
+                const year = new Date(value).getFullYear();
+                console.log("Year:", year);
+                if (year.toString().length === 4) {
+                  setToDate(value);
+                }
+              } else {
+                setToDate(undefined);
+              }
+            }}
             min={fromDate}
           />
         </div>
