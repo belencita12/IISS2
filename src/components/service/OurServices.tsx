@@ -9,12 +9,13 @@ import { useFetch } from "@/hooks/api/useFetch";
 import { SERVICE_TYPE } from "@/lib/urls";
 import type { ServiceType } from "@/lib/service-types/IServiceType";
 import NotImageNicoPets from "../../../public/NotImageNicoPets.png";
+import ServiciosBanner from "../unauthorizePage/ServiciosBanner";
 interface ServiceResponse {
   data: ServiceType[];
 }
 
 export default function OurServices() {
-  const queryParams = new URLSearchParams({ page: "1", size: "10" });
+  const queryParams = new URLSearchParams({ page: "1" });
   const apiUrl = `${SERVICE_TYPE}?${queryParams.toString()}`;
   const { data, loading, error } = useFetch<ServiceResponse>(apiUrl, null, {
     immediate: true,
@@ -43,18 +44,22 @@ export default function OurServices() {
     );
   }
 
-  const bestServices = services.slice(0, 4).map((s) => ({
-    id: s.id,
-    title: s.name,
-    description: s.description,
-    image: s.img?.originalUrl ?? NotImageNicoPets.src,
-    alt: `Imagen de ${s.name}`,
-  }));
+  const bestServices = services.slice(4, 8).map((s) => ({
+  id: s.id,
+  title: s.name,
+  description: s.description,
+  image: s.img?.originalUrl ?? NotImageNicoPets.src,
+  alt: `Imagen de ${s.name}`,
+}));
+
 
   const serviceCards = services.slice(0, 2);
 
   return (
     <div className="w-full space-y-4 sm:space-y-6 mt-4 sm:mt-6">
+       <div className="relative z-10">
+                    <ServiciosBanner />
+                </div>
       <div className="bg-white w-full">
         <section className="w-full px-0 sm:px-0">
           <div className="flex flex-col lg:flex-row items-center lg:items-start gap-4 lg:gap-7 w-full px-3 sm:px-6">
@@ -76,11 +81,8 @@ export default function OurServices() {
               <div className="flex flex-col gap-3 lg:gap-4 px-3 sm:px-6">
                 <div className="text-center lg:text-left flex flex-col gap-1">
                   <h2 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-myPurple-focus to-myPink-primary bg-clip-text text-transparent">
-                    Nuestros servicios
-                  </h2>
-                  <p className="mt-1 md:mt-2 text-sm sm:text-base md:text-lg text-center lg:text-justify text-gray-700">
                     Dale a tu mascota el cuidado que se merece.
-                  </p>
+                  </h2>
                   <p className="text-sm sm:text-base md:text-lg font-bold bg-gradient-to-r from-myPink-primary to-myPurple-primary bg-clip-text text-transparent">
                     ¡Tu tranquilidad y su felicidad son nuestra prioridad!
                   </p>
