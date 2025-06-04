@@ -25,10 +25,10 @@ import { Textarea } from "@/components/ui/textarea";
 
 interface AppointmentListProps {
     token: string;
-    employeeRuc: string;
+    searchEmployee: string;
 }
 
-const AppointmentList = ({ token, employeeRuc: searchEmployee }: AppointmentListProps) => {
+const AppointmentList = ({ token, searchEmployee }: AppointmentListProps) => {
     const [filters, setFilters] = useState<AppointmentQueryParams>({
         page: 1,
         search: undefined,
@@ -79,7 +79,7 @@ const AppointmentList = ({ token, employeeRuc: searchEmployee }: AppointmentList
         const newFilters = {
             ...filters,
             ...updatedFilters,
-            searchEmployee: searchEmployee,
+            searchEmployee,
             page: 1,
         };
         performSearchWithFilters(newFilters);
@@ -89,7 +89,7 @@ const AppointmentList = ({ token, employeeRuc: searchEmployee }: AppointmentList
         const newFilters = {
             ...filters,
             search: value,
-            searchEmployee: searchEmployee,
+            searchEmployee,
             page: 1,
         };
         performSearchWithFilters(newFilters);
