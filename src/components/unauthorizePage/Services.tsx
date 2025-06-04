@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import ServiciosBanner from "./ServiciosBanner";
 import { ServiceType } from "@/lib/service-types/IServiceType";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -11,7 +10,11 @@ import { SERVICE_TYPE } from "@/lib/urls";
 import { useFetch } from "@/hooks/api/useFetch";
 import { Button } from "@/components/ui/button";
 
-
+const staticServices = [
+    { name: "Vacunación", image: "/vac1.jpg" },
+    { name: "Peluquería", image: "/peluq1.jpg" },
+    { name: "Castración", image: "/veterinaria9.jpg" },
+];
 
 interface ServiceResponse {
     data: ServiceType[];
@@ -20,7 +23,6 @@ interface ServiceResponse {
 export default function Services() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [itemsToShow, setItemsToShow] = useState(3);
-    const router = useRouter();
 
     useEffect(() => {
         const handleResize = () => {
@@ -33,11 +35,17 @@ export default function Services() {
             }
         };
 
+        // Establecer el valor inicial
         handleResize();
+
+        // Agregar el event listener
         window.addEventListener('resize', handleResize);
+
+        // Limpiar el event listener
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    // Construir la URL con parámetros de paginación porque el que existe no tiene
     const queryParams = new URLSearchParams({
         page: '1',
         size: '50'
@@ -46,9 +54,9 @@ export default function Services() {
     
     const { data, loading, error } = useFetch<ServiceResponse>(
         apiUrl,
-        null,
+        null, // Sin token de autenticación
         {
-            immediate: true,
+            immediate: true, // Hace la petición automáticamente al montar el componente
             throwErrors: false,
             showToast: true,
             customErrorMessage: "Error al obtener los tipos de servicios"
@@ -56,7 +64,7 @@ export default function Services() {
     );
 
     const services = data?.data || [];
-    const displayServices = services;
+    const displayServices = services.length > 0 ? services : staticServices;
     
     const maxIndex = Math.max(0, displayServices.length - itemsToShow);
 
@@ -66,10 +74,6 @@ export default function Services() {
 
     const prevSlide = () => {
         setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
-    };
-
-    const handleServiceClick = (service: ServiceType) => {
-        router.push(`/services/${service.id}`);
     };
 
     const visibleServices = displayServices.slice(currentIndex, currentIndex + itemsToShow);
@@ -106,6 +110,7 @@ export default function Services() {
 
             {!loading && !error && displayServices.length > 0 && (
                 <section className="relative py-9 bg-white mt-9">
+                    {/* Botones de navegación */}
                     {displayServices.length > itemsToShow && (
                         <>
                             <Button
@@ -123,16 +128,19 @@ export default function Services() {
                         </>
                     )}
 
+                    {/* Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {visibleServices.map((service) => (
                             <div 
-                                key={service.id} 
+                                key={'id' in service ? service.id : service.name} 
                                 className="bg-myPink-disabled p-5 rounded-lg shadow-lg text-center transition-all duration-200 hover:scale-105 cursor-pointer flex flex-col items-center gap-4"
-                                onClick={() => handleServiceClick(service)}
                             >
                                 <div className="w-full aspect-square relative max-w-[300px] mx-auto">
                                     <Image 
-                                        src={service.img?.originalUrl || NotImageNicoPets.src} 
+                                        src={'id' in service ? 
+                                            (service.img?.originalUrl || NotImageNicoPets.src) : 
+                                            service.image
+                                        } 
                                         alt={service.name} 
                                         fill
                                         quality={100}
