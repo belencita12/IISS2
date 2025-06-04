@@ -48,7 +48,7 @@ export function StampedFilters({
         name: stockText,
         address: addressText,
       }, token); // Replace with actual token or context
-      console.log("Stocks fetched:", stocks);
+      //console.log("Stocks fetched:", stocks);
       setStocks(stocks.data);
     }
 
@@ -72,14 +72,14 @@ export function StampedFilters({
           <Label>{"Deposito"}</Label>
           <DataList datas={stocks.map(stock => ({ text: stock.name, value: stock.id?.toString() ?? "" }))} 
             handleSelect={(value) => {
-              console.log("Selected stock ID:", value);
+              //console.log("Selected stock ID:", value);
               setStockId(value ? parseInt(value) : undefined);
             }}
             placeholder={"Buscar por Deposito"}
             className="w-full"
             onChange={(e) => {
               if(typeof e === "string") {
-                console.log("Input changed:", e);
+                //console.log("Input changed:", e);
                 setStockText(e);
               }
             }}
@@ -127,7 +127,7 @@ export function StampedFilters({
               const value = e.target.value;
               // Solo permitir números y máximo 8 dígitos
               if (/^\d{0,8}$/.test(value)) {
-                console.log("Stamped number changed:", value);
+                //console.log("Stamped number changed:", value);
                 setStampedNumber(value || undefined);
               }
             }}

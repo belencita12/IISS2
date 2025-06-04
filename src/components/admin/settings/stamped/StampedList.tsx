@@ -94,12 +94,15 @@ export function StampedList({ token }: StampedListProps) {
 
   const handleView = (stamped: Stamped) => {
     // TODO: Implementar vista detallada
-    console.log("Ver timbrado:", stamped);
   };
 
   const handleEdit = (stamped: Stamped) => {
-   // setSelectedStamped(stamped);
-   // setIsFormModalOpen(true);
+    if (!stamped.isActive) {
+      toast("error", "El depósito está inactivo");
+      return;
+    }
+    setSelectedStamped(stamped);
+    setIsFormModalOpen(true);
   };
 
   const handleDelete = (stamped: Stamped) => {
@@ -124,7 +127,7 @@ export function StampedList({ token }: StampedListProps) {
       });
       setData(result);
     } catch (error) {
-      console.error("Error al eliminar timbrado:", error);
+      //console.error("Error al eliminar timbrado:", error);
       if (error instanceof Error) {
         toast("error", error.message);
       } else {

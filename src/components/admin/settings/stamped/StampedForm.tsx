@@ -56,31 +56,58 @@ export function StampedForm({
 
     // Obtener números de timbrado activos
     const fetchActiveStampedNumbers = async () => {
-      if (defaultValues) return; // No necesitamos verificar si estamos editando
-      
-      setIsLoadingActiveNumbers(true);
-      try {
-        const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://iiss2-be.duckdns.org';
-        const response = await fetch(`${API_BASE_URL}/stamped?page=1&size=10&includeDeleted=false`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        
-        if (!response.ok) {
-          throw new Error("Error al obtener los timbrados activos");
-        }
+      if (defaultValues) {
+        // Si estamos editando, excluimos el número actual del timbrado
+        setIsLoadingActiveNumbers(true);
+        try {
+          const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://iiss2-be.duckdns.org';
+          const response = await fetch(`${API_BASE_URL}/stamped?page=1&size=10&includeDeleted=false`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          
+          if (!response.ok) {
+            throw new Error("Error al obtener los timbrados activos");
+          }
 
-        const data = await response.json();
-        const activeNumbers = data.data
-          .filter((stamped: Stamped) => stamped.isActive)
-          .map((stamped: Stamped) => stamped.stampedNum);
-        
-        setActiveStampedNumbers(activeNumbers);
-      } catch (error) {
-        console.error("Error al obtener timbrados activos:", error);
-      } finally {
-        setIsLoadingActiveNumbers(false);
+          const data = await response.json();
+          const activeNumbers = data.data
+            .filter((stamped: Stamped) => stamped.isActive && stamped.id !== defaultValues.id)
+            .map((stamped: Stamped) => stamped.stampedNum);
+          
+          setActiveStampedNumbers(activeNumbers);
+        } catch (error) {
+          console.error("Error al obtener timbrados activos:", error);
+        } finally {
+          setIsLoadingActiveNumbers(false);
+        }
+      } else {
+        // Si estamos creando, obtenemos todos los números activos
+        setIsLoadingActiveNumbers(true);
+        try {
+          const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://iiss2-be.duckdns.org';
+          const response = await fetch(`${API_BASE_URL}/stamped?page=1&size=10&includeDeleted=false`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          
+          if (!response.ok) {
+            throw new Error("Error al obtener los timbrados activos");
+          }
+
+          const data = await response.json();
+          const activeNumbers = data.data
+            .filter((stamped: Stamped) => stamped.isActive)
+            .map((stamped: Stamped) => stamped.stampedNum);
+          
+          setActiveStampedNumbers(activeNumbers);
+        } catch (error) {
+          console.error("Error al obtener timbrados activos:", error);
+        } finally {
+          setIsLoadingActiveNumbers(false);
+        }
       }
     };
 
@@ -101,7 +128,7 @@ export function StampedForm({
           if (!num || isLoadingActiveNumbers) return true;
           return !activeStampedNumbers.includes(num);
         },
-        "Este número de timbrado ya está activo"
+        "Este número de timbrado ya está activo en otro timbrado"
       ),
     stockId: z.number().min(1, "El depósito es obligatorio"),
     fromDate: z.string()
@@ -229,20 +256,22 @@ export function StampedForm({
         : `${API_BASE_URL}/stamped`;
       const method = defaultValues?.id ? "PATCH" : "POST";
 
+      const requestBody = {
+        stampedNum: data.stampedNum,
+        stockId: data.stockId,
+        fromDate: data.fromDate,
+        toDate: data.toDate,
+        fromNum: data.fromNum,
+        toNum: data.toNum
+      };
+
       const response = await fetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          stampedNum: data.stampedNum,
-          stockId: data.stockId,
-          fromDate: data.fromDate,
-          toDate: data.toDate,
-          fromNum: data.fromNum,
-          toNum: data.toNum
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
@@ -264,7 +293,7 @@ export function StampedForm({
       toast(
         "error",
         error instanceof Error
-          ? "Error al procesar la solicitud. Por favor, intente nuevamente."
+          ? error.message
           : "Error de conexión con el servidor. Por favor, intente nuevamente."
       );
     }
@@ -279,7 +308,7 @@ export function StampedForm({
         }
       }}
     >
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {defaultValues ? "Editar Timbrado" : "Registrar Timbrado"}
@@ -325,15 +354,15 @@ export function StampedForm({
             <Select
               value={watch("stockId")?.toString()}
               onValueChange={(value) => setValue("stockId", Number(value), { shouldValidate: true })}
-              disabled={isLoadingStocks || isSubmitting}
+              disabled={isLoadingStocks || isSubmitting || !!defaultValues}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Depósitos" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="max-h-[300px]">
                 <SelectItem value="0">Todos</SelectItem>
                 {stocks.map((stock: StockData) => (
-                  <SelectItem key={stock.id || ''} value={(stock.id || 0).toString()}>
+                  <SelectItem key={stock.id || ''} value={(stock.id || 0).toString()} className="whitespace-normal">
                     {stock.name} - {stock.address}
                   </SelectItem>
                 ))}
