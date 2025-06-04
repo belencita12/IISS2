@@ -8,12 +8,15 @@ import PaginatedPetsTable from "@/components/admin/pet/PaginatedPetsTable";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import ClientAppointmentList from "@/components/admin/appointment/AppointmentListByClient"; // ✅ asegúrate de que el path sea correcto
+import { getTranslations } from "next-intl/server";
 
 export default async function ClientDetails({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
+
+    const t = await getTranslations();
   const { id } = await params;
   const session = await getServerSession(authOptions);
   const token = session?.user?.token || "";
@@ -27,23 +30,24 @@ export default async function ClientDetails({
 
     return (
         <>
-            <div className="mx-auto px-1 md:px-24 mb-6 mt-6">
+           <div className="pt-2">
                 <Link href="/dashboard/clients">
                     <Button variant="outline" className="border-black border-solid">
-                        Volver 
+                        {t("button.toReturn")} 
                     </Button>
                 </Link>
             </div>
 
+
             <ClientProfileSection {...client} />
 
-            <section className="mx-auto mt-10 px-1 md:px-24">
+            <section className="mx-auto mt-10 px-1">
                 <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl">Mascotas</h2>
+                    <h2 className="text-xl font-semibold mb-4">{t("client.details.pets")}</h2>
                     <div className="flex gap-3">
                         <Link href={`/dashboard/clients/${id}/pet/register`}>
                             <Button variant="outline" className="border-black border-solid">
-                                Agregar
+                                {t("button.add")}
                             </Button>
                         </Link>
                     </div>
@@ -51,8 +55,8 @@ export default async function ClientDetails({
                 <PaginatedPetsTable token={token} id={clientId} />
             </section>
 
-            <section className="mx-auto px-1 md:px-24 mt-10">
-                <h2 className="text-xl font-semibold mb-4">Citas del Cliente</h2>
+            <section className="mx-auto px-1 mt-12">
+                <h2 className="text-xl font-semibold mb-4">{t("client.details.appointments")}</h2>
                 <ClientAppointmentList token={token} clientRuc={client.ruc} />
             </section>
         </>

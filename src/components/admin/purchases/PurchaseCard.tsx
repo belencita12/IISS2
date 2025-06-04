@@ -13,6 +13,7 @@ const PurchaseCard = ({ purchase }: PurchaseCardProps) => {
   const router = useRouter();
 
   const p = useTranslations("PurchaseDetail");
+  const t = useTranslations();
 
   const handleViewDetail = () => {
     if (purchase.id) {
@@ -27,9 +28,9 @@ const PurchaseCard = ({ purchase }: PurchaseCardProps) => {
     >
       <div>
         <h3 className="font-bold text-lg">{purchase.provider?.businessName}</h3>
-        <p>{p("totalCost")}: {purchase.total.toLocaleString()} Gs.</p>
-        <p>{p("totalCostIva")}: {purchase.ivaTotal.toLocaleString()} Gs.</p>
-        <p>{p("stock")}: {purchase.stock?.name}</p>
+        <p>{t("purchase.card.totalCost", {totalCost: purchase.total.toLocaleString() })}</p>
+        <p>{t("purchase.card.totalCostIva", {totalCostIva : purchase.ivaTotal.toLocaleString()})}</p>
+        <p>{t("purchase.card.stock")}: {purchase.stock?.name}</p>
       </div>
 
       <div className="flex flex-col justify-between items-end h-full">

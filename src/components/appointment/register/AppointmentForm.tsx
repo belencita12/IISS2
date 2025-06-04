@@ -38,6 +38,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useTranslations } from "next-intl"
+import { Textarea } from "@/components/ui/textarea";
 
 type AppointmentFormProps = {
   token: string;
@@ -84,6 +85,13 @@ export const AppointmentForm = ({
     typeof selectedDate === "string" && selectedDate.trim() !== ""
       ? selectedDate.trim()
       : null;
+
+  const minDate = new Date().toISOString().split("T")[0];
+  const maxDate = (() => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() + 1);
+    return d.toISOString().split("T")[0];
+  })();
 
   const onSubmit = async (data: AppointmentRegister) => {
     // Solo mostrar error de horario si hay empleado y fecha seleccionados pero no horario
@@ -257,7 +265,15 @@ export const AppointmentForm = ({
                     type="date"
                     {...register("designatedDate")}
                     className="w-full border border-myPurple-tertiary rounded-md p-2 focus:ring-myPurple-primary focus:border-myPurple-primary transition-all duration-200"
-                    min={new Date().toISOString().split("T")[0]}
+                    min={minDate}
+                    max={maxDate}
+                    onBlur={(e) => {
+                      let value = e.target.value;
+                      if (value && (value < minDate || value > maxDate)) {
+                        value = value < minDate ? minDate : maxDate;
+                        setValue("designatedDate", value, { shouldValidate: true });
+                      }
+                    }}
                   />
                   {errors.designatedDate && (
                     <p className="text-myPink-focus text-sm mt-1">
@@ -307,7 +323,7 @@ export const AppointmentForm = ({
                 <h3 className="font-medium">{t("appointmentForm.details")}</h3>
               </div>
               <div>
-                <textarea
+                <Textarea
                   {...register("details")}
                   className="w-full border border-myPurple-tertiary rounded-md p-3 focus:ring-myPurple-primary focus:border-myPurple-primary transition-all duration-200"
                   rows={4}

@@ -8,12 +8,12 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { ServiceType } from "@/lib/appointment/IAppointment";
-import { SERVICE_TYPE} from "@/lib/urls";
+import { SERVICE_TYPE } from "@/lib/urls";
 import { useFetch } from "@/hooks/api";
 import { useTranslations } from "next-intl";
+import SearchBar from "@/components/global/SearchBar";
 
 type ServiceSelectProps = {
   onSelectService: (service: ServiceType) => void;
@@ -30,14 +30,28 @@ export default function ServiceSelect({
   token,
   userRole,
 }: ServiceSelectProps) {
+  const [search, setSearch] = useState("");
   const [services, setServices] = useState<ServiceType[]>([]);
+  const [selectedService, setSelectedService] = useState<ServiceType | null>(null);
+  const [open, setOpen] = useState(false);
+  const { data, get, loading} = useFetch<ServiceResponse>("", token);
+  const t = useTranslations();
 
-  const { data, get } = useFetch<ServiceResponse>("", token);
-  const p = useTranslations("Placeholder");
-
+  const fetchServices = (query: string = "") => {
+  setServices([]); 
+  const params = new URLSearchParams({ page: "1", size: "100" });
+  if (query.trim()) {
+    params.append("name", query.trim());
+  }
+  get(undefined, `${SERVICE_TYPE}?${params.toString()}`);
+};
   useEffect(() => {
-    get(undefined, `${SERVICE_TYPE}?page=1&size=100`);
-  }, []);
+    const delayDebounce = setTimeout(() => {
+      fetchServices(search);
+    }, 300);
+
+    return () => clearTimeout(delayDebounce);
+  }, [search]);
 
   useEffect(() => {
     if (data?.data) {
@@ -46,25 +60,55 @@ export default function ServiceSelect({
   }, [data]);
 
   const handleSelect = (serviceId: string) => {
-    const selectedService = services.find((s) => s.id === Number(serviceId));
-    if (selectedService) {
-      onSelectService(selectedService);
+    const selected = services.find((s) => s.id === Number(serviceId));
+    if (selected) {
+      setSelectedService(selected);
+      onSelectService(selected);
+    }
+  };
+
+  const handleOpenChange = (value: boolean) => {
+    setOpen(value);
+    if (value) {
+      setSearch("");
+      fetchServices("");
     }
   };
 
   return (
     <div className="space-y-2">
       <div className="flex gap-2">
-        <Select onValueChange={handleSelect}>
+        <Select onValueChange={handleSelect} open={open} onOpenChange={handleOpenChange}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder={p("select")} />
+            {selectedService ? (
+              <div>
+                <span className="text-muted-foreground">{t("appointmentForm.serviceSelect.otherService")}</span>
+              </div>
+            ) : (
+              <span className="text-muted-foreground">{t("appointmentForm.serviceSelect.selectOneService")}</span>
+            )}
           </SelectTrigger>
+
           <SelectContent>
-            {services.map((service) => (
-              <SelectItem key={service.id} value={String(service.id)}>
-                {service.name}
-              </SelectItem>
-            ))}
+            <div className="px-2 pt-2">
+              <SearchBar
+                onSearch={(query) => setSearch(query)}
+                placeholder={t("search.searchByName")}
+                defaultQuery={search}
+              />
+              
+            </div>
+            {services.length > 0 ? (
+              services.map((service) => (
+                <SelectItem key={service.id} value={String(service.id)}>
+                  {service.name}
+                </SelectItem>
+              ))
+            ) : (
+              <div className="px-4 py-2 text-sm text-muted-foreground">
+                {loading ? t("button.loading") : t("error.notFoundServices")}
+              </div>
+            )}
           </SelectContent>
         </Select>
 

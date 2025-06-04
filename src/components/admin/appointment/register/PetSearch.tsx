@@ -44,10 +44,7 @@ export default function PetSearch({
 
   const { data, get, loading } = useFetch<PetResponse>("", token);
 
-  const p = useTranslations("Placeholder");
-  const a = useTranslations("AppointmentForm");
-  const b = useTranslations("Button");
-  const e = useTranslations("Error");
+  const t = useTranslations();
 
   useEffect(() => {
     if (debouncedSearch) {
@@ -76,7 +73,7 @@ export default function PetSearch({
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder={p("name")}
+            placeholder={t("search.searchByName")}
             className="pl-8"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -87,7 +84,7 @@ export default function PetSearch({
               <Command className="rounded-lg border shadow-md">
                 <CommandList>
                   <CommandEmpty>
-                    {loading ? b("loading") : e("notFoundField", {field: "mascotas"})}
+                    {loading ? t("button.loading") : t("error.notFoundPets")}
                   </CommandEmpty>
                   <CommandGroup>
                     {pets.map((pet) => (
@@ -99,7 +96,7 @@ export default function PetSearch({
                         <div>
                           <p>{pet.name}</p>
                           <p className="text-sm text-muted-foreground">
-                            {a("owner")}: {pet.owner.name}
+                            {t("appointmentForm.selectedPet.owner", {owner: pet.owner.name})}
                           </p>
                         </div>
                       </CommandItem>

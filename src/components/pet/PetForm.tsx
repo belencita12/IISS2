@@ -221,8 +221,18 @@ export default function PetForm({ clientId, token }: PetFormProps) {
                     id="birthDate"
                     type="date"
                     {...register("birthDate")}
+                    min="1900-01-01"
                     max={new Date().toISOString().split("T")[0]}
                     className="border-myPurple-tertiary focus-visible:ring-myPurple-primary"
+                    onBlur={(e) => {
+                      const min = "1900-01-01";
+                      const max = new Date().toISOString().split("T")[0];
+                      let value = e.target.value;
+                      if (value && (value < min || value > max)) {
+                        value = value < min ? min : max;
+                        setValue("birthDate", value, { shouldValidate: true });
+                      }
+                    }}
                   />
                   {errors.birthDate && (
                     <p className="text-myPink-focus text-sm">

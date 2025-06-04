@@ -1,7 +1,6 @@
 "use client";
 
 import GenericTable, { Column } from "@/components/global/GenericTable";
-import { Eye } from "lucide-react";
 import { VaccineRecord } from "@/lib/vaccine-registry/IVaccineRegistry";
 import { useEffect, useState } from "react";
 import { getByPetId } from "@/lib/vaccine-registry/getByPetId";
@@ -47,17 +46,6 @@ export default function PetVaccinationTable({
     },
   ];
 
-  const actions = [
-    {
-      icon: <Eye className="w-4 h-4" />,
-      onClick: (vac: VaccineRecord) => {
-        router.push(`/user-profile/pet/${petId}`);
-      },
-      label: t("button.edit"),
-    }    
-  ];
-  
-
   const [vaccines, setVaccines] = useState<VaccineRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -98,8 +86,6 @@ export default function PetVaccinationTable({
     <GenericTable
       data={vaccines}
       columns={columns}
-      actions={actions}
-      actionsTitle={t("vaccine.table.actions")}
       pagination={pagination}
       isLoading={isLoading}
       skeleton={<PetVaccinationListSkeleton />}
