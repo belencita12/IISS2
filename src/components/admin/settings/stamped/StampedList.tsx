@@ -95,8 +95,12 @@ export function StampedList({ token }: StampedListProps) {
   };
 
   const handleEdit = (stamped: Stamped) => {
-   // setSelectedStamped(stamped);
-   // setIsFormModalOpen(true);
+    if (!stamped.isActive) {
+      toast("error", "El depósito está inactivo");
+      return;
+    }
+    setSelectedStamped(stamped);
+    setIsFormModalOpen(true);
   };
 
   const handleDelete = (stamped: Stamped) => {
@@ -183,21 +187,12 @@ export function StampedList({ token }: StampedListProps) {
   ];
 
   const actions: TableAction<Stamped>[] = [
-    // {
-    //   icon: <Eye className="h-4 w-4" />,
-    //   onClick: handleView,
-    //   label: "Ver",
-    // },
     {
       icon: <Pencil className="h-4 w-4" />,
       onClick: handleEdit,
       label: "Editar",
+      show: (stamped) => stamped.isActive && stamped.currentNum <= stamped.fromNum
     },
-    // {
-    //   icon: <Trash2 className="h-4 w-4 text-red-500" />,
-    //   onClick: handleDelete,
-    //   label: "Eliminar",
-    // },
   ];
 
   return (
