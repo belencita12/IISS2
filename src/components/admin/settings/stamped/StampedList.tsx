@@ -45,7 +45,6 @@ export function StampedList({ token }: StampedListProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [stockId, setStockId] = useState<number|undefined>(undefined);
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
