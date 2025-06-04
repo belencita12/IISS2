@@ -78,7 +78,7 @@ export function StampedForm({
         
         setActiveStampedNumbers(activeNumbers);
       } catch (error) {
-        console.error("Error al obtener timbrados activos:", error);
+        //console.error("Error al obtener timbrados activos:", error);
       } finally {
         setIsLoadingActiveNumbers(false);
       }
@@ -260,7 +260,7 @@ export function StampedForm({
       onSuccess();
       onClose();
     } catch (error) {
-      console.error('Error completo:', error);
+      //console.error('Error completo:', error);
       toast(
         "error",
         error instanceof Error
