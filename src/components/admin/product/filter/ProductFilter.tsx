@@ -32,7 +32,7 @@ interface ProductFiltersProps {
   preventInvalidKeys: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   selectedTags: string[];
   onTagsChange: (selectedTags: string[]) => void;
-  resetCounter: number;
+  resetCounter?: number;
   token: string;
 }
 
