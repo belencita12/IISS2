@@ -9,14 +9,12 @@ import { StampedFilters } from "./StampedFilters";
 import { toast } from "@/lib/toast";
 import { normalizeText } from "@/lib/utils";
 import useDebounce from "@/hooks/useDebounce";
-import SearchBar from "@/components/global/SearchBar";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import { deleteStamped } from "@/lib/stamped/stampedService";
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { Pencil } from "lucide-react";
 import GenericPagination from "@/components/global/GenericPagination";
 import { useStampedList } from "@/hooks/stamped/useStampedList";
 import { PaginationResponse } from "@/lib/types";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { StampedForm } from "./StampedForm";
 
 interface StampedListProps {
@@ -43,33 +41,18 @@ export function StampedList({ token }: StampedListProps) {
   const [data, setData] = useState<PaginationResponse<Stamped> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  console.log(currentPage)
+  const [stockId, setStockId] = useState<number|undefined>(undefined);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if(debouncedSearch.length > 0){
-          const result = await getStampedList({
-            page: 1,
-            size: 1000,
-            fromDate,
-            toDate,
-            includeDeleted: isActive === false,
-          });
-          let filteredData = result.data.filter((s) => s.stampedNum.includes(debouncedSearch) || s.stock.name.includes(debouncedSearch) || s.stock.address.includes(debouncedSearch));
-          if(isActive === true){
-            filteredData = filteredData.filter((s) => s.isActive === true);
-          }else if(isActive === false){
-            filteredData = filteredData.filter((s) => s.isActive === false);
-          }
-          result.data = filteredData;
-          setData(result);
-        }else{
           const result = await getStampedList({
             page: currentPage,
             size: 10,
             fromDate,
             toDate,
+            stockId: stockId,
+            stamped: debouncedSearch ? normalizeText(debouncedSearch) : undefined,
             includeDeleted: isActive === false,
           });
           let filteredData = result.data;
@@ -80,7 +63,6 @@ export function StampedList({ token }: StampedListProps) {
           }
           result.data = filteredData;
           setData(result);
-        }
         setError(null);
       } catch (error) {
         if (error instanceof Error) {
@@ -97,7 +79,7 @@ export function StampedList({ token }: StampedListProps) {
     if (token) {
       fetchData();
     }
-  }, [currentPage, debouncedSearch, fromDate, toDate, isActive, token]);
+  }, [currentPage, debouncedSearch, fromDate, toDate, isActive, token, stockId]);
 
   if (error) {
     toast("error", error || t("error.loading"));
@@ -110,12 +92,15 @@ export function StampedList({ token }: StampedListProps) {
 
   const handleView = (stamped: Stamped) => {
     // TODO: Implementar vista detallada
-    console.log("Ver timbrado:", stamped);
   };
 
   const handleEdit = (stamped: Stamped) => {
-   // setSelectedStamped(stamped);
-   // setIsFormModalOpen(true);
+    if (!stamped.isActive) {
+      toast("error", "El depósito está inactivo");
+      return;
+    }
+    setSelectedStamped(stamped);
+    setIsFormModalOpen(true);
   };
 
   const handleDelete = (stamped: Stamped) => {
@@ -140,7 +125,7 @@ export function StampedList({ token }: StampedListProps) {
       });
       setData(result);
     } catch (error) {
-      console.error("Error al eliminar timbrado:", error);
+      
       if (error instanceof Error) {
         toast("error", error.message);
       } else {
@@ -202,33 +187,16 @@ export function StampedList({ token }: StampedListProps) {
   ];
 
   const actions: TableAction<Stamped>[] = [
-    // {
-    //   icon: <Eye className="h-4 w-4" />,
-    //   onClick: handleView,
-    //   label: "Ver",
-    // },
     {
       icon: <Pencil className="h-4 w-4" />,
       onClick: handleEdit,
       label: "Editar",
+      show: (stamped) => stamped.isActive && stamped.currentNum <= stamped.fromNum
     },
-    // {
-    //   icon: <Trash2 className="h-4 w-4 text-red-500" />,
-    //   onClick: handleDelete,
-    //   label: "Eliminar",
-    // },
   ];
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row w-full gap-4">
-        <div className="w-full">
-          <SearchBar 
-            onSearch={handleSearch} 
-            placeholder="Buscar por deposito, dirección o número de timbrado" 
-          /> 
-        </div>
-      </div>
 
       <StampedFilters
         fromDate={fromDate}
@@ -240,6 +208,17 @@ export function StampedList({ token }: StampedListProps) {
           setIsActive(value);
           setCurrentPage(1);
         }}
+        stockId={stockId}
+        setStockId={(value) => {
+          setStockId(value);
+          setCurrentPage(1);
+        }}
+        stampedNumber={query}
+        setStampedNumber={(value) => {
+          setQuery(value || "");
+          setCurrentPage(1);
+        }}
+        token={token}
       />
 
       <div className="flex justify-between items-center">
