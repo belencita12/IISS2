@@ -28,6 +28,8 @@ import { downloadFromBlob, normalizeText } from "@/lib/utils";
 import ExportButton from "@/components/global/ExportButton";
 import { getAppointmentReport } from "@/lib/appointment/getAppointmentReport";
 import { Textarea } from "@/components/ui/textarea";
+import { ro, se } from "date-fns/locale";
+import { useCurrentAppointment } from "@/context/appointment/CurrentApointment";
 
 interface AppointmentListProps {
     token: string;
@@ -64,7 +66,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
     const [resetCounter, setResetCounter] = useState(0);
 
     const [isGettingReport, setIsGettingReport] = useState(false);
-
+    const { setCurrentAppointment } = useCurrentAppointment();
     const {
         data,
         loading: isLoading,
@@ -226,6 +228,9 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
                 } con éxito`
             );
             refresh();
+            setCurrentAppointment(selectedAppointment);
+            console.log("Selected Appointment:", selectedAppointment);
+            router.push(`/dashboard/appointment/${selectedAppointment.id}`);
         } catch (error: unknown) {
             if (error instanceof Error) toast("error", error.message);
         } finally {
@@ -384,3 +389,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
 };
 
 export default AppointmentList;
+function setCurrentApointment(arg0: null) {
+    throw new Error("Function not implemented.");
+}
+

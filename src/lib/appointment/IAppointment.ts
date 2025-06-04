@@ -53,6 +53,7 @@ export interface AppointmentData {
     services?: {
       id: number;
       name: string;
+      price?: number;
     }[]; 
     pet: {
       id: number;

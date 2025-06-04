@@ -1,4 +1,5 @@
 import SaleCreation from "@/components/admin/sales/SaleCreation";
+import { CurrentAppointmentProvider } from "@/context/appointment/CurrentApointment";
 import authOptions from "@/lib/auth/options";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
@@ -14,7 +15,9 @@ export default async function MovementsPage() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Crear Venta</h1>
         </div>
-        <SaleCreation token={token} /> 
+        <CurrentAppointmentProvider>
+          <SaleCreation token={token} />
+        </CurrentAppointmentProvider>
       </div>
     );
   }

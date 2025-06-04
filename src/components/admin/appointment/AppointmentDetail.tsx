@@ -1,27 +1,32 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { AppointmentDetailSkeleton } from "@/components/admin/appointment/Skeleton/AppointmentDetailSkeleton"
-import { useAppointmentDetail } from "@/hooks/appointment/useAppointmentDetail"
-import { AppointmentInfoCard } from "@/components/admin/appointment/details/AppointmentInfoCard"
-import { PetInfoCard } from "@/components/admin/appointment/details/PetInfoCard"
-import { OwnerInfoCard } from "@/components/admin/appointment/details/OwnerInfoCard"
-import { EmployeeInfoCard } from "@/components/admin/appointment/details/EmployeeInfoCard"
-import type { AppointmentData } from "@/lib/appointment/IAppointment"
-import type { EmployeeData } from "@/lib/employee/IEmployee"
-import type { PetData } from "@/lib/pets/IPet"
-import type { IUserProfile } from "@/lib/client/IUserProfile"
-import { toast } from "@/lib/toast"
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { AppointmentDetailSkeleton } from "@/components/admin/appointment/Skeleton/AppointmentDetailSkeleton";
+import { useAppointmentDetail } from "@/hooks/appointment/useAppointmentDetail";
+import { AppointmentInfoCard } from "@/components/admin/appointment/details/AppointmentInfoCard";
+import { PetInfoCard } from "@/components/admin/appointment/details/PetInfoCard";
+import { OwnerInfoCard } from "@/components/admin/appointment/details/OwnerInfoCard";
+import { EmployeeInfoCard } from "@/components/admin/appointment/details/EmployeeInfoCard";
+import type { AppointmentData } from "@/lib/appointment/IAppointment";
+import type { EmployeeData } from "@/lib/employee/IEmployee";
+import type { PetData } from "@/lib/pets/IPet";
+import type { IUserProfile } from "@/lib/client/IUserProfile";
+import { toast } from "@/lib/toast";
+import { useCurrentAppointment } from "@/context/appointment/CurrentApointment";
 
 interface AppointmentDetailProps {
-  token: string | null
-  appointmentId: string
+  token: string | null;
+  appointmentId: string;
 }
 
-export const AppointmentDetail = ({ token, appointmentId }: AppointmentDetailProps) => {
-  const router = useRouter()
+export const AppointmentDetail = ({
+  token,
+  appointmentId,
+}: AppointmentDetailProps) => {
+  const router = useRouter();
+  const { setCurrentAppointment } = useCurrentAppointment();
 
   const {
     appointment,
@@ -33,26 +38,36 @@ export const AppointmentDetail = ({ token, appointmentId }: AppointmentDetailPro
     employeeDetails,
     employeeLoading,
   } = useAppointmentDetail(token, appointmentId) as {
-    appointment: AppointmentData | null
-    appointmentLoading: boolean
-    petDetails: PetData | null
-    petLoading: boolean
-    ownerDetails: IUserProfile | null
-    ownerLoading: boolean
-    employeeDetails: EmployeeData | null
-    employeeLoading: boolean
-  }
+    appointment: AppointmentData | null;
+    appointmentLoading: boolean;
+    petDetails: PetData | null;
+    petLoading: boolean;
+    ownerDetails: IUserProfile | null;
+    ownerLoading: boolean;
+    employeeDetails: EmployeeData | null;
+    employeeLoading: boolean;
+  };
 
   useEffect(() => {
     if (!appointment && !appointmentLoading) {
-      toast("error", "No hay detalles para esta cita")
+      toast("error", "No hay detalles para esta cita");
     }
-  }, [appointment, appointmentLoading, router])
+  }, [appointment, appointmentLoading, router]);
 
   if (appointmentLoading) {
-    return <AppointmentDetailSkeleton />
+    return <AppointmentDetailSkeleton />;
   }
 
+  const handlePayClick = () => {
+    if (!appointment) {
+      toast("error", "No hay cita seleccionada");
+      return;
+    }
+
+    setCurrentAppointment(appointment);
+
+    router.push(`/dashboard/new-sale`);
+  };
   return (
     <div className="w-full">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
@@ -63,8 +78,20 @@ export const AppointmentDetail = ({ token, appointmentId }: AppointmentDetailPro
         >
           Volver
         </Button>
+        <Button
+          className="px-3 py-1 bg-black text-white rounded border border-gray-300 hover:bg-gray-800"
+          onClick={handlePayClick}
+          disabled={
+            appointment?.status === "CANCELLED" ||
+            appointment?.status === "PENDING"
+          }
+        >
+          Pagar
+        </Button>
         <div className="order-2 sm:order-none mx-auto sm:mx-0">
-          <h1 className="text-2xl font-bold text-center sm:text-left">Detalle de la Cita</h1>
+          <h1 className="text-2xl font-bold text-center sm:text-left">
+            Detalle de la Cita
+          </h1>
         </div>
         <div className="hidden sm:block order-3 w-[72px]"></div>
       </div>
@@ -79,12 +106,12 @@ export const AppointmentDetail = ({ token, appointmentId }: AppointmentDetailPro
             ownerLoading={ownerLoading}
             petDetails={petDetails}
           />
-          
+
           <div className="grid grid-cols-1 gap-6">
-            <PetInfoCard 
-              appointment={appointment} 
-              petDetails={petDetails} 
-              petLoading={petLoading} 
+            <PetInfoCard
+              appointment={appointment}
+              petDetails={petDetails}
+              petLoading={petLoading}
             />
             <EmployeeInfoCard
               appointment={appointment}
@@ -95,7 +122,10 @@ export const AppointmentDetail = ({ token, appointmentId }: AppointmentDetailPro
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AppointmentDetail
+export default AppointmentDetail;
+function setCurrentAppointment(appointment: AppointmentData) {
+  throw new Error("Function not implemented.");
+}

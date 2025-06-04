@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ClientData } from "@/lib/admin/client/IClient";
 import { Button } from "@/components/ui/button";
 import { ProductWithExtraData as Product } from "@/lib/products/IProducts";
@@ -31,7 +31,7 @@ import {
 import { PrintInvoiceModal } from "@/components/global/PrintInvoiceModal";
 import { getInvoiceDetailReport } from "@/lib/invoices/getInvoiceDetailReport";
 import { useTranslations } from "next-intl";
-
+import { useCurrentAppointment } from "@/context/appointment/CurrentApointment";
 type Props = {
   token: string;
 };
@@ -54,7 +54,6 @@ export default function SaleCreation({ token }: Props) {
   );
   const router = useRouter();
 
-
   // Modal para imprimir la factura
   const [showPrintModal, setShowPrintModal] = useState(false);
   const [isPrinting, setIsPrinting] = useState(false);
@@ -63,11 +62,63 @@ export default function SaleCreation({ token }: Props) {
   const s = useTranslations("Sales");
   const b = useTranslations("Button");
 
-
   // Calcular el total de la factura
   const total = products.reduce((sum, product) => sum + product.total, 0);
 
   const { post, loading } = useFetch<InvoiceForm>(INVOICE_API, token);
+
+  const { currentAppointment } = useCurrentAppointment();
+
+  //Efecto para cargar datos de la cital actual
+  useEffect(() => {
+    console.log("Cargando datos de la cita actual", currentAppointment);
+    if (currentAppointment) {
+      // Precargar cliente
+      if (currentAppointment.id) {
+        const clientData: ClientData = {
+          id: currentAppointment.pet.owner.id?.toString() || "",
+          fullName: currentAppointment.pet.owner.name || "",
+          email: "",
+        };
+        setSelectedCustomer(clientData);
+      }
+
+      // Cargar servicios como productos para la venta
+      if (
+        currentAppointment.services &&
+        currentAppointment.services.length > 0
+      ) {
+        const serviceProducts: Product[] = currentAppointment.services.map(
+          (service) => ({
+            id: service.id.toString(),
+            name: service.name,
+            price: service.price || 0, // Aquí poner el precio real
+            quantity: 1,
+            total: service.price || 0, // Total = precio * cantidad
+            category: "SERVICE" as const,
+            description: "",
+            stock: 0,
+            code: "",
+            provider: {
+              id: 0,
+              name: "",
+            },
+            providerId: 0,
+          })
+        );
+
+        setProducts(serviceProducts);
+      }
+
+      // Mensaje informativo
+      toast(
+        "info",
+        `Datos cargados de la cita: ${
+          currentAppointment.pet.owner.name || "Cliente"
+        }`
+      );
+    }
+  }, [currentAppointment]);
 
   // Función para agregar un producto a la lista
   const addProduct = (product: Product) => {
@@ -259,7 +310,9 @@ export default function SaleCreation({ token }: Props) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="CASH">{s("SaleCreation.cash")}</SelectItem>
-                  <SelectItem value="CREDIT">{s("SaleCreation.credit")}</SelectItem>
+                  <SelectItem value="CREDIT">
+                    {s("SaleCreation.credit")}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </CardContent>
@@ -348,7 +401,9 @@ export default function SaleCreation({ token }: Props) {
               <div className="space-y-2">
                 <div className="flex justify-between font-bold text-lg">
                   <span>{s("SaleCreation.total")}:</span>
-                  <span>{total.toLocaleString("ES-PY")} {s("SaleCreation.gs")}</span>
+                  <span>
+                    {total.toLocaleString("ES-PY")} {s("SaleCreation.gs")}
+                  </span>
                 </div>
 
                 {paymentMethods.length > 0 && (
@@ -356,12 +411,16 @@ export default function SaleCreation({ token }: Props) {
                     <div className="h-px bg-gray-200 my-2"></div>
                     <div className="flex justify-between">
                       <span>{s("SaleCreation.totalPaid")}:</span>
-                      <span>{totalPaid.toLocaleString("ES-PY")} {s("SaleCreation.gs")}</span>
+                      <span>
+                        {totalPaid.toLocaleString("ES-PY")}{" "}
+                        {s("SaleCreation.gs")}
+                      </span>
                     </div>
                     {remainingBalance > 0 && (
                       <div className="flex justify-between text-red-500 font-medium">
                         <span>
-                          Faltan {remainingBalance.toLocaleString("ES-PY")} {s("SaleCreation.gs")}
+                          Faltan {remainingBalance.toLocaleString("ES-PY")}{" "}
+                          {s("SaleCreation.gs")}
                           para completar el pago.
                         </span>
                       </div>
