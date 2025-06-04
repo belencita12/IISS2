@@ -93,7 +93,7 @@ export function StampedFilters({
           />
         </div>
 
-        <div className="flex-1">
+        {/* <div className="flex-1">
           <Label>{"Direccion"}</Label>
           <DataList datas={stocks.map(stock => ({ text: stock.address, value: stock.id?.toString() ?? "" }))} 
             handleSelect={(value) => {
@@ -116,7 +116,7 @@ export function StampedFilters({
             type="text"
 
           />
-        </div>
+        </div> */}
 
         <div className="flex-1">
           <Label>{"Número de Timbrado"}</Label>
@@ -161,7 +161,7 @@ export function StampedFilters({
           />
         </div>
 
-        <div className="flex-1">
+        {/* <div className="flex-1">
           <Label>{t("status")}</Label>
           <Select
             value={isActive === undefined ? "all" : isActive.toString()}
@@ -176,7 +176,7 @@ export function StampedFilters({
               <SelectItem value="false">{t("inactive")}</SelectItem>
             </SelectContent>
           </Select>
-        </div>
+        </div> */}
       </div>
     </div>
   );
