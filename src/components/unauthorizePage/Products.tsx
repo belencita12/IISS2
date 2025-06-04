@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import ProductosBanner from "./ProductosBanner";
 import { Product } from "@/lib/products/IProducts";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -10,12 +11,6 @@ import { useFetch } from "@/hooks/api/useFetch";
 import { PRODUCT_API } from "@/lib/urls"; 
 import { Button } from "@/components/ui/button";  
 
-const staticProducts = [
-  { name: "Alimentos", image: "/veterinaria6.png" },
-  { name: "Higiene", image: "/hig1.jpg" },
-  { name: "Medicamentos", image: "/medicamentos2.jpg" },
-];
-
 interface ProductResponse {
   data: Product[];
 }
@@ -23,6 +18,7 @@ interface ProductResponse {
 export default function Products() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsToShow, setItemsToShow] = useState(3);
+  const router = useRouter();
   
   useEffect(() => {
     const handleResize = () => {
@@ -40,7 +36,6 @@ export default function Products() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   
-  // Construir la URL con parámetros de paginación
   const queryParams = new URLSearchParams({
     page: '1',
     size: '50'
@@ -49,7 +44,7 @@ export default function Products() {
   
   const { data, loading, error } = useFetch<ProductResponse>(
     apiUrl,
-    null, // Sin token de autenticación
+    null,
     {
       immediate: true,
       throwErrors: false,
@@ -58,13 +53,12 @@ export default function Products() {
     }
   );
 
-  // Filtrar productos que no sean de categoría "SERVICE"
   const filteredProducts = useMemo(() => {
     if (!data?.data) return [];
     return data.data.filter((product) => product.category !== "SERVICE");
   }, [data?.data]);
 
-  const displayProducts = filteredProducts.length > 0 ? filteredProducts : staticProducts;
+  const displayProducts = filteredProducts;
   
   const maxIndex = Math.max(0, displayProducts.length - itemsToShow);
 
@@ -74,6 +68,10 @@ export default function Products() {
 
   const prevSlide = () => {
     setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
+  };
+
+  const handleProductClick = (product: Product) => {
+    router.push(`/shop/product/${product.id}`);
   };
 
   const visibleProducts = displayProducts.slice(currentIndex, currentIndex + itemsToShow);
@@ -110,7 +108,6 @@ export default function Products() {
 
       {!loading && !error && displayProducts.length > 0 && (
         <section className="relative py-9 bg-white mt-9">
-          {/* Botones de navegación */}
           {displayProducts.length > itemsToShow && (
             <>
               <Button
@@ -128,19 +125,16 @@ export default function Products() {
             </>
           )}
 
-          {/* Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {visibleProducts.map((product) => (
               <div 
-                key={'id' in product ? product.id : product.name} 
+                key={product.id} 
                 className="bg-myPurple-disabled p-5 rounded-lg shadow-lg text-center transition-all duration-200 hover:scale-105 cursor-pointer flex flex-col items-center gap-4"
+                onClick={() => handleProductClick(product)}
               >
                 <div className="w-full aspect-square relative max-w-[300px] mx-auto">
                   <Image 
-                    src={'id' in product ? 
-                      (product.image?.originalUrl || NotImageNicoPets.src) : 
-                      product.image
-                    } 
+                    src={product.image?.originalUrl || NotImageNicoPets.src} 
                     alt={product.name} 
                     fill
                     quality={100}
