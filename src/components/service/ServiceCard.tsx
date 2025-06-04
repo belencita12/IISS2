@@ -50,10 +50,10 @@ export function ServiceCard({
             </div>
 
             <div className="flex justify-center lg:justify-start mt-2">
-              <Button>
+              <Button className="bg-myPink-primary hover:bg-myPink-hover text-white">
                 <a
                   href={ctaLink}
-                  className="inline-block text-white px-4 py-2 rounded hover:bg-black-600 transition"
+                  className="p-2"
                 >
                   {ctaText}
                 </a>
