@@ -124,24 +124,23 @@ export default function Services() {
                     )}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {visibleServices.map((service) => (
-                            <div 
-                                key={service.id} 
-                                className="bg-myPink-disabled p-5 rounded-lg shadow-lg text-center transition-all duration-200 hover:scale-105 cursor-pointer flex flex-col items-center gap-4"
-                                onClick={() => handleServiceClick(service)}
-                            >
-                                <div className="w-full aspect-square relative max-w-[300px] mx-auto">
-                                    <Image 
-                                        src={service.img?.originalUrl || NotImageNicoPets.src} 
-                                        alt={service.name} 
-                                        fill
-                                        quality={100}
-                                        className="rounded-md object-cover" 
-                                    />
-                                </div>
-                                <h3 className="font-semibold text-sm sm:text-base text-myPink-primary">{service.name}</h3>
-                            </div>
-                        ))}
+                    {visibleServices.map((service) => (
+                        <div 
+                        key={service.id} 
+                        className="bg-myPink-disabled p-5 rounded-lg shadow-lg text-center flex flex-col items-center gap-4"
+                        >
+                        <div className="w-full aspect-square relative max-w-[300px] mx-auto">
+                            <Image 
+                            src={service.img?.originalUrl || NotImageNicoPets.src} 
+                            alt={service.name} 
+                            fill
+                            quality={100}
+                            className="rounded-md object-cover" 
+                            />
+                        </div>
+                        <h3 className="font-semibold text-sm sm:text-base text-myPink-primary">{service.name}</h3>
+                        </div>
+                    ))}
                     </div>
                 </section>
             )}
