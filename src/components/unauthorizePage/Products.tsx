@@ -11,8 +11,6 @@ import { useFetch } from "@/hooks/api/useFetch";
 import { PRODUCT_API } from "@/lib/urls"; 
 import { Button } from "@/components/ui/button";  
 
-const staticProducts = [];
-
 interface ProductResponse {
   data: Product[];
 }
