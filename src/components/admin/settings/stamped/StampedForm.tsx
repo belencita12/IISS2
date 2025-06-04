@@ -78,7 +78,7 @@ export function StampedForm({
         
         setActiveStampedNumbers(activeNumbers);
       } catch (error) {
-        console.error("Error al obtener timbrados activos:", error);
+        //console.error("Error al obtener timbrados activos:", error);
       } finally {
         setIsLoadingActiveNumbers(false);
       }
@@ -260,7 +260,7 @@ export function StampedForm({
       onSuccess();
       onClose();
     } catch (error) {
-      console.error('Error completo:', error);
+      //console.error('Error completo:', error);
       toast(
         "error",
         error instanceof Error
@@ -279,7 +279,7 @@ export function StampedForm({
         }
       }}
     >
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {defaultValues ? "Editar Timbrado" : "Registrar Timbrado"}
@@ -334,7 +334,9 @@ export function StampedForm({
                 <SelectItem value="0">Todos</SelectItem>
                 {stocks.map((stock: StockData) => (
                   <SelectItem key={stock.id || ''} value={(stock.id || 0).toString()}>
-                    {stock.name} - {stock.address}
+                    <div className="truncate">
+                      {stock.name} - {stock.address}
+                    </div>
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -360,11 +362,17 @@ export function StampedForm({
                 id="fromDate"
                 type="date"
                 min={minDate}
+                max="9999-12-31"
                 {...register("fromDate", {
                   onChange: (e) => {
                     const value = e.target.value;
-                    if (value && toDate && value > toDate) {
-                      setValue("toDate", value);
+                    console.log("fromDate onChange - value:", value);
+                    if (value) {
+                      if (toDate && value > toDate) {
+                        setValue("toDate", value);
+                      }else{
+                        setValue("toDate", "");
+                      }
                     }
                   }
                 })}
@@ -382,7 +390,15 @@ export function StampedForm({
                 type="date"
                 min={getMinToDate()}
                 max={getMaxToDate()}
-                {...register("toDate")}
+                {...register("toDate", {
+                  onChange: (e) => {
+                    const value = e.target.value;
+                    console.log("toDate onChange - value:", value);
+                    if (value) {
+                      setValue("toDate", value);
+                    }
+                  }
+                })}
                 disabled={isSubmitting}
               />
               {errors.toDate && (
