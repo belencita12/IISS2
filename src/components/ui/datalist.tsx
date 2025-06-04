@@ -41,7 +41,7 @@ const DataList = ({ className, handleSelect, datas, placeholder, onChange, handl
                 {datas && isShown && (datas.length > 0? datas.map((item, index) => 
                     <div onClick={()=>{
                         handleSelect && handleSelect(item.value)
-                        console.log("Selected:", item);
+                        //console.log("Selected:", item);
                         onChange && onChange(item.text);
                         setIsShown(false);
                     }}
