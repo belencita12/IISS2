@@ -24,21 +24,19 @@ export default function MovementEmployeeSearch({
   hasSearched = false,
 }: MovementEmployeeSearchProps) {
 
-  const em = useTranslations("EmployeeTable");
-  const p = useTranslations("Placeholder");
-  const e = useTranslations("Error");
+  const t = useTranslations();
 
   const columns: Column<EmployeeData>[] = [
-    { header: em("name"), accessor: "fullName" },
-    { header: em("ruc"), accessor: "ruc" },
+    { header: t("employee.table.name"), accessor: "fullName" },
+    { header: t("employee.table.ruc"), accessor: "ruc" },
   ];
 
   const actions: TableAction<EmployeeData>[] = [
     {
-      label: p("select"),
+      label: t("placeholder.select"),
       icon: (
         <div className="px-4 py-2 border border-black bg-white text-black rounded-md">
-          {p("select")}
+          {t("placeholder.select")}
         </div>
       ),
       onClick: (employee) => {
@@ -53,7 +51,7 @@ export default function MovementEmployeeSearch({
       <SearchBar
         onSearch={onSearch}
         debounceDelay={400}
-        placeholder={p("getBy", {field: "nombre o ruc del empleado"})}
+        placeholder={t("search.searchByNameOrRucEmployee")}
       />
       {isLoading ? (
         <EmployeeTableSkeleton />
@@ -69,7 +67,7 @@ export default function MovementEmployeeSearch({
       ) : (
         hasSearched &&
         !isLoading && (
-          <p className="text-center mt-4">{e("notFound")}</p>
+          <p className="text-center mt-4">{t("error.notFoundEmployee")}</p>
         )
       )}
     </div>

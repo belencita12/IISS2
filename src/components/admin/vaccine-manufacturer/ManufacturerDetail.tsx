@@ -13,6 +13,7 @@ import { useVaccineList } from "@/hooks/vaccine/useVaccineList";
 import { useEffect } from "react";
 import { Loading } from "@/components/global/Loading";
 
+
 interface Props {
   id: number;
   token: string;
@@ -27,9 +28,7 @@ export default function ManufacturerDetail({ id, token }: Props) {
   } = useVaccineList(token);
   const { manufacturer, loading } = useManufacturerDetail(id, token);
 
-  const v = useTranslations("VaccineDetail");
-  const b = useTranslations("Button");
-  const e = useTranslations("Error");
+  const t = useTranslations();
 
   useEffect(() => {
     if (token)
@@ -45,22 +44,22 @@ export default function ManufacturerDetail({ id, token }: Props) {
       </div>
     );
 
-  if (!manufacturer) return <p>{e("notFound")}</p>;
+  if (!manufacturer) return <p>{t("error.notFound")}</p>;
 
   const columns: Column<(typeof vaccines.vaccines)[number]>[] = [
     {
-      header: v("name"),
+      header: t("vaccine.table.name"),
       accessor: (item) => item.name,
     },
     {
-      header: v("specie"),
+      header: t("vaccine.table.specie"),
       accessor: (item) => item.species?.name ?? "—",
     },
     {
-      header: v("price"),
+      header: t("vaccine.table.price"),
       accessor: (item) =>
         item.product?.price
-          ? `Gs. ${item.product.price.toLocaleString("es-PY")}`
+          ? t("vaccine.table.priceGs", {price: item.product.price.toLocaleString("es-PY")})
           : "—",
     },
   ];
@@ -70,21 +69,21 @@ export default function ManufacturerDetail({ id, token }: Props) {
     {
       icon: <Eye className="w-4 h-4" />,
       onClick: (item) => handleView(item.id),
-      label: b("seeDetails"),
+      label: t("button.seeDetails"),
     },
   ];
 
   return (
     <div className="p-4 space-y-6">
       <h1 className="text-3xl font-bold">
-        {v("manufacturer")}: {manufacturer.name}
+        {t("vaccine.table.manufacturer")}: {manufacturer.name}
       </h1>
-      <h2 className="text-xl font-semibold">{v("vaccineAsociated")}</h2>
+      <h2 className="text-xl font-semibold">{t("vaccine.table.vaccineAsociated")}</h2>
       <GenericTable
         data={vaccines.vaccines}
         columns={columns}
         actions={actions}
-        emptyMessage={v("emptyMessage")}
+        emptyMessage={t("vaccine.table.emptyMessageForManufacturer")}
         skeleton={<VaccineTableSkeleton />}
         isLoading={vaccinesLoading}
       />

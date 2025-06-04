@@ -26,25 +26,21 @@ export const MovementDetailsList = ({ id, token }: Props) => {
   const [isReverting, setIsReverting] = useState(false);
   const router = useRouter();
 
-  const m = useTranslations("MovementDetail");
-  const e = useTranslations("Error");
-  const b = useTranslations("Button");
-  const mc = useTranslations("ModalConfirmation");
-  const s = useTranslations("Success");
+  const t = useTranslations();
 
 
   if (loading) return <MovementDetailSkeleton/>;
-  if (error) return <p className="text-center text-red-500 mt-10">{e("error")}: {error}</p>;
-  if (!movement) return <p className="text-center mt-10">{e("notFound")}</p>;
+  if (error) return <p className="text-center text-red-500 mt-10">{t("error.error")}: {error}</p>;
+  if (!movement) return <p className="text-center mt-10">{t("error.notFound")}</p>;
 
   const handleRevert = async () => {
     try {
       setIsReverting(true);
       await revertMovement(id, token);
-      toast('success', s("successRevert", {field: "Movimiento"}));
+      toast('success', t("success.successRevertMovement"));
       router.push("/dashboard/movement");
-    } catch (error) {
-      toast('error', error instanceof Error ? error.message : e("errorRevert", {field : "movimiento"}));
+    } catch (error: unknown) {
+      if (error instanceof Error) toast('error', error.message);
     } finally {
       setIsReverting(false);
       setIsRevertModalOpen(false);
@@ -54,11 +50,11 @@ export const MovementDetailsList = ({ id, token }: Props) => {
   const getMovementTypeLabel = (type: string) => {
     switch (type) {
       case "INBOUND":
-        return m("inbound");
+        return t("movement.type.inbound");
       case "OUTBOUND":
-        return m("outbound");
+        return t("movement.type.outbound");
       case "TRANSFER":
-        return m("transfer");
+        return t("movement.type.transfer");
       default:
         return type;
     }
@@ -66,19 +62,19 @@ export const MovementDetailsList = ({ id, token }: Props) => {
 
   return (
     <div className="container mx-auto p-4 max-w-6xl">
-      <div className="mb-6 mt-6">
+      <div className="mb-6 mt-2">
         <Button
           variant="outline"
           onClick={() => router.push('/dashboard/movement')}
           className="border-black border-solid"
         >
-          {b("toReturn")}
+          {t("button.toReturn")}
         </Button>
       </div>
 
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">
-          {m("movementOf")} {getMovementTypeLabel(movement.type)}
+          {t("movement.details.movementOf", {movement : getMovementTypeLabel(movement.type) })} 
         </h1>
         <p className="text-base md:text-lg font-semibold text-black">
           {formatDate(movement.dateMovement)}
@@ -86,12 +82,12 @@ export const MovementDetailsList = ({ id, token }: Props) => {
       </div>
 
       <Card className="p-6 mb-6 shadow-sm space-y-4">
-        <InfoRow label={m("employee")} value={movement.manager?.fullName} />
-        {movement.originStock?.name && <InfoRow label={m("origin")} value={movement.originStock.name} />}
-        {movement.destinationStock?.name && <InfoRow label={m("destination")} value={movement.destinationStock.name} />}
+        <InfoRow label={t("movement.details.employee")} value={movement.manager?.fullName} />
+        {movement.originStock?.name && <InfoRow label={t("movement.details.originStock")} value={movement.originStock.name} />}
+        {movement.destinationStock?.name && <InfoRow label={t("movement.details.destinationStock")} value={movement.destinationStock.name} />}
         {movement.description && (
           <div className="flex flex-col">
-            <p className="text-sm text-gray-500 mb-1">{m("description")}</p>
+            <p className="text-sm text-gray-500 mb-1">{t("movement.details.description")}</p>
             <p className="bg-gray-200 rounded-md px-3 py-2 text-sm text-gray-800 w-full break-words">
                 {movement.description}
             </p>
@@ -103,7 +99,7 @@ export const MovementDetailsList = ({ id, token }: Props) => {
                   disabled={isReverting}
                   className="border-none"
                 >
-                  {isReverting ? b("reversing") :b("revert")}
+                  {isReverting ? t("button.reversing") :t("button.revert")}
                 </Button>
               </div>
             )}
@@ -112,7 +108,7 @@ export const MovementDetailsList = ({ id, token }: Props) => {
       </Card>
 
       <div className="flex justify-between items-center mb-2">
-        <h2 className="text-xl font-semibold text-gray-700">{m("products")}</h2>
+        <h2 className="text-xl font-semibold text-gray-700">{t("movement.details.productsTitle")}</h2>
       </div>
       <Separator className="mb-4" />
       <div className="space-y-6">
@@ -141,10 +137,10 @@ export const MovementDetailsList = ({ id, token }: Props) => {
         isOpen={isRevertModalOpen}
         onClose={() => setIsRevertModalOpen(false)}
         onConfirm={handleRevert}
-        title={mc("titleRevert", {field: "movimiento"})}
-        message={mc("confirmRevert", {field: "movimiento"})}
-        confirmText={b("revert")}
-        cancelText={b("cancel")}
+        title={t("confirmationModal.movement.titleRevert")}
+        message={t("confirmationModal.movement.messageRevert")}
+        confirmText={t("button.revert")}
+        cancelText={t("button.cancel")}
         variant="warning"
         isLoading={isReverting}
       />

@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { useTranslations } from "next-intl";
+import { Textarea } from "@/components/ui/textarea";
 
 interface VisitListProps {
   token: string;
@@ -177,7 +178,7 @@ export default function VisitList({ token, petId }: VisitListProps) {
           title={m("motivo")}
           size="md"
         >
-          <textarea
+          <Textarea
             className="w-full h-32 p-2 border border-gray-300 rounded"
             placeholder={m("reason")}
             value={cancelDescription}

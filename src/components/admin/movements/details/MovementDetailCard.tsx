@@ -15,7 +15,7 @@ const DetailItem = ({ label, value }: { label: string; value: string }) => (
 );
 
 export const MovementDetailCard = ({ detail }: Props) => {
-  const p = useTranslations("ProductDetail")
+  const t = useTranslations();
 
   return (
     <Card className="flex p-4 items-start gap-4 shadow-sm border">
@@ -29,18 +29,18 @@ export const MovementDetailCard = ({ detail }: Props) => {
       <div className="flex-1">
         <h3 className="font-medium text-lg">{detail.product.name}</h3>
         <div className="grid grid-cols-2 gap-4 mt-2 text-sm text-gray-700">
-          <DetailItem label={p("category")} value={detail.product.category} />
-          <DetailItem label={p("code")} value={`${detail.product.code}`} />
-          <DetailItem label={p("tags")} value={`${detail.product.tags}`} />
+          <DetailItem label={t("product.details.category")} value={detail.product.category} />
+          <DetailItem label={t("product.details.code")} value={`${detail.product.code}`} />
+          <DetailItem label={t("product.details.tags")} value={`${detail.product.tags}`} />
           <DetailItem
-            label={p("price")}
-            value={`${detail.product.price?.toLocaleString()} Gs.`}
+            label={t("product.details.price")}
+            value={`${detail.product.price?.toLocaleString()} ${t("product.card.gs")}`}
           />
           <DetailItem
-            label={p("cost")}
-            value={`${detail.product.cost?.toLocaleString()} Gs.`}
+            label={t("product.details.cost")}
+            value={`${detail.product.cost?.toLocaleString()} ${t("product.card.gs")}`}
           />
-          <DetailItem label={p("quantity")} value={`${detail.quantity}`} />
+          <DetailItem label={t("product.details.quantity")} value={`${detail.quantity}`} />
         </div>
       </div>
     </Card>

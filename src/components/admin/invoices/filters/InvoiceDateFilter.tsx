@@ -5,7 +5,6 @@ import { GetInvoiceQueryParams } from "@/lib/invoices/IInvoice";
 import { useEffect, useState } from "react";
 import useDebounce from "@/hooks/useDebounce";
 import clsx from "clsx";
-import { Input } from "@/components/ui/input";
 import { useTranslations } from "next-intl";
 
 interface Props {
@@ -14,6 +13,8 @@ interface Props {
 }
 
 export default function InvoiceDateFilter({ filters, setFilters }: Props) {
+
+  const t = useTranslations();
 
   const f = useTranslations("Filters");
 
@@ -39,11 +40,11 @@ export default function InvoiceDateFilter({ filters, setFilters }: Props) {
     startDate && endDate && endDate < startDate;
 
   const startDateError = isStartDateInFuture
-    ? f("startDateError")
+    ? t("error.startDateError")
     : null;
 
   const endDateError = isEndDateBeforeStart
-    ? f("errorDate")
+    ? t("error.errorDate")
     : null;
 
   useEffect(() => {
@@ -62,7 +63,7 @@ export default function InvoiceDateFilter({ filters, setFilters }: Props) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
   <div className="space-y-2">
-  <Label htmlFor="startDate">{f("fromDate")}</Label>
+  <Label htmlFor="startDate">{t("filters.date.from")}</Label>
   <input
     id="startDate"
     type="date"
@@ -96,7 +97,7 @@ export default function InvoiceDateFilter({ filters, setFilters }: Props) {
 </div>
 
 <div className="space-y-2">
-  <Label htmlFor="endDate">{f("toDate")}</Label>
+  <Label htmlFor="endDate">{t("filters.date.to")}</Label>
   <input
     id="endDate"
     type="date"

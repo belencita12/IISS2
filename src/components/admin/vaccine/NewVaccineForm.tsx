@@ -52,22 +52,21 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
     isLoadingProviders,
   } = useVaccineForm(token, initialData);
 
-  const v = useTranslations("VaccineForm");
-  const b = useTranslations("Button");
-  const ph = useTranslations("Placeholder")
+
+  const t = useTranslations();
 
   return (
     <div className="p-4 mx-auto max-w-4xl">
       <h2 className="text-3xl font-bold mb-6">
-        {isEdit ? v("titleEdit") : v("titleRegister")}
+        {isEdit ? t("vaccine.form.titleUpdate") : t("vaccine.form.titleRegister")}
       </h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Nombre */}
         <div>
-          <label className="block text-sm font-medium mb-2">{v("name")}</label>
+          <label className="block text-sm font-medium mb-2">{t("vaccine.form.name")}</label>
           <Input
             {...register("name")}
-            placeholder={ph("name")}
+            placeholder={t("placeholder.name")}
             className="mb-2"
           />
           {errors.name && (
@@ -78,7 +77,7 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
         {/* Fabricante */}
         <div>
           <div className="flex items-center justify-between">
-            <label className="block text-sm font-medium mb-2">{v("manufacturer")}</label>
+            <label className="block text-sm font-medium mb-2">{t("vaccine.form.manufacturer")}</label>
           </div>
           <div className="relative">
             <Input
@@ -87,14 +86,14 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
               onChange={(e) => setManufacturerSearch(e.target.value)}
               onBlur={validateManufacturerSelection}
               onFocus={() => setIsManufacturerListVisible(true)}
-              placeholder={ph("getBy", {field : "fabricante"})}
+              placeholder={t("search.searchByName")}
               className="w-full mb-2 pr-10"
             />
             <button
               type="button"
               onClick={() => goToManufacturerPage()}
               className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-black rounded-full"
-              title={b("add")}
+              title={t("button.add")}
             >
               <Plus size={18} />
             </button>
@@ -132,7 +131,7 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
 
         {/* Especie */}
         <div>
-          <label className="block text-sm font-medium mb-2">{v("specie")}</label>
+          <label className="block text-sm font-medium mb-2">{t("vaccine.form.specie")}</label>
           <div className="relative">
             <Input
               type="text"
@@ -140,7 +139,7 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
               onChange={(e) => setSpeciesSearch(e.target.value)}
               onFocus={() => setIsSpeciesListVisible(true)}
               onBlur={validateSpeciesSelection}
-              placeholder={ph("getBy", {field : "especie"})}
+              placeholder={t("search.searchByName")}
               className="w-full mb-2"
             />
             {isSpeciesListVisible && (
@@ -172,11 +171,11 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
 
         {/* Costo */}
         <div>
-          <label className="block text-sm font-medium mb-2">{v("cost")}</label>
+          <label className="block text-sm font-medium mb-2">{t("vaccine.form.cost")}</label>
           <NumericInput
             id="cost"
             type="formattedNumber"
-            placeholder={ph("cost")}
+            placeholder={t("placeholder.cost")}
             value={watch("cost") ?? ""}
             onChange={(e) =>
               setValue("cost", Number(e.target.value), { shouldValidate: true })
@@ -188,11 +187,11 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
 
         {/* IVA */}
         <div>
-          <label className="block text-sm font-medium mb-2">{v("iva")}</label>
+          <label className="block text-sm font-medium mb-2">{t("vaccine.form.iva")}</label>
           <NumericInput
             id="iva"
             type="formattedNumber"
-            placeholder={ph("iva")}
+            placeholder={t("placeholder.iva")}
             value={watch("iva") ?? ""}
             onChange={(e) =>
               setValue("iva", Number(e.target.value), { shouldValidate: true })
@@ -204,11 +203,11 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
 
         {/* Precio */}
         <div>
-          <label className="block text-sm font-medium mb-2">{v("price")}</label>
+          <label className="block text-sm font-medium mb-2">{t("vaccine.form.price")}</label>
           <NumericInput
             id="price"
             type="formattedNumber"
-            placeholder={ph("price")}
+            placeholder={t("placeholder.price")}
             value={watch("price") ?? ""}
             onChange={(e) =>
               setValue("price", Number(e.target.value), {
@@ -221,10 +220,10 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">{v("description")}</label>
+          <label className="block text-sm font-medium mb-2">{t("vaccine.form.description")}</label>
           <Input
             {...register("description")}
-            placeholder={ph("description")}
+            placeholder={t("placeholder.description")}
             className="mb-2"
           />
           {errors.description && (
@@ -234,7 +233,7 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
 
         {/* Proveedor */}
         <div>
-          <label className="block text-sm font-medium mb-2">{v("provider")}</label>
+          <label className="block text-sm font-medium mb-2">{t("vaccine.form.provider")}</label>
           <div className="relative">
             <Input
               type="text"
@@ -242,7 +241,7 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
               onChange={(e) => setProviderSearch(e.target.value)}
               onFocus={() => setIsProviderListVisible(true)}
               onBlur={validateProviderSelection}
-              placeholder={ph("getBy", { field : "proveedor"})}
+              placeholder={t("placeholder.name")}
               className="w-full mb-2"
             />
             {isProviderListVisible && (
@@ -277,7 +276,7 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
 
         <div>
           <label className="block text-sm font-medium mb-2">
-            {v("image")}
+            {t("vaccine.form.image")}
           </label>
 
           <div className="flex items-center justify-center gap-4 mb-4">
@@ -318,16 +317,16 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
             onClick={() => goBackToVaccineList()}
             disabled={isSubmitting}
           >
-            {b("cancel")}
+            {t("button.cancel")}
           </Button>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting
               ? isEdit
-                ? b("saving")
-                : b("adding")
+                ? t("button.saving")
+                : t("button.adding")
               : isEdit
-              ? b("save")
-              : b("add")}
+              ? t("button.save")
+              : t("button.add")}
           </Button>
         </div>
       </form>

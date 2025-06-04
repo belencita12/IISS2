@@ -27,22 +27,21 @@ import useDebounce from "@/hooks/useDebounce";
 import { downloadFromBlob, normalizeText } from "@/lib/utils";
 import ExportButton from "@/components/global/ExportButton";
 import { getAppointmentReport } from "@/lib/appointment/getAppointmentReport";
-import { unknown } from "zod";
+import { Textarea } from "@/components/ui/textarea";
 
 interface AppointmentListProps {
     token: string;
 }
 
 const AppointmentList = ({ token }: AppointmentListProps) => {
-    const a = useTranslations("AppointmentDetail");
-  const b = useTranslations("Button");
-  const e = useTranslations("Error");
-  const ph= useTranslations("Placeholder");
+
+    const t = useTranslations();
 
     const router = useRouter();
     const [filters, setFilters] = useState<AppointmentQueryParams>({
         page: 1,
         search: undefined,
+        searchEmployee: undefined, 
         fromDesignatedDate: undefined,
         toDesignatedDate: undefined,
         status: undefined,
@@ -58,7 +57,11 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
     const [cancelModalOpen, setCancelModalOpen] = useState(false);
     const [cancelDescription, setCancelDescription] = useState("");
     const [searchValue, setSearchValue] = useState("");
+    const [employeeSearchValue, setEmployeeSearchValue] = useState("");
     const debouncedSearchValue = useDebounce(searchValue, 500);
+    const debouncedEmployeeSearchValue = useDebounce(employeeSearchValue, 500);
+    const [isFiltering, setIsFiltering] = useState(false);
+    const [resetCounter, setResetCounter] = useState(0);
 
     const [isGettingReport, setIsGettingReport] = useState(false);
 
@@ -80,20 +83,25 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
         autoFetch: true,
         extraParams: {
             search: filters.search,
+            searchEmployee: filters.employeeRuc,
             fromDesignatedDate: filters.fromDesignatedDate,
             toDesignatedDate: filters.toDesignatedDate,
             status: filters.status,
         },
     });
 
-    // Sincronizar search debounced con filtros
     useEffect(() => {
-        const normalizedSearch = debouncedSearchValue
+        const normalizedClientSearch = debouncedSearchValue
             ? normalizeText(debouncedSearchValue)
             : undefined;
 
+        const normalizedEmployeeSearch = debouncedEmployeeSearchValue
+            ? normalizeText(debouncedEmployeeSearchValue)
+            : undefined;
+
         const updatedFilters = {
-            search: normalizedSearch,
+            search: normalizedClientSearch,
+            searchEmployee: normalizedEmployeeSearch,
             fromDesignatedDate: filters.fromDesignatedDate,
             toDesignatedDate: filters.toDesignatedDate,
             status: filters.status,
@@ -102,6 +110,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
         search(updatedFilters);
     }, [
         debouncedSearchValue,
+        debouncedEmployeeSearchValue,
         filters.fromDesignatedDate,
         filters.toDesignatedDate,
         filters.status,
@@ -116,13 +125,29 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
         }));
     };
 
+    const resetFilters = () => {
+        setIsFiltering(true);
+        setFilters({
+            page: 1,
+            search: undefined,
+            searchEmployee: undefined,
+            fromDesignatedDate: undefined,
+            toDesignatedDate: undefined,
+            status: undefined,
+        });
+        setSearchValue("");
+        setEmployeeSearchValue("");
+        setIsFiltering(false);
+        setResetCounter((prev) => prev + 1);
+    };
+
     const handleGetAppointmentReport = async () => {
         const { fromDesignatedDate: from, toDesignatedDate: to } = filters;
 
         if (!from || !to) {
             toast(
                 "error",
-                e("errorLimitDate")
+                t("error.errorLimitDate")
             );
             return;
         }
@@ -143,9 +168,14 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
         setIsGettingReport(false);
     };
 
-    const handleSearch = (value: string) => {
-        setSearchValue(value);
-    };
+    const hasActiveFilters = Boolean(
+        searchValue ||
+        filters.fromDesignatedDate ||
+        filters.toDesignatedDate ||
+        filters.status ||
+        employeeSearchValue
+    );
+
 
     const openConfirmModal = (
         appointment: AppointmentData,
@@ -160,7 +190,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
             if (appointmentDate > currentDate) {
                 toast(
                     "error",
-                    e("errorEndDate")
+                    t("error.errorEndDate")
                 );
                 return;
             }
@@ -192,7 +222,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
             toast(
                 "success",
                 `Cita ${
-                    modalAction === b("") ? a("completed") : a("canceled")
+                    modalAction === "complete" ? t("appointmentStatus.completed") : t("appointmentStatus.cancelled")
                 } con éxito`
             );
             refresh();
@@ -212,11 +242,34 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
 
     return (
         <div className="p-4 mx-auto">
+            {hasActiveFilters && (
+                <div className="flex justify-end">
+                    <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => resetFilters()}
+                    className="text-sm h-8 px-2 text-gray-600 mr-[10px]"
+                    disabled={isFiltering}
+                    >
+                    Limpiar filtros
+                    </Button>
+                </div>
+            )}
+
             <div className="max-w-8xl mx-auto p-4 space-y-6">
-                <SearchBar
-                    placeholder={ph("getBy", {field: "nombre o ruc del cliente"})}
-                    onSearch={handleSearch}
-                />
+                <div className="flex space-x-4">
+                    <SearchBar
+                        placeholder={t("search.searchByNameOrRuc")}
+                        onSearch={setSearchValue}
+                        resetTrigger={resetCounter}
+                    />
+                    <SearchBar
+                        placeholder={t("search.searchByNameOrRucEmployee")}
+                        onSearch={setEmployeeSearchValue}
+                        resetTrigger={resetCounter}
+                    />
+                </div>
+
                 <div className="flex flex-col md:flex-row gap-4">
                     <div className="flex-1">
                         <AppointmentDateFilter
@@ -234,7 +287,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
             </div>
 
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-3xl font-bold">{a("title")}</h2>
+                <h2 className="text-3xl font-bold">{t("appointmentTable.title")}</h2>
                 <div className="flex justify-between items-center mb-4">
                     <Button
                         variant="outline"
@@ -243,7 +296,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
                             router.push("/dashboard/appointment/register")
                         }
                     >
-                        {b("schedule")}
+                        {t("button.schedule")}
                     </Button>
                     <ExportButton
                         handleGetReport={handleGetAppointmentReport}
@@ -269,7 +322,7 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
                             />
                         ))
                     ) : (
-                        <p>{e("notFoundField", {field: "citas"})}</p>
+                        <p>{t("error.notFoundAppointments")}</p>
                     )}
                 </div>
             )}
@@ -287,10 +340,10 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
                     onConfirm={handleConfirmAction}
-                    title={a("titleFinish")}
-          message={a("finishDescription")}
-          confirmText={b("confirm")}
-          cancelText={b("cancel")}
+                    title={t("confirmationModal.appointment.confirmFinish")}
+                    message={t("confirmationModal.appointment.confirmFinishDescription")}
+                    confirmText={t("button.confirm")}
+                    cancelText={t("button.cancel")}
                     isLoading={isProcessing}
                 />
             )}
@@ -299,12 +352,12 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
                 <Modal
                     isOpen={cancelModalOpen}
                     onClose={() => setCancelModalOpen(false)}
-                    title={a("titleCancel")}
+                    title={t("confirmationModal.appointment.cancelTitle")}
                     size="md"
                 >
-                    <textarea
+                    <Textarea
                         className="w-full h-32 p-2 border border-gray-300 rounded"
-                        placeholder={ph("reason")}
+                        placeholder={t("placeholder.reason")}
                         value={cancelDescription}
                         onChange={(e) => setCancelDescription(e.target.value)}
                     />
@@ -314,14 +367,14 @@ const AppointmentList = ({ token }: AppointmentListProps) => {
                             onClick={() => setCancelModalOpen(false)}
                             disabled={isProcessing}
                         >
-                            {b("cancel")}
+                            {t("button.cancel")}
                         </Button>
                         <Button
                             className="bg-red-600 text-white px-4 py-2 rounded border hover:bg-red-700"
                             onClick={handleConfirmAction}
                             disabled={isProcessing || !cancelDescription.trim()}
                         >
-                            {isProcessing ? b("canceling") : b("confirm")}
+                            {isProcessing ? t("button.cancelling") : t("button.confirm")}
                         </Button>
                     </div>
                 </Modal>

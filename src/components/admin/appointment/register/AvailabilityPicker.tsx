@@ -29,6 +29,8 @@ export const AvailabilityPicker = ({
   const b = useTranslations("Button");
   const e = useTranslations("Error");
 
+  const t = useTranslations();
+
   useEffect(() => {
     if (!employeeId || !date ) return;
 
@@ -37,8 +39,8 @@ export const AvailabilityPicker = ({
       try {
         const data = await getAvailability(token, employeeId, date);
         setSlots(data);
-      } catch (error) {
-        toast("error", error instanceof Error ? error.message : e("notFound"));
+      } catch (error:unknown) {
+        if(error instanceof Error ) toast("error", error.message)
         setSlots([]);
       } finally {
         setLoading(false);
@@ -112,10 +114,10 @@ export const AvailabilityPicker = ({
 
   return (
     <div className="space-y-2">
-      <h3 className="text-sm font-medium text-gray-700">{a("selectHour")}</h3>
+      <h3 className="text-sm font-medium text-gray-700">{t("appointmentForm.selectHour")}</h3>
 
       {loading ? (
-        <p className="text-gray-500">{b("loading")}</p>
+        <p className="text-gray-500">{t("button.loading")}</p>
       ) : (
         <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
           {slots.map((slot, index) =>

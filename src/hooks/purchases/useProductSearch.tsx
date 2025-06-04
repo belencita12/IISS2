@@ -27,12 +27,12 @@ export const useProductSearch = (token: string, providerId?: number) => {
           providerId,
         };
         const res = await getProducts(params, token);
-        const productList = res.data
-          ? Array.isArray(res.data)
-            ? res.data
-            : []
-          : [];
-        setSearchProducts(productList);
+        const productList = Array.isArray(res.data) ? res.data : [];
+
+        //excluir servicios
+        const filtered = productList.filter((p) => p.category !== "SERVICE");
+
+        setSearchProducts(filtered);
       } catch (error) {
         toast(
           "error",

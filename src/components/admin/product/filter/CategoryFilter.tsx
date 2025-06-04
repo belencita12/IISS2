@@ -28,7 +28,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
 
-  const f = useTranslations("Filters");
+  const t = useTranslations();
 
   return (
     <div className="relative w-full">
@@ -41,7 +41,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
             className="w-full h-full p-[9px] text-sm rounded flex items-center justify-between"
           >
             <span className="truncate">
-              {category ? getCategoryLabel(category) : f("category")}
+              {category ? getCategoryLabel(category) : t("filters.category")}
             </span>
             <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
           </Button>
@@ -62,7 +62,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
                   }}
                   className="px-4 py-2"
                 >
-                  {f("none")}
+                  {t("filters.none")}
                 </CommandItem>
                 <CommandItem
                   onSelect={() => {
@@ -71,7 +71,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
                   }}
                   className="px-4 py-2"
                 >
-                  {f("service")}
+                   {t("filters.productFiltersCategory.service")}
                 </CommandItem>
                 <CommandItem
                   onSelect={() => {
@@ -80,7 +80,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
                   }}
                   className="px-4 py-2"
                 >
-                  {f("product")}
+                  {t("filters.productFiltersCategory.product")}
                 </CommandItem>
                 <CommandItem
                   onSelect={() => {
@@ -89,7 +89,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
                   }}
                   className="px-4 py-2"
                 >
-                  {f("vaccine")}
+                   {t("filters.productFiltersCategory.vaccine")}
                 </CommandItem>
               </CommandList>
             </CommandGroup>
