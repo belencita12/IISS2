@@ -279,7 +279,7 @@ export function StampedForm({
         }
       }}
     >
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {defaultValues ? "Editar Timbrado" : "Registrar Timbrado"}
@@ -334,7 +334,9 @@ export function StampedForm({
                 <SelectItem value="0">Todos</SelectItem>
                 {stocks.map((stock: StockData) => (
                   <SelectItem key={stock.id || ''} value={(stock.id || 0).toString()}>
-                    {stock.name} - {stock.address}
+                    <div className="truncate">
+                      {stock.name} - {stock.address}
+                    </div>
                   </SelectItem>
                 ))}
               </SelectContent>
