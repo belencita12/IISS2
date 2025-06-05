@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
-import { Stamped, StampedQueryParams } from "@/lib/stamped/IStamped";
+import { Stamped} from "@/lib/stamped/IStamped";
 import GenericTable, { Column, TableAction } from "@/components/global/GenericTable";
 import { StampedFilters } from "./StampedFilters";
 import { toast } from "@/lib/toast";
@@ -17,13 +17,13 @@ import { useStampedList } from "@/hooks/stamped/useStampedList";
 import { PaginationResponse } from "@/lib/types";
 import { StampedForm } from "./StampedForm";
 
+
 interface StampedListProps {
   token: string;
 }
 
 export function StampedList({ token }: StampedListProps) {
-  const t = useTranslations("Stamped");
-  const ph = useTranslations("Placeholder");
+  const t = useTranslations();
   const [query, setQuery] = useState("");
   const [fromDate, setFromDate] = useState<string | undefined>(undefined);
   const [toDate, setToDate] = useState<string | undefined>(undefined);
@@ -69,7 +69,7 @@ export function StampedList({ token }: StampedListProps) {
           setError(error.message);
           toast("error", error.message);
         } else {
-          const errorMessage = "Error al obtener los timbrados";
+          const errorMessage = t("error.notGetData");
           setError(errorMessage);
           toast("error", errorMessage);
         }
@@ -85,15 +85,6 @@ export function StampedList({ token }: StampedListProps) {
     toast("error", error || t("error.loading"));
   }
 
-  const handleSearch = (newQuery: string) => {
-    setQuery(newQuery);
-    setCurrentPage(1);
-  };
-
-  const handleView = (stamped: Stamped) => {
-    // TODO: Implementar vista detallada
-  };
-
   const handleEdit = (stamped: Stamped) => {
     if (!stamped.isActive) {
       toast("error", "El depósito está inactivo");
@@ -103,17 +94,12 @@ export function StampedList({ token }: StampedListProps) {
     setIsFormModalOpen(true);
   };
 
-  const handleDelete = (stamped: Stamped) => {
-    setSelectedStamped(stamped);
-    setIsDeleteModalOpen(true);
-  };
-
   const handleConfirmDelete = async () => {
     if (!selectedStamped) return;
 
     try {
       await deleteStamped(selectedStamped.id, token);
-      toast("success", t("success.delete"));
+      toast("success", t("success.successDeleteStamped"));
       // Refrescar datos
       const result = await getStampedList({
         page: currentPage,
@@ -124,12 +110,10 @@ export function StampedList({ token }: StampedListProps) {
         includeDeleted: isActive === false,
       });
       setData(result);
-    } catch (error) {
+    } catch (error: unknown) {
       
       if (error instanceof Error) {
         toast("error", error.message);
-      } else {
-        toast("error", t("error.delete"));
       }
     } finally {
       setIsDeleteModalOpen(false);
@@ -153,34 +137,34 @@ export function StampedList({ token }: StampedListProps) {
 
   const columns: Column<Stamped>[] = [
     {
-      header: "Número",
+      header: t("stamped.table.stampedNumber"),
       accessor: "stampedNum",
     },
     {
-      header: "Depósito",
+      header: t("stamped.table.stock"),
       accessor: (stamped) => stamped.stock.name,
     },
     {
-      header: "Dirección",
+      header: t("stamped.table.address"),
       accessor: (stamped) => stamped.stock.address,
     },
     {
-      header: "Fecha desde",
+      header: t("stamped.date.from"),
       accessor: (stamped) => new Date(stamped.fromDate).toLocaleDateString('es-ES'),
     },
     {
-      header: "Fecha hasta",
+      header: t("stamped.date.to"),
       accessor: (stamped) => new Date(stamped.toDate).toLocaleDateString('es-ES'),
     },
     {
-      header: "Rango numérico",
+      header: t("stamped.table.numberRange"),
       accessor: (stamped) => `${stamped.fromNum} - ${stamped.toNum}`,
     },
     {
-      header: "Estado",
+      header: t("stamped.table.status"),
       accessor: (stamped) => (
         <span className={stamped.isActive ? "text-green-600" : "text-red-600"}>
-          {stamped.isActive ? "Activo" : "Inactivo"}
+          {stamped.isActive ? t("stamped.status.active") : t("stamped.status.inactive")}
         </span>
       ),
     },
@@ -222,12 +206,12 @@ export function StampedList({ token }: StampedListProps) {
       />
 
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Timbrado</h1>
+        <h1 className="text-3xl font-bold">{t("stamped.table.title")}</h1>
         <Button variant="outline" className="px-6" onClick={() => {
           setSelectedStamped(null);
           setIsFormModalOpen(true);
         }}>
-          Agregar
+          {t("button.add")}
         </Button>
       </div>
 
@@ -236,7 +220,7 @@ export function StampedList({ token }: StampedListProps) {
         columns={columns}
         actions={actions}
         isLoading={isLoading}
-        emptyMessage="No hay timbrados disponibles"
+        emptyMessage={t("stamped.table.emptyMessage")}
       />
 
       {data && data.totalPages > 1 && (
@@ -272,10 +256,10 @@ export function StampedList({ token }: StampedListProps) {
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
-        title={t("deleteTitle")}
-        message={t("deleteMessage", { number: selectedStamped?.stampedNum || "" })}
-        confirmText={t("delete")}
-        cancelText={t("cancel")}
+        title={t("confirmationModal.stamped.titleDelete")}
+        message={t("confirmationModal.stamped.messageDelete", {stamped :  selectedStamped?.stampedNum ?? ""})}
+        confirmText={t("button.delete")}
+        cancelText={t("button.cancel")}
         variant="danger"
       />
     </div>

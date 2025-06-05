@@ -891,7 +891,8 @@
     "successDeleteService": "Servicio eliminado correctamente",
     "successRegisterService": "Servicio agregado correctamente",
     "successUpdateService": "Servicio actualizado con éxito",
-    "successDeletePet": "Mascota eliminada correctamente"
+    "successDeletePet": "Mascota eliminada correctamente",
+    "successDeleteStamped": "Timbrado eliminado correctamente"
   },
   "vaccine": {
     "table": {
@@ -948,7 +949,9 @@
     "searchByNameOrRucProvider": "Buscar por razón social o RUC del proveedor...",
     "searchByPetName": "Buscar por nombre de la mascota...",
     "searchByOwnerName": "Buscar por nombre del dueño...",
-    "searchByReceiptNumber": "Buscar por Nro de recibo..."
+    "searchByReceiptNumber": "Buscar por Nro de recibo...",
+    "searchByStockName": "Buscar por nombre de depósito...",
+    "searchByStampedNumber": "Buscar por nro de timbrado..."
   },
   "productCatalog": {
     "selectedTags": "Etiquetas seleccionadas:",
@@ -1247,6 +1250,10 @@
   },
 
   "confirmationModal":{
+    "stamped": {
+      "titleDelete": "Eliminar timbrado",
+      "messageDelete": "¿Estás seguro de que deseas eliminar el timbrado Nro {stamped}?"
+    },
     "pet":{
       "titleDelete": "Eliminar mascota",
       "messageDelete": "¿Estás seguro de que deseas eliminar la mascota {pet}?"
@@ -1309,6 +1316,28 @@
       "messageDelete":"¿Estás seguro de que deseas eliminar al fabricante {manufacturer}?"
     },
     "tags": "Etiquetas"
+  },
+
+  "stamped":{
+    "date": {
+      "from": "Fecha desde",
+      "to": "Fecha hasta"
+    },
+    "table": {
+      "title": "Timbrado",
+      "stampedNumber": "Número de timbrado",
+      "stock": "Depósito",
+      "address": "Dirección",
+      "startDate": "Fecha de inicio",
+      "endDate": "Fecha de fin",
+      "numberRange": "Rango de números",
+      "status": "Estado",
+      "emptyMessage": "No hay timbrados registrados"
+    },
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo"
+    }
   },
    "Stamped": {
     "title": "Timbrado",
@@ -1553,5 +1582,31 @@
     "icon": "📜"
   },
   "configure": "Configurar"
+},
+ "help": {
+  "dashboard": {
+    "title": "Dashboard",
+    "description": "Vista general del sistema y métricas clave",
+    "dashboard1": {
+      "id": "dashboard1",
+      "question": "¿Qué datos generales muestra el dashboard?",
+      "answer": "El dashboard muestra el total facturado, la cantidad de facturas emitidas y el número de citas agendadas."
+    },
+    "dashboard2": {
+      "id": "dashboard2",
+      "question": "¿Qué información contiene el gráfico de 'Distribución por tipo de factura'?",
+      "answer": "Muestra la cantidad de facturas emitidas según el tipo: contado o crédito."
+    },
+    "dashboard3": {
+      "id": "dashboard3",
+      "question": "¿Qué representa el gráfico de ingresos mensuales?",
+      "answer": "Este gráfico muestra los ingresos obtenidos por mes, permitiendo visualizar la evolución del monto facturado a lo largo del tiempo."
+    },
+    "dashboard4": {
+      "id": "dashboard4",
+      "question": "¿Qué indica el gráfico de 'Citas por mes'?",
+      "answer": "Refleja la cantidad de citas agendadas en cada mes, facilitando el seguimiento de la actividad mensual."
+    }
+  }
 }
 }

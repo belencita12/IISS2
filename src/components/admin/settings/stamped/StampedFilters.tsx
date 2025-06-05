@@ -3,7 +3,6 @@
 import { useTranslations } from "next-intl";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEffect, useState } from "react";
 import { getStocks } from "@/lib/stock/getStock";
 import { DataList } from "@/components/ui/datalist";
@@ -54,7 +53,7 @@ export function StampedFilters({
     if(token) result();
   }, [stockText, addressText, token]);
   
-  const t = useTranslations("Stamped");
+  const t = useTranslations();
 
  /*  const handleStatusChange = (value: string) => {
     if (value === "all") {
@@ -68,12 +67,12 @@ export function StampedFilters({
     <div className="flex flex-col gap-4">
       <div className="flex flex-row gap-4 items-center">
         <div className="flex-1">
-          <Label>{"Deposito"}</Label>
+          <Label>{t("stamped.table.stock")}</Label>
           <DataList datas={stocks.map(stock => ({ text: stock.name, value: stock.id?.toString() ?? "" }))} 
             handleSelect={(value) => {
               setStockId(value ? parseInt(value) : undefined);
             }}
-            placeholder={"Buscar por Deposito"}
+            placeholder={t("search.searchByStockName")}
             className="w-full"
             onChange={(e) => {
               if(typeof e === "string") {
@@ -117,10 +116,10 @@ export function StampedFilters({
         </div> */}
 
         <div className="flex-1">
-          <Label>{"Número de Timbrado"}</Label>
+          <Label>{t("stamped.table.stampedNumber")}</Label>
           <Input 
             type="text"
-            placeholder={"Buscar por número de timbrado"}
+            placeholder={t("search.searchByStampedNumber")}
             onChange={(e) => {
               const value = e.target.value;
               // Solo permitir números y máximo 8 dígitos
@@ -144,7 +143,7 @@ export function StampedFilters({
       </div>
       <div className="flex flex-row gap-4 items-center">
         <div className="flex-1">
-          <Label>{t("startDate")}</Label>
+          <Label>{t("stamped.table.startDate")}</Label>
           <Input
             type="date"
             value={fromDate || ""}
@@ -152,7 +151,6 @@ export function StampedFilters({
               const value = e.target.value;
               if (value) {
                 const year = new Date(value).getFullYear();
-                console.log("Year:", year);
                 if (year.toString().length === 4) {
                   setFromDate(value);
                 }
@@ -165,7 +163,7 @@ export function StampedFilters({
         </div>
 
         <div className="flex-1">
-          <Label>{t("endDate")}</Label>
+          <Label>{t("stamped.table.endDate")}</Label>
           <Input
             type="date"
             value={toDate || ""}
@@ -173,7 +171,6 @@ export function StampedFilters({
               const value = e.target.value;
               if (value) {
                 const year = new Date(value).getFullYear();
-                console.log("Year:", year);
                 if (year.toString().length === 4) {
                   setToDate(value);
                 }
