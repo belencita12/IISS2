@@ -21,6 +21,7 @@ interface PetFiltersProps {
   clientSearchQuery?: string;
   selectedSpeciesId?: number | null;
   selectedRaceId?: number | null;
+  reset?: number
 }
 
 export function PetFilters({
@@ -37,6 +38,7 @@ export function PetFilters({
   clientSearchQuery = "",
   selectedSpeciesId = null,
   selectedRaceId = null,
+  reset= 0,
 }: PetFiltersProps) {
 
   const t = useTranslations();
@@ -49,6 +51,7 @@ export function PetFilters({
             placeholder={t("search.searchByPetName")}
             debounceDelay={500}
             defaultQuery={petSearchQuery}
+            resetTrigger={reset}
           />
         </div>
 
@@ -58,6 +61,7 @@ export function PetFilters({
             placeholder={t("search.searchByOwnerName")}
             debounceDelay={500}
             defaultQuery={clientSearchQuery}
+            resetTrigger={reset}
           />
         </div>
       </div>

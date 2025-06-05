@@ -32,6 +32,10 @@ export default function DateFilter({
   useEffect(() => {
     if (to !== debouncedEndDate) setDateTo(debouncedEndDate || undefined);
   }, [debouncedEndDate]);
+  useEffect(()=>{
+    setStartDate(from?? "")
+    setEndDate(to?? "")
+  },[to, from])
 
   const isEndDateBeforeStart = from && to && to < from;
   const toDateError = isEndDateBeforeStart

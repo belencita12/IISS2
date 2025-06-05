@@ -46,6 +46,8 @@ export default function ProductListPage({ token }: ProductListProps) {
 
   // Estado para almacenar productos combinados
   const [combinedProducts, setCombinedProducts] = useState<Product[]>([]);
+  const [isFiltering, setIsFiltering] = useState(false);
+  const [resetCounter, setResetCounter] = useState(0);
 
   useEffect(() => {
     syncPageSize(pagination.pageSize);
@@ -128,8 +130,48 @@ export default function ProductListPage({ token }: ProductListProps) {
     : handlePageChange;
   const loading = isLoading || isTagFiltering;
 
+  const hasActiveFilters = useMemo(() => {
+    const hasInputFilters = Object.values(inputFilters).some(
+      (value) => value !== "" && value !== undefined && value !== null
+    );
+    const hasTags = selectedTags.length > 0;
+
+    return hasInputFilters || hasTags;
+  }, [inputFilters, selectedTags]);
+
+
+  const resetFilters = () => {
+    setIsFiltering(true)
+    setInputFilters({
+      searchTerm: "",
+      category: "",
+      minPrice: "",
+      maxPrice: "",
+      minCost: "",
+      maxCost: "",
+    });
+    handleTagsChange([]); 
+    handleSearch(); 
+    setIsFiltering(false)
+    setResetCounter((prev) => prev + 1);
+  };
+
+
   return (
     <div className="max-w-screen-xl mx-auto p-4">
+      {hasActiveFilters && (
+          <div className="flex justify-end">
+              <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => resetFilters()}
+              className="text-sm h-8 px-2 text-gray-600 mr-[10px]"
+              disabled={isFiltering}
+              >
+              Limpiar filtros
+              </Button>
+          </div>
+      )}
       <div className="mb-2">
         <ProductFilters
           filters={inputFilters}
@@ -143,6 +185,7 @@ export default function ProductListPage({ token }: ProductListProps) {
           preventInvalidKeys={preventInvalidKeys}
           selectedTags={selectedTags}
           onTagsChange={handleTagsChange}
+          resetCounter= {resetCounter}
           token={token}
         />
       </div>

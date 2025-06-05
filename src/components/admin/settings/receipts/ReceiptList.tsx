@@ -14,11 +14,14 @@ import { useTranslations } from "next-intl";
 import { ReceiptFiltersParams } from "@/lib/receipts/IReceipt";
 import { RECEIPT_API } from "@/lib/urls";
 import { usePaginatedFetch } from "@/hooks/api/usePaginatedFetch";
+import { Button } from "@/components/ui/button";
 type ReceiptListProps = {
   token: string;
 };
 
 export default function ReceiptList({ token }: ReceiptListProps) {
+  const [isFiltering, setIsFiltering] = useState(false);
+  const [resetCounter, setResetCounter] = useState(0);
   const [filters, setFilters] = useState<ReceiptFiltersParams>({
     page: 1,
     size: 7,
@@ -102,11 +105,48 @@ export default function ReceiptList({ token }: ReceiptListProps) {
     },
   ];
 
+  const hasActiveFilters = !!(
+    filters.fromTotal ||
+    filters.toTotal ||
+    filters.fromIssueDate ||
+    filters.toIssueDate ||
+    filters.receiptNumber ||
+    filters.searchTerm
+  );
+
+  const resetFilters = () => {
+    setIsFiltering(true)
+    setFilters({
+      page: 1,
+      size: 7,
+      fromIssueDate: undefined,
+      toIssueDate: undefined,
+      fromTotal: undefined,
+      toTotal: undefined
+    })
+    
+    setResetCounter((prev) => prev + 1);
+    setIsFiltering(false)
+  };
+
   return (
     <div>
       <div className="mb-6 flex flex-col gap-4 p-5">
+        {hasActiveFilters && (
+          <div className="flex justify-end">
+            <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => resetFilters()}
+            className="text-sm h-8 px-2 text-gray-600 mr-[10px]"
+            disabled={isFiltering}
+            >
+            Limpiar filtros
+            </Button>
+          </div>
+        )}
         <div className="flex-1">
-          <ReceiptFilters filters={filters} setFilters={handleFilterChange} />
+          <ReceiptFilters filters={filters} setFilters={handleFilterChange} reset={resetCounter} />
         </div>
         <div className="flex-1">
           <DateFilter

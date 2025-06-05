@@ -11,12 +11,12 @@ import { useTranslations } from "next-intl";
 
 interface Props {
   filters: ReceiptFiltersParams;
+  reset: number;
   setFilters: (val: ReceiptFiltersParams) => void;
 }
 
-export default function ReceiptFilters({ filters, setFilters }: Props) {
-
-  const t = useTranslations();
+export default function ReceiptFilters({ filters, reset, setFilters }: Props) {
+   const t = useTranslations();
   const [min, setMin] = useState(filters.fromTotal?.toString() ?? "");
   const [max, setMax] = useState(filters.toTotal?.toString() ?? "");
   const [receipt, setReceipt] = useState(
@@ -85,6 +85,12 @@ export default function ReceiptFilters({ filters, setFilters }: Props) {
     });
   }, [debouncedMin, debouncedMax, debouncedReceipt, debouncedSearchTerm]);
 
+  useEffect(()=>{
+    setMin(filters.fromTotal?.toString() ?? "")
+    setMax(filters.toTotal?.toString() ?? "")
+    setReceipt(filters.receiptNumber?.toString() ?? "")
+  },[reset])
+
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4">
@@ -97,6 +103,7 @@ export default function ReceiptFilters({ filters, setFilters }: Props) {
               const filtered = value.replace(/[.,]/g, "");
               setSearchTerm(filtered);
             }}
+            resetTrigger={reset}
           />
         </div>
 

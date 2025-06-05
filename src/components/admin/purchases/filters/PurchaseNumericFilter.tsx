@@ -34,6 +34,11 @@ export default function PurchaseNumericFilter({ filters, setFilters }: Props) {
     }
   }, [debouncedMin, debouncedMax]);
 
+  useEffect(()=>{
+    setMin(filters.totalMin?.toString() ?? "")
+    setMax(filters.totalMax?.toString() ?? "")
+  },[filters.totalMin, filters.totalMax])
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div className="space-y-2">

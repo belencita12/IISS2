@@ -60,6 +60,11 @@ export default function InvoiceDateFilter({ filters, setFilters }: Props) {
     }
   }, [debouncedStartDate, debouncedEndDate]);
 
+  useEffect(()=>{
+    setStartDate(filters.fromIssueDate ?? "")
+    setEndDate(filters.toIssueDate ?? "")
+  },[filters.fromIssueDate, filters.toIssueDate])
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
   <div className="space-y-2">

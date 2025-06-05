@@ -8,18 +8,21 @@ import GenericTable, {
   Column,
   TableAction,
 } from "@/components/global/GenericTable";
-import { useVaccineRegistryList } from "@/hooks/vaccine-registry/useVaccineRegistryList";
+import { useVaccineRegistryList, VaccineRegistryFilters } from "@/hooks/vaccine-registry/useVaccineRegistryList";
 import { VaccineRecord } from "@/lib/vaccine-registry/IVaccineRegistry";
 import VaccineRegistryDateFilter from "./filters/VaccineRegistryDateFilter";
 import { getPetById } from "@/lib/pets/getPetById";
 import { formatDate } from "@/lib/utils";
 import VaccineRegistryListSkeleton from "./skeleton/VaccineRegistryListSkeleton";
+import { useState } from "react";
 
 interface Props {
   token: string;
 }
 
 export default function VaccineRegistryList({ token }: Props) {
+  const [isFiltering, setIsFiltering] = useState(false);
+  const [resetCounter, setResetCounter] = useState(0);
   const router = useRouter();
 
   const {
@@ -81,6 +84,28 @@ export default function VaccineRegistryList({ token }: Props) {
     },
   ];
 
+  const hasActiveFilters = !!(
+      filters.clientName ||
+      filters.fromApplicationDate ||
+      filters.toApplicationDate ||
+      filters.fromExpectedDate ||
+      filters.toExpectedDate
+    );
+  
+    const resetFilters = () => {
+      setIsFiltering(true)
+      const cleanFilters: VaccineRegistryFilters = {
+        clientName:"",
+        fromApplicationDate:"",
+        toApplicationDate:"",
+        fromExpectedDate:"",
+        toExpectedDate:""
+      };
+      setFilters(cleanFilters);
+      setIsFiltering(false)
+      setResetCounter((prev) => prev + 1);
+    };
+
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
@@ -97,9 +122,23 @@ export default function VaccineRegistryList({ token }: Props) {
       </div>
 
       <div className="space-y-4 mb-4">
+        {hasActiveFilters && (
+          <div className="flex justify-end">
+            <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => resetFilters()}
+            className="text-sm h-8 px-2 text-gray-600 mr-[10px]"
+            disabled={isFiltering}
+            >
+            Limpiar filtros
+            </Button>
+          </div>
+        )}
         <SearchBar
           onSearch={handleSearch}
           placeholder="Buscar por nombre de cliente"
+          resetTrigger={resetCounter}
         />
 
         <VaccineRegistryDateFilter
@@ -108,6 +147,7 @@ export default function VaccineRegistryList({ token }: Props) {
           toKey="toApplicationDate"
           filters={filters}
           setFilters={setFilters}
+          resetTrigger={resetCounter}
         />
 
         <VaccineRegistryDateFilter
@@ -116,6 +156,7 @@ export default function VaccineRegistryList({ token }: Props) {
           toKey="toExpectedDate"
           filters={filters}
           setFilters={setFilters}
+          resetTrigger={resetCounter}
         />
       </div>
 

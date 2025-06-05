@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Eye,  Pencil, Trash } from "lucide-react";
+import { Eye, Pencil, Trash } from "lucide-react";
 import { usePaginatedFetch } from "@/hooks/api";
 import { PET_API } from "@/lib/urls";
 import { ListPetData } from "@/lib/pets/IPet";
@@ -40,6 +40,8 @@ export default function ListPets({ token }: ListPetsProps) {
   const [petToDelete, setPetToDelete] = useState<ListPetData | null>(null);
   const [from, setFrom] = useState<string | undefined>();
   const [to, setTo] = useState<string | undefined>();
+  const [resetCounter, setResetCounter] = useState(0);
+  const [isFiltering, setIsFiltering] = useState(false);
 
   const {
     data: pets,
@@ -231,8 +233,42 @@ export default function ListPets({ token }: ListPetsProps) {
     { header: t("pet.details.race"), accessor: (pet) => pet.race.name },
   ];
 
+  const hasActiveFilters = !!(
+    from ||
+    to ||
+    searchQuery ||
+    clientSearchQuery ||
+    selectedRaceId ||
+    selectedSpeciesId
+  );
+
+  const resetFilters = () => {
+    setIsFiltering(true)
+    setFrom(undefined)
+    setTo(undefined)
+    setSelectedRaceId(null)
+    setSelectedSpeciesId(null)
+    handleClientSearch("")
+    handlePetSearch("")
+    setResetCounter((prev) => prev + 1);
+    setIsFiltering(false)
+  };
+
   return (
     <div className="space-y-4">
+      {hasActiveFilters && (
+        <div className="flex justify-end">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => resetFilters()}
+            className="text-sm h-8 px-2 text-gray-600 mt-[20px] mb-[-10px]"
+            disabled={isFiltering}
+          >
+          Limpiar filtros
+          </Button>
+        </div>
+      )}
       <PetFilters
         token={token}
         onPetSearch={handlePetSearch}
@@ -247,6 +283,7 @@ export default function ListPets({ token }: ListPetsProps) {
         from={from}
         setDateTo={handleSetToDate}
         setDateFrom={handleSetFromDate}
+        reset={resetCounter}
       />
       <div className="flex justify-between mr-5">
         <h1 className="text-2xl font-bold">{t("pet.title")}</h1>

@@ -32,6 +32,7 @@ interface ProductFiltersProps {
   preventInvalidKeys: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   selectedTags: string[];
   onTagsChange: (selectedTags: string[]) => void;
+  resetCounter?: number;
   token: string;
 }
 
@@ -43,6 +44,7 @@ export default function ProductFilters({
   selectedTags,
   onTagsChange,
   token,
+  resetCounter
 }: ProductFiltersProps) {
   const { searchInput, setSearchInput, clearFilter } = useProductFilters(
     filters,
@@ -67,6 +69,7 @@ export default function ProductFilters({
             defaultQuery={searchInput}
             debounceDelay={400}
             placeholder={t("search.searchByCodeOrName")}
+            resetTrigger= {resetCounter}
           />
         </div>
         <div className="w-full sm:w-[30%]">
