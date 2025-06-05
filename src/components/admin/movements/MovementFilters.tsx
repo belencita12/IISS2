@@ -21,9 +21,10 @@ interface Props {
   filters: GetMovementQueryParams & { managerRuc?: string };
   setFilters: (val: GetMovementQueryParams & { managerRuc?: string }) => void;
   onSearch: () => void;
+  resetCounter: number
 }
 
-export default function MovementFilters({ token, filters, setFilters }: Props) {
+export default function MovementFilters({ token, filters, setFilters, resetCounter }: Props) {
   const handleChange = <K extends keyof Props["filters"]>(
     key: K,
     value: Props["filters"][K]
@@ -54,6 +55,7 @@ export default function MovementFilters({ token, filters, setFilters }: Props) {
             defaultQuery={filters.managerRuc ?? ""}
             onSearch={(value) => handleChange("managerRuc", value)}
             debounceDelay={300}
+            resetTrigger={resetCounter}
           />
         </div>
 
@@ -63,6 +65,7 @@ export default function MovementFilters({ token, filters, setFilters }: Props) {
             defaultQuery={filters.productName ?? ""}
             onSearch={(value) => handleChange("productName", value)}
             debounceDelay={300}
+            resetTrigger={resetCounter}
           />
         </div>
       </div>

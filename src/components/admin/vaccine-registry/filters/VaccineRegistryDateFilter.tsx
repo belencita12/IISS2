@@ -13,6 +13,7 @@ interface Props {
   toKey: string;
   filters: VaccineRegistryFilters;
   setFilters: React.Dispatch<React.SetStateAction<VaccineRegistryFilters>>;
+  resetTrigger?: number;
 }
 
 export default function VaccineRegistryDateFilter({
@@ -21,6 +22,7 @@ export default function VaccineRegistryDateFilter({
   toKey,
   filters,
   setFilters,
+  resetTrigger
 }: Props) {
   const [fromDate, setFromDate] = useState<string>(
     (filters[fromKey] as string) ?? ""
@@ -89,6 +91,12 @@ export default function VaccineRegistryDateFilter({
     }
   }, [debouncedFrom, debouncedTo, fromKey, toKey, setFilters]);
 
+  useEffect(() => {
+    setFromDate((filters[fromKey] as string) ?? "");
+    setToDate((filters[toKey] as string) ?? "");
+    prevDebounced.current = { from: "", to: "" };
+  }, [resetTrigger]);
+  
   const isInvalidRange = fromDate && toDate && toDate < fromDate;
   const errorMessage = isInvalidRange
     ? "La fecha hasta no puede ser menor que la fecha desde."

@@ -36,6 +36,11 @@ export default function DateFilter({
     // eslint-disable-next-line
   }, [debouncedEndDate]);
 
+  useEffect(()=>{
+    setStartDate(from?? "")
+    setEndDate(to?? "")
+  },[to, from])
+
   const isEndDateBeforeStart = from && to && to < from;
   const toDateError = isEndDateBeforeStart
     ? t("error.errorDate")

@@ -28,11 +28,13 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
   const t = useTranslations();
 
   const [products, setProducts] = useState<ProductWithAmount[]>([]);
+  const [resetCounter, setResetCounter] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
+  const [isFiltering, setIsFiltering] = useState(false);
   const [filters, setFilters] = useState({
     searchTerm: "",
     category: "",
@@ -112,6 +114,30 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
     router.push(`/dashboard/products/${productId}`);
   };
 
+  const hasActiveFilters = !!(
+    filters.category ||
+    filters.maxPrice ||
+    filters.maxCost ||
+    filters.minCost ||
+    filters.minPrice ||
+    filters.searchTerm
+  );
+
+  const resetFilters = () => {
+    setIsFiltering(true)
+    setFilters({
+      searchTerm: "",
+      category: "",
+      minPrice: "",
+      maxPrice: "",
+      minCost: "",
+      maxCost: "",
+    })
+    setSelectedTags([]); 
+    setResetCounter((prev) => prev + 1);
+    setIsFiltering(false)
+  }
+
   return (
     <div className=" mx-auto p-4">
       <div className="mb-3">
@@ -137,6 +163,19 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
           </div>
         )}
       </div>
+      {hasActiveFilters && (
+        <div className="flex justify-end">
+          <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => resetFilters()}
+          className="text-sm h-8 px-2 text-gray-600 mr-[10px]"
+          disabled={isFiltering}
+          >
+          Limpiar filtros
+          </Button>
+        </div>
+      )}
       <ProductFilters
         filters={filters}
         setFilters={setFilters}
@@ -145,6 +184,7 @@ export default function DepositDetails({ token, stockId }: DepositDetailsProps) 
         selectedTags={selectedTags}
         onTagsChange={setSelectedTags}
         token={token}
+        resetCounter={resetCounter}
       />
       <div className="flex justify-between items-center mb-6 mt-6">
         <h1 className="text-2xl font-bold">{t("stock.details.stockProducts")}</h1>
