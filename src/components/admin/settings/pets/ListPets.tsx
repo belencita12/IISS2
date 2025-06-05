@@ -3,8 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Eye, FileText, Pencil, Trash } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Eye,  Pencil, Trash } from "lucide-react";
 import { usePaginatedFetch } from "@/hooks/api";
 import { PET_API } from "@/lib/urls";
 import { ListPetData } from "@/lib/pets/IPet";
@@ -21,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { getPetReport } from "@/lib/pets/getPetReport";
 import ExportButton from "@/components/global/ExportButton";
 import { downloadFromBlob } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 interface ListPetsProps {
   token: string;
@@ -28,6 +28,7 @@ interface ListPetsProps {
 
 export default function ListPets({ token }: ListPetsProps) {
   const router = useRouter();
+  const t = useTranslations();
   const [searchQuery, setSearchQuery] = useState("");
   const [clientSearchQuery, setClientSearchQuery] = useState("");
   const [selectedSpeciesId, setSelectedSpeciesId] = useState<number | null>(
@@ -54,8 +55,8 @@ export default function ListPets({ token }: ListPetsProps) {
   });
 
   useEffect(() => {
-    if (error) {
-      toast("error", `Error al cargar las mascotas: ${error.message}`);
+    if (error instanceof Error) {
+      toast("error", error.message);
     }
   }, [error]);
 
@@ -85,7 +86,7 @@ export default function ListPets({ token }: ListPetsProps) {
 
   const handleGetPetReport = async () => {
     if (!from || !to) {
-      toast("error", "Se necesitan fechas limites para generar el reporte");
+      toast("error", t("error.errorLimitDate"));
     } else {
       setIsGettingReport(true);
       const result = await getPetReport({
@@ -104,7 +105,7 @@ export default function ListPets({ token }: ListPetsProps) {
     if (!petToDelete) return;
     try {
       await deletePet(token, petToDelete.id);
-      toast("success", "Mascota eliminada correctamente");
+      toast("success", t("success.successDeletePet"));
       setIsDeleteModalOpen(false);
       setPetToDelete(null);
       search({
@@ -115,8 +116,9 @@ export default function ListPets({ token }: ListPetsProps) {
         ...(selectedSpeciesId ? { speciesId: selectedSpeciesId } : {}),
         ...(selectedRaceId ? { raceId: selectedRaceId } : {}),
       });
-    } catch (error) {
-      toast("error", "Ocurrió un error al eliminar la mascota");
+    } catch (error: unknown) {
+      if (error instanceof Error)
+      toast("error", error.message);
       setIsDeleteModalOpen(false);
     }
   };
@@ -177,10 +179,10 @@ export default function ListPets({ token }: ListPetsProps) {
   const actions: TableAction<ListPetData>[] = [
     {
       icon: <Eye size={18} />,
-      label: "Ver detalle",
+      label: t("button.seeDetails"),
       onClick: (pet) => {
         if (!pet.owner?.id || !pet.id) {
-          toast("error", "No se puede acceder al detalle de esta mascota.");
+          toast("error", t("error.notAccessDetails"));
           return;
         }
         router.push(`/dashboard/clients/${pet.owner.id}/pet/${pet.id}`);
@@ -188,10 +190,10 @@ export default function ListPets({ token }: ListPetsProps) {
     },
     {
       icon: <Pencil size={18} />,
-      label: "Editar",
+      label: t("button.edit"),
       onClick: (pet) => {
         if (!pet.owner?.id || !pet.id) {
-          toast("error", "No se puede editar esta mascota.");
+          toast("error", t("error.errorUpdatePet"));
           return;
         }
         router.push(`/dashboard/clients/${pet.owner.id}/pet/${pet.id}/edit`);
@@ -199,7 +201,7 @@ export default function ListPets({ token }: ListPetsProps) {
     },
     {
       icon: <Trash size={18} />,
-      label: "Eliminar",
+      label: t("button.delete"),
       onClick: (pet) => {
         setPetToDelete(pet);
         setIsDeleteModalOpen(true);
@@ -223,10 +225,10 @@ export default function ListPets({ token }: ListPetsProps) {
       className: "w-12",
     },
 
-    { header: "Nombre", accessor: "name" },
-    { header: "Cliente", accessor: (pet) => pet.owner?.name || "No asignado" },
-    { header: "Especie", accessor: (pet) => pet.species.name },
-    { header: "Raza", accessor: (pet) => pet.race.name },
+    { header: t("pet.details.name"), accessor: "name" },
+    { header: t("pet.details.owner"), accessor: (pet) => pet.owner?.name },
+    { header: t("pet.details.specie"), accessor: (pet) => pet.species.name },
+    { header: t("pet.details.race"), accessor: (pet) => pet.race.name },
   ];
 
   return (
@@ -247,7 +249,7 @@ export default function ListPets({ token }: ListPetsProps) {
         setDateFrom={handleSetFromDate}
       />
       <div className="flex justify-between mr-5">
-        <h1 className="text-2xl font-bold">Lista de Mascotas</h1>
+        <h1 className="text-2xl font-bold">{t("pet.title")}</h1>
         <div className="flex gap-2">
           <Button
             variant="outline"
@@ -255,7 +257,7 @@ export default function ListPets({ token }: ListPetsProps) {
             className="disabled:opacity-75"
             onClick={() => router.push("/dashboard/settings/pets/register")}
           >
-            Registrar Mascota
+            {t("button.register")}
           </Button>
           <ExportButton
             handleGetReport={handleGetPetReport}
@@ -270,7 +272,7 @@ export default function ListPets({ token }: ListPetsProps) {
         pagination={pagination}
         onPageChange={setPage}
         isLoading={isLoading}
-        emptyMessage="No hay mascotas registradas"
+        emptyMessage={t("pet.table.emptyMessage")}
         skeleton={<PetsTableSkeleton />}
         className="w-full"
       />
@@ -278,10 +280,10 @@ export default function ListPets({ token }: ListPetsProps) {
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
-        title="Eliminar Mascota"
-        message={`¿Seguro que quieres eliminar a ${petToDelete?.name}?`}
-        confirmText="Eliminar"
-        cancelText="Cancelar"
+        title={t("confirmationModal.pet.titleDelete")}
+        message={t("confirmationModal.pet.messageDelete", {pet: petToDelete?.name ?? ""})}
+        confirmText={t("button.delete")}
+        cancelText={t("button.cancel")}
         variant="danger"
       />
     </div>

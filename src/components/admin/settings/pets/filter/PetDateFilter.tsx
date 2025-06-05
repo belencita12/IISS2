@@ -2,6 +2,7 @@
 
 import { Label } from "@/components/ui/label";
 import clsx from "clsx";
+import { useTranslations } from "next-intl";
 
 interface Props {
   to: string | undefined;
@@ -16,14 +17,15 @@ export default function PetDateFilter({
   setDateFrom,
   setDateTo,
 }: Props) {
+  const t = useTranslations();
   const isEndDateBeforeStart = from && to && to < from;
   const toDateError = isEndDateBeforeStart
-    ? "La fecha hasta no puede ser menor que la fecha desde."
+    ? t("error.errorDate")
     : null;
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div className="space-y-2">
-        <Label htmlFor="from">Fecha desde</Label>
+        <Label htmlFor="from">{t("filters.date.from")}</Label>
         <input
           id="from"
           type="date"
@@ -50,7 +52,7 @@ export default function PetDateFilter({
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="to">Fecha hasta</Label>
+        <Label htmlFor="to">{t("filters.date.to")}</Label>
         <input
           id="to"
           type="date"

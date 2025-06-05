@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { useGetSpecies } from "@/hooks/species/useGetSpecies";
+import { useTranslations } from "next-intl";
 
 interface SpeciesFilterProps {
   token: string;
@@ -27,6 +28,8 @@ export function SpeciesFilter({
     token,
   });
 
+  const t = useTranslations();
+
   const handleChange = (value: string) => {
     onSelectSpecies(value === "ALL" ? null : Number(value));
   };
@@ -35,7 +38,7 @@ export function SpeciesFilter({
 
   return (
     <div className="w-full text-sm space-y-1">
-      <Label>Especie</Label>
+      <Label>{t("filters.pet.specie")}</Label>
       <Select
         value={
           selectedSpeciesId !== null && selectedSpeciesId !== undefined
@@ -46,10 +49,10 @@ export function SpeciesFilter({
         disabled={isLoading}
       >
         <SelectTrigger>
-          <SelectValue placeholder="Todas" />
+          <SelectValue placeholder={t("placeholder.select")} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="ALL">Todas</SelectItem>
+          <SelectItem value="ALL">{t("filters.all")}</SelectItem>
           {speciesList.map((s) => (
             <SelectItem key={s.id} value={s.id.toString()}>
               {s.name}

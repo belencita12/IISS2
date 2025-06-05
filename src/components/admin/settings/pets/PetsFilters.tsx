@@ -5,6 +5,7 @@ import SearchBar from "@/components/global/SearchBar";
 import { SpeciesFilter } from "./filter/SpeciesFilter";
 import { RaceFilter } from "./filter/RaceFilter";
 import PetDateFilter from "./filter/PetDateFilter";
+import { useTranslations } from "next-intl";
 
 interface PetFiltersProps {
   token: string;
@@ -37,13 +38,15 @@ export function PetFilters({
   selectedSpeciesId = null,
   selectedRaceId = null,
 }: PetFiltersProps) {
+
+  const t = useTranslations();
   return (
     <div>
       <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-2 md:space-y-0 mt-4">
         <div className="w-full md:w-1/2">
           <SearchBar
             onSearch={onPetSearch}
-            placeholder="Buscar por nombre de la mascota..."
+            placeholder={t("search.searchByPetName")}
             debounceDelay={500}
             defaultQuery={petSearchQuery}
           />
@@ -52,7 +55,7 @@ export function PetFilters({
         <div className="w-full md:w-1/2">
           <SearchBar
             onSearch={onClientSearch}
-            placeholder="Buscar por nombre del cliente..."
+            placeholder={t("search.searchByOwnerName")}
             debounceDelay={500}
             defaultQuery={clientSearchQuery}
           />

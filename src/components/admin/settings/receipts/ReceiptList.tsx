@@ -10,6 +10,7 @@ import { useGetReceipts } from "@/hooks/receipts/useGetReceipts";
 import ReceiptFilters from "./filter/ReceiptFilters";
 import GenericPagination from "@/components/global/GenericPagination";
 import { formatDate } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 type ReceiptListProps = {
   token: string;
@@ -17,6 +18,8 @@ type ReceiptListProps = {
 
 export default function ReceiptList({ token }: ReceiptListProps) {
   const { data, isLoading, query, setQuery } = useGetReceipts({ token });
+
+  const t = useTranslations();
 
   const handleChange = (
     field: keyof typeof query,
@@ -36,20 +39,20 @@ export default function ReceiptList({ token }: ReceiptListProps) {
 
   const columns: Column<IReceipt>[] = [
     {
-      header: "Número de recibo",
+      header: t("receipts.table.receiptNumber"),
       accessor: (row: IReceipt): string => row.receiptNumber,
     },
     {
-      header: "Total",
+      header: t("receipts.table.total"),
       accessor: (row: IReceipt): string => 
         row.total.toLocaleString("es-PY", { style: "currency", currency: "PYG" }),
     },
     {
-      header: "Fecha de emisión",
+      header: t("receipts.table.issueDate"),
       accessor: (row: IReceipt): string => formatDate(row.issueDate),
     },
     {
-      header: "Métodos de pagos",
+      header: t("receipts.table.paymentMethods"),
       accessor: (row: IReceipt): string =>
         row.paymentMethods
           .map(
@@ -62,7 +65,7 @@ export default function ReceiptList({ token }: ReceiptListProps) {
           .join(", "),
     },
     {
-      header: "Acciones",
+      header: t("receipts.table.actions"),
       accessor: (row: IReceipt): ReactNode => (
         <button
           onClick={() => (window.location.href = `./receipts/${row.id}`)}
@@ -89,10 +92,10 @@ export default function ReceiptList({ token }: ReceiptListProps) {
           />
         </div>
       </div>
-      <h2 className="text-3xl font-bold mb-4 pt-4">Recibos</h2>
+      <h2 className="text-3xl font-bold mb-4 pt-4">{t("receipts.table.title")}</h2>
       {isLoading && <ReceiptListSkeleton />}
       {!isLoading && data?.data && data.data.length === 0 && (
-        <p className="text-center p-4">No se encontraron recibos</p>
+        <p className="text-center p-4">{t("error.notFound")}</p>
       )}
       {data?.data && data.data.length > 0 && (
         <GenericTable

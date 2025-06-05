@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { useGetRaces } from "@/hooks/races/useGetRaces";
+import { useTranslations } from "next-intl";
 
 interface RaceFilterProps {
   token: string;
@@ -34,6 +35,8 @@ export function RaceFilter({
     condition: true,
   });
 
+  const t = useTranslations();
+
   useEffect(() => {
     setQuery((prev) => ({
       ...prev,
@@ -50,7 +53,7 @@ export function RaceFilter({
 
   return (
     <div className="w-full text-sm space-y-1">
-      <Label>Raza</Label>
+      <Label>{t("filters.pet.race")}</Label>
       <Select
         value={
           selectedRaceId !== null && selectedRaceId !== undefined
@@ -63,13 +66,13 @@ export function RaceFilter({
         <SelectTrigger>
           <SelectValue
             placeholder={
-              selectedSpeciesId ? "Todas" : "Seleccione una especie primero"
+              selectedSpeciesId ? t("filters.all") : t("placeholder.selectSpecieFirst")
             }
           />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="ALL">
-            {selectedSpeciesId ? "Todas" : "Seleccione una especie primero"}
+            {selectedSpeciesId ? t("filters.all")  : t("placeholder.selectSpecieFirst")}
           </SelectItem>
           {races.map((race) => (
             <SelectItem key={race.id} value={race.id.toString()}>

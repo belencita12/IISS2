@@ -1,20 +1,20 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { ServiceType } from "@/lib/service-types/types";
+import { useTranslations } from "next-intl";
 
 interface ServiceTypeDetailProps {
   data: ServiceType;
 }
 
 export default function ServiceTypeDetail({data }: ServiceTypeDetailProps) {
-  const router = useRouter();
+
+  const t = useTranslations();
 
   if (!data)
-    return <div className="text-center mt-8">Tipo de servicio no encontrado</div>;
+    return <div className="text-center mt-8">{t("error.notFound")}</div>;
 
   // URL por defecto si no hay imagen
   const defaultImageSrc = "/NotImageNicoPets.png";
@@ -37,7 +37,7 @@ export default function ServiceTypeDetail({data }: ServiceTypeDetailProps) {
   return (
     <div className="max-w-5xl mx-auto p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">Detalle de Tipos de Servicios</h1>
+        <h1 className="text-2xl font-bold">{t("serviceTypes.details.title")}</h1>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
@@ -61,51 +61,51 @@ export default function ServiceTypeDetail({data }: ServiceTypeDetailProps) {
         <div className="md:col-span-8 flex flex-col space-y-4 pl-6">
           <div>
             <h1 className="text-3xl font-bold">{capitalizeFirstLetter(data.name)}</h1>
-            <p className="text-muted-foreground mt-1">Slug: {data.slug}</p>
+            <p className="text-muted-foreground mt-1">{t("serviceTypes.details.slug", {slug : data.slug})}</p>
           </div>
 
           <div className="space-y-4">
             <div>
-              <h3 className="text-lg font-semibold">Descripción</h3>
+              <h3 className="text-lg font-semibold">{t("serviceTypes.details.description")}</h3>
               <p className="text-muted-foreground">{data.description}</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <h3 className="text-lg font-semibold">Duración</h3>
-                <p className="text-muted-foreground">{data.duration} minutos</p>
+                <h3 className="text-lg font-semibold">{t("serviceTypes.details.duration")}</h3>
+                <p className="text-muted-foreground">{t("serviceTypes.details.durationMin", {duration: data.duration})}</p>
               </div>
               
               <div>
-                <h3 className="text-lg font-semibold">Precio</h3>
+                <h3 className="text-lg font-semibold">{t("serviceTypes.details.price")}</h3>
                 <p className="text-muted-foreground">{formatCurrency(data.price)}</p>
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold">Costo</h3>
+                <h3 className="text-lg font-semibold">{t("serviceTypes.details.cost")}</h3>
                 <p className="text-muted-foreground">{formatCurrency(data.cost)}</p>
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold">IVA</h3>
-                <p className="text-muted-foreground">{data.iva}%</p>
+                <h3 className="text-lg font-semibold">{t("serviceTypes.details.iva")}</h3>
+                <p className="text-muted-foreground">{t("serviceTypes.details.ivaPercentage", {iva : data.iva})}</p>
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold">Máximo de Colaboradores</h3>
+                <h3 className="text-lg font-semibold">{t("serviceTypes.details.colabs")}</h3>
                 <p className="text-muted-foreground">{data.maxColabs}</p>
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold">Estado</h3>
+                <h3 className="text-lg font-semibold">{t("serviceTypes.details.status")}</h3>
                 <Badge variant={data.isPublic ? "default" : "secondary"}>
-                  {data.isPublic ? "Público" : "Privado"}
+                  {data.isPublic ? t("serviceTypes.status.public") : t("serviceTypes.status.private")}
                 </Badge>
               </div>
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold">Etiquetas</h3>
+              <h3 className="text-lg font-semibold">{t("serviceTypes.details.tags")}</h3>
               <div className="flex flex-wrap gap-2 mt-2">
                 {data.tags && data.tags.length > 0 ? (
                   data.tags.map((tag) => (
@@ -114,7 +114,7 @@ export default function ServiceTypeDetail({data }: ServiceTypeDetailProps) {
                     </Badge>
                   ))
                 ) : (
-                  <p className="text-muted-foreground">No hay etiquetas</p>
+                  <p className="text-muted-foreground">{t("error.notFound")}</p>
                 )}
               </div>
             </div>

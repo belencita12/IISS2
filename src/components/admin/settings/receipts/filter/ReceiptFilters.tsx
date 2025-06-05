@@ -7,6 +7,7 @@ import useDebounce from "@/hooks/useDebounce";
 import { useEffect, useState } from "react";
 import SearchBar from "@/components/global/SearchBar";
 import clsx from "clsx";
+import { useTranslations } from "next-intl";
 
 interface Props {
   filters: ReceiptFiltersParams;
@@ -14,6 +15,8 @@ interface Props {
 }
 
 export default function ReceiptFilters({ filters, setFilters }: Props) {
+
+  const t = useTranslations();
   const [min, setMin] = useState(filters.fromTotal?.toString() ?? "");
   const [max, setMax] = useState(filters.toTotal?.toString() ?? "");
   const [receipt, setReceipt] = useState(filters.receiptNumber?.toString() ?? "");
@@ -33,7 +36,7 @@ export default function ReceiptFilters({ filters, setFilters }: Props) {
     maxNumber < minNumber;
 
   const maxAmountError = isMaxLessThanMin
-    ? "El monto máximo no puede ser menor al monto mínimo."
+    ? t("filters.priceRange.errorNumericMin")
     : null;
 
   useEffect(() => {
@@ -57,7 +60,7 @@ export default function ReceiptFilters({ filters, setFilters }: Props) {
       <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4">
         <div className="space-y-2">
           <SearchBar
-            placeholder="Buscar cliente por nombre o RUC"
+            placeholder={t("search.searchByNameOrRuc")}
             defaultQuery={filters.searchTerm ?? ""}
             onSearch={(value) => setSearchTerm(value)}
             debounceDelay={300}
@@ -69,7 +72,7 @@ export default function ReceiptFilters({ filters, setFilters }: Props) {
             id="receiptNumber"
             type="formattedNumber"
             value={receipt}
-            placeholder="Buscar por Nro. de Recibo"
+            placeholder={t("search.searchByReceiptNumber")}
             onChange={(e) => setReceipt(e.target.value)}
             className="w-full border px-3 py-2 rounded"
           />
@@ -78,12 +81,12 @@ export default function ReceiptFilters({ filters, setFilters }: Props) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="fromTotal">Monto mínimo</Label>
+          <Label htmlFor="fromTotal">{t("filters.priceRange.minAmount")}</Label>
           <NumericInput
             id="fromTotal"
             type="formattedNumber"
             value={min}
-            placeholder="Ej. 10.000"
+            placeholder={t("placeholder.minAmount")}
             onChange={(e) => setMin(e.target.value)}
             className={clsx(
               "w-full border px-3 py-2 rounded",
@@ -93,12 +96,12 @@ export default function ReceiptFilters({ filters, setFilters }: Props) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="toTotal">Monto máximo</Label>
+          <Label htmlFor="toTotal">{t("filters.priceRange.maxAmount")}</Label>
           <NumericInput
             id="toTotal"
             type="formattedNumber"
             value={max}
-            placeholder="Ej. 50.000"
+            placeholder={t("placeholder.maxAmount")}
             onChange={(e) => setMax(e.target.value)}
             className={clsx(
               "w-full border px-3 py-2 rounded",

@@ -10,6 +10,7 @@ import CustomerSearch from "@/components/admin/sales/CustomerSearch";
 import { blockExtraKeysNumber } from "@/lib/utils";
 import { usePetRegisterForm } from "@/hooks/pets/usePetForm";
 import { ClientData } from "@/lib/admin/client/IClient";
+import { useTranslations } from "next-intl";
 
 interface AdminPetFormProps {
   token: string;
@@ -37,19 +38,21 @@ null
     watch,
   } = usePetRegisterForm(token);
 
+  const t = useTranslations();
+
   return (
     <div className="max-w-5xl mx-auto p-8">
       <div className="flex flex-col md:flex-row gap-16">
         <div className="flex flex-col items-center space-y-4 w-80">
           <h1 className="text-3xl font-bold self-start">
-            Registro de Mascota (Admin)
+            {t("pet.form.titleAdmin")}
           </h1>
           <p className="text-gray-600">
-            Ingresa los datos de la mascota
+            {t("pet.form.description")}
           </p>
           <div className="w-full flex flex-col items-center">
             <h3 className="text-sm font-semibold mb-2 text-gray-700">
-              Imagen (Opcional)
+              {t("pet.form.imageOpcional")}
             </h3>
             <FormImgUploader
               prevClassName="rounded"
@@ -69,7 +72,7 @@ null
             className="space-y-4"
           >
             <div className="space-y-1">
-              <h5 className="text-sm font-medium">Cliente</h5>
+              <h5 className="text-sm font-medium">{t("pet.form.client")}</h5>
               <CustomerSearch
                 token={token}
                 onSelectCustomer={(customer) => {
@@ -109,14 +112,14 @@ null
             <FormInput
               register={register("name")}
               error={errors.name?.message}
-              label="Nombre"
-              placeholder="Luna"
+              label={t("pet.form.name")}
+              placeholder={t("placeholder.name")}
               name="name"
             />
             <FormInput
               register={register("dateOfBirth")}
               error={errors.dateOfBirth?.message}
-              label="Fecha de nacimiento"
+              label={t("pet.form.born")}
               type="date"
               name="dateOfBirth"
               max={new Date().toISOString().split("T")[0]}
@@ -124,7 +127,7 @@ null
             <div className="flex gap-4">
               <div className="w-1/2">
                 <FormSelect
-                  label="Especie"
+                  label={t("pet.form.specie")}
                   name="speciesId"
                   disabled={isGettingSpecies}
                   onChange={handleSpeciesChange}
@@ -132,8 +135,8 @@ null
                   error={errors.speciesId?.message}
                   placeholder={
                     isGettingSpecies
-                      ? "Cargando Especies..."
-                      : "Seleccionar Especie"
+                      ? t("button.loading")
+                      : t("placeholder.select")
                   }
                   options={species?.data.map((s) => ({
                     value: s.id.toString(),
@@ -143,7 +146,7 @@ null
               </div>
               <div className="w-1/2">
                 <FormSelect
-                  label="Raza"
+                  label={t("pet.form.race")}
                   name="raceId"
                   disabled={isGettingRaces || !selectedSpeciesId}
                   register={register("raceId")}
@@ -151,10 +154,10 @@ null
                   error={errors.raceId?.message}
                   placeholder={
                     !selectedSpeciesId
-                      ? "Selecciona una especie"
+                      ? t("placeholder.selectSpecieFirst")
                       : isGettingRaces
-                      ? "Cargando Razas..."
-                      : "Seleccionar Raza"
+                      ? t("button.loading")
+                      : t("placeholder.select")
                   }
                   options={races?.data.map((r) => ({
                     value: r.id.toString(),
@@ -171,7 +174,7 @@ null
               onKeyDown={blockExtraKeysNumber}
               register={register("weight")}
               error={errors.weight?.message}
-              label="Peso (kg)"
+              label={t("pet.form.weight")}
               name="weight"
             />
             <PetSexSelector
@@ -181,10 +184,10 @@ null
             />
             <div className="flex justify-start gap-4 mt-16">
               <Button type="button" variant="outline" disabled={isSubmitting}>
-                <Link href="/dashboard/settings/pets">Cancelar</Link>
+                <Link href="/dashboard/settings/pets">{t("button.cancel")}</Link>
               </Button>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Registrando..." : "Registrar Mascota"}
+                {isSubmitting ? t("button.registering") : t("button.register")}
               </Button>
             </div>
           </form>

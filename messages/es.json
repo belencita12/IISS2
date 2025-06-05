@@ -658,6 +658,7 @@
     "noSelectProduct": "No se seleccionó producto",
     "noPrint": "No se pudo abrir la ventana de impresión.",
     "errorPrintInvoice": "No se pudo imprimir la factura",
+    "errorPrintReceipt": "No se pudo imprimir el recibo",
     "selectStock": "Debe seleccionar un depósito",
     "selectCustomer": "Debe seleccionar un cliente",
     "selectProduct": "Debe seleccionar al menos un producto",
@@ -676,7 +677,9 @@
     "errorLoadTags": "Error al cargar las etiquetas",
     "errorRestoreTag": "Ocurrió un error al intentar restaurar la etiqueta",
     "errorDeleteTag": "Ocurrió un error al intentar eliminar la etiqueta",
-    "errorSaveTag": "Ocurrió un error al agregar la etiqueta"
+    "errorSaveTag": "Ocurrió un error al agregar la etiqueta",
+    "notAccessDetails": "No se puede acceder al detalle"
+    
     
   },
   "profileTabs": {
@@ -778,6 +781,7 @@
   },
 
   "pet": {
+    "title": "Mascotas",
     "form": {
       "title": "Registro de Mascota",
       "description": "Ingrese los datos de la mascota",
@@ -790,7 +794,10 @@
       "female": "Hembra",
       "male": "Macho",
       "image": "Imagen de tu mascota",
-      "optional": "Opcional"
+      "optional": "Opcional",
+      "titleAdmin": "Registro de Mascota (Admin)",
+      "imageOpcional": "Imagen (Opcional)",
+      "client": "Cliente"
     },
     "details": {
       "name": "Nombre",
@@ -801,13 +808,15 @@
       "sex": "Género",
       "female": "Hembra",
       "male": "Macho",
-      "vaccineControl": "Control de vacunas"
+      "vaccineControl": "Control de vacunas",
+      "owner":"Dueño"
     },
     "myPets": "Mis mascotas",
     "addPet": "Comienza agregando una nueva mascota",
     "table": {
       "emptyMessage": "No hay mascotas registradas"
     }
+
   },
   "paymentMethods":{
     "title": "Métodos de Pago",
@@ -841,7 +850,7 @@
   },
   
   "success": {
-    "successRegisterPet": "Mascota registrada con éxito",
+    "successRegisterPet": "Mascota registrada correctamente",
     "successUpdatePet": "Mascota actualizada correctamente",
     "successRegisterAppointment": "Cita agendada con éxito",
     "successDeleteClient": "{client} fue eliminado correctamente",
@@ -880,7 +889,8 @@
     "successUpdateTag": "Etiqueta actualizada con éxito",
     "successDeleteService": "Servicio eliminado correctamente",
     "successRegisterService": "Servicio agregado correctamente",
-    "successUpdateService": "Servicio actualizado con éxito"
+    "successUpdateService": "Servicio actualizado con éxito",
+    "successDeletePet": "Mascota eliminada correctamente"
   },
   "vaccine": {
     "table": {
@@ -934,7 +944,10 @@
     "searchByEmployeeRuc": "Buscar por RUC del encargado...",
     "searchByProductName": "Buscar por nombre del producto...",
     "searchByNameOrRucEmployee": "Buscar por nombre o RUC del empleado...",
-    "searchByNameOrRucProvider": "Buscar por razón social o RUC del proveedor..."
+    "searchByNameOrRucProvider": "Buscar por razón social o RUC del proveedor...",
+    "searchByPetName": "Buscar por nombre de la mascota...",
+    "searchByOwnerName": "Buscar por nombre del dueño...",
+    "searchByReceiptNumber": "Buscar por Nro de recibo..."
   },
   "productCatalog": {
     "selectedTags": "Etiquetas seleccionadas:",
@@ -1210,6 +1223,8 @@
       "product": "Producto"
     },
     "priceRange": {
+      "minAmount": "Monto mínimo",
+      "maxAmount": "Monto máximo",
       "from": "Desde",
       "to":"Hasta",
       "errorNumericMin": "No puede ser menor al mínimo"
@@ -1217,9 +1232,18 @@
     "total": {
       "minTotal": "Total mínimo",
       "maxTotal": "Total máximo"
+    },
+    "pet":{
+      "specie": "Especie",
+      "race": "Raza"
     }
   },
+
   "confirmationModal":{
+    "pet":{
+      "titleDelete": "Eliminar mascota",
+      "messageDelete": "¿Estás seguro de que deseas eliminar la mascota {pet}?"
+    },
     "serviceTypes":{
       "titleDelete": "Eliminar servicio",
       "messageDelete":"¿Estás seguro de que deseas eliminar el servicio {service}?"
@@ -1424,6 +1448,49 @@
       "colabs": "Número máximo de colaboradores (Opcional)",
       "isPublic": "Público",
       "tags": "Etiqueta/s"
+    },
+    "details": {
+      "title": "Detalle de Servicio",
+      "description": "Descripción",
+      "slug": "Identificador: {slug}",
+      "duration": "Duración",
+      "durationMin": "{duration} minutos",
+      "cost": "Costo",
+      "price": "Precio",
+      "colabs": "Número de colaboradores",
+      "iva": "IVA",
+      "ivaPercentage":"{iva} %",
+      "status": "Estado",
+      "tags": "Etiqueta/s"
+    },
+    "status": {
+      "public": "Público",
+      "private": "Privado"
+    }
+  },
+  "receipts":{
+    "table":{
+      "receiptNumber": "Número de recibo",
+      "total": "Total",
+      "issueDate": "Fecha de emisión",
+      "paymentMethods": "Métodos de pago",
+      "actions": "Acciones",
+      "title": "Recibos"
+    },
+    "details":{
+      "title": "Detalle de Recibo",
+      "receiptNumber": "Número de recibo",
+      "information": "Información del recibo",
+      "issueDate": "Fecha de emisión",
+      "paymentMethods": "Métodos de pago",
+      "invoiceData": "Datos de la factura",
+      "invoiceNumber": "Número de factura",
+      "ruc": "RUC",
+      "client":"Cliente",
+      "invoiceType": "Tipo de factura",
+      "total": "Total",
+      "iva": "IVA",
+      "type": "Tipo"
     }
   },
 
