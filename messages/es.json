@@ -542,6 +542,7 @@
     }
   },
   "button": {
+    "payInvoice": "Pagar Factura",
     "addSchedule": "Agregar horario",
     "seeActive": "Ver activos",
     "seeDeleted": "Ver eliminados",
@@ -1103,7 +1104,8 @@
       "stock": "Depósito",
       "date": "Fecha",
       "selectedProducts":"Productos seleccionados",
-      "titleEditQuantity": "Actualizar cantidad"
+      "titleEditQuantity": "Actualizar cantidad",
+      "selectAProvider": "Selecciona un proveedor para buscar productos"
     }
   },
 
@@ -1185,6 +1187,11 @@
   },
 
   "filters": {
+    "receipts":{
+      "receiptNumber": "El número de recibo debe ser mayor a 0.",
+      "minAmount": "El monto mínimo debe ser mayor a 0.",
+      "maxAmount": "El monto máximo debe ser mayor a 0."
+    },
     "clearFilters": "Limpiar filtros",
     "title": "Filtros",
     "type": "Tipo",
