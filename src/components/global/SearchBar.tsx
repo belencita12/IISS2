@@ -10,6 +10,7 @@ interface SearchBarProps {
   placeholder?: string;
   debounceDelay?: number;
   defaultQuery?: string;
+  resetTrigger?: number;
 }
 
 export default function SearchBar({
@@ -17,6 +18,7 @@ export default function SearchBar({
   placeholder = "Buscar...",
   debounceDelay = 500,
   defaultQuery = "",
+  resetTrigger = 0,
 }: SearchBarProps) {
   const [query, setQuery] = useState(defaultQuery);
   const debouncedQuery = useDebounce(query, debounceDelay);
@@ -28,6 +30,10 @@ export default function SearchBar({
       onSearch(debouncedQuery);
     }
   }, [debouncedQuery, onSearch]);
+
+  useEffect(() => {
+    setQuery("");
+  }, [resetTrigger]);
 
   const clearSearch = () => {
     setQuery("");

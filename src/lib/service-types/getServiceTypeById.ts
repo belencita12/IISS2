@@ -1,11 +1,15 @@
 import { ServiceType } from "./types";
 import { SERVICE_TYPE } from "@/lib/urls";
 
-export async function getServiceTypeById(id: string, token: string): Promise<ServiceType> {
+export async function getServiceTypeById(id: string, token?: string): Promise<ServiceType> {
+  const headers: HeadersInit = {};
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
   const response = await fetch(`${SERVICE_TYPE}/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers,
   });
 
   if (!response.ok) {
@@ -13,9 +17,6 @@ export async function getServiceTypeById(id: string, token: string): Promise<Ser
   }
 
   const data = await response.json();
-  console.log('Datos del servicio:', data); // Para ver la estructura exacta
-
-  // Mapear los campos según la estructura de la API
   return {
     id: data.id,
     slug: data.slug,
@@ -30,4 +31,4 @@ export async function getServiceTypeById(id: string, token: string): Promise<Ser
     imageUrl: data.img?.originalUrl || "",
     tags: data.tags || [],
   };
-} 
+}

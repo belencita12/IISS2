@@ -178,7 +178,7 @@ export default async function Page({
                     {employee ? (
                         <AppointmentList
                             token={token}
-                            employeeRuc={employee.ruc}
+                            searchEmployee={employee.ruc}
                         />
                     ) : (
                         <div>Cargando.....</div>

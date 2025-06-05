@@ -1,40 +1,64 @@
 "use client";
 
+import { useState } from "react";
 import { ReactNode } from "react";
 import { IReceipt } from "@/lib/receipts/IReceipt";
 import GenericTable, { Column } from "@/components/global/GenericTable";
 import { Eye } from "lucide-react";
 import ReceiptListSkeleton from "./skeleton/ReceiptListSkeleton";
 import DateFilter from "../../purchases/filters/PurchaseDateFilter";
-import { useGetReceipts } from "@/hooks/receipts/useGetReceipts";
 import ReceiptFilters from "./filter/ReceiptFilters";
-import GenericPagination from "@/components/global/GenericPagination";
 import { formatDate } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 
+import { ReceiptFiltersParams } from "@/lib/receipts/IReceipt";
+import { RECEIPT_API } from "@/lib/urls";
+import { usePaginatedFetch } from "@/hooks/api/usePaginatedFetch";
 type ReceiptListProps = {
   token: string;
 };
 
 export default function ReceiptList({ token }: ReceiptListProps) {
-  const { data, isLoading, query, setQuery } = useGetReceipts({ token });
+  const [filters, setFilters] = useState<ReceiptFiltersParams>({
+    page: 1,
+    size: 7,
+    fromIssueDate: undefined,
+    toIssueDate: undefined,
+  });
 
-  const t = useTranslations();
+  const {
+    data,
+    loading: isLoading,
+    pagination = {
+      currentPage: 1,
+      totalPages: 1,
+      totalItems: 0,
+      pageSize: 7,
+    },
+    setPage,
+    search,
+  } = usePaginatedFetch<IReceipt>(RECEIPT_API, token, {
+    initialPage: 1,
+    size: 7,
+    autoFetch: true,
+    extraParams: {
+      fromIssueDate: filters.fromIssueDate,
+      toIssueDate: filters.toIssueDate,
+      searchTerm: filters.searchTerm,
+      fromTotal: filters.fromTotal,
+      toTotal: filters.toTotal,
+    },
+  });
+    const t = useTranslations();
 
-  const handleChange = (
-    field: keyof typeof query,
-    value: string | number | undefined
-  ) => {
-    setQuery((prev) => ({
+  const handleFilterChange = (updatedFilters: ReceiptFiltersParams) => {
+    const { page, size, ...safeFilters } = updatedFilters;
+    setFilters((prev) => ({
       ...prev,
-      [field]: value === "" || value === undefined ? undefined : value,
+      ...safeFilters,
+      page: 1,
     }));
-  };
-  const handlePageChange = (page: number) => {
-    setQuery((prev) => ({
-      ...prev,
-      page,
-    }));
+    search(safeFilters as Record<string, unknown>);
   };
 
   const columns: Column<IReceipt>[] = [
@@ -77,45 +101,47 @@ export default function ReceiptList({ token }: ReceiptListProps) {
       ),
     },
   ];
+
   return (
     <div>
       <div className="mb-6 flex flex-col gap-4 p-5">
         <div className="flex-1">
-          <ReceiptFilters filters={query} setFilters={setQuery} />
+          <ReceiptFilters filters={filters} setFilters={handleFilterChange} />
         </div>
         <div className="flex-1">
           <DateFilter
-            from={query.fromIssueDate}
-            to={query.toIssueDate}
-            setDateFrom={(date) => handleChange("fromIssueDate", date)}
-            setDateTo={(date) => handleChange("toIssueDate", date)}
+            from={filters.fromIssueDate}
+            to={filters.toIssueDate}
+            setDateFrom={(date) =>
+              handleFilterChange({ ...filters, fromIssueDate: date })
+            }
+            setDateTo={(date) =>
+              handleFilterChange({ ...filters, toIssueDate: date })
+            }
           />
         </div>
       </div>
+
       <h2 className="text-3xl font-bold mb-4 pt-4">{t("receipts.table.title")}</h2>
+
       {isLoading && <ReceiptListSkeleton />}
-      {!isLoading && data?.data && data.data.length === 0 && (
+
+      {!isLoading && data?.length === 0 && (
         <p className="text-center p-4">{t("error.notFound")}</p>
       )}
-      {data?.data && data.data.length > 0 && (
+
+      {!isLoading && data && data.length > 0 && (
         <GenericTable
           columns={columns}
-          data={data.data}
+          data={data}
           isLoading={isLoading}
-          onPageChange={handlePageChange}
-        />
-      )}
-      {data && data.totalPage > 1 && (
-        <GenericPagination
-          currentPage={data.currentPage}
-          totalPages={data.totalPage}
-          handlePreviousPage={() =>
-            setQuery((prev) => ({ ...prev, page: (prev.page ?? 1) - 1 }))
-          }
-          handleNextPage={() =>
-            setQuery((prev) => ({ ...prev, page: (prev.page ?? 1) + 1 }))
-          }
-          handlePageChange={(page) => setQuery((prev) => ({ ...prev, page }))}
+          pagination={{
+            currentPage: pagination.currentPage,
+            totalPages: pagination.totalPages,
+            totalItems: pagination.totalItems,
+            pageSize: pagination.pageSize,
+          }}
+          onPageChange={setPage}
         />
       )}
     </div>

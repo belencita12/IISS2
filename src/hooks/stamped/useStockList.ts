@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { StockData, StockResponse } from "@/lib/stock/IStock";
 import { Stamped } from "@/lib/stamped/IStamped";
 import { STOCK_API, STAMPED_API } from "@/lib/urls";
+import { apiFetch } from "@/lib/api/apiFetch";
+import { PaginationResponse } from "@/lib/types";
 
 export function useStockList(token: string, currentStockId?: number) {
   const [stocks, setStocks] = useState<StockData[]>([]);
@@ -13,45 +15,17 @@ export function useStockList(token: string, currentStockId?: number) {
   const getStockList = async (page: number = 1, includeDeleted: boolean = false) => {
     setIsLoading(true);
     try {
-      // Primero obtenemos todos los depósitos
-      const stockResponse = await fetch(`${STOCK_API}?page=${page}&size=10&includeDeleted=${includeDeleted}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!stockResponse.ok) {
-        const errorData = await stockResponse.json().catch(() => ({}));
-        throw new Error(errorData.message || "Error al obtener los depósitos");
+      const stockData = await apiFetch<PaginationResponse<StockData>>(`${STOCK_API}?page=${page}&size=20&includeDeleted=${includeDeleted}`, token);
+      
+      if (!stockData.data) {
+        throw new Error("No se pudo obtener la lista de depósitos");
       }
 
-      const stockData: StockResponse = await stockResponse.json();
-      const allStocks = stockData.data || [];
+      const allStocks = stockData.data.data;
 
-      // Luego obtenemos los timbrados activos
-      const stampedResponse = await fetch(`${STAMPED_API}?page=${page}&size=10&includeDeleted=${includeDeleted}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!stampedResponse.ok) {
-        const errorData = await stampedResponse.json().catch(() => ({}));
-        throw new Error(errorData.message || "Error al obtener los timbrados");
-      }
-
-      const stampedData = await stampedResponse.json();
-      const activeStamped = Array.isArray(stampedData) ? stampedData : stampedData.data || [];
-
-      // Filtramos los depósitos que ya tienen timbrados activos, pero incluimos el depósito actual si se está editando
-      const availableStocks = allStocks.filter((stock: StockData) => 
-        !activeStamped.some((stamped: Stamped) => 
-          stamped.stock.id === stock.id && (!currentStockId || stamped.stock.id !== currentStockId)
-        )
-      );
-
-      setStocks(availableStocks);
-      setTotalPages(stockData.totalPages || 1);
+      // Ya no filtramos los depósitos, mostramos todos
+      setStocks(allStocks);
+      setTotalPages(stockData.data.totalPages || 1);
       setCurrentPage(page);
       setError(null);
     } catch (error) {

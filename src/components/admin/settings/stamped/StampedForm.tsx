@@ -48,16 +48,15 @@ export function StampedForm({
   const [minDate, setMinDate] = useState("");
   const [activeStampedNumbers, setActiveStampedNumbers] = useState<string[]>([]);
   const [isLoadingActiveNumbers, setIsLoadingActiveNumbers] = useState(false);
+  const [stocksWithActiveStamped, setStocksWithActiveStamped] = useState<number[]>([]);
 
   useEffect(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     setMinDate(today.toISOString().split('T')[0]);
 
-    // Obtener números de timbrado activos
-    const fetchActiveStampedNumbers = async () => {
-      if (defaultValues) return; // No necesitamos verificar si estamos editando
-      
+    // Obtener números de timbrado activos y depósitos con timbrados activos
+    const fetchActiveStampedData = async () => {
       setIsLoadingActiveNumbers(true);
       try {
         const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://iiss2-be.duckdns.org';
@@ -76,18 +75,34 @@ export function StampedForm({
           .filter((stamped: Stamped) => stamped.isActive)
           .map((stamped: Stamped) => stamped.stampedNum);
         
+        const stocksWithStamped = data.data
+          .filter((stamped: Stamped) => stamped.isActive)
+          .map((stamped: Stamped) => stamped.stock.id)
+          .filter((id: number | undefined): id is number => id !== undefined);
+        
         setActiveStampedNumbers(activeNumbers);
+        setStocksWithActiveStamped(stocksWithStamped);
       } catch (error) {
-        console.error("Error al obtener timbrados activos:", error);
+        // Error al obtener timbrados activos
       } finally {
         setIsLoadingActiveNumbers(false);
       }
     };
 
     if (isOpen) {
-      fetchActiveStampedNumbers();
+      fetchActiveStampedData();
     }
-  }, [isOpen, token, defaultValues]);
+  }, [isOpen, token]);
+
+  // Filtrar los depósitos disponibles
+  const availableStocks = stocks.filter(stock => {
+    // Si estamos editando, solo mostrar el depósito actual y los que no tienen timbrado
+    if (defaultValues) {
+      return stock.id === defaultValues.stock.id || (stock.id !== undefined && !stocksWithActiveStamped.includes(stock.id));
+    }
+    // Si estamos agregando, mostrar todos los depósitos
+    return true;
+  });
 
   const stampedSchema = z.object({
     stampedNum: z.string()
@@ -101,7 +116,7 @@ export function StampedForm({
           if (!num || isLoadingActiveNumbers) return true;
           return !activeStampedNumbers.includes(num);
         },
-        "Este número de timbrado ya está activo"
+        "Este número de timbrado ya está activo en otro timbrado"
       ),
     stockId: z.number().min(1, "El depósito es obligatorio"),
     fromDate: z.string()
@@ -117,13 +132,17 @@ export function StampedForm({
     fromNum: z.coerce
       .number()
       .refine((val) => !isNaN(val), "El número inicial debe ser un número válido")
-      .refine((val) => val >= 1, "El número inicial debe ser mayor o igual a 1"),
+      .refine((val) => val >= 1, "El número inicial debe ser mayor o igual a 1")
+      .refine((val) => val <= 9999, "El número inicial no puede ser mayor a 9999"),
     toNum: z.coerce
       .number()
       .refine((val) => !isNaN(val), "El número final debe ser un número válido")
       .refine((val) => val >= 1, "El número final debe ser mayor o igual a 1")
-      .refine((val) => val <= 2001, "El número final no puede ser mayor a 2001"),
+      .refine((val) => val <= 9999, "El número final no puede ser mayor a 9999"),
   }).refine((data) => data.fromNum <= data.toNum, {
+    message: "El número inicial no puede ser mayor que el número final",
+    path: ["fromNum"],
+  }).refine((data) => data.toNum >= data.fromNum, {
     message: "El número final no puede ser menor que el número inicial",
     path: ["toNum"],
   }).refine((data) => {
@@ -229,20 +248,22 @@ export function StampedForm({
         : `${API_BASE_URL}/stamped`;
       const method = defaultValues?.id ? "PATCH" : "POST";
 
+      const requestBody = {
+        stampedNum: data.stampedNum,
+        stockId: data.stockId,
+        fromDate: data.fromDate,
+        toDate: data.toDate,
+        fromNum: data.fromNum,
+        toNum: data.toNum
+      };
+
       const response = await fetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          stampedNum: data.stampedNum,
-          stockId: data.stockId,
-          fromDate: data.fromDate,
-          toDate: data.toDate,
-          fromNum: data.fromNum,
-          toNum: data.toNum
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
@@ -260,11 +281,10 @@ export function StampedForm({
       onSuccess();
       onClose();
     } catch (error) {
-      console.error('Error completo:', error);
       toast(
         "error",
         error instanceof Error
-          ? "Error al procesar la solicitud. Por favor, intente nuevamente."
+          ? error.message
           : "Error de conexión con el servidor. Por favor, intente nuevamente."
       );
     }
@@ -279,7 +299,7 @@ export function StampedForm({
         }
       }}
     >
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {defaultValues ? "Editar Timbrado" : "Registrar Timbrado"}
@@ -325,16 +345,18 @@ export function StampedForm({
             <Select
               value={watch("stockId")?.toString()}
               onValueChange={(value) => setValue("stockId", Number(value), { shouldValidate: true })}
-              disabled={isLoadingStocks || isSubmitting}
+              disabled={isLoadingStocks || isSubmitting || !!defaultValues}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Depósitos" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="max-h-[300px]">
                 <SelectItem value="0">Todos</SelectItem>
-                {stocks.map((stock: StockData) => (
+                {availableStocks.map((stock: StockData) => (
                   <SelectItem key={stock.id || ''} value={(stock.id || 0).toString()}>
-                    {stock.name} - {stock.address}
+                    <div className="truncate">
+                      {stock.name} - {stock.address}
+                    </div>
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -360,11 +382,16 @@ export function StampedForm({
                 id="fromDate"
                 type="date"
                 min={minDate}
+                max="9999-12-31"
                 {...register("fromDate", {
                   onChange: (e) => {
                     const value = e.target.value;
-                    if (value && toDate && value > toDate) {
-                      setValue("toDate", value);
+                    if (value) {
+                      if (toDate && value > toDate) {
+                        setValue("toDate", value);
+                      }else{
+                        setValue("toDate", "");
+                      }
                     }
                   }
                 })}
@@ -382,7 +409,14 @@ export function StampedForm({
                 type="date"
                 min={getMinToDate()}
                 max={getMaxToDate()}
-                {...register("toDate")}
+                {...register("toDate", {
+                  onChange: (e) => {
+                    const value = e.target.value;
+                    if (value) {
+                      setValue("toDate", value);
+                    }
+                  }
+                })}
                 disabled={isSubmitting}
               />
               {errors.toDate && (

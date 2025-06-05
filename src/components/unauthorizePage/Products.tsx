@@ -1,19 +1,15 @@
 'use client';
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import ProductosBanner from "./ProductosBanner";
 import { Product } from "@/lib/products/IProducts";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import NotImageNicoPets from "../../../public/NotImageNicoPets.png";
 import { useFetch } from "@/hooks/api/useFetch";
 import { PRODUCT_API } from "@/lib/urls"; 
-
-const staticProducts = [
-  { name: "Alimentos", image: "/veterinaria6.png" },
-  { name: "Higiene", image: "/hig1.jpg" },
-  { name: "Medicamentos", image: "/medicamentos2.jpg" },
-];
+import { Button } from "@/components/ui/button";  
 
 interface ProductResponse {
   data: Product[];
@@ -21,8 +17,25 @@ interface ProductResponse {
 
 export default function Products() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [itemsToShow, setItemsToShow] = useState(3);
+  const router = useRouter();
   
-  // Construir la URL con parámetros de paginación
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setItemsToShow(1);
+      } else if (window.innerWidth < 1024) {
+        setItemsToShow(2);
+      } else {
+        setItemsToShow(3);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
   const queryParams = new URLSearchParams({
     page: '1',
     size: '50'
@@ -31,7 +44,7 @@ export default function Products() {
   
   const { data, loading, error } = useFetch<ProductResponse>(
     apiUrl,
-    null, // Sin token de autenticación
+    null,
     {
       immediate: true,
       throwErrors: false,
@@ -40,15 +53,13 @@ export default function Products() {
     }
   );
 
-  // Filtrar productos que no sean de categoría "SERVICE"
   const filteredProducts = useMemo(() => {
     if (!data?.data) return [];
     return data.data.filter((product) => product.category !== "SERVICE");
   }, [data?.data]);
 
-  const displayProducts = filteredProducts.length > 0 ? filteredProducts : staticProducts;
+  const displayProducts = filteredProducts;
   
-  const itemsToShow = 3;
   const maxIndex = Math.max(0, displayProducts.length - itemsToShow);
 
   const nextSlide = () => {
@@ -59,21 +70,20 @@ export default function Products() {
     setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
   };
 
+  const handleProductClick = (product: Product) => {
+    router.push(`/shop/product/${product.id}`);
+  };
+
   const visibleProducts = displayProducts.slice(currentIndex, currentIndex + itemsToShow);
 
   return (
     <div className="flex flex-col w-full">
-      <section className="relative flex flex-col sm:flex-row gap-5 py-5 bg-white w-full min-h-[300px]">
-        <div className="sm:w-1/4 w-full">
-          <Image
-            src="/productos9.jpg"
-            alt="Productos"
-            width={150}
-            height={150}
-            className="object-contain rounded-md aspect-square w-full h-full"
-          />
+      <section className="relative w-full min-h-[300px]">
+        <div className="absolute top-0 left-0 right-0 h-80 bg-gradient-to-r from-myPurple-primary to-myPink-primary opacity-90">
+          <div className="absolute inset-0 bg-[url('/placeholder.svg?height=200&width=200')] bg-repeat opacity-10"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent"></div>
         </div>
-        <div className="sm:w-3/4 w-full">
+        <div className="relative z-10">
           <ProductosBanner />
         </div>
       </section>
@@ -97,35 +107,34 @@ export default function Products() {
       )}
 
       {!loading && !error && displayProducts.length > 0 && (
-        <section className="relative py-10 bg-white mt-10">
-          {/* Botones de navegación */}
+        <section className="relative py-9 bg-white mt-9">
           {displayProducts.length > itemsToShow && (
             <>
-              <button
+              <Button
                 onClick={prevSlide}
                 className="absolute -left-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full p-2 shadow-lg transition-all duration-200"
               >
                 <ChevronLeft className="w-5 h-5 text-myPurple-primary" />
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={nextSlide}
                 className="absolute -right-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full p-2 shadow-lg transition-all duration-200"
               >
                 <ChevronRight className="w-5 h-5 text-myPurple-primary" />
-              </button>
+              </Button>
             </>
           )}
 
-          {/* Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {visibleProducts.map((product) => (
               <div 
-                key={'id' in product ? product.id : product.name} 
-                className="bg-myPurple-disabled p-4 rounded-lg shadow-lg text-center transition-all duration-200 hover:scale-105 cursor-pointer flex flex-col items-center gap-4"
+                key={product.id} 
+                className="bg-myPurple-disabled p-5 rounded-lg shadow-lg text-center transition-all duration-200 hover:scale-105 cursor-pointer flex flex-col items-center gap-4"
+                onClick={() => handleProductClick(product)}
               >
-                <div className="w-full aspect-square relative">
+                <div className="w-full aspect-square relative max-w-[300px] mx-auto">
                   <Image 
-                    src={'id' in product ? (product.image?.originalUrl || NotImageNicoPets.src) : product.image} 
+                    src={product.image?.originalUrl || NotImageNicoPets.src} 
                     alt={product.name} 
                     fill
                     quality={100}
