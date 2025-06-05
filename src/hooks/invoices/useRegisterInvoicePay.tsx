@@ -95,8 +95,8 @@ export const useCreatePayment = (invoice?: Invoice, token?: string) => {
         toast("success", "Pago registrado con éxito");
         reset();
         setPaymentMethods([]);
-        window.location.reload(); 
-        return true;
+        const receiptId = String(response.data.id);
+        return receiptId;
       } else {
         toast("error", "Error al registrar el pago");
       }

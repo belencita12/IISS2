@@ -5,7 +5,6 @@ export default function ReceiptDetailSkeleton() {
     <div className="p-6 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mt-12 mb-6">
         <h1 className="text-2xl font-bold">Detalle del Recibo</h1>
-        <Skeleton className="h-10 w-32 mb-4" />{" "}
       </div>
 
       <div className="bg-white shadow rounded-lg p-6 space-y-6">
