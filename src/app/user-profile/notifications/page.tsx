@@ -13,6 +13,7 @@ export default async function NotificationsPage() {
   return (
     <NotificationsList
       token={user.token}
+      userId={user.clientId}
     />
   );
 } 

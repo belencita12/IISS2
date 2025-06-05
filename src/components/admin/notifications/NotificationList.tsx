@@ -2,12 +2,11 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import GenericPagination from "@/components/global/GenericPagination";
-import { BellIcon, CheckCircle2, Filter, X } from "lucide-react";
-import SearchBar from "../global/SearchBar";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { Separator } from "../ui/separator";
-import NotificationsListSkeleton from "./NotificationsListSkeleton";
+import { BellIcon, CheckCircle2, EraserIcon } from "lucide-react";
+import SearchBar from "@/components/global/SearchBar";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import NotificationListSkeleton from "./skeleton/NotificationListSkeleton";
 import { SelectOptions } from "@/components/global/FormSelect";
 import {
   Select,
@@ -16,9 +15,8 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { NotificationCard } from "./NotificationCard";
+import NotificationCard from "./NotificationCard";
 import { useNotification } from "@/hooks/notification/useNotification";
-import { useState } from "react";
 
 interface NotificationsListProps {
   token: string;
@@ -55,7 +53,10 @@ const READ_STATUS_TYPES: SelectOptions[] = [
   { value: "false", label: "No leídos" },
 ];
 
-export default function NotificationsList({ token, userId }: NotificationsListProps) {
+export default function NotificationsList({
+  token,
+  userId,
+}: NotificationsListProps) {
   const {
     notifications,
     total,
@@ -64,16 +65,13 @@ export default function NotificationsList({ token, userId }: NotificationsListPr
     page,
     size,
     markAllLoading,
-    markReadLoading,
     handleSearch,
     updateFilters,
-    handleMarkRead,
     handleMarkAllRead,
     setPage,
     resetFilters,
+    handleMarkRead,
   } = useNotification(token, userId);
-
-  const [showMobileFilters, setShowMobileFilters] = useState(true);
 
   const MIN_DATE = "2000-01-01";
   const MAX_DATE = new Date().toISOString().split("T")[0];
@@ -111,37 +109,28 @@ export default function NotificationsList({ token, userId }: NotificationsListPr
     setPage((prev) => Math.min(totalPages, prev + 1));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-100 via-fuchsia-100 to-white pb-10">
-      <div className="relative bg-gradient-to-r from-myPurple-primary to-myPink-primary py-8">
-        <div className="container mx-auto px-16">
-          <div className="flex items-center gap-3">
-            <BellIcon className="w-8 h-8 text-white" />
-            <h1 className="text-3xl font-bold text-white">Notificaciones</h1>
-          </div>
-        </div>
-      </div>
-
+    <div className="min-h-screen pb-10">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <SearchBar
           onSearch={handleSearch}
           placeholder="Buscar notificaciones..."
           debounceDelay={500}
         />
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="gap-8">
           {/* Filtros*/}
-          <aside
-            className={`
-    ${showMobileFilters ? "block" : "hidden"} 
-    lg:block 
-    lg:col-span-1 lg:sticky top-4 
-    bg-gray-50 rounded-lg border shadow-sm p-5 space-y-5 h-fit lg:max-h-screen lg:overflow-auto
-  `}
-          >
-            <div className="flex items-center space-x-2 mb-4">
-              <Filter className="h-5 w-5" />
-              <h3 className="text-lg font-semibold">Filtros</h3>
-            </div>
-            <div className="space-y-4">
+          <div className="bg-gray-50 rounded-lg border shadow-sm p-5 h-fit mb-8">
+              <div className="flex justify-end">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-sm h-8 px-2 text-gray-600 mr-[10px]"
+                  onClick={resetFilters}
+                >
+                    <EraserIcon/>
+                  Limpiar filtros
+                </Button>
+              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Filtro por tipo de notificacion */}
               <div>
                 <Label className="mb-1">Tipo de notificación</Label>
@@ -200,8 +189,9 @@ export default function NotificationsList({ token, userId }: NotificationsListPr
                   </SelectContent>
                 </Select>
               </div>
-              <Separator />
-              {/* Date Range Filter */}
+              {/* Filtro de rango de fechas */}
+              <div className="flex flex-col sm:flex-row gap-8 sm:gap-4">
+
               <div>
                 <Label className="mb-1">Fecha Desde</Label>
                 <Input
@@ -226,52 +216,27 @@ export default function NotificationsList({ token, userId }: NotificationsListPr
                   onBlur={(e) => handleDateChange(e.target.value, false)}
                 />
               </div>
+              </div>
             </div>
-            <div className="mt-6 space-y-3">
-              <Button
-                variant="outline"
-                className="w-full h-9 p-4 bg-gradient-to-r from-myPurple-disabled to-myPink-disabled text-myPurple-primary hover:from-myPurple-tertiary hover:to-myPink-tertiary hover:text-myPurple-focus"
-                onClick={resetFilters}
-              >
-                Limpiar filtros
-              </Button>
-            </div>
-          </aside>
-          {/* Mobile Filter Toggle - Fuera de la aside para controlar su visibilidad de manera independiente */}
-          <div className="lg:hidden mb-4">
-            <Button
-              variant="outline"
-              className="w-full flex items-center justify-center space-x-2"
-              onClick={() => setShowMobileFilters(!showMobileFilters)}
-            >
-              {showMobileFilters ? (
-                <X className="h-4 w-4" />
-              ) : (
-                <Filter className="h-4 w-4" />
-              )}
-              <span>
-                {showMobileFilters ? "Ocultar filtros" : "Mostrar filtros"}
-              </span>
-            </Button>
           </div>
           <div className="w-full lg:col-span-3 space-y-6">
             {/* Barra de acciones */}
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-0 justify-between items-start sm:items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-10 sm:gap-0">
+                <h3 className="text-3xl font-bold">Notificaciones</h3>
               <Button
-                className="bg-gradient-to-r from-myPurple-primary to-myPink-primary hover:from-myPurple-hover hover:to-myPink-hover text-white"
+                variant="default"
                 onClick={handleMarkAllRead}
                 disabled={markAllLoading}
               >
                 <CheckCircle2 className="h-4 w-4 mr-2" />
                 {markAllLoading ? "Marcando..." : "Marcar todo como leído"}
               </Button>
-              <span className="text-gray-500">{`Mostrando ${total === 0 ? 0 : (page - 1) * size + 1} - ${total === 0 ? 0 : Math.min(page * size, total)} de ${total}`}</span>
             </div>
 
             {/* Lista de notificaciones */}
             <div className="w-full space-y-3">
               {loading ? (
-                <NotificationsListSkeleton />
+                <NotificationListSkeleton />
               ) : notifications.length === 0 ? (
                 <Card>
                   <CardContent className="flex flex-col items-center justify-center py-12">
@@ -287,12 +252,7 @@ export default function NotificationsList({ token, userId }: NotificationsListPr
                 </Card>
               ) : (
                 notifications.map((n) => (
-                  <NotificationCard
-                    key={n.id}
-                    notification={n}
-                    onMarkRead={handleMarkRead}
-                    isMarking={markReadLoading}
-                  />
+                  <NotificationCard key={n.id} notification={n} onMarkAsRead={handleMarkRead} />
                 ))
               )}
             </div>
