@@ -18,33 +18,33 @@ describe('ProfileTabs - Vista de cliente en /user-profile', () => {
     });
 
     it('Debe mostrar por defecto la pestaña "Mis Mascotas"', () => {
-        cy.contains('Mis Mascotas')
+        cy.contains('Mis mascotas')
             .should('have.class', 'bg-white')
             .and('have.class', 'text-violet-600');
-        cy.contains('Mascotas Registradas').should('exist');
+        cy.contains('Lista de mascotas').should('exist');
          cy.wait(10000);
     });
 
     it('Debe mostrar la pestaña "Mis Citas" al hacer clic', () => {
-        cy.contains('Mis Citas').click();
+        cy.contains('Mis citas').click();
         cy.wait(1000);
 
-        cy.contains('Mis Citas')
+        cy.contains('Mis citas')
             .should('have.class', 'bg-white')
             .and('have.class', 'text-violet-600');
          cy.wait(10000);
 
-        cy.contains('Citas Agendadas').should('exist');
+        cy.contains('Mis citas').should('exist');
     });
     it('Debe mostrar la pestaña "Mis Citas" y permitir ver detalles de una cita', () => {
-    cy.contains('Mis Citas').click();
+    cy.contains('Mis citas').click();
     cy.wait(1000);
 
-    cy.contains('Mis Citas')
+    cy.contains('Mis citas')
         .should('have.class', 'bg-white')
         .and('have.class', 'text-violet-600');
 
-    cy.contains('Citas Agendadas').should('exist');
+    cy.contains('Mis citas').should('exist');
     cy.wait(20000);
 
     cy.get(':nth-child(2) > .text-right > [aria-label="Ver detalles"]').first().click();

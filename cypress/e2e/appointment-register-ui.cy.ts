@@ -19,7 +19,7 @@ describe("Registro completo de cita (cliente)", () => {
             .click();
 
         cy.get('[role="dialog"]').last().within(() => {
-            cy.get('input[placeholder*="nombre"]').type("Pinchi", { delay: 100 });
+            cy.get('input[placeholder*="nombre"]').type("Patroclo", { delay: 100 });
             cy.wait(1000);
             cy.get('[role="option"]').first().click();
         });
@@ -37,7 +37,7 @@ describe("Registro completo de cita (cliente)", () => {
 
         // === Empleado ===
         cy.get('button[role="combobox"]')
-            .contains("Selecciona un empleado")
+            .contains("Seleccionar un empleado")
             .click();
 
         cy.get('[role="dialog"]').last().within(() => {
@@ -47,7 +47,11 @@ describe("Registro completo de cita (cliente)", () => {
         });
 
         // === Fecha ===
-        cy.get('input[type="date"]').type("2025-05-22");
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const formatted = tomorrow.toISOString().split("T")[0];
+        cy.get('input[type="date"]').type(formatted);
+
 
         cy.get("button")
             .filter(":visible")
@@ -100,13 +104,15 @@ describe("Registro completo de cita (cliente)", () => {
         cy.get('button[role="combobox"]').contains("Seleccionar").click();
 
         cy.get('[role="dialog"]').last().within(() => {
-            cy.get('input[placeholder*="nombre"]').type("Pinchi", { delay: 100 });
+            cy.get('input[placeholder*="nombre"]').type("Patroclo", { delay: 100 });
             cy.wait(1000);
             cy.get('[role="option"]').first().click();
         });
 
         cy.get('button[role="combobox"]')
-            .should("contain.text", "Pinchi");
+            .eq(0) // Primer combobox: mascota
+            .should("contain.text", "Patroclo");
+
     });
 
 
@@ -124,32 +130,35 @@ describe("Registro completo de cita (cliente)", () => {
 
 
     it("No debe permitir seleccionar horarios ocupados", () => {
-        // Selecciona un empleado para habilitar el componente de horarios
-        cy.get('button[role="combobox"]')
-            .contains("Selecciona un empleado")
-            .click();
+    // === Empleado ===
+    cy.get('button[role="combobox"]').eq(2).click(); // 0 = mascota, 1 = servicio, 2 = empleado
 
-        cy.get('[role="dialog"]').last().within(() => {
-            cy.get('input[placeholder*="nombre"]').type("bry", { delay: 100 });
-            cy.get('[role="option"]').first().click();
-        });
-
-        // Seleccionar una fecha válida (asegura que se activen los horarios)
-        cy.get('input[type="date"]').type("2025-05-22");
-
-        // Espera a que carguen los horarios válidos (como referencia: "16:00")
-        cy.get("button")
-            .filter(":visible")
-            .not("[disabled]")
-            .contains("16:00", { timeout: 10000 })
-            .should("exist");
-
-        // Validar que un horario inválido u ocupado (por ejemplo, "13:00") NO esté visible
-        cy.get("button")
-            .filter(":visible")
-            .contains("13:00")
-            .should("not.exist");
+    cy.get('[role="dialog"]').last().within(() => {
+        cy.get('input[placeholder*="nombre"]').type("bry", { delay: 100 });
+        cy.get('[role="option"]').first().click();
     });
+
+    // === Fecha dinámica: mañana ===
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const formattedDate = tomorrow.toISOString().split("T")[0];
+
+    cy.get('input[type="date"]').type(formattedDate);
+
+    // === Esperar horario disponible (ej: 16:00)
+    cy.get("button")
+        .filter(":visible")
+        .not("[disabled]")
+        .contains("16:00", { timeout: 10000 })
+        .should("exist");
+
+    // === Validar que un horario ocupado (ej: 13:00) NO esté visible
+    cy.get("button")
+        .filter(":visible")
+        .contains("13:00")
+        .should("not.exist");
+});
+
 
 
 

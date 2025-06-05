@@ -26,7 +26,7 @@ describe("AppointmentListSection", () => {
     });
 
     it("Debe buscar citas por RUC del cliente", () => {
-        cy.get('input[placeholder="Buscar por RUC del cliente"]').type("4567345-9");
+        cy.get('input[placeholder="Buscar por nombre o ruc del cliente..."]').type("4567345-9");
         cy.wait(20000);
         cy.get("div").should("contain", "Lourdes");
     });
