@@ -9,7 +9,7 @@ describe("Detalle de cita (cliente)", () => {
     cy.session(SESSION_KEY, () => {
       cy.loginAndSetSession(SESSION_KEY, USER.email, USER.password);
     });
-    cy.visit("/user-profile/appointment/138"); // usa un ID válido que tenga datos reales
+    cy.visit("/user-profile/appointment/122"); // usa un ID válido que tenga datos reales
   });
 
   it("Debe mostrar todos los servicios contratados", () => {

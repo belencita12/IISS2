@@ -14,7 +14,7 @@ describe("Registro completo de cita (cliente)", () => {
 
     it("Debe permitir buscar citas por RUC del cliente", () => {
 
-        cy.get("input[placeholder*='nombre o ruc']").type("1234567-8"); // ← usa un RUC válido del sistema
+        cy.get("input[placeholder*='nombre o ruc']").type("5282472-1"); // ← usa un RUC válido del sistema
         cy.wait(10000);
 
         cy.get("[data-testid='appointment-card']").should("exist"); // ajusta según tu card
@@ -42,7 +42,7 @@ describe("Registro completo de cita (cliente)", () => {
 
         cy.get("input[placeholder]")
             .should("exist")
-            .and("have.attr", "placeholder", "Buscar por nombre o ruc del cliente");
+            .and("have.attr", "placeholder", "Buscar por nombre o ruc del cliente...");
     });
 
 
