@@ -23,8 +23,8 @@ export const deleteSpeciesById = async (token: string, id: number): Promise<bool
         }
 
         return true;
-    } catch (error) {
-        toast("error", "Error inesperado al intentar eliminar la especie.");
+    } catch (error: unknown) {
+        if (error instanceof Error) toast("error", error.message);
         return false;
     }
 };
