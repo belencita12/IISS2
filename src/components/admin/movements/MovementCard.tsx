@@ -11,17 +11,17 @@ interface Props {
 }
 
 export default function MovementCard({ movement }: Props) {
-const m = useTranslations("MovementDetail");
-const e = useTranslations("Error");
+
+const t = useTranslations();
 
   return (
     <Card
       title={
         movement.type === "INBOUND"
-          ? m("typeInbound")
+          ? t("movement.type.inbound")
           : movement.type === "OUTBOUND"
-          ? m("typeOutbound")
-          : m("typeTransfer")
+          ? t("movement.type.outbound")
+          : t("movement.type.transfer")
       }
       description=""
       alt="Movimiento"
@@ -34,12 +34,12 @@ const e = useTranslations("Error");
       <div className="flex flex-col md:flex-row justify-between gap-4 w-full">
         {/* Columna 1 */}
         <div className="text-sm text-gray-700 space-y-1 md:w-1/2">
-          <p>{m("origin")}: {movement.originStock?.name || "—"}</p>
-          <p>{m("destination")}: {movement.destinationStock?.name || "—"}</p>
+          <p>{t("movement.card.originStock", {origin: movement.originStock?.name || "—"})}</p>
+          <p>{t("movement.card.destinationStock", {destination: movement.destinationStock?.name || "—"})}</p>
           <div>
             <p>
               <strong>
-                {movement.manager?.fullName ?? e("noAsigned")} –{" "}
+                {movement.manager?.fullName ?? t("error.noAsigned")} –{" "}
                 {movement.manager?.ruc ?? "—"}
               </strong>
             </p>

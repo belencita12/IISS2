@@ -40,11 +40,7 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const router = useRouter(); 
-  const u = useTranslations("ClientForm");
-  const b = useTranslations("Button");
-  const e= useTranslations("Error");
-  const s = useTranslations("Success");
-  const p = useTranslations("Placeholder");
+  const t = useTranslations();
 
 
   const {
@@ -84,7 +80,7 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
           setPreviewImage(clientData.image.originalUrl);
         }
       } catch (error:unknown) {
-        toast("error", error instanceof Error ? error.message : e("errorLoad", {field: "cliente"}));
+        toast("error", error instanceof Error ? error.message : t("error.errorGetData"));
         router.push("/dashboard/clients");
       }
     };
@@ -112,13 +108,13 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
       const response = await updateClient(clientId, formData, token);
       
       if ('error' in response) {
-        toast("error", response.error || e("noUpdate"));
+        toast("error", response.error || t("error.noUpdate"));
       } else {
-        toast("success", s("successEdit", {field: "Cliente"})); 
+        toast("success", t("success.successUpdateClient")); 
         router.push("/dashboard/clients"); 
       }
     } catch (error:unknown) {
-      toast("error", e("noUpdate"));
+      toast("error", t("error.noUpdate"));
     } finally {
       setIsSubmitting(false);
     }
@@ -126,9 +122,42 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
 
   return (
     <div className="max-w-5xl mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-6">{u("edit")}</h1>
+      <h1 className="text-3xl font-bold mb-6">{t("client.form.titleUpdate")}</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
-        <div className="flex flex-col items-center space-y-4">
+
+        <div>
+          <Label>{t("client.form.name")}</Label>
+          <Input {...register("name")} placeholder={t("placeholder.name")} />
+          {errors.name && <p className="text-red-500">{errors.name.message}</p>}
+        </div>
+        <div>
+          <Label>{t("client.form.lastName")}</Label>
+          <Input {...register("lastname")} placeholder={t("placeholder.lastName")} />
+          {errors.lastname && <p className="text-red-500">{errors.lastname.message}</p>}
+        </div>
+        <div>
+          <Label>{t("client.form.email")}</Label>
+          <Input {...register("email")} placeholder={t("placeholder.exampleEmail")} type="email" />
+          {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+        </div>
+        <div>
+          <Label>{t("client.form.address")}</Label>
+          <Input {...register("adress")} placeholder={t("placeholder.address")} />
+          {errors.adress && <p className="text-red-500">{errors.adress.message}</p>}
+        </div>
+        <div>
+          <Label>{t("client.form.phone")}</Label>
+          <Input {...register("phoneNumber")} placeholder={t("placeholder.phone")} />
+          {errors.phoneNumber && <p className="text-red-500">{errors.phoneNumber.message}</p>}
+        </div>
+        <div>
+          <Label>{t("client.form.ruc")}</Label>
+          <Input {...register("ruc")} placeholder={t("placeholder.ruc")} />
+          {errors.ruc && <p className="text-red-500">{errors.ruc.message}</p>}
+        </div>
+
+                 {/* Imagen alineada a la izquierda */}
+        <div className="mt-10 flex justify-start">
           <FormImgUploader
             onChange={(file) => {
               if (file) {
@@ -139,57 +168,33 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
                     setPreviewImage(reader.result as string);
                   };
                   reader.readAsDataURL(file);
-                } catch (error:unknown) {
-                  toast("error", error instanceof Error ? error.message : e("errorLoad", {field: "imagen"}));
+                } catch (error: unknown) {
+                  if (error instanceof Error) toast("error", error.message);
                 }
               }
             }}
             error={errors.profileImg?.message?.toString()}
-            prevClassName="w-48 h-48 rounded-full object-cover"
-            prevWidth={192}
+            prevClassName="w-40 h-40  object-cover shadow-md border-2 border-gray-300"
+            prevWidth={160}
             defaultImage={previewImage}
           />
         </div>
 
-        <div>
-          <Label>{u("name")}</Label>
-          <Input {...register("name")} placeholder={p("name")} />
-          {errors.name && <p className="text-red-500">{errors.name.message}</p>}
-        </div>
-        <div>
-          <Label>{u("lastName")}</Label>
-          <Input {...register("lastname")} placeholder={p("lastName")} />
-          {errors.lastname && <p className="text-red-500">{errors.lastname.message}</p>}
-        </div>
-        <div>
-          <Label>{u("email")}</Label>
-          <Input {...register("email")} placeholder={p("exampleEmail")} type="email" />
-          {errors.email && <p className="text-red-500">{errors.email.message}</p>}
-        </div>
-        <div>
-          <Label>{u("address")}</Label>
-          <Input {...register("adress")} placeholder={p("address")} />
-          {errors.adress && <p className="text-red-500">{errors.adress.message}</p>}
-        </div>
-        <div>
-          <Label>{u("phone")}</Label>
-          <Input {...register("phoneNumber")} placeholder={p("phone")} />
-          {errors.phoneNumber && <p className="text-red-500">{errors.phoneNumber.message}</p>}
-        </div>
-        <div>
-          <Label>{u("ruc")}</Label>
-          <Input {...register("ruc")} placeholder={p("ruc")} />
-          {errors.ruc && <p className="text-red-500">{errors.ruc.message}</p>}
-        </div>
-        
-        <div className="flex gap-4">
-          <Button type="button" variant="outline" disabled={isSubmitting} onClick={() => router.push("/dashboard/clients")}>
-            {isSubmitting ? b("cancel") : b("cancel")}
+        {/* Botones abajo a la derecha */}
+        <div className="mt-6 flex justify-end gap-4">
+          <Button
+            type="button"
+            variant="outline"
+            disabled={isSubmitting}
+            onClick={() => router.push("/dashboard/clients")}
+          >
+            {isSubmitting ? t("button.cancelling") : t("button.cancel")}
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? b("saving") : b("save")}
+            {isSubmitting ? t("button.saving") : t("button.save")}
           </Button>
         </div>
+
       </form>
     </div>
   );

@@ -44,13 +44,7 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
         },
     });
 
-    const mf = useTranslations("ManufacturerTable");
-    const b = useTranslations("Button");
-    const e = useTranslations("Error");
-    const s = useTranslations("Success");
-    const m = useTranslations("ModalConfirmation");
-    const ph = useTranslations("Placeholder");
-
+    const t = useTranslations();
     const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -68,7 +62,7 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
             try {
                 const results = await getManufacturers(token, page, query);
                 if (!Array.isArray(results.data)) {
-                    throw new Error("La respuesta de la API no es un array");
+                    throw new Error(t("error.apiResponseIsNotArray"));
                 }
                 setData({
                     manufacturers: results.data,
@@ -79,9 +73,8 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
                         pageSize: results.size || 4,
                     },
                 });
-            } catch (error) {
-                toast("error", "Error al cargar fabricantes");
-                console.error("Error cargando fabricantes:", error);
+            } catch (error: unknown) {
+                if (error instanceof Error) toast("error", error.message);
             } finally {
                 setLoading(false);
             }
@@ -122,7 +115,7 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
     };
 
     const columns: Column<Manufacturer>[] = [
-        { header: mf("name"), accessor: "name" },
+        { header: t("manufacturer.table.name"), accessor: "name" },
     ];
 
     const actions: TableAction<Manufacturer>[] = [
@@ -132,12 +125,12 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
                 router.push(
                     `/dashboard/vaccine/manufacturer/${manufacturer.id}`
                 ),
-            label: b("seeDetails"),
+            label: t("button.seeDetails"),
         },
         {
             icon: <Pencil className="w-4 h-4" />,
             onClick: handleEditManufacturer,
-            label: b("edit"),
+            label: t("button.edit"),
         },
         {
             icon: <Trash className="w-4 h-4" />,
@@ -145,7 +138,7 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
                 setManufacturerToDelete(manufacturer);
                 setIsDeleteModalOpen(true);
             },
-            label: b("delete"),
+            label: t("button.delete"),
         },
     ];
 
@@ -153,7 +146,7 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
         if (!manufacturerToDelete) return;
         try {
             await deleteManufacturer(token, manufacturerToDelete.id);
-            toast("success", "Fabricante eliminado exitosamente");
+            toast("success", t("success.successDeleteManufacturer"));
 
             const currentPage = data.pagination.currentPage;
             const isLastItemOnPage = data.manufacturers.length === 1;
@@ -163,7 +156,7 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
                     : currentPage;
 
             await loadManufacturers(newPage, searchQuery);
-        } catch (error) {
+        } catch (error: unknown) {
             if (error instanceof Error) {
                 toast("error", error.message);
             }
@@ -177,16 +170,16 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
         <div className="p-4 mx-auto">
             <SearchBar
                 onSearch={handleSearch}
-                placeholder={ph("getBy", {field : "nombre"})}
+                placeholder={t("search.searchByName")}
                 debounceDelay={400}
             />
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-3xl font-bold">{mf("titleManufacturers")}</h2>
+                <h2 className="text-3xl font-bold">{t("manufacturer.table.title")}</h2>
                 <Button
                     className="border border-gray-300 hover:bg-gray-800"
                     onClick={handleAddManufacturer}
                 >
-                    {b("add")}
+                    {t("button.add")}
                 </Button>
             </div>
             <GenericTable
@@ -197,16 +190,16 @@ export default function ManufacturerList({ token }: ManufacturerListProps) {
                 onPageChange={handlePageChange}
                 isLoading={loading}
                 skeleton={<VaccineTableSkeleton />}
-                emptyMessage={e("notFoundField", {field: "fabricantes"})}
+                emptyMessage={t("manufacturer.table.emptyMessage")}
             />
             <ConfirmationModal
                 isOpen={isDeleteModalOpen}
                 onClose={() => setIsDeleteModalOpen(false)}
                 onConfirm={handleConfirmDelete}
-                title={m("titleDelete", {field : "fabricante"})}
-                message={m("deleteMessage", {field : manufacturerToDelete?.name ?? ""})}
-                confirmText={b("delete")}
-                cancelText={b("cancel")}
+                title={t("confirmationModal.manufacturer.titleDelete")}
+                message={t("confirmationModal.manufacturer.messageDelete", { manufacturer: manufacturerToDelete?.name ?? "" })}
+                confirmText={t("button.delete")}
+                cancelText={t("button.cancel")}
                 variant="danger"
             />
 

@@ -49,10 +49,7 @@ export default function EmployeeSelect({
   const debouncedSearchQuery = useDebounce(searchQuery, 2000);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
-  const em = useTranslations("EmployeeTable");
-  const e = useTranslations("Error");
-  const b = useTranslations("Button");
-  const ph = useTranslations("Placeholder");
+  const t = useTranslations();
 
   const { data, loading: isLoading, get } = useFetch<EmployeeApiResponse>(EMPLOYEE_API, token);
 
@@ -126,7 +123,7 @@ export default function EmployeeSelect({
                 {selectedEmployee.fullName}
               </div>
             ) : (
-              <span>{em("selectEmployee")}</span>
+              <span>{t("appointmentForm.employeeSelect.select")}</span>
             )}
             <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
@@ -143,7 +140,7 @@ export default function EmployeeSelect({
               <div className="w-full pb-2">
                 <SearchBar
                   onSearch={handleSearchChange}
-                  placeholder={ph("getBy", {field: "nombre"})}
+                  placeholder={t("search.searchByName")}
                   debounceDelay={500}
                   defaultQuery={searchQuery}
                 />
@@ -152,11 +149,11 @@ export default function EmployeeSelect({
 
             {isLoading || isSearching ? (
               <div className="py-6 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
-                {isSearching ? b("searching") : b("loading")}
+                {isSearching ? t("button.searching") : t("button.loading")}
               </div>
             ) : (
               <>
-                <CommandEmpty>{e("notFoundField", {field: "empleados"})}</CommandEmpty>
+                <CommandEmpty>{t("error.notFoundEmployee")}</CommandEmpty>
                 <CommandGroup>
                   <CommandList className="max-h-[250px] overflow-y-auto">
                     {employees.map((employee) => (

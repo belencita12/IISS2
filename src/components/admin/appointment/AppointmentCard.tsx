@@ -18,12 +18,6 @@ interface AppointmentCardProps {
   ) => void;
 }
 
-const statusTranslations: Record<string, string> = {
-  PENDING: "Pendiente",
-  COMPLETED: "Finalizada",
-  CANCELLED: "Cancelada",
-};
-
 const AppointmentCard = ({
   appointment,
   isProcessing = false,
@@ -31,9 +25,13 @@ const AppointmentCard = ({
 }: AppointmentCardProps) => {
   const router = useRouter();
 
-  const a = useTranslations("AppointmentDetail");
-  const b = useTranslations("Button");
-  const e = useTranslations("Error");
+  const t = useTranslations();
+
+  const statusTranslations: Record<string, string> = {
+    PENDING: t("appointmentStatus.pending"),
+    COMPLETED: t("appointmentStatus.completed"),
+    CANCELLED: t("appointmentStatus.cancelled"),
+  };
 
 
   const handleViewDetail = () => {
@@ -53,16 +51,17 @@ const AppointmentCard = ({
     >
       <div className="flex flex-col gap-2">
         <h3 className="font-bold text-lg">
-          Servicio{appointment.services?.length !== 1 ? "s" : ""}:{" "}
+          {t("appointmentDetails.service")}{appointment.services?.length !== 1 ? "s" : ""}:{" "}
           {appointment.services?.map((s) => s.name).join(", ") ||
-            e("noSpecified")}
+            t("error.noSpecified")}
         </h3>
 
-        <p>{a("owner")}: {appointment.pet?.owner?.name ?? e("notFound")}</p>
-        <p>{a("race")}: {appointment.pet?.race ?? e("noSpecified")}</p>
-        <p>{a("details")}: {appointment.details ?? e("noSpecified")}</p>
+        <p>{t("appointmentDetails.petDetails.owner")}: {appointment.pet?.owner?.name ?? t("error.notFound")}</p>
+        <p>{t("appointmentDetails.petDetails.race")}: {appointment.pet?.race ?? t("error.noSpecified")}</p>
+        <p>{t("appointmentDetails.details")}: {appointment.details ?? t("error.noSpecified")}</p>
+        <p>Veterinario: {appointment.employee?.name}</p>
         <p className="text-sm text-gray-500 font-semibold">
-          {a("status")}: {statusTranslations[appointment.status] ?? appointment.status}
+          {t("appointmentDetails.status")}: {statusTranslations[appointment.status] ?? appointment.status}
         </p>
       </div>
 
@@ -83,7 +82,7 @@ const AppointmentCard = ({
               }}
               className="px-3 py-1 bg-white text-black rounded border border-gray-300 hover:bg-gray-100"
             >
-              { b("finish")}
+              { t("button.finish")}
             </Button>
             <Button
               disabled={isProcessing}
@@ -93,7 +92,7 @@ const AppointmentCard = ({
               }}
               className="px-3 py-1 bg-black text-white rounded border border-gray-300 hover:bg-gray-800"
             >
-              { b("cancel")}
+              { t("button.cancel")}
             </Button>
           </div>
         )}

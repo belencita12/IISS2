@@ -1,5 +1,5 @@
 "use client";
-
+import YouTubeEmbed from "@/components/global/YoutubeVideo"; 
 import { ReactNode, useState } from "react";
 import {
   Root,
@@ -16,6 +16,7 @@ export interface HelpCardProps {
   description: string;
   questions: { id: string; question: string; answer: string }[];
   isSingle?: boolean;
+  videoId?: string;
 }
 
 export default function HelpCard({
@@ -24,6 +25,7 @@ export default function HelpCard({
   description,
   questions,
   isSingle = false,
+  videoId,
 }: HelpCardProps) {
   const [openItem, setOpenItem] = useState<string | undefined>(undefined);
 
@@ -38,6 +40,13 @@ export default function HelpCard({
         <h2 className="text-xl font-bold">{title}</h2>
       </div>
       <p className="text-gray-600 mb-6">{description}</p>
+
+      {videoId && (
+        <div className="mt-8 mb-8">
+          <h3 className="text-lg font-semibold mb-2">Video explicativo</h3>
+          <YouTubeEmbed videoId={videoId} />
+        </div>
+      )}
 
       <Root
         type="single"

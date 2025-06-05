@@ -3,10 +3,10 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { BellIcon, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import LogoutButton from "./LogoutButton";
-import { SessionProvider, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import NavbarSkeleton from "../skeleton/NavbarSkeleton";
 import { usePathname } from "next/navigation";
 
@@ -84,7 +84,7 @@ export function Navbar({ links }: NavbarProps) {
                 key="user-profile"
                 href="/user-profile"
                 className={`transition-colors duration-200 ${
-                  profileActive
+                  profileActive && (!pathname.includes("notifications"))
                     ? "text-myPurple-hover font-semibold"
                     : "text-myPurple-primary hover:text-myPurple-hover"
                 }`}
@@ -95,12 +95,24 @@ export function Navbar({ links }: NavbarProps) {
           </nav>
         </div>
 
-        {/* Logout */}
-        <div className="flex items-center gap-2 md:gap-4 ml-auto md:ml-0">
+        {/* Logout and notifications */}
+        <div className="flex items-center gap-4 md:gap-6 ml-auto md:ml-0">
           {isAuthenticated && (
-            <div className="hidden md:block">
-              <LogoutButton />
-            </div>
+            <>
+              <Link
+                href="/user-profile/notifications"
+                className={`hidden md:block transition-colors duration-200 text-lg ${
+                  pathname.includes("notifications")
+                    ? "text-myPurple-hover font-semibold"
+                    : "text-myPurple-primary hover:text-myPurple-hover"
+                }`}
+              >
+                <BellIcon className="w-6 h-6" />
+              </Link>
+              <div className="hidden md:block">
+                <LogoutButton />
+              </div>
+            </>
           )}
           <Button
             variant="ghost"
@@ -135,7 +147,7 @@ export function Navbar({ links }: NavbarProps) {
                 key="user-profile"
                 href="/user-profile"
                 className={`transition-colors duration-200 text-lg ${
-                  profileActive
+                  profileActive && (!pathname.includes("notifications"))
                     ? "text-myPurple-hover font-semibold"
                     : "text-myPurple-primary hover:text-myPurple-hover"
                 }`}
@@ -143,7 +155,19 @@ export function Navbar({ links }: NavbarProps) {
               >
                 Mi Perfil
               </Link>
-              
+
+              <Link
+                href="/user-profile/notifications"
+                className={`transition-colors duration-200 text-lg ${
+                  pathname.includes("notifications") 
+                    ? "text-myPurple-hover font-semibold"
+                    : "text-myPurple-primary hover:text-myPurple-hover"
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                Notificaciones
+              </Link>
+
               <div className="mt-4 w-full flex justify-center">
                 <LogoutButton />
               </div>
@@ -152,13 +176,5 @@ export function Navbar({ links }: NavbarProps) {
         </nav>
       )}
     </header>
-  );
-}
-
-export default function NavbarWrapped({ links }: NavbarProps) {
-  return (
-    <SessionProvider>
-      <Navbar links={links} />
-    </SessionProvider>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import GenericTable, { Column } from "@/components/global/GenericTable";
-import { Eye } from "lucide-react";
 import { VaccineRecord } from "@/lib/vaccine-registry/IVaccineRegistry";
 import { useEffect, useState } from "react";
 import { getByPetId } from "@/lib/vaccine-registry/getByPetId";
@@ -24,41 +23,28 @@ export default function PetVaccinationTable({
     console.log("reminder", vac);
   };
   const router = useRouter();
-
-  const v = useTranslations("VaccuneTable");
-  const e = useTranslations("Error");
-  const b = useTranslations("Button");
+  
+  const t = useTranslations();
 
   const columns: Column<VaccineRecord>[] = [
     {
-      header: v("date"),
+      header: t("vaccine.table.date"),
       accessor: (vac) => formatDate(vac.applicationDate || vac.createdAt),
       className: "font-medium",
     },
     {
-      header: v("details"),
+      header: t("vaccine.table.details"),
       accessor: (vac) => vac.vaccine.name,
     },
     {
-      header: v("expectedDate"),
+      header: t("vaccine.table.expectedDate"),
       accessor: (vac) => formatDate(vac.expectedDate),
     },
     {
-      header: v("dosis"),
+      header: t("vaccine.table.dosis"),
       accessor: (vac) => vac.dose,
     },
   ];
-
-  const actions = [
-    {
-      icon: <Eye className="w-4 h-4" />,
-      onClick: (vac: VaccineRecord) => {
-        router.push(`/user-profile/pet/${petId}`);
-      },
-      label: b("edit"),
-    }    
-  ];
-  
 
   const [vaccines, setVaccines] = useState<VaccineRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -87,7 +73,7 @@ export default function PetVaccinationTable({
           pageSize: data.size,
         });
       } catch (error: unknown) {
-        toast("error", error instanceof Error ? error.message : e("errorLoad", {field: "vacunas"}));
+        if (error instanceof Error) toast("error", error.message);
       } finally {
         setIsLoading(false);
       }
@@ -100,15 +86,13 @@ export default function PetVaccinationTable({
     <GenericTable
       data={vaccines}
       columns={columns}
-      actions={actions}
-      actionsTitle={v("actions")}
       pagination={pagination}
       isLoading={isLoading}
       skeleton={<PetVaccinationListSkeleton />}
       onPageChange={(page) =>
         setPagination({ ...pagination, currentPage: page })
       }
-      emptyMessage={e("notFoundField", {field: "vacunas"})}
+      emptyMessage={t("vaccine.table.emptyMessage")}
     />
   );
 }

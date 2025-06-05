@@ -79,8 +79,8 @@ export default function RaceList({ token }: RaceListProps) {
     );
 
     useEffect(() => {
-        if (token) loadRaces(pagination.pageSize, pagination.currentPage);
-    }, [token, pagination.currentPage, loadRaces]);
+        if (token) loadRaces(pagination.pageSize, pagination.currentPage, searchQuery, showDeleted);
+    }, [token, pagination.currentPage, searchQuery, showDeleted, loadRaces]);
 
     const confirmDelete = (race: Race) => {
         setSelectedRace(race);
@@ -104,9 +104,15 @@ export default function RaceList({ token }: RaceListProps) {
 
     const handleSearch = (query: string) => {
         setSearchQuery(query);
+        setPagination(prev => ({ ...prev, currentPage: 1 }));
         loadRaces(pagination.pageSize, 1, query, showDeleted);
     };
     const handlePageChange = (page: number) => setPagination(prev => ({ ...prev, currentPage: page }));
+
+    const handleSpeciesFilter = (speciesId: number | null) => {
+        setSelectedSpecies(speciesId);
+        setPagination(prev => ({ ...prev, currentPage: 1 }));
+    };
 
     const toggleDeletedRaces = () => {
         setShowDeleted(!showDeleted);
@@ -128,7 +134,6 @@ export default function RaceList({ token }: RaceListProps) {
             loadRaces(pagination.pageSize, pagination.currentPage);
         }
     };
-    
     
     const handleRestore = async (race: Race) => {
         setIsRestoring(true);
@@ -178,7 +183,7 @@ export default function RaceList({ token }: RaceListProps) {
                 <div className="w-48">
                     <SpeciesFilter
                         token={token as string}
-                        onSelectSpecies={setSelectedSpecies}
+                        onSelectSpecies={handleSpeciesFilter}
                         selectedSpeciesId={selectedSpecies}
                     />
                 </div>

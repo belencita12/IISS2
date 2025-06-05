@@ -16,7 +16,8 @@ interface StockDetailCardProps {
 }
 
 const StockDetailCard: React.FC<StockDetailCardProps> = ({ product, amount, onClick }) => {
-  const p = useTranslations("ProductDetail");
+
+  const t = useTranslations();
 
 
   return (
@@ -53,23 +54,23 @@ const StockDetailCard: React.FC<StockDetailCardProps> = ({ product, amount, onCl
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             <div className="flex flex-col">
-              <p className="text-sm text-gray-500">{p("name")}</p>
-              <p className="text-sm text-gray-500 mt-2">{p("provider")}</p>
-              <p className="text-sm text-gray-500 mt-2">{p("category")}</p>
-              <p className="text-sm text-gray-500 mt-2">{p("price")}</p>
+              <p className="text-sm text-gray-500">{t("product.details.code")}</p>
+              <p className="text-sm text-gray-500 mt-2">{t("product.details.provider")}</p>
+              <p className="text-sm text-gray-500 mt-2">{t("product.details.category")}</p>
+              <p className="text-sm text-gray-500 mt-2">{t("product.details.price")}</p>
             </div>
             <div className="flex flex-col min-w-0">
               <p className="text-sm break-words">{product.code}</p>
               <p className="text-sm mt-2 break-words">{product.provider.name}</p>
               <p className="text-sm mt-2 break-words">{getCategoryLabel(product.category)}</p>
-              <p className="text-sm mt-2">{product.price.toLocaleString()} {p("gs")}</p>
+              <p className="text-sm mt-2">{t("product.details.priceGs", {price: product.price.toLocaleString()})}</p>
             </div>
             <div className="flex flex-col">
-              <p className="text-sm text-gray-500">{p("cost")}</p>
-              <p className="text-sm text-gray-500 mt-2">{p("quantity")}</p>
+              <p className="text-sm text-gray-500">{t("product.details.cost")}</p>
+              <p className="text-sm text-gray-500 mt-2">{t("product.details.quantity")}</p>
             </div>
             <div className="flex flex-col">
-              <p className="text-sm">{product.cost?.toLocaleString()} {p("gs")}</p>
+              <p className="text-sm">{t("product.details.costGs", {cost: (product.cost ?? 0).toLocaleString()})}</p>
               <p className="text-sm mt-2">{amount}</p>
             </div>
           </div>

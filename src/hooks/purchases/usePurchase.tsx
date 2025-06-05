@@ -93,6 +93,7 @@ export const usePurchase = (token: string) => {
     register,
     handleSubmit,
     control,
+    setValue,
     watch,
     errors,
     isSubmitting,

@@ -12,17 +12,15 @@ export const registerClient = async (clientData: FormClient, token: string) => {
       body: JSON.stringify(clientData),
     });
 
-    let data = null;
-    try {
-      data = await response.json();
-    } catch (jsonError) {}
+    const data = await response.json().catch(() => null); // parsea solo una vez
 
     if (!response.ok) {
-      return { error: data?.message || `Error HTTP: ${response.status}`, status: response.status };
+      const message = data?.message || `Error HTTP: ${response.status}`;
+      throw new Error(message);
     }
+
     return { success: true, status: response.status, data };
   } catch (error) {
     throw error;
   }
 };
-

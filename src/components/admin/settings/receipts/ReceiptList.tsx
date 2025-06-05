@@ -1,33 +1,65 @@
 "use client";
 
-import { useEffect, useState, ReactNode } from "react";
-import { getReceipts } from "@/lib/receipts/getReceipts";
-import { IReceipt, IReceiptResponse } from "@/lib/receipts/IReceipt";
+import { useState } from "react";
+import { ReactNode } from "react";
+import { IReceipt } from "@/lib/receipts/IReceipt";
 import GenericTable, { Column } from "@/components/global/GenericTable";
-import { Eye, Receipt } from "lucide-react";
+import { Eye } from "lucide-react";
 import ReceiptListSkeleton from "./skeleton/ReceiptListSkeleton";
-
+import DateFilter from "../../purchases/filters/PurchaseDateFilter";
+import ReceiptFilters from "./filter/ReceiptFilters";
+import { formatDate } from "@/lib/utils";
+import { ReceiptFiltersParams } from "@/lib/receipts/IReceipt";
+import { RECEIPT_API } from "@/lib/urls";
+import { usePaginatedFetch } from "@/hooks/api/usePaginatedFetch";
+import { Button } from "@/components/ui/button";
 type ReceiptListProps = {
   token: string;
 };
 
 export default function ReceiptList({ token }: ReceiptListProps) {
-  const [receipts, setReceipts] = useState<IReceipt[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [isFiltering, setIsFiltering] = useState(false);
+  const [resetCounter, setResetCounter] = useState(0);
+  const [filters, setFilters] = useState<ReceiptFiltersParams>({
+    page: 1,
+    size: 7,
+    fromIssueDate: undefined,
+    toIssueDate: undefined,
+  });
 
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      try {
-        const response: IReceiptResponse = await getReceipts(token);
-        setReceipts(response.data);
-      } catch (error) {
-        setReceipts([]);
-      }
-      setLoading(false);
-    }
-    fetchData();
-  }, [token]);
+  const {
+    data,
+    loading: isLoading,
+    pagination = {
+      currentPage: 1,
+      totalPages: 1,
+      totalItems: 0,
+      pageSize: 7,
+    },
+    setPage,
+    search,
+  } = usePaginatedFetch<IReceipt>(RECEIPT_API, token, {
+    initialPage: 1,
+    size: 7,
+    autoFetch: true,
+    extraParams: {
+      fromIssueDate: filters.fromIssueDate,
+      toIssueDate: filters.toIssueDate,
+      searchTerm: filters.searchTerm,
+      fromTotal: filters.fromTotal,
+      toTotal: filters.toTotal,
+    },
+  });
+
+  const handleFilterChange = (updatedFilters: ReceiptFiltersParams) => {
+    const { page, size, ...safeFilters } = updatedFilters;
+    setFilters((prev) => ({
+      ...prev,
+      ...safeFilters,
+      page: 1,
+    }));
+    search(safeFilters as Record<string, unknown>);
+  };
 
   const columns: Column<IReceipt>[] = [
     {
@@ -36,19 +68,19 @@ export default function ReceiptList({ token }: ReceiptListProps) {
     },
     {
       header: "Total",
-      accessor: (row: IReceipt): string => 
-        row.total.toLocaleString("es-PY", { style: "currency", currency: "PYG" }),
+      accessor: (row: IReceipt): string =>
+        row.total.toLocaleString("es-PY", {
+          style: "currency",
+          currency: "PYG",
+        }),
     },
     {
       header: "Fecha de emisión",
-      accessor: (row: IReceipt): string => {
-        const [year, month, day] = row.issueDate.split("-");
-        return `${day.padStart(2, '0')} - ${month.padStart(2, '0')} - ${year}`;
-      },
+      accessor: (row: IReceipt): string => formatDate(row.issueDate),
     },
     {
       header: "Métodos de pagos",
-      accessor: (row: IReceipt): string => 
+      accessor: (row: IReceipt): string =>
         row.paymentMethods
           .map(
             (pm) =>
@@ -63,7 +95,7 @@ export default function ReceiptList({ token }: ReceiptListProps) {
       header: "Acciones",
       accessor: (row: IReceipt): ReactNode => (
         <button
-          onClick={() => window.location.href = `./receipts/${row.id}`}
+          onClick={() => (window.location.href = `./receipts/${row.id}`)}
           className="p-2 hover:bg-gray-100 rounded-full transition-colors"
           title="Ver detalle"
         >
@@ -73,12 +105,85 @@ export default function ReceiptList({ token }: ReceiptListProps) {
     },
   ];
 
-  if (loading) return <ReceiptListSkeleton />;
+  const hasActiveFilters = !!(
+    filters.fromTotal ||
+    filters.toTotal ||
+    filters.fromIssueDate ||
+    filters.toIssueDate ||
+    filters.receiptNumber ||
+    filters.searchTerm
+  );
+
+  const resetFilters = () => {
+    setIsFiltering(true)
+    setFilters({
+      page: 1,
+      size: 7,
+      fromIssueDate: undefined,
+      toIssueDate: undefined,
+      fromTotal: undefined,
+      toTotal: undefined
+    })
+    
+    setResetCounter((prev) => prev + 1);
+    setIsFiltering(false)
+  };
 
   return (
     <div>
+      <div className="mb-6 flex flex-col gap-4 p-5">
+        {hasActiveFilters && (
+          <div className="flex justify-end">
+            <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => resetFilters()}
+            className="text-sm h-8 px-2 text-gray-600 mr-[10px]"
+            disabled={isFiltering}
+            >
+            Limpiar filtros
+            </Button>
+          </div>
+        )}
+        <div className="flex-1">
+          <ReceiptFilters filters={filters} setFilters={handleFilterChange} reset={resetCounter} />
+        </div>
+        <div className="flex-1">
+          <DateFilter
+            from={filters.fromIssueDate}
+            to={filters.toIssueDate}
+            setDateFrom={(date) =>
+              handleFilterChange({ ...filters, fromIssueDate: date })
+            }
+            setDateTo={(date) =>
+              handleFilterChange({ ...filters, toIssueDate: date })
+            }
+          />
+        </div>
+      </div>
+
       <h2 className="text-3xl font-bold mb-4 pt-4">Recibos</h2>
-      <GenericTable columns={columns} data={receipts} />
+
+      {isLoading && <ReceiptListSkeleton />}
+
+      {!isLoading && data?.length === 0 && (
+        <p className="text-center p-4">No se encontraron recibos</p>
+      )}
+
+      {!isLoading && data && data.length > 0 && (
+        <GenericTable
+          columns={columns}
+          data={data}
+          isLoading={isLoading}
+          pagination={{
+            currentPage: pagination.currentPage,
+            totalPages: pagination.totalPages,
+            totalItems: pagination.totalItems,
+            pageSize: pagination.pageSize,
+          }}
+          onPageChange={setPage}
+        />
+      )}
     </div>
   );
 }

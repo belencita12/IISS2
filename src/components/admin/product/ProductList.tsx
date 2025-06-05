@@ -18,9 +18,7 @@ interface ProductListProps {
 export default function ProductListPage({ token }: ProductListProps) {
   const router = useRouter();
 
-  const b = useTranslations("Button");
-  const p = useTranslations("ProductDetail");
-  const e = useTranslations("Error");
+  const t = useTranslations();
 
   // Hook para filtrado normal
   const {
@@ -48,6 +46,8 @@ export default function ProductListPage({ token }: ProductListProps) {
 
   // Estado para almacenar productos combinados
   const [combinedProducts, setCombinedProducts] = useState<Product[]>([]);
+  const [isFiltering, setIsFiltering] = useState(false);
+  const [resetCounter, setResetCounter] = useState(0);
 
   useEffect(() => {
     syncPageSize(pagination.pageSize);
@@ -130,8 +130,48 @@ export default function ProductListPage({ token }: ProductListProps) {
     : handlePageChange;
   const loading = isLoading || isTagFiltering;
 
+  const hasActiveFilters = useMemo(() => {
+    const hasInputFilters = Object.values(inputFilters).some(
+      (value) => value !== "" && value !== undefined && value !== null
+    );
+    const hasTags = selectedTags.length > 0;
+
+    return hasInputFilters || hasTags;
+  }, [inputFilters, selectedTags]);
+
+
+  const resetFilters = () => {
+    setIsFiltering(true)
+    setInputFilters({
+      searchTerm: "",
+      category: "",
+      minPrice: "",
+      maxPrice: "",
+      minCost: "",
+      maxCost: "",
+    });
+    handleTagsChange([]); 
+    handleSearch(); 
+    setIsFiltering(false)
+    setResetCounter((prev) => prev + 1);
+  };
+
+
   return (
     <div className="max-w-screen-xl mx-auto p-4">
+      {hasActiveFilters && (
+          <div className="flex justify-end">
+              <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => resetFilters()}
+              className="text-sm h-8 px-2 text-gray-600 mr-[10px]"
+              disabled={isFiltering}
+              >
+              Limpiar filtros
+              </Button>
+          </div>
+      )}
       <div className="mb-2">
         <ProductFilters
           filters={inputFilters}
@@ -145,24 +185,25 @@ export default function ProductListPage({ token }: ProductListProps) {
           preventInvalidKeys={preventInvalidKeys}
           selectedTags={selectedTags}
           onTagsChange={handleTagsChange}
+          resetCounter= {resetCounter}
           token={token}
         />
       </div>
       <div className="mt-8 mb-6 flex justify-between items-center">
-        <h1 className="text-2xl font-bold">{p("titleProducts")}</h1>
+        <h1 className="text-2xl font-bold">{t("product.list.title")}</h1>
         <Button
           variant="outline"
           onClick={() => router.push(`/dashboard/products/register`)}
           className="px-6"
         >
-          {b("add")}
+          {t("button.add")}
         </Button>
       </div>
 
       {loading ? (
         <ProductListSkeleton />
       ) : displayedProducts.length === 0 ? (
-        <p className="text-center py-4">{e("notFoundField", {field: "productos"})}</p>
+        <p className="text-center py-4">{t("error.notFoundProducts")}</p>
       ) : (
         <div className="flex flex-wrap justify-between gap-y-4">
           {displayedProducts.map((product) => (

@@ -29,8 +29,7 @@ export const NumericFilter: React.FC<NumericFilterProps> = ({
   const [localMin, setLocalMin] = useState<string>(minValue);
   const [localMax, setLocalMax] = useState<string>(maxValue);
 
-  const f = useTranslations("Filters");
-  const e = useTranslations("Error");
+  const t = useTranslations();
 
   const isMaxLessThanMin =
     localMin !== "" &&
@@ -58,7 +57,7 @@ export const NumericFilter: React.FC<NumericFilterProps> = ({
           <NumericInput
             id="min"
             type="formattedNumber"
-            placeholder={f("from")}
+            placeholder={t("filters.priceRange.from")}
             value={localMin}
             onChange={(e) => handleMinChange(e.target.value)}
             onKeyDown={preventInvalidKeys}
@@ -82,7 +81,7 @@ export const NumericFilter: React.FC<NumericFilterProps> = ({
           <NumericInput
             id="max"
             type="formattedNumber"
-            placeholder={f("to")}
+            placeholder={t("filters.priceRange.to")}
             value={localMax}
             onChange={(e) => handleMaxChange(e.target.value)}
             onKeyDown={preventInvalidKeys}
@@ -102,7 +101,7 @@ export const NumericFilter: React.FC<NumericFilterProps> = ({
           )}
           {isMaxLessThanMin && (
             <p className="absolute left-0 top-full mt-1 text-xs text-red-500">
-              {e("numericMin")}
+              {t("filters.priceRange.errorNumericMin")}
             </p>
           )}
         </div>

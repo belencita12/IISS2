@@ -21,17 +21,18 @@ import {
 import { Modal } from "@/components/global/Modal";
 import { Button } from "@/components/ui/button";
 import AppointmentListSkeleton from "./Skeleton/AppointmentListSkeleton";
+import { Textarea } from "@/components/ui/textarea";
 
 interface AppointmentListProps {
     token: string;
-    employeeRuc: string;
+    searchEmployee: string;
 }
 
-const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
+const AppointmentList = ({ token, searchEmployee }: AppointmentListProps) => {
     const [filters, setFilters] = useState<AppointmentQueryParams>({
         page: 1,
         search: undefined,
-        employeeRuc: employeeRuc,
+        searchEmployee: searchEmployee,
         fromDesignatedDate: undefined,
         toDesignatedDate: undefined,
         status: undefined,
@@ -48,6 +49,8 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
     const [cancelDescription, setCancelDescription] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const [isFiltering, setIsFiltering] = useState(false);
+    const [resetCounter, setResetCounter] = useState(0);
 
     const { data, error, pagination, fetchData, refresh } =
         usePaginatedFetch<AppointmentData>(APPOINTMENT_API, token, {
@@ -76,7 +79,7 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
         const newFilters = {
             ...filters,
             ...updatedFilters,
-            employeeRuc,
+            searchEmployee,
             page: 1,
         };
         performSearchWithFilters(newFilters);
@@ -86,10 +89,30 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
         const newFilters = {
             ...filters,
             search: value,
-            employeeRuc,
+            searchEmployee,
             page: 1,
         };
         performSearchWithFilters(newFilters);
+    };
+
+    const hasActiveFilters = Boolean(
+        filters.fromDesignatedDate ||
+        filters.toDesignatedDate ||
+        filters.status
+    );
+
+    const resetFilters = () => {
+        setIsFiltering(true);
+        setFilters({
+            page: 1,
+            search: undefined,
+            searchEmployee: searchEmployee,
+            fromDesignatedDate: undefined,
+            toDesignatedDate: undefined,
+            status: undefined,
+        });
+        setIsFiltering(false);
+        setResetCounter((prev) => prev + 1);
     };
 
     const openConfirmModal = (
@@ -134,7 +157,13 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
                     modalAction === "complete" ? "finalizada" : "cancelada"
                 } con éxito`
             );
-            await fetchData(filters.page || 1, { employeeRuc });
+            await fetchData(filters.page || 1, { 
+                search: filters.search,
+                searchEmployee: searchEmployee,
+                fromDesignatedDate: filters.fromDesignatedDate,
+                toDesignatedDate: filters.toDesignatedDate,
+                status: filters.status,
+            });
         } catch (error) {
             toast("error", "Ocurrió un error al actualizar la cita");
         } finally {
@@ -154,10 +183,24 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
 
     return (
         <div className="p-4 mx-auto">
+            {hasActiveFilters && (
+                <div className="flex justify-end">
+                    <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => resetFilters()}
+                    className="text-sm h-8 px-2 text-gray-600 mr-[10px]"
+                    disabled={isFiltering}
+                    >
+                    Limpiar filtros
+                    </Button>
+                </div>
+            )}
             <div className="max-w-8xl mx-auto p-4 space-y-6">
                 <SearchBar
-                    placeholder="Buscar por RUC del cliente"
+                    placeholder="Buscar por nombre o RUC del cliente"
                     onSearch={handleSearch}
+                    resetTrigger={resetCounter}
                 />
                 <div className="flex flex-col md:flex-row gap-4">
                     <div className="flex-1">
@@ -259,7 +302,7 @@ const AppointmentList = ({ token, employeeRuc }: AppointmentListProps) => {
                     title="Motivo de cancelación"
                     size="md"
                 >
-                    <textarea
+                    <Textarea
                         className="w-full h-32 p-2 border border-gray-300 rounded"
                         placeholder="Escribe una razón para cancelar la cita"
                         value={cancelDescription}

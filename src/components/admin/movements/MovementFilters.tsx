@@ -21,9 +21,10 @@ interface Props {
   filters: GetMovementQueryParams & { managerRuc?: string };
   setFilters: (val: GetMovementQueryParams & { managerRuc?: string }) => void;
   onSearch: () => void;
+  resetCounter: number
 }
 
-export default function MovementFilters({ token, filters, setFilters }: Props) {
+export default function MovementFilters({ token, filters, setFilters, resetCounter }: Props) {
   const handleChange = <K extends keyof Props["filters"]>(
     key: K,
     value: Props["filters"][K]
@@ -33,15 +34,13 @@ export default function MovementFilters({ token, filters, setFilters }: Props) {
 
   const [stocks, setStocks] = useState<StockData[]>([]);
 
-  const f = useTranslations("Filters");
-  const ph = useTranslations("Placeholder");
-  const e = useTranslations("Error");
+  const t = useTranslations();
 
   useEffect(() => {
     getStocks({ page: 1 }, token)
       .then((res) => setStocks(res.data))
       .catch((err) => {
-        const message = err?.message || e("notGetData");
+        const message = err?.message || t("error.notGetData");
         toast("error", message);
       });
   }, [token]);
@@ -52,26 +51,28 @@ export default function MovementFilters({ token, filters, setFilters }: Props) {
       <div className="flex flex-col md:flex-row items-center gap-4">
         <div className="w-full md:w-1/2">
           <SearchBar
-            placeholder={ph("getBy", {field: "ruc del encargado"})}
+            placeholder={t("search.searchByEmployeeRuc")}
             defaultQuery={filters.managerRuc ?? ""}
             onSearch={(value) => handleChange("managerRuc", value)}
             debounceDelay={300}
+            resetTrigger={resetCounter}
           />
         </div>
 
         <div className="w-full md:w-1/2">
           <SearchBar
-            placeholder={ph("getBy", {field: "nombre del producto"})}
+            placeholder={t("search.searchByProductName")}
             defaultQuery={filters.productName ?? ""}
             onSearch={(value) => handleChange("productName", value)}
             debounceDelay={300}
+            resetTrigger={resetCounter}
           />
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <Label>{f("origin")}</Label>
+          <Label>{t("filters.movement.origin")}</Label>
           <Select
             value={
               filters.originStockId !== undefined
@@ -86,10 +87,10 @@ export default function MovementFilters({ token, filters, setFilters }: Props) {
             }
           >
             <SelectTrigger>
-              <SelectValue placeholder={ph("select")} />
+              <SelectValue placeholder={t("placeholder.select")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">{f("all")}</SelectItem>
+              <SelectItem value="ALL">{t("filters.all")}</SelectItem>
               {stocks
                 .filter((s) => s.id !== undefined)
                 .map((s) => (
@@ -102,7 +103,7 @@ export default function MovementFilters({ token, filters, setFilters }: Props) {
         </div>
 
         <div>
-          <Label>{f("destination")}</Label>
+          <Label>{t("filters.movement.destination")}</Label>
           <Select
             value={
               filters.destinationStockId !== undefined
@@ -117,10 +118,10 @@ export default function MovementFilters({ token, filters, setFilters }: Props) {
             }
           >
             <SelectTrigger>
-              <SelectValue placeholder={ph("select")} />
+              <SelectValue placeholder={t("placeholder.select")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">{f("all")}</SelectItem>
+              <SelectItem value="ALL">{t("filters.all")}</SelectItem>
               {stocks
                 .filter((s) => s.id !== undefined)
                 .map((s) => (
@@ -133,7 +134,7 @@ export default function MovementFilters({ token, filters, setFilters }: Props) {
         </div>
 
         <div>
-          <Label>{f("type")}</Label>
+          <Label>{t("filters.type")}</Label>
           <Select
             value={filters.type ?? "ALL"}
             onValueChange={(value) =>
@@ -141,13 +142,13 @@ export default function MovementFilters({ token, filters, setFilters }: Props) {
             }
           >
             <SelectTrigger>
-              <SelectValue placeholder={ph("select")}/>
+              <SelectValue placeholder={t("placeholder.select")}/>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">{f("all")}</SelectItem>
-              <SelectItem value="INBOUND">{ph("inbound")}</SelectItem>
-              <SelectItem value="OUTBOUND">{ph("outbound")}</SelectItem>
-              <SelectItem value="TRANSFER">{ph("transfer")}</SelectItem>
+              <SelectItem value="ALL">{t("filters.all")}</SelectItem>
+              <SelectItem value="INBOUND">{t("movement.type.inbound")}</SelectItem>
+              <SelectItem value="OUTBOUND">{t("movement.type.outbound")}</SelectItem>
+              <SelectItem value="TRANSFER">{t("movement.type.transfer")}</SelectItem>
             </SelectContent>
           </Select>
         </div>

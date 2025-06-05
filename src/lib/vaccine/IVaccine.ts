@@ -13,7 +13,7 @@ export interface VaccineImage {
 }
 
 export interface ProductData {
-  cost: unknown;  // Puede ser objeto decimal o número
+  cost: unknown; // Puede ser objeto decimal o número
   iva: unknown;
   price: unknown;
 }
@@ -46,7 +46,7 @@ export interface Vaccine {
     };
     createdAt: string;
     updatedAt: string;
-    deletedAt: unknown; 
+    deletedAt: unknown;
   };
 }
 
@@ -70,15 +70,13 @@ export interface VaccineFormValues {
   };
 }
 
-
-
 export interface IVaccine {
   id: number;
   name: string;
   manufacturer: { id: number; name: string };
   species: { id: number; name: string };
+  product?: { price: number };
 }
-
 
 export interface VaccineListProps {
   token: string | null;

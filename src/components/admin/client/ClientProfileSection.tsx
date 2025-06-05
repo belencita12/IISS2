@@ -20,13 +20,13 @@ export default function ClientProfileSection({
     phoneNumber,
     adress,
 }: IUserProfile) {
-    const u= useTranslations("ProfileUser")
+    const t = useTranslations();
 
     return (
-        <Card className="mb-8 mt-8 shadow-md w-full">
+        <Card className="mb-8 mt-2 shadow-md w-full">
             <CardHeader className="pb-0">
                 <h1 className="text-3xl font-bold tracking-tight">
-                    {u("title")}
+                    {t("client.details.profileTitle")}
                 </h1>
             </CardHeader>
             <CardContent>
@@ -53,7 +53,7 @@ export default function ClientProfileSection({
                                 </div>
                                 <div className="min-w-0 flex-1">
                                     <p className="text-sm text-muted-foreground">
-                                        {u("rucLabel")}
+                                        {t("client.details.ruc")}
                                     </p>
                                     <p className="font-medium truncate">
                                         {ruc}
@@ -67,7 +67,7 @@ export default function ClientProfileSection({
                                 </div>
                                 <div className="min-w-0 flex-1">
                                     <p className="text-sm text-muted-foreground">
-                                        {u("emailLabel")}
+                                        {t("client.details.email")}
                                     </p>
                                     <TooltipProvider>
                                         <Tooltip>
@@ -90,7 +90,7 @@ export default function ClientProfileSection({
                                 </div>
                                 <div className="min-w-0 flex-1">
                                     <p className="text-sm text-muted-foreground">
-                                        {u("phoneLabel")}
+                                        {t("client.details.phone")}
                                     </p>
                                     <p className="font-medium truncate">
                                         {phoneNumber}
@@ -105,7 +105,7 @@ export default function ClientProfileSection({
                                     </div>
                                     <div className="min-w-0 flex-1">
                                         <p className="text-sm text-muted-foreground">
-                                            {u("addressLabel")}
+                                            {t("client.details.address")}
                                         </p>
                                         <TooltipProvider>
                                             <Tooltip>

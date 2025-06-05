@@ -63,3 +63,12 @@ export type InvoiceForm = {
     productId: number;
   }[];
 };
+
+export type PaymentFormData = {
+  amount: number;
+  paymentDate: string;
+  paymentMethods: {
+    methodId: number;
+    amount: number;
+  }[];
+}

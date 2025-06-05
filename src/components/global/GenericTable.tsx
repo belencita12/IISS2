@@ -20,6 +20,7 @@ export type TableAction<T> = {
   icon: React.ReactNode;
   onClick: (item: T) => void;
   label: string;
+  show?: (item: T) => boolean;
 };
 
 export interface PaginationInfo {
@@ -135,14 +136,16 @@ export default function GenericTable<T extends { id?: string | number }>({
               {actions && actions.length > 0 && (
                 <TableCell className="text-right flex gap-2 justify-end">
                   {actions.map((action, actionIndex) => (
-                    <button
-                      key={actionIndex}
-                      onClick={() => action.onClick(item)}
-                      aria-label={action.label}
-                      className="p-2 rounded-md hover:bg-gray-100"
-                    >
-                      {action.icon}
-                    </button>
+                    action.show && !action.show(item) ? null : (
+                      <button
+                        key={actionIndex}
+                        onClick={() => action.onClick(item)}
+                        aria-label={action.label}
+                        className="p-2 rounded-md hover:bg-gray-100"
+                      >
+                        {action.icon}
+                      </button>
+                    )
                   ))}
                 </TableCell>
               )}

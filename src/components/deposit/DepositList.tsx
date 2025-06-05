@@ -12,7 +12,6 @@ import { deleteStockById } from "@/lib/stock/deleteStockById";
 import GenericPagination from "../global/GenericPagination";
 import DepositListSkeleton from "./skeleton/DepositListSkeleton";
 import { useTranslations } from "next-intl";
-import { FileDiff } from "lucide-react";
 
 interface DepositListProps {
   token?: string;
@@ -28,6 +27,7 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
   const [allDeposits, setAllDeposits] = useState<StockData[]>([]);
   const [selectedDeposit, setSelectedDeposit] = useState<StockData | null>(null);
 
+  const t = useTranslations();
   const s = useTranslations("StockList");
   const b = useTranslations("Button");
   const e = useTranslations("Error");
@@ -38,7 +38,7 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
     try {
       setIsLoading(true);
       if (!token) {
-        toast("error", e("authError"));
+        toast("error", t("error.authError"));
         return;
       }
 
@@ -56,7 +56,7 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
       setTotalPages(data.totalPages);
       setAllDeposits(cleanedData);
     } catch (error: unknown) {
-      toast("error", error instanceof Error ? error.message : e("errorLoad", {field: "depositos"}));
+      toast("error", error instanceof Error ? error.message : e("error.errorLoadStock"));
 
     } finally {
       setIsLoading(false);
@@ -83,6 +83,7 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
   return (
     <div className="p-6">
       <SearchBar
+      placeholder={t("search.searchByName")}
         onSearch={(term) => {
           setSearchTerm(term);
           setCurrentPage(1);
@@ -91,9 +92,9 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
       />
 
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold mb-4">{s("title")}</h2>
-        <Button className="border border-gray-300 hover:bg-gray-800" onClick={handleAddDeposit}>
-          {b("register")}
+        <h2 className="text-2xl font-bold mb-4">{t("stock.table.title")}</h2>
+        <Button variant="outline" className="px-6" onClick={handleAddDeposit}>
+          {t("button.register")}
         </Button>
       </div>
 
@@ -102,34 +103,39 @@ const DepositList: React.FC<DepositListProps> = ({ token = "" }) => {
       )}
       {!isLoading && (
         <div className="space-y-4">
-          {deposits.map((deposit) => (
-            <DepositCard
-              key={deposit.id}
-              nombre={deposit.name}
-              ubicacion={deposit.address}
-              id={deposit.id}
-              onEdit={(id) => {
-                const selected = deposits.find((d) => d.id === id);
-                if(selected) {
-                  setSelectedDeposit(selected);
-                  setIsModalOpen(true);
+          {deposits.length === 0 ? (
+            <div className="flex flex-col items-center justify-center">
+              <p>{t("error.notFoundStock")}</p>
+            </div>
+          ) : (
+            deposits.map((deposit) => (
+              <DepositCard
+                key={deposit.id}
+                nombre={deposit.name}
+                ubicacion={deposit.address}
+                id={deposit.id}
+                onEdit={(id) => {
+                  const selected = deposits.find((d) => d.id === id);
+                  if (selected) {
+                    setSelectedDeposit(selected);
+                    setIsModalOpen(true);
                 }
               }}
               onDelete={async (id) => {
                 try {
                   const success = await deleteStockById(id, token);
                   if (!success) {
-                    toast("error", e("noDelete", {field: deposit.name}));
+                    toast("error", t("error.errorDelete", {field: deposit.name}));
                     return;
                   }
 
-                  toast("success", sc("successDelete", {field: deposit.name}));
+                  toast("success", t("success.successDeleteStock"));
                   showDeposits(currentPage, token, searchTerm);
                 } catch (error : unknown) {
-                  toast("error", error instanceof Error ? error.message : e("noDelete", {field: deposit.name}));
+                  if (error instanceof Error) toast("error", error.message);
                 }
               }}
-            />
+            />)
           ))}
         </div>
       )}

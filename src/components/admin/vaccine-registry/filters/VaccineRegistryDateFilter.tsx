@@ -13,6 +13,7 @@ interface Props {
   toKey: string;
   filters: VaccineRegistryFilters;
   setFilters: React.Dispatch<React.SetStateAction<VaccineRegistryFilters>>;
+  resetTrigger?: number;
 }
 
 export default function VaccineRegistryDateFilter({
@@ -21,6 +22,7 @@ export default function VaccineRegistryDateFilter({
   toKey,
   filters,
   setFilters,
+  resetTrigger
 }: Props) {
   const [fromDate, setFromDate] = useState<string>(
     (filters[fromKey] as string) ?? ""
@@ -89,6 +91,12 @@ export default function VaccineRegistryDateFilter({
     }
   }, [debouncedFrom, debouncedTo, fromKey, toKey, setFilters]);
 
+  useEffect(() => {
+    setFromDate((filters[fromKey] as string) ?? "");
+    setToDate((filters[toKey] as string) ?? "");
+    prevDebounced.current = { from: "", to: "" };
+  }, [resetTrigger]);
+  
   const isInvalidRange = fromDate && toDate && toDate < fromDate;
   const errorMessage = isInvalidRange
     ? "La fecha hasta no puede ser menor que la fecha desde."
@@ -108,6 +116,17 @@ export default function VaccineRegistryDateFilter({
               setFromDate(value);
               if (toDate && value > toDate) {
                 setToDate("");
+              }
+            }}
+            min="1900-01-01"
+            max={(() => { const d = new Date(); d.setFullYear(d.getFullYear() + 5); return d.toISOString().split('T')[0]; })()}
+            onBlur={(e) => {
+              const min = "1900-01-01";
+              const max = (() => { const d = new Date(); d.setFullYear(d.getFullYear() + 5); return d.toISOString().split('T')[0]; })();
+              let value = e.target.value;
+              if (value && (value < min || value > max)) {
+                value = value < min ? min : max;
+                setFromDate(value);
               }
             }}
             className="w-full border px-3 py-2 rounded pr-10"
@@ -133,7 +152,17 @@ export default function VaccineRegistryDateFilter({
             type="date"
             value={toDate}
             onChange={(e) => setToDate(e.target.value)}
-            min={fromDate || undefined}
+            min={fromDate || "1900-01-01"}
+            max={(() => { const d = new Date(); d.setFullYear(d.getFullYear() + 5); return d.toISOString().split('T')[0]; })()}
+            onBlur={(e) => {
+              const min = "1900-01-01";
+              const max = (() => { const d = new Date(); d.setFullYear(d.getFullYear() + 5); return d.toISOString().split('T')[0]; })();
+              let value = e.target.value;
+              if (value && (value < min || value > max)) {
+                value = value < min ? min : max;
+                setToDate(value);
+              }
+            }}
             className={clsx(
               "w-full border px-3 py-2 rounded pr-10",
               errorMessage && "border-red-500"

@@ -19,7 +19,7 @@ export default function AppointmentDateFilter({ filters, setFilters }: Props) {
   const debouncedStartDate = useDebounce(startDate, 500);
   const debouncedEndDate = useDebounce(endDate, 500);
 
-  const f = useTranslations("Filters");
+  const t = useTranslations();
 
   const adjustEndDate = (dateStr: string) => {
     if (!dateStr) return undefined;
@@ -44,7 +44,7 @@ export default function AppointmentDateFilter({ filters, setFilters }: Props) {
     startDate && endDate && endDate < startDate;
 
   const endDateError = isEndDateBeforeStart
-    ? f("errorDate")
+    ? t("error.errorDate")
     : null;
 
   useEffect(() => {
@@ -60,17 +60,24 @@ export default function AppointmentDateFilter({ filters, setFilters }: Props) {
     }
   }, [debouncedStartDate, debouncedEndDate]);
 
+  useEffect(() => {
+    setStartDate(filters.fromDesignatedDate ?? "");
+    setEndDate(filters.toDesignatedDate ?? "");
+  }, [filters.fromDesignatedDate, filters.toDesignatedDate]);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div className="space-y-2">
-        <Label htmlFor="startDate">{f("fromDate")}</Label>
+        <Label htmlFor="startDate">{t("filters.date.from")}</Label>
         <input
           id="startDate"
           type="date"
           className={clsx(
             "w-full border px-3 py-2 rounded",
           )}
-          value={startDate}
+          min="1900-01-01"
+          max={(() => { const d = new Date(); d.setFullYear(d.getFullYear() + 5); return d.toISOString().split('T')[0]; })()}
+          value={startDate || ""}
           onChange={(e) => {
             const value = e.target.value;
             setStartDate(value);
@@ -78,11 +85,20 @@ export default function AppointmentDateFilter({ filters, setFilters }: Props) {
               setEndDate("");
             }
           }}
+          onBlur={(e) => {
+            const min = "1900-01-01";
+            const max = (() => { const d = new Date(); d.setFullYear(d.getFullYear() + 5); return d.toISOString().split('T')[0]; })();
+            let value = e.target.value;
+            if (value && (value < min || value > max)) {
+              value = value < min ? min : max;
+              setStartDate(value);
+            }
+          }}
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="endDate">{f("toDate")}</Label>
+        <Label htmlFor="endDate">{t("filters.date.to")}</Label>
         <input
           id="endDate"
           type="date"
@@ -90,9 +106,19 @@ export default function AppointmentDateFilter({ filters, setFilters }: Props) {
             "w-full border px-3 py-2 rounded",
             endDateError && "border-red-500"
           )}
-          value={endDate}
-          min={startDate || undefined}
+          min={startDate || "1900-01-01"}
+          max={(() => { const d = new Date(); d.setFullYear(d.getFullYear() + 5); return d.toISOString().split('T')[0]; })()}
+          value={endDate || ""}
           onChange={(e) => setEndDate(e.target.value)}
+          onBlur={(e) => {
+            const min = startDate || "1900-01-01";
+            const max = (() => { const d = new Date(); d.setFullYear(d.getFullYear() + 5); return d.toISOString().split('T')[0]; })();
+            let value = e.target.value;
+            if (value && (value < min || value > max)) {
+              value = value < min ? min : max;
+              setEndDate(value);
+            }
+          }}
         />
         {endDateError && (
           <p className="text-red-600 text-sm mt-1">{endDateError}</p>

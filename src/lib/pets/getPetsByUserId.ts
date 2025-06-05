@@ -61,12 +61,15 @@ export const getPetsByNameAndUserIdFull = async (
       }
     );
 
-    if (!response.ok) throw new Error("Error al obtener las mascotas");
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({})); 
+            const message = errorData?.message || `Error HTTP: ${response.status}`;
+            throw new Error(message);
+        }
 
     const data = await response.json();
     return data as PetDataResponse;
   } catch (error) {
-    console.error("Error en obtener mascotas por nombre y usuario", error);
     throw error;
   }
 };

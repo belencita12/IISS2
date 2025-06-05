@@ -15,9 +15,13 @@ export const useVaccineList = (token: string | null) => {
 
   const [loading, setLoading] = useState(false);
   const [lastSearch, setLastSearch] = useState("");
+  const [lastManufacturerId, setLastManufacturerId] = useState<number | null>(null);
 
   const loadVaccines = useCallback(
-    async (page: number = 1, filters: { name?: string } = {}) => {
+    async (
+      page: number = 1,
+      filters: { name?: string; manufacturerId?: number } = {}
+    ) => {
       if (!token) return;
       setLoading(true);
       try {
@@ -44,12 +48,16 @@ export const useVaccineList = (token: string | null) => {
   );
 
   const handleSearch = useCallback(
-    async (query: string) => {
+    async (query: string, manufacturerId?: number) => {
       if (!token) return;
       setLoading(true);
       setLastSearch(query);
+      setLastManufacturerId(manufacturerId ?? null);
       try {
-        const result = await getVaccines(token, 1, { name: query });
+        const result = await getVaccines(token, 1, {
+          name: query,
+          manufacturerId,
+        });
         setData({
           vaccines: result.data,
           pagination: {
@@ -70,7 +78,10 @@ export const useVaccineList = (token: string | null) => {
   );
 
   const handlePageChange = (page: number) => {
-    loadVaccines(page, { name: lastSearch });
+    loadVaccines(page, {
+      name: lastSearch,
+      manufacturerId: lastManufacturerId ?? undefined,
+    });
   };
 
   return {
@@ -78,6 +89,8 @@ export const useVaccineList = (token: string | null) => {
     loading,
     lastSearch,
     setLastSearch,
+    lastManufacturerId,
+    setLastManufacturerId,
     loadVaccines,
     handleSearch,
     handlePageChange,

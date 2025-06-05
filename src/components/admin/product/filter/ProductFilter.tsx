@@ -32,6 +32,7 @@ interface ProductFiltersProps {
   preventInvalidKeys: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   selectedTags: string[];
   onTagsChange: (selectedTags: string[]) => void;
+  resetCounter?: number;
   token: string;
 }
 
@@ -43,6 +44,7 @@ export default function ProductFilters({
   selectedTags,
   onTagsChange,
   token,
+  resetCounter
 }: ProductFiltersProps) {
   const { searchInput, setSearchInput, clearFilter } = useProductFilters(
     filters,
@@ -50,8 +52,7 @@ export default function ProductFilters({
     setFilters
   );
 
-  const f = useTranslations("Filters");
-  const ph= useTranslations("Placeholder");
+  const t = useTranslations();
   const handleRemoveTag = (tag: string) => {
     onTagsChange(selectedTags.filter((t) => t !== tag));
   };
@@ -67,7 +68,8 @@ export default function ProductFilters({
             }}
             defaultQuery={searchInput}
             debounceDelay={400}
-            placeholder={ph("getBy", {field: "código o nombre del producto"})}
+            placeholder={t("search.searchByCodeOrName")}
+            resetTrigger= {resetCounter}
           />
         </div>
         <div className="w-full sm:w-[30%]">
@@ -84,7 +86,7 @@ export default function ProductFilters({
       <div className="w-full flex flex-col sm:flex-row gap-4 mb-5">
         <div className="w-full sm:w-1/2">
           <NumericFilter
-            label={ph("price")}
+            label={t("placeholder.price")}
             minValue={filters.minPrice}
             maxValue={filters.maxPrice}
             onMinChange={(minPrice) =>
@@ -100,7 +102,7 @@ export default function ProductFilters({
         </div>
         <div className="w-full sm:w-1/2">
           <NumericFilter
-            label={ph("cost")}
+            label={t("placeholder.cost")}
             minValue={filters.minCost}
             maxValue={filters.maxCost}
             onMinChange={(minCost) =>
@@ -118,7 +120,7 @@ export default function ProductFilters({
       <div className="flex flex-col sm:flex-row sm:gap-4 w-full">
         <div className="w-full sm:w-[24%]">
           <TagFilter
-            title={f("tag")}
+            title={t("placeholder.tag")}
             selectedTags={selectedTags}
             onChange={onTagsChange}
             token={token}
@@ -137,7 +139,7 @@ export default function ProductFilters({
                     <button
                       onClick={() => handleRemoveTag(tag)}
                       className="inline-flex items-center justify-center rounded-full w-4 h-4 bg-gray text-black hover:bg-blue-300 transition-colors"
-                      aria-label={`Eliminar etiqueta ${tag}`}
+                      aria-label={t("filters.delete.label", {tag: tag})}
                     >
                       <X className="w-3 h-3" />
                     </button>

@@ -5,7 +5,6 @@ import { GetInvoiceQueryParams } from "@/lib/invoices/IInvoice";
 import { useEffect, useState } from "react";
 import useDebounce from "@/hooks/useDebounce";
 import clsx from "clsx";
-import { Input } from "@/components/ui/input";
 import { useTranslations } from "next-intl";
 
 interface Props {
@@ -14,6 +13,8 @@ interface Props {
 }
 
 export default function InvoiceDateFilter({ filters, setFilters }: Props) {
+
+  const t = useTranslations();
 
   const f = useTranslations("Filters");
 
@@ -39,11 +40,11 @@ export default function InvoiceDateFilter({ filters, setFilters }: Props) {
     startDate && endDate && endDate < startDate;
 
   const startDateError = isStartDateInFuture
-    ? f("startDateError")
+    ? t("error.startDateError")
     : null;
 
   const endDateError = isEndDateBeforeStart
-    ? f("errorDate")
+    ? t("error.errorDate")
     : null;
 
   useEffect(() => {
@@ -59,10 +60,15 @@ export default function InvoiceDateFilter({ filters, setFilters }: Props) {
     }
   }, [debouncedStartDate, debouncedEndDate]);
 
+  useEffect(()=>{
+    setStartDate(filters.fromIssueDate ?? "")
+    setEndDate(filters.toIssueDate ?? "")
+  },[filters.fromIssueDate, filters.toIssueDate])
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
   <div className="space-y-2">
-  <Label htmlFor="startDate">{f("fromDate")}</Label>
+  <Label htmlFor="startDate">{t("filters.date.from")}</Label>
   <input
     id="startDate"
     type="date"
@@ -70,14 +76,23 @@ export default function InvoiceDateFilter({ filters, setFilters }: Props) {
       "w-full border px-3 py-2 rounded",
       startDateError && "border-red-500"
     )}
-    value={startDate}
+    value={startDate || ""}
+    min="1900-01-01"
     max={today}
     onChange={(e) => {
       const value = e.target.value;
       setStartDate(value);
-
       if (endDate && value > endDate) {
         setEndDate("");
+      }
+    }}
+    onBlur={(e) => {
+      const min = "1900-01-01";
+      const max = today;
+      let value = e.target.value;
+      if (value && (value < min || value > max)) {
+        value = value < min ? min : max;
+        setStartDate(value);
       }
     }}
   />
@@ -87,7 +102,7 @@ export default function InvoiceDateFilter({ filters, setFilters }: Props) {
 </div>
 
 <div className="space-y-2">
-  <Label htmlFor="endDate">{f("toDate")}</Label>
+  <Label htmlFor="endDate">{t("filters.date.to")}</Label>
   <input
     id="endDate"
     type="date"
@@ -95,10 +110,19 @@ export default function InvoiceDateFilter({ filters, setFilters }: Props) {
       "w-full border px-3 py-2 rounded",
       endDateError && "border-red-500"
     )}
-    value={endDate}
-    min={startDate || undefined}
+    value={endDate || ""}
+    min={startDate || "1900-01-01"}
     max={today}
     onChange={(e) => setEndDate(e.target.value)}
+    onBlur={(e) => {
+      const min = startDate || "1900-01-01";
+      const max = today;
+      let value = e.target.value;
+      if (value && (value < min || value > max)) {
+        value = value < min ? min : max;
+        setEndDate(value);
+      }
+    }}
   />
   {endDateError && (
     <p className="text-red-600 text-sm mt-1">{endDateError}</p>

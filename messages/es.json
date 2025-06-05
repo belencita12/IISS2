@@ -41,7 +41,8 @@
     "male": "Macho",
     "female": "Hembra",
     "revert": "Revertir",
-    "reversing": "Revirtiendo..."
+    "reversing": "Revirtiendo...",
+    "refresh": "Reintentar"
   },
   "Success": {
     "success": "Éxito",
@@ -68,6 +69,7 @@
     "noAvailabilityHour": "No hay horarios disponibles para esta fecha",
     "notGetRuc": "No se pudo obtener el RUC del cliente",
     "notFound": "No se encontraron datos.",
+    "notFoundEmployees": "No se encontraron empleados",
     "notFoundField": "No se encontraron {field}.",
     "notFoundPets": "No se encontraron mascotas.",
     "notFoundProducts": "No se encontraron productos.",
@@ -86,7 +88,8 @@
     "numericMin": "No puede ser menor al mínimo",
     "selectOne": "Debes seleccionar al menos un {field}",
     "errorEndDate": "No se puede finalizar una cita antes de su fecha programada",
-    "errorLimitDate": "Se necesitan fechas límites para generar el reporte"
+    "errorLimitDate": "Se necesitan fechas límites para generar el reporte",
+    "startDateError": "La fecha no puede ser posterior a la actual."
   },
   "Filters":{
     "from": "Deste",
@@ -366,6 +369,7 @@
     "productCatalog": "Catálogo de productos",
     "updating": "Actualizando...",
     "title": "Tienda NicoPets",
+    "searchProducts": "Buscar Productos",
     "selectedTags": "Etiquetas seleccionadas:",
     "clearAll": "Limpiar todas",
     "filters": "Filtros",
@@ -516,6 +520,639 @@
     "unitCost": "Costo unitario",
     "iva": "IVA",
     "subTotal": "Sub. Total"
-  }
+  },
+  "header": {
+    "name": "{field}",
+    "description": "Bienvenido a nuestro sistema de veterinaria",
+    "heart": "Veterinaria cliente fiel"
+  },
+  "profile":{
+    "name": "{field}",
+    "phone": "Teléfono",
+    "ruc": "RUC",
+    "address": "Dirección",
+    "email": "{field}",
+    "form": {
+      "name": "Nombre",
+      "address": "Dirección",
+      "ruc": "RUC",
+      "email": "Correo electrónico",
+      "phone": "Teléfono"
+    }
+  },
+  "button": {
+    "edit": "Editar",
+    "editing": "Editando...",
+    "save":"Guardar",
+    "cancel": "Cancelar",
+    "saving": "Guardando...",
+    "cancelling": "Cancelando...",
+    "seeMore": "Ver más",
+    "seeDetails": "Ver detalles",
+    "schedule": "Agendar",
+    "scheduleing": "Agendando...",
+    "loading": "Cargando...",
+    "toReturn": "Volver",
+    "register": "Registrar",
+    "registering": "Registrando...",
+    "uploadImage": "Subir imagen",
+    "changeImage": "Cambiar imagen",
+    "searching": "Buscando...",
+    "updating": "Actualizando...",
+    "finish": "Finalizar",
+    "confirm": "Confirmar",
+    "delete": "Eliminar",
+    "add": "Agregar",
+    "change": "Cambiar",
+    "upload": "Subir",
+    "adding": "Agregando...",
+    "revert": "Revertir",
+    "reversing":"Revirtiendo..."
+    
+  },
 
+  "placeholder":{
+    "name": "Ingrese el nombre",
+    "address": "Ingrese la dirección",
+    "ruc": "Ingrese el RUC",
+    "email": "Ingrese el correo electrónico",
+    "phone": "Ingrese el número de teléfono",
+    "exampleEmail": "ejemplo@gmail.com",
+    "select": "Seleccionar",
+    "selectSpecieFirst": "Debes seleccionar una especie primero",
+    "details": "Ingrese los detalles",
+    "tag": "Etiqueta",
+    "reason": "Ingrese el motivo",
+    "lastName": "Ingrese el apellido",
+    "price": "Ingrese el precio",
+    "cost": "Ingrese el costo",
+    "iva":"Ingrese el IVA",
+    "description": "Ingrese una descripción",
+    "minAmount":"Ej: 100.000",
+    "maxAmount":"Ej: 1.000.000"
+
+  },
+  "error": {
+    "error": "Error",
+    "notFound": "No se encontraron datos",
+    "noSpecified": "No especificado",
+    "unknown": "Desconocido",
+    "notGetRuc": "No se pudo obtener el RUC.",
+    "errorRegisterAppointment": "Ocurrió un error al registrar la cita",
+    "errorLoadAppointments": "No se pudieron cargar las citas",
+    "withoutServices": "Sin servicios",
+    "noAsigned": "No asignado",
+    "noDetails": "No hay detalles disponibles",
+    "notGetData": "No se pudo obtener la información",
+    "notFoundEmployee": "No se encontró el empleado",
+    "notFoundEmployees": "No se encontraron empleados",
+    "noUpdate": "Ocurrió un error al actualizar los datos",
+    "auth": "Debes estar autenticado para realizar esta acción.",
+    "noEmpty": "El campo no puede ser vacío",
+    "invalidResponse":"Respuesta inválida de la API",
+    "errorUpdatePet": "Error al actualizar la mascota",
+    "noImage": "Sin imagen",
+    "errorLoadSchedule": "Error al cargar horarios",
+    "noAvailabilityHour":"No hay horarios disponibles para esta fecha",
+    "notFoundPets": "No se encontraron mascotas",
+    "notFoundServices": "No se encontraron servicios",
+    "errorLoadProducts": "Error al cargar productos",
+    "notFoundProducts": "No se encontraron productos",
+    "notFoundProduct": "No se encontró el producto",
+    "errorUnknown": "Error desconocido",
+    "errorLimitDate":"Se necesitan fechas límites para generar el reporte",
+    "errorEndDate":"No se puede finalizar una cita antes de su fecha programada",
+    "notFoundAppointments":"No se encontraron citas.",
+    "errorDate": "La fecha hasta no puede ser menor que la fecha desde.",
+    "notFoundClients": "No se encontraron clientes",
+    "errorDelete": "Ocurrió un error al intentar eliminar a {field}.",
+    "errorRegisterClient": "Ocurrió un error al intentar registrar cliente.",
+    "errorGetData": "Ocurrió un error al obtener los datos.",
+    "authError": "Debes estar autenticado para acceder a esta sección",
+    "errorRegisterProduct": "Ocurrió un error al intentar registrar el producto.",
+    "errorGetProduct": "Ocurrió un error al obtener el producto",
+    "notFoundProviders": "No se encontraron proveedores",
+    "errorDeleteVaccine": "Ocurrió un error al intentar eliminar la vacuna.",
+    "errorDeleteEmployee": "No se pudo eliminar empleado",
+    "isMaxLessThanMin": "El total máximo no puede ser menor al mínimo.",
+    "errorLoadVaccine":"Ocurrió un error al cargar datos de la vacuna",
+    "apiResponseIsNotArray": "La respuesta de la API no es un array",
+    "errorContentType": "Error: La API devolvió una respuesta no válida (posible HTML en lugar de JSON)",
+    "unexpectedError": "Ocurrió un error inesperado",
+    "errorLoadStock": "Ocurrió un error al cargar los depósitos",
+    "notFoundStock": "No se encontraron depósitos",
+    "errorDeleteStock": "No se pudo eliminar el depósito"
+    
+  },
+  "profileTabs": {
+    "myProfile": "Mis datos",
+    "myPets": "Mis mascotas",
+    "myAppointments": "Mis citas"
+  },
+  "myPetsSection": {
+    "registeredPets": "Mascotas registradas",
+    "managePets": "Administra la información de tus mascotas",
+    "petListBtn": "Lista de mascotas",
+    "addPetBtn": "Agregar mascota",
+    "vetProducts": "Productos veterinarios",
+    "exploreProducts": "Explora los productos disponibles",
+    "recommendedProducts": {
+      "errorLoading": "No se pudieron cargar los productos recomendados"
+    }
+  },
+  "myAppointmentsSection": {
+    "title": "Mis citas",
+    "description": "Consulta y agenda nuevas citas médicas para tus mascotas"
+  },
+  "appointmentStatus": {
+    "pending": "Pendiente",
+    "completed": "Finalizada",
+    "cancelled": "Cancelada",
+    "inProgress": "En progreso"
+  },
+  "appointmentTable": {
+    "title": "Citas",
+    "date": "Fecha",
+    "time": "Hora",
+    "pet": "Mascota",
+    "employee": "Encargado",
+    "services": "Servicio/s",
+    "status": "Estado",
+    "actions": "Acciones",
+    "details": "Detalles",
+    "emptyMessage": "No hay citas agendadas"
+  },
+  "appointmentDetails": {
+    "title": "Detalles de la cita",
+    "pet": "Mascota",
+    "petDetails": {
+      "name": "Nombre",
+      "race": "Raza",
+      "owner": "Dueño"
+    },
+    "status": "Estado",
+    "date": "Fecha y hora designada",
+    "employee": "Encargado",
+    "details": "Detalles",
+    "service":"Servicio",
+    "services": "Servicios"
+
+  },
+  "appointmentForm": {
+    "selectPet": "Seleccionar mascota",
+    "selectService": "Seleccionar servicio/s",
+    "selectEmployee": "Seleccionar empleado",
+    "selectDate": "Fecha de la cita",
+    "details": "Detalles de la cita",
+    "selectHour": "Seleccionar horario de la cita",
+    "employeeSelected": "Empleado",
+    "workPosition": "Puesto",
+    "owner": "Dueño",
+    "petSelected": "Mascota",
+    "race": "Raza",
+    "serviceSelected": "Servicio",
+    "price": "Precio",
+    "title": "Agendar cita",
+    "description": "Ingresa los datos para agendar tu cita veterinaria",
+    "availabilityHour": "Horario disponible",
+    "otherService": "Selecciona otro servicio",
+    "dateSelected": {
+      "date": "Fecha",
+      "hour": "Hora"
+    },
+    "employeeSelectedd":{
+      "employee": "Encargado: {employee}",
+      "workPosition": "Puesto: {workPosition}"
+    },
+    "selectedPet": {
+      "pet": "Mascota: {pet}",
+      "race": "Raza: {race}",
+      "owner": "Dueño: {owner}"
+    },
+    "selectedService": {
+      "service" : "Servicio: {service}",
+      "price": "Precio: {price} Gs."
+    },
+    "employeeSelect": {
+      "select": "Seleccionar un empleado"
+    },
+    "serviceSelect": {
+      "otherService":"Selecciona otro servicio",
+      "selectOneService": "Debes seleccionar al menos un servicio"
+    }
+  },
+
+  "pet": {
+    "form": {
+      "title": "Registro de Mascota",
+      "description": "Ingrese los datos de la mascota",
+      "name": "Nombre",
+      "specie": "Animal",
+      "race": "Raza",
+      "weight": "Peso (Kg)",
+      "born": "Fecha de nacimiento",
+      "sex" : "Género",
+      "female": "Hembra",
+      "male": "Macho",
+      "image": "Imagen de tu mascota",
+      "optional": "Opcional"
+    },
+    "details": {
+      "name": "Nombre",
+      "weight": "Peso",
+      "race": "Raza",
+      "born": "Fecha de nacimiento",
+      "specie": "Animal",
+      "sex": "Género",
+      "female": "Hembra",
+      "male": "Macho",
+      "vaccineControl": "Control de vacunas"
+    },
+    "myPets": "Mis mascotas",
+    "addPet": "Comienza agregando una nueva mascota",
+    "table": {
+      "emptyMessage": "No hay mascotas registradas"
+    }
+
+
+  },
+  
+  "success": {
+    "successRegisterPet": "Mascota registrada con éxito",
+    "successUpdatePet": "Mascota actualizada correctamente",
+    "successRegisterAppointment": "Cita agendada con éxito",
+    "successDeleteClient": "{client} fue eliminado correctamente",
+    "successRegisterClient": "Cliente registrado con éxito",
+    "successUpdateClient": "Cliente actualizado correctamente",
+    "successRegisterProduct": "Producto agregado correctamente",
+    "successDeleteProduct": "Producto eliminado correctamente",
+    "successUpdateProduct": "Producto actualizado correctamente",
+    "successDeleteVaccine": "Vacuna eliminada correctamente",
+    "successRevertMovement": "Movimiento revertido con éxito",
+    "successDeleteEmployee": "{employee} fue eliminado correctamente",
+    "successDeleteManufacturer": "Fabricante eliminado correctamente",
+    "successUpdateManufacturer": "Fabricante actualizado correctamente",
+    "successRegisterManufacturer": "Fabricante registrado correctamente",
+    "successDeleteStock": "Depósito eliminado correctamente"
+  },
+  "vaccine": {
+    "table": {
+      "date": "Fecha",
+      "details": "Detalles de la vacuna",
+      "expectedDate": "Fecha prevista",
+      "dosis": "Dosis",
+      "actions": "Acciones",
+      "name": "Nombre",
+      "manufacturer": "Fabricante",
+      "specie": "Especie",
+      "price": "Precio",
+      "manufacturersVaccine": "Fabricantes de vacunas",
+      "vaccineTitle": "Vacunas",
+      "emptyMessage": "No hay vacunas registradas",
+      "priceGs": "{price} Gs.",
+      "vaccineAsociated": "Vacunas asociadas",
+      "emptyMessageForManufacturer": "No hay vacunas registradas para este fabricante"
+    },
+    "details": {
+      "manufacturer":"Fabricante",
+      "specie": "Especie",
+      "cost": "Costo",
+      "iva": "IVA",
+      "price": "Precio",
+      "quantity": "Cantidad",
+      "uds":"{quantity} Unids.",
+      "ivaPercentage": "{iva} %",
+      "priceGs": "{price} Gs."
+    },
+    "form":{
+      "titleRegister": "Agregar vacuna",
+      "titleUpdate": "Editar vacuna",
+      "manufacturer":"Fabricante",
+      "specie": "Especie",
+      "cost": "Costo",
+      "iva": "IVA",
+      "price": "Precio",
+      "quantity": "Cantidad",
+      "name": "Nombre",
+      "image": "Imagen (Opcional)",
+      "provider": "Proveedor",
+      "description": "Descripción"
+    }
+  },
+  "search": {
+    "searchByName": "Buscar por nombre...",
+    "searchByNameOrRuc": "Buscar por nombre o ruc del cliente...",
+    "searchByNameOrRucOrEmail": "Buscar por nombre, ruc o correo del cliente...",
+    "searchByCodeOrName": "Buscar por código o nombre...",
+    "searchByEmployeeRuc": "Buscar por RUC del encargado...",
+    "searchByProductName": "Buscar por nombre del producto...",
+    "searchByNameOrRucEmployee": "Buscar por nombre o RUC del empleado..."
+  },
+  "productCatalog": {
+    "selectedTags": "Etiquetas seleccionadas:",
+    "searchProducts":"Buscar Productos",
+    "productCard" : {
+      "price": "{price} Gs."
+    }
+    
+  },
+  "client":{
+    "table": {
+      "title": "Clientes",
+      "actions":"Acciones",
+      "emptyMessage": "No hay clientes registrados."
+    },
+    "details":{
+      "fullName": "Nombre",
+      "email":"Correo electrónico",
+      "ruc": "RUC",
+      "address": "Dirección",
+      "phone": "Teléfono",
+      "profileTitle": "Perfil de Cliente",
+      "pets": "Mascotas",
+      "appointments": "Citas agendadas"
+    },
+    "form":{
+      "title": "Registro de Cliente",
+      "titleUpdate": "Actualizar datos de Cliente",
+      "name": "Nombre",
+      "lastName":"Apellido",
+      "address": "Dirección",
+      "email": "Correo electrónico",
+      "phone": "Teléfono",
+      "ruc": "RUC"
+    }
+  },
+
+  "product":{
+    "list": {
+      "title": "Productos"
+    },
+    "card": {
+      "name": "Nombre:",
+      "code": "Código:",
+      "provider": "Proveedor:",
+      "category": "Categoría:",
+      "price": "Precio:",
+      "cost": "Costo:",
+      "gs": "Gs.",
+      "quantity": "Cantidad"
+    },
+    "details": {
+      "quantityDeposit":"Cantidad por depósitos",
+      "name": "Nombre",
+      "description": "Descripción",
+      "price": "Precio",
+      "cost": "Costo",
+      "category": "Categoría",
+      "code": "Código",
+      "tags": "Etiqueta/s",
+      "quantity": "Cantidad",
+      "priceGs": "{price} Gs.",
+      "costGs": "{cost} Gs.",
+      "provider": "Proveedor"
+    },
+    "form": {
+      "titleRegister": "Registro de Producto",
+      "titleUpdate": "Editar Producto",
+      "name": "Nombre",
+      "description": "Descripción",
+      "price": "Precio",
+      "cost": "Costo",
+      "category": "Categoría",
+      "code": "Código",
+      "tags": "Etiqueta/s",
+      "quantity": "Cantidad",
+      "iva": "IVA",
+      "provider": "Proveedor",
+      "image": "Imagen (Opcional)"
+    }
+  },
+  "manufacturer": {
+    "table": {
+      "name": "Nombre",
+      "emptyMessage": "No hay fabricantes registrados",
+      "title": "Fabricantes de vacunas"
+    },
+    "form": {
+      "name": "Nombre del fabricante",
+      "titleRegister": "Registrar fabricante",
+      "titleEdit": "Editar fabricante"
+    }
+
+  },
+
+  "stock":{
+    "details": {
+      "name": "Nombre",
+      "address": "Dirección",
+      "quantity": "Cantidad",
+      "uds": "{quantity} Unids.",
+      "title": "Depósito",
+      "stockProducts": "Productos en depósito"
+    },
+    "table":{
+      "actions": "Acciones",
+      "emptyMessage": "Producto no disponible en ninguna sucursal.",
+      "title": "Depósitos"
+    },
+    "card": {
+      "address": "Dirección: {address}"
+    }
+  },
+  "employee": {
+    "table": {
+      "name": "Nombre",
+      "ruc": "RUC",
+      "actions": "Acciones",
+      "email":"Correo electrónico",
+      "workPosition": "Puesto",
+      "title": "Empleados",
+      "emptyMessage": "No hay empleados registrados"
+    }
+  },
+  "purchase": {
+    "card": {
+      "totalCost": "Costo total: {totalCost} Gs.",
+      "totalCostIva": "Costo total IVA: {totalCostIva} Gs.",
+      "stock": "Depósito"
+    },
+    "list":{
+      "title": "Compras",
+      "emptyMessage": "No hay compras registradas"
+    }
+  },
+
+  "invoices": {
+    "gs": "Gs.",
+    "type": {
+      "credit": "Crédito",
+      "cash": "Contado"
+    },
+    "table": {
+      "title": "Facturas",
+      "invoiceNumber": "Factura N°",
+      "client": "Cliente",
+      "ruc": "RUC",
+      "date": "Fecha",
+      "type": "Tipo",
+      "total": "Total",
+      "totalPayed": "Total pagado",
+      "actions": "Acciones",
+      "emptyMessage": "No hay facturas registradas"
+    }
+  },
+
+
+  "movement" : {
+    "form": {
+      "title": "Registrar Movimiento",
+      "typeOfMovement": "Tipo de movimiento",
+      "originStock":"Depósito origen",
+      "destinationStock": "Depósito destino",
+      "selectOrigin": "Seleccionar origen",
+      "selectDestination": "Seleccionar destino",
+      "date": "Fecha",
+      "description": "Descripción",
+      "selectEmployee": "Seleccionar encargado",
+      "movementProducts": "Productos del movimiento",
+      "selectedProducts": "Productos seleccionados"
+    },
+    "card": {
+      "originStock": "Depósito origen: {origin}",
+      "destinationStock": "Depósito destino: {destination}"
+    },
+    "type": {
+      "inbound": "Entrante",
+      "outbound": "Saliente",
+      "transfer": "Transferencia"
+    },
+    "details": {
+      "movementOf": "Movimiento de {movement}",
+      "employee": "Encargado",
+      "originStock": "Depósito origen",
+      "destinationStock": "Depósito destino",
+      "description":"Descripción",
+      "productsTitle": "Productos"
+    },
+    "table": {
+      "title": "Movimientos",
+      "emptyMessage": "No hay movimientos registrados"
+  
+    }
+  },
+
+  "filters": {
+    "title": "Filtros",
+    "type": "Tipo",
+    "provider": "Proveedor",
+    "stock": "Depósito",
+    "warning": {
+      "minPrice": "El precio mínimo no puede ser 0. Por favor ingrese un valor mayor.",
+      "maxPrice": "El precio máximo no puede ser 0. Por favor ingrese un valor mayor.",
+      "priceError": "El precio máximo debe ser mayor o igual al precio mínimo.",
+      "notFoundFilteredProducts": "No hay productos que coincidan con los filtros seleccionados. Intenta modificar tus criterios de búsqueda."
+    },
+    "allFiltersDeleted": "Todos los filtros han sido eliminados",
+    "delete": {
+      "label": "Eliminar etiqueta {tag}",
+      "clearAll": "Limpiar todas",
+      "clear":"Limpiar todo",
+      "clearAllFilters": "Limpiar todos los filtros"
+    },
+    "category": "Categoría",
+    "price": "Precio",
+    "tags": "Etiquetas",
+    "date": {
+      "from": "Fecha desde",
+      "to" :"Fecha hasta"
+    },
+    "movement":{
+      "origin": "Origen",
+      "destination": "Destino"
+    },
+    "appointmentStatus": "Estado de la cita",
+    "all": "Todos",
+    "none": "Ninguno",
+    "productFiltersCategory": {
+      "vaccine": "Vacuna",
+      "service": "Servicio",
+      "product": "Producto"
+    },
+    "priceRange": {
+      "from": "Desde",
+      "to":"Hasta",
+      "errorNumericMin": "No puede ser menor al mínimo"
+    },
+    "total": {
+      "minTotal": "Total mínimo",
+      "maxTotal": "Total máximo"
+    }
+  },
+  "confirmationModal":{
+    "stock":{
+      "titleDelete": "Eliminar depósito",
+      "messageDelete":"¿Estás seguro de que deseas eliminar el {stock}?"
+    },
+    "employee": {
+      "titleDelete": "Eliminar empleado",
+      "messageDelete": "¿Estás seguro de que deseas eliminar al empleado {employee}?"
+    },
+    "appointment": {
+      "confirmFinish": "Confirmar finalización",
+      "confirmFinishDescription": "¿Estás seguro de que deseas finalizar la cita?",
+      "cancelTitle": "Cancelar cita"
+    },
+    "client": {
+      "titleDelete": "Eliminar cliente",
+      "messageDelete": "¿Estás seguro de que deseas eliminar al cliente {client}?"
+    },
+    "product": {
+      "titleDelete": "Eliminar producto",
+      "messageDelete": "¿Estás seguro de que deseas eliminar el producto {product}?"
+    },
+    "vaccine": {
+      "titleDelete": "Eliminar vacuna",
+      "messageDelete":"¿Estás seguro de que deseas eliminar la vacuna {vaccine}?"
+    },
+    "movement": {
+      "titleRevert": "Revertir movimiento",
+      "messageRevert": "¿Estás seguro de que deseas eliminar el movimiento?"
+    },
+    "manufacturer":{
+      "titleDelete": "Eliminar fabricante",
+      "messageDelete":"¿Estás seguro de que deseas eliminar al fabricante {manufacturer}?"
+    },
+    "tags": "Etiquetas"
+  },
+   "Stamped": {
+    "title": "Timbrado",
+    "stampedNumber": "Número de timbrado",
+    "deposit": "Depósito",
+    "address": "Dirección",
+    "startDate": "Fecha de inicio",
+    "endDate": "Fecha de fin",
+    "numberRange": "Rango de números",
+    "status": "Estado",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "searchPlaceholder": "Buscar por número o depósito",
+    "selectStatus": "Seleccionar estado",
+    "all": "Todos",
+    "add": "Agregar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "view": "Ver",
+    "cancel": "Cancelar",
+    "deleteTitle": "Eliminar Timbrado",
+    "deleteMessage": "¿Estás seguro que deseas eliminar el timbrado {number}?",
+    "success": {
+      "delete": "Timbrado eliminado exitosamente"
+    },
+    "error": {
+      "loading": "Error al cargar los timbrados",
+      "delete": "Error al eliminar el timbrado"
+    },
+    "noStampedFound": "No se encontraron timbrados"
+  }
 }

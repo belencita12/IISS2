@@ -43,9 +43,7 @@ export default function PetSelect({
 
   const { loading: isLoading, get } = useFetch<PetDataResponse>(PET_API, token);
 
-  const ph = useTranslations("Placeholder");
-  const b = useTranslations("Button");
-  const e = useTranslations("Error");
+  const t = useTranslations();
 
   const fetchPets = async (search?: string) => {
     try {
@@ -57,7 +55,7 @@ export default function PetSelect({
       if (response && response.data) {
         setPets(response.data.data || []);
       }
-    } catch (err) {
+    } catch (err:unknown) {
       if (err instanceof Error) toast("error", err.message);
     }
   };
@@ -102,7 +100,7 @@ export default function PetSelect({
                 {selectedPet.name}
               </div>
             ) : (
-              <span className="text-muted-foreground">{ph("select")}</span>
+              <span className="text-muted-foreground">{t("placeholder.select")}</span>
             )}
 
             <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -120,7 +118,7 @@ export default function PetSelect({
               <div className="w-full pb-2">
                 <SearchBar
                   onSearch={handleSearchChange}
-                  placeholder={ph("getBy", {field: "nombre"})}
+                  placeholder={t("search.searchByName")}
                   debounceDelay={500}
                   defaultQuery={searchQuery}
                 />
@@ -129,11 +127,11 @@ export default function PetSelect({
 
             {isLoading ? (
               <div className="py-6 text-center text-sm text-muted-foreground">
-                {b("loading")}
+                {t("button.loading")}
               </div>
             ) : (
               <>
-                <CommandEmpty>{e("notFoundField", {field: "mascotas"})}</CommandEmpty>
+                <CommandEmpty>{t("error.notFoundPets")}</CommandEmpty>
                 <CommandGroup>
                   <CommandList className="max-h-[250px] overflow-y-auto">
                     {pets.map((pet) => (

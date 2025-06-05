@@ -72,12 +72,14 @@ export default function ClientAppointmentHelp({
       title: "Clientes",
       description: "Gestión de clientes y sus mascotas",
       questions: clientQuestions.filter(filter),
+      videoId: "C1hcquSQ1lc"
     },
     {
       icon: <CalendarIcon />,
       title: "Citas",
       description: "Programación y gestión de citas",
       questions: appointmentQuestions.filter(filter),
+      videoId: "mXX_PPf3zlQ"
     },
   ].filter((card) => card.questions.length > 0);
 
@@ -95,6 +97,7 @@ export default function ClientAppointmentHelp({
           description={card.description}
           questions={card.questions}
           isSingle={isSingle}
+          videoId={card.videoId}
         />
       ))}
     </div>

@@ -18,6 +18,7 @@ import {
 } from "@/lib/appointment/service";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import AppointmentListSkeleton from "./Skeleton/AppointmentListSkeleton";
+import { Textarea } from "@/components/ui/textarea";
 
 interface ClientAppointmentListProps {
   token: string;
@@ -183,7 +184,7 @@ const ClientAppointmentList = ({
           title="Motivo de cancelación"
           size="md"
         >
-          <textarea
+          <Textarea
             className="w-full h-32 p-2 border border-gray-300 rounded"
             placeholder="Escribe una razón para cancelar la cita"
             value={cancelDescription}

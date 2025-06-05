@@ -18,9 +18,11 @@ export async function getAppointmentByPetId(
       cache: "no-store",
     }
   );
-  if (!res.ok) {
-    throw new Error("Error al obtener las citas de la mascota");
-  }
+     if (!res.ok) {
+            const errorData = await res.json().catch(() => ({})); 
+            const message = errorData?.message || `Error HTTP: ${res.status}`;
+            throw new Error(message);
+        }
   const data = await res.json();
   return data.data ?? [];
 }

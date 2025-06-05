@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   rucFormatRegExp,
+  rucOrCiFormat,
   timeFormatRegExp,
   validatePhoneNumber,
 } from "./utils";
@@ -11,7 +12,7 @@ export const phoneNumber = () =>
     .string()
     .min(1, "El número de telefono es obligatorio")
     .refine((str) => validatePhoneNumber(str), {
-      message: "Número de telefono inválido",
+      message: "Ingrese un número de teléfono válido. Ej: +595981234567",
     });
 
 export const ruc = () =>
@@ -38,3 +39,12 @@ export const image = () =>
       message: "La imagen no debe superar 1MB",
     })
     .optional();
+
+export const rucOrCi = () =>
+  z
+    .string()
+    .min(1, "El RUC o CI es obligatorio")
+    .regex(
+      rucOrCiFormat,
+      "Ingrese un RUC o CI válido. Ej: 12345678-1 o 12345678"
+    );
