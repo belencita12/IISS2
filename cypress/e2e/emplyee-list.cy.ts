@@ -1,8 +1,8 @@
 describe('Lista de empleados', () => {
     const SESSION_KEY = "sessionToken";
     const USER = {
-        email: Cypress.env("USER_EMAIL"),
-        password: Cypress.env("USER_PASSWORD")
+        email: Cypress.env("USER_EMAIL_A"),
+        password: Cypress.env("USER_PASSWORD_A")
     };
 
     beforeEach(() => {
@@ -32,14 +32,13 @@ describe('Lista de empleados', () => {
 
 
     it('Debe buscar empleados correctamente filtrandolos por nombre', () => {
-        cy.get('input[placeholder="Buscar un empleado..."]').type('Nick Jonson');
-        cy.get('button').contains('Buscar').click();
+        cy.get('input[placeholder="Buscar..."]').type('Bryan Myers');
         cy.wait(5000);
-        cy.get('table tbody tr').should('contain', 'Nick Jonson');
+        cy.get('table tbody tr').should('contain', 'Bryan Myers');
     });
 
     it('Debe abrir la página de registro de empleados', () => {
-        cy.get('button').contains('Agregar').click();
+        cy.get('button').contains('Registrar').click();
         cy.wait(5000);
         cy.url().should('include', '/dashboard/employee/register');
     });
@@ -81,4 +80,5 @@ describe('Lista de empleados', () => {
 
     
 });
+
 
