@@ -13,14 +13,12 @@ export const getEmployeeByID = async (token: string, id: number) => {
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.error(`Error HTTP ${response.status}:`, errorText);
             throw new Error(`Error ${response.status}: ${errorText}`);
           }
 
         const data: EmployeeData = await response.json();
         return data;
     } catch (error) {
-        console.error("Error en getEmployeeByID:", error);
         throw error;
     }
 };

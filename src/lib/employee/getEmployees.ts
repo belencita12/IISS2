@@ -11,14 +11,12 @@ export const fetchEmployees = async (page: number, query: string, token: string 
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.error(`Error HTTP ${response.status}:`, errorText);
             throw new Error(`Error ${response.status}: ${errorText}`);
         }
 
         const data = await response.json();
         return data;
     } catch (error) {
-        console.error("Error en obtener empleados", error);
         throw error;
     }
 };

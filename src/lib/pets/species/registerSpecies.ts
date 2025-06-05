@@ -22,7 +22,6 @@ export const registerSpecies = async (
 
         return result;
     } catch (error) {
-        console.error("Error registering species:", error);
         throw error;
     }
 };

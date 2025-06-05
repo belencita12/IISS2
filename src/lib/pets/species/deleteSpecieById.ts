@@ -25,7 +25,6 @@ export const deleteSpeciesById = async (token: string, id: number): Promise<bool
         return true;
     } catch (error) {
         toast("error", "Error inesperado al intentar eliminar la especie.");
-        console.error("Error en deleteSpeciesById:", error);
         return false;
     }
 };

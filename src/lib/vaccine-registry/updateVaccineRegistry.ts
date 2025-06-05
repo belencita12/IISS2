@@ -24,7 +24,6 @@ export const updateVaccineRegistry = async (
 
     return result;
   } catch (error) {
-    console.error("Error al actualizar la vacunación:", error);
     throw error;
   }
 };

@@ -19,7 +19,6 @@ export const deleteEmployeeByID = async (token: string, id: number): Promise<boo
 
         return true; 
     } catch (error) {
-        console.error("Error en deleteEmployeeByID:", error);
-        return false; 
+        throw error; 
     }
 };

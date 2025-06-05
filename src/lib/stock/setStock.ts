@@ -19,7 +19,6 @@ export async function setStock({id, name, address}:StockData, token:string) {
         const data = await response.json();
         return data;
     } catch (error) {
-        console.error("Error en setStock:", error);
         throw error;
     }
     

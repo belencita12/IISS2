@@ -1,7 +1,9 @@
 import { Heart } from "lucide-react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { useTranslations } from "next-intl"
 
 export default function TermsAndConditions() {
+  const t = useTranslations("terms");
   return (
     <div className="min-h-screen ">
       {/* Decorative header background */}
@@ -16,10 +18,10 @@ export default function TermsAndConditions() {
           {/* Page Header */}
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold mb-4 text-white bg-clip-text text-transparent">
-              Términos y Condiciones
+              {t("pageTitle")}
             </h1>
             <div className="flex items-center justify-center gap-2 text-white">
-              <span>Última actualización:</span>
+              <span>{t("lastUpdated")}</span>
               <span className="flex items-center justify-center gap-2 text-white">
                 {new Date().toLocaleDateString()}
               </span>
@@ -31,15 +33,13 @@ export default function TermsAndConditions() {
             <div className="absolute top-0 right-0 w-32 h-32 -mt-10 -mr-10 bg-white/10 rounded-full"></div>
             <div className="absolute bottom-0 left-0 w-24 h-24 -mb-8 -ml-8 bg-white/10 rounded-full"></div>
 
-            <h2 className="text-2xl font-bold text-myPurple-focus mb-4 relative z-10">Términos y Condiciones</h2>
+            <h2 className="text-2xl font-bold text-myPurple-focus mb-4 relative z-10">{t("introTitle")}</h2>
             <p className="text-gray-700 mb-6 relative z-10 leading-relaxed">
-              Estos términos y condiciones describen las reglas y regulaciones para el uso de nuestros servicios
-              veterinarios. Al acceder a nuestros servicios, usted acepta estar sujeto a estos términos. Por favor,
-              léalos cuidadosamente.
+              {t("introDescription")}
             </p>
             <div className="flex items-center gap-2 text-myPink-focus relative z-10">
               <Heart className="h-5 w-5" />
-              <span className="font-medium">Cuidamos a tus mascotas como si fueran nuestras</span>
+              <span className="font-medium">{t("introSlogan")}</span>
             </div>
           </div>
 
@@ -72,8 +72,7 @@ export default function TermsAndConditions() {
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -mb-24 -ml-24"></div>
 
             <p className="text-center text-white italic relative z-10">
-              Al utilizar nuestros servicios, usted confirma que ha leído, entendido y aceptado estos términos y
-              condiciones.
+              {t("acceptanceNotice")}
             </p>
           </div>
         </div>
