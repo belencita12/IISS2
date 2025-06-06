@@ -6,6 +6,7 @@ import BarChart from "@/components/global/BarChart";
 import PieChart from "@/components/global/PieChart";
 import { useAdminDashboardStats } from "@/hooks/dashboard/useAdminDashboardStats";
 import DashboardContentSkeleton from "./skeleton/DashboardContentSkeleton";
+import { useTranslations } from "next-intl";
 
 interface Props {
   token: string;
@@ -24,6 +25,8 @@ export default function DashboardContent({ token }: Props) {
     groupTopNWithOthers
   } = useAdminDashboardStats(token);
 
+  const t = useTranslations("dashboard");
+
   const groupedServiceData = groupTopNWithOthers(serviceDistribution, 6);
 
   if (loading) {
@@ -35,17 +38,17 @@ export default function DashboardContent({ token }: Props) {
       {/* Tarjetas resumen */}
       <div className="flex md:flex-row flex-col items-center w-full gap-3">
         <StatCard
-          label="Total facturado"
-          value={`Gs. ${totalRevenue.toLocaleString("es-PY")}`}
+          label={t("statCard.totalRenueve")}
+          value={t("statCard.totalRenueveGs", {totalRenueve:totalRevenue.toLocaleString("es-PY") })} 
           icon={<DollarSign size={32} className="text-green-500" />}
         />
         <StatCard
-          label="Facturas emitidas"
+          label={t("statCard.invoiceCount")}
           value={invoiceCount}
           icon={<Users size={32} className="text-blue-500" />}
         />
         <StatCard
-          label="Citas agendadas"
+          label={t("statCard.appointmentCount")}
           value={appointmentCount}
           icon={<Users size={32} className="text-purple-500" />}
         />
@@ -54,24 +57,24 @@ export default function DashboardContent({ token }: Props) {
       {/* Pie charts arriba */}
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex-1">
-          <h2 className="text-lg font-semibold mb-2">Distribución por servicio</h2>
+          <h2 className="text-lg font-semibold mb-2">{t("groupedServiceData")}</h2>
           <PieChart data={groupedServiceData} nameKey="label" dataKey="value" />
         </div>
         <div className="flex-1">
-          <h2 className="text-lg font-semibold mb-2">Distribución por tipo de factura</h2>
+          <h2 className="text-lg font-semibold mb-2">{t("invoiceTypeChart")}</h2>
           <PieChart data={invoiceTypeChart} nameKey="label" dataKey="value" />
         </div>
       </div>
 
       {/* Gráfico de líneas */}
       <div>
-        <h2 className="text-lg font-semibold mb-2">Ingresos mensuales</h2>
+        <h2 className="text-lg font-semibold mb-2">{t("monthlyRevenue")}</h2>
         <LineChart data={monthlyRevenue} xKey="label" yKey="value" />
       </div>
 
       {/* Gráfico de barras */}
       <div>
-        <h2 className="text-lg font-semibold mb-2">Citas por mes</h2>
+        <h2 className="text-lg font-semibold mb-2">{t("monthlyAppointments")}</h2>
         <BarChart data={monthlyAppointments} xKey="label" yKey="value" />
       </div>
     </div>

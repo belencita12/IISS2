@@ -9,6 +9,7 @@ import {
   Content,
 } from "@radix-ui/react-accordion";
 import { ChevronDown } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export interface HelpCardProps {
   icon: ReactNode;
@@ -28,6 +29,7 @@ export default function HelpCard({
   videoId,
 }: HelpCardProps) {
   const [openItem, setOpenItem] = useState<string | undefined>(undefined);
+  const t = useTranslations("help.card")
 
   return (
     <div
@@ -43,7 +45,7 @@ export default function HelpCard({
 
       {videoId && (
         <div className="mt-8 mb-8">
-          <h3 className="text-lg font-semibold mb-2">Video explicativo</h3>
+          <h3 className="text-lg font-semibold mb-2">{t("video")}</h3>
           <YouTubeEmbed videoId={videoId} />
         </div>
       )}

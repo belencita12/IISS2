@@ -1,47 +1,8 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import HelpCard from "./HelpCard";
 import { UserIcon, CalendarIcon } from "lucide-react";
-
-const clientQuestions = [
-  {
-    id: "clientes1",
-    question: "¿Cómo registro un nuevo cliente?",
-    answer:
-      "Para registrar un nuevo cliente, haz clic en 'Clientes', luego selecciona 'Agregar' y completa todos los datos solicitados.",
-  },
-  {
-    id: "clientes2",
-    question: "¿Cómo añado una mascota a un cliente existente?",
-    answer:
-      "En la sección 'Clientes', selecciona el cliente deseado haciendo clic en el ícono de 'ver' (ojo), haz clic en 'Agregar' y completa la información requerida.",
-  },
-  {
-    id: "clientes3",
-    question: "¿Cómo veo el historial médico de una mascota?",
-    answer:
-      "Dentro del perfil del cliente, selecciona la mascota correspondiente haciendo clic en el ícono de 'ver' (ojo) para ver su detalle. Allí encontrarás el historial de vacunación y las visitas registradas.",
-  },
-];
-
-const appointmentQuestions = [
-  {
-    id: "citas1",
-    question: "¿Cómo programo una nueva cita?",
-    answer:
-      "Desde la sección 'Citas', haz clic en 'Agendar' y completa la información requerida para programar la cita.",
-  },
-  {
-    id: "citas2",
-    question: "¿Cómo cancelo una cita?",
-    answer:
-      "En la lista de citas dentro de la sección 'Citas', haz clic en 'Cancelar', ingresa el motivo de la cancelación y confirma la acción.",
-  },
-  {
-    id: "citas3",
-    question: "¿Cómo finalizo una cita?",
-    answer:
-      "En la sección 'Citas', desde la lista de citas, haz clic en 'Finalizar' y luego confirma para completar el proceso.",
-  },
-];
 
 interface ClientAppointmentHelpProps {
   searchTerm: string;
@@ -60,6 +21,44 @@ function normalize(text: string | undefined | null): string {
 export default function ClientAppointmentHelp({
   searchTerm,
 }: ClientAppointmentHelpProps) {
+  const t = useTranslations("help.clientAppointmentHelp");
+
+  const clientQuestions = [
+    {
+      id: "clientes1",
+      question: t("clients.questions.1.question"),
+      answer: t("clients.questions.1.answer"),
+    },
+    {
+      id: "clientes2",
+      question: t("clients.questions.2.question"),
+      answer: t("clients.questions.2.answer"),
+    },
+    {
+      id: "clientes3",
+      question: t("clients.questions.3.question"),
+      answer: t("clients.questions.3.answer"),
+    },
+  ];
+
+  const appointmentQuestions = [
+    {
+      id: "citas1",
+      question: t("appointments.questions.1.question"),
+      answer: t("appointments.questions.1.answer"),
+    },
+    {
+      id: "citas2",
+      question: t("appointments.questions.2.question"),
+      answer: t("appointments.questions.2.answer"),
+    },
+    {
+      id: "citas3",
+      question: t("appointments.questions.3.question"),
+      answer: t("appointments.questions.3.answer"),
+    },
+  ];
+
   const normalizedSearch = normalize(searchTerm);
 
   const filter = (q: { question: string; answer: string }) =>
@@ -69,17 +68,17 @@ export default function ClientAppointmentHelp({
   const cards = [
     {
       icon: <UserIcon />,
-      title: "Clientes",
-      description: "Gestión de clientes y sus mascotas",
+      title: t("clients.title"),
+      description: t("clients.description"),
       questions: clientQuestions.filter(filter),
-      videoId: "C1hcquSQ1lc"
+      videoId: "C1hcquSQ1lc",
     },
     {
       icon: <CalendarIcon />,
-      title: "Citas",
-      description: "Programación y gestión de citas",
+      title: t("appointments.title"),
+      description: t("appointments.description"),
       questions: appointmentQuestions.filter(filter),
-      videoId: "mXX_PPf3zlQ"
+      videoId: "mXX_PPf3zlQ",
     },
   ].filter((card) => card.questions.length > 0);
 
