@@ -3,6 +3,7 @@ import { useState } from "react";
 import InvoiceTable from "./InvoiceTable";
 import InvoiceNumericFilter from "./filters/InvoiceNumericFilter";
 import InvoiceDateFilter from "./filters/InvoiceDateFilter";
+import InvoiceTypeFilter from "./filters/InvoiceTypeFilter";
 import SearchBar from "@/components/global/SearchBar";
 import { usePaginatedFetch } from "@/hooks/api/usePaginatedFetch";
 import { INVOICE_API } from "@/lib/urls";
@@ -14,6 +15,7 @@ import ExportButton from "@/components/global/ExportButton";
 import { downloadFromBlob } from "@/lib/utils";
 import { getInvoiceReport } from "@/lib/invoices/getInvoiceReport";
 import { Button } from "@/components/ui/button";
+
 
 interface InvoiceListProps {
   token: string;
@@ -45,6 +47,7 @@ const InvoiceList = ({ token }: InvoiceListProps) => {
       fromIssueDate: filters?.fromIssueDate,
       toIssueDate: filters?.toIssueDate,
       search: filters?.search,
+      type: filters?.type,
     },
   });
 
@@ -95,7 +98,8 @@ const InvoiceList = ({ token }: InvoiceListProps) => {
     filters.toTotal ||
     filters.fromIssueDate ||
     filters.toIssueDate ||
-    filters.search
+    filters.search ||
+    filters.type
   );
 
   const resetFilters = () => {
@@ -126,7 +130,7 @@ const InvoiceList = ({ token }: InvoiceListProps) => {
           className="text-sm h-8 px-2 text-gray-600 mr-[10px]"
           disabled={isFiltering}
           >
-          Limpiar filtros
+          {t("filters.clearFilters")}
           </Button>
         </div>
       )}
@@ -140,15 +144,16 @@ const InvoiceList = ({ token }: InvoiceListProps) => {
           resetTrigger={resetCounter}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <InvoiceNumericFilter
-            filters={filters}
-            setFilters={handleFilterChange}
-          />
-          <InvoiceDateFilter
-            filters={filters}
-            setFilters={handleFilterChange}
-          />
+        <div className="flex flex-col md:flex-row gap-6">
+          <div className="flex-1">
+            <InvoiceNumericFilter filters={filters} setFilters={handleFilterChange} />
+          </div>
+          <div className="flex-1">
+            <InvoiceDateFilter filters={filters} setFilters={handleFilterChange} />
+          </div>
+          <div className="flex-1">
+            <InvoiceTypeFilter filters={filters} setFilters={handleFilterChange} />
+          </div>
         </div>
       </div>
       <div className="flex justify-between items-center mb-4">

@@ -1193,6 +1193,9 @@
   },
 
   "filters": {
+    "invoices":{
+      "type": "Tipo de factura"
+    },
     "receipts":{
       "receiptNumber": "El número de recibo debe ser mayor a 0.",
       "minAmount": "El monto mínimo debe ser mayor a 0.",
