@@ -695,8 +695,8 @@
     "managePets": "Administra la información de tus mascotas",
     "petListBtn": "Lista de mascotas",
     "addPetBtn": "Agregar mascota",
-    "vetProducts": "Productos veterinarios",
-    "exploreProducts": "Explora los productos disponibles",
+    "vetProducts": "Recomendaciones veterinarias",
+    "exploreProducts": "Explora los productos y servicios disponibles",
     "recommendedProducts": {
       "errorLoading": "No se pudieron cargar los productos recomendados"
     }
@@ -1803,7 +1803,7 @@
 
 "shop":{
   "title": "Tienda NicoPets",
-  "description": "Encuentra los mejores productos para el cuidado de tus mascotas"
+  "description": "Encuentra los mejores productos y servicios para el cuidado de tus mascotas"
 },
 
  "help": {

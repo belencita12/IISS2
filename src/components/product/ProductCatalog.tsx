@@ -247,7 +247,6 @@ const ProductCatalog = ({ token }: { token?: string }) => {
             )}
 
             <div className="max-w-7xl mx-auto space-y-6">
-                <h1 className="text-3xl font-bold mb-4 text-myPurple-primary">{t("productCatalog.searchProducts")}</h1>
                 <div className="w-full mx-auto bg-gray-50 py-2">
                     <SearchBar onSearch={handleSearch} />
 
