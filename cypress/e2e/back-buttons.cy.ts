@@ -6,15 +6,15 @@ describe("Verificar botón Volver en pantallas clave", () => {
 
   const pagesToTest = [
     { path: "/user-profile/pet/list-pets", type: "cliente" },
-    { path: "/user-profile/pet/43", type: "cliente" },
-    { path: "/user-profile/appointment/102", type: "cliente" },
-    { path: "/dashboard/clients/3", type: "admin" },
-    { path: "/dashboard/clients/3/pet/43", type: "admin" },
-    { path: "/dashboard/products/142", type: "admin" },
+    { path: "/user-profile/pet/27", type: "cliente" },
+    { path: "/user-profile/appointment/122", type: "cliente" },
+    { path: "/dashboard/clients/14", type: "admin" },
+    { path: "/dashboard/clients/14/pet/27", type: "admin" },
+    { path: "/dashboard/products/149", type: "admin" },
     { path: "/dashboard/stock/4", type: "admin" },
     { path: "/dashboard/movement/22", type: "admin" },
     { path: "/dashboard/purchases/15", type: "admin" },
-    { path: "/dashboard/employee/7", type: "admin" },
+    { path: "/dashboard/employee/6", type: "admin" },
     { path: "/dashboard/invoices/51", type: "admin" },
     { path: "/dashboard/settings/positions/2", type: "admin" },
   ] as const;

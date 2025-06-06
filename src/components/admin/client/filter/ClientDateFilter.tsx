@@ -19,7 +19,6 @@ export default function DateFilter({
   setDateFrom,
   setDateTo,
 }: Props) {
-
   const t = useTranslations();
   const [startDate, setStartDate] = useState(from ?? "");
   const [endDate, setEndDate] = useState(to ?? "");
@@ -27,7 +26,8 @@ export default function DateFilter({
   const debouncedEndDate = useDebounce(endDate, 500);
 
   useEffect(() => {
-    if (from !== debouncedStartDate) setDateFrom(debouncedStartDate || undefined);
+    if (from !== debouncedStartDate)
+      setDateFrom(debouncedStartDate || undefined);
     // Solo actualiza si cambia el valor debounced
     // eslint-disable-next-line
   }, [debouncedStartDate]);
@@ -36,15 +36,13 @@ export default function DateFilter({
     // eslint-disable-next-line
   }, [debouncedEndDate]);
 
-  useEffect(()=>{
-    setStartDate(from?? "")
-    setEndDate(to?? "")
-  },[to, from])
+  useEffect(() => {
+    setStartDate(from ?? "");
+    setEndDate(to ?? "");
+  }, [to, from]);
 
   const isEndDateBeforeStart = from && to && to < from;
-  const toDateError = isEndDateBeforeStart
-    ? t("error.errorDate")
-    : null;
+  const toDateError = isEndDateBeforeStart ? t("error.errorDate") : null;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -52,6 +50,7 @@ export default function DateFilter({
         <Label htmlFor="from">{t("filters.date.from")}</Label>
         <input
           id="from"
+          data-testid="date-from"
           type="date"
           className={clsx(
             "w-full border px-3 py-2 rounded",
@@ -79,6 +78,7 @@ export default function DateFilter({
         <Label htmlFor="to">{t("filters.date.to")}</Label>
         <input
           id="to"
+          data-testid="date-to"
           type="date"
           className={clsx(
             "w-full border px-3 py-2 rounded",

@@ -31,15 +31,15 @@ describe('ClientListSection', () => {
 
 
     it('Debe buscar clientes correctamente filtrandolos por nombre', () => {
-        cy.get('input[placeholder="Buscar por nombre, correo o ruc"]').type('Juan');
+        cy.get('input[placeholder="Buscar por nombre, ruc o correo del cliente..."]').type('annia');
         
         cy.wait(5000);
-        cy.get('table tbody tr').should('contain', 'Juan Pérez');
+        cy.get('table tbody tr').should('contain', 'Annia Benítez H.');
     });
 
 
     it('Debe buscar clientes correctamente filtrando por correo', () => {
-        cy.get('input[placeholder="Buscar por nombre, correo o ruc"]').type('anniamicaela@gmail.com');
+        cy.get('input[placeholder="Buscar por nombre, ruc o correo del cliente..."]').type('anniamicaela@gmail.com');
         
         cy.wait(5000);
         cy.get('table tbody tr').should('contain', 'anniamicaela@gmail.com');

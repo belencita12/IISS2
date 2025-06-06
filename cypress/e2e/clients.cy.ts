@@ -68,7 +68,7 @@ describe('Página de Detalles del Cliente', () => {
       failOnStatusCode: false,
     });
 
-    cy.wait(2000);
+    cy.wait(10000);
     cy.contains('Página no encontrada').should('be.visible');
   });
 

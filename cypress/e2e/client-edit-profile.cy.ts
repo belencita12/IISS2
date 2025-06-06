@@ -18,54 +18,54 @@ describe('ProfileTabs - Vista de cliente en /user-profile', () => {
     });
 
     it('Debe mostrar por defecto la pestaña "Mis Mascotas"', () => {
-        cy.contains('Mis Mascotas')
+        cy.contains('Mis mascotas')
             .should('have.class', 'bg-white')
             .and('have.class', 'text-violet-600');
-        cy.contains('Mascotas Registradas').should('exist');
+        cy.contains('Lista de mascotas').should('exist');
         cy.wait(10000);
     });
 
     it('Debe mostrar la pestaña "Mis Citas" al hacer clic', () => {
-        cy.contains('Mis Citas').click();
+        cy.contains('Mis citas').click();
         cy.wait(1000);
 
-        cy.contains('Mis Citas')
+        cy.contains('Mis citas')
             .should('have.class', 'bg-white')
             .and('have.class', 'text-violet-600');
         cy.wait(10000);
 
-        cy.contains('Citas Agendadas').should('exist');
+        cy.contains('Mis citas').should('exist');
     });
 
-    it('Debe mostrar la pestaña "Mis Datos" al hacer clic', () => {
-        cy.contains('Mis Datos').click();
+    it('Debe mostrar la pestaña "Mis datos" al hacer clic', () => {
+        cy.contains('Mis datos').click();
         cy.wait(1000);
 
-        cy.contains('Mis Datos')
+        cy.contains('Mis datos')
             .should('have.class', 'bg-white')
             .and('have.class', 'text-violet-600');
         cy.wait(20000);
 
-        cy.contains('Jose Valgaba').should('exist');
+        cy.contains('Annia Benítez').should('exist');
     });
     it('Debe permitir editar los datos del cliente', () => {
-        cy.contains('Mis Datos').click();
+        cy.contains('Mis datos').click();
         cy.wait(3000);
 
-        cy.contains('Editar perfil').click();
+        cy.contains('Editar').click();
 
         // Editar campos
-        cy.get('input[placeholder="Tu nombre completo"]')
+        cy.get('input[placeholder="Ingrese el nombre"]')
             .clear()
-            .type('Jose Valgaba Actualizado');
+            .type('Annia Benítez H.');
 
-        cy.get('input[placeholder="Tu número de teléfono"]')
+        cy.get('input[placeholder="Ingrese el número de teléfono"]')
             .clear()
-            .type('+595981123456');
+            .type('+595985518020');
 
-        cy.get('input[placeholder="Tu dirección"]')
+        cy.get('input[placeholder="Ingrese la dirección"]')
             .clear()
-            .type('Av. Siempre Viva 123');
+            .type('Obligado a veces Encarnación zona uni');
 
         // Confirmar cambios
         cy.contains('Guardar').click();
@@ -74,15 +74,15 @@ describe('ProfileTabs - Vista de cliente en /user-profile', () => {
     });
 
     it('Debe mostrar mensajes de validación si se intenta guardar con campos vacíos', () => {
-        cy.contains('Mis Datos').click();
+        cy.contains('Mis datos').click();
         cy.wait(3000);
 
-        cy.contains('Editar perfil').click();
+        cy.contains('Editar').click();
 
         // Vaciar los campos editables
-        cy.get('input[placeholder="Tu nombre completo"]').clear();
-        cy.get('input[placeholder="Tu número de teléfono"]').clear();
-        cy.get('input[placeholder="Tu dirección"]').clear();
+        cy.get('input[placeholder="Ingrese el nombre"]').clear();
+        cy.get('input[placeholder="Ingrese el número de teléfono"]').clear();
+        cy.get('input[placeholder="Ingrese la dirección"]').clear();
 
 
         cy.contains('Guardar').click();
