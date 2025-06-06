@@ -30,7 +30,7 @@ describe('Listado de fabricantes de vacunas', () => {
             cy.get('button[aria-label="Ver detalles"]').click();
         });
         cy.wait(10000);
-        cy.url().should('include', '/dashboard/vaccine/manufacturer/9');
+        cy.url().should('include', '/dashboard/vaccine/manufacturer/19');
         cy.get('h1.text-3xl').should('contain.text', 'Fabricante: ');
     });
 

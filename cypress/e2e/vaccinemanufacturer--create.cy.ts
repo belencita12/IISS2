@@ -1,8 +1,8 @@
 describe('Crear Fabricantes Vacunas', () => {
     const SESSION_KEY = "sessionToken";
     const USER = {
-        email: Cypress.env("USER_EMAIL"),
-        password: Cypress.env("USER_PASSWORD")
+        email: Cypress.env("USER_EMAIL_A"),
+        password: Cypress.env("USER_PASSWORD_A")
     };
     let uniqueName = "";
 
@@ -19,20 +19,20 @@ describe('Crear Fabricantes Vacunas', () => {
     });
 
     it('Los botones para interactuar con el formulario deden ser visibles', () => {
-        cy.get('button').contains('Crear').should('be.visible');
+        cy.get('button').contains('Agregar').should('be.visible');
         cy.get('button').contains('Cancelar').should('be.visible');
     });    
 
     it('Debe mostrar mensajes de error cuando se intenta enviar el formulario vacío', () => {
-        cy.get('button').contains('Crear').click();
+        cy.get('button').contains('Agregar').click();
         cy.contains('El nombre debe tener al menos 3 caracteres').should('be.visible');
     });
 
     it('Debe mostrar mensajes de error cuando se intenta enviar el formulario vacío', () => {
         const randomNumber = Math.floor(Math.random() * 100000);
         uniqueName = `FabricanteTest${randomNumber}`;
-        cy.get('input[placeholder="Nombre del fabricante"]').type(`${uniqueName}`);
-        cy.get('button').contains('Crear').click();
+        cy.get('input[placeholder="Ingrese el nombre"]').type(`${uniqueName}`);
+        cy.get('button').contains('Agregar').click();
     });
 
    /*  it('Intentar crear un fabricante de vacunas con un nombre repetido', () => {
