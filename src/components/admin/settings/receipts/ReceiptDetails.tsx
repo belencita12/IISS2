@@ -6,11 +6,11 @@ import { Invoice } from "@/lib/invoices/IInvoice";
 import { getReceiptById } from "@/lib/receipts/getReceiptById";
 import { getInvoiceById } from "@/lib/invoices/getInvoiceById";
 import { Button } from "@/components/ui/button";
-import { formatDate } from "@/lib/utils";
 import { toast } from "@/lib/toast";
 import { getReceiptDetailPdf } from "@/lib/receipts/getReceiptDetailPdf";
 import PrintButton from "@/components/global/PrintButton";
 import ReceiptDetailSkeleton from "./skeleton/ReceiptDetailSkeleton";
+import { useTranslations } from "next-intl";
 
 interface ReceiptDetailProps {
   id: string;
@@ -18,6 +18,7 @@ interface ReceiptDetailProps {
 }
 
 export default function ReceiptDetail({ id, token }: ReceiptDetailProps) {
+  const t = useTranslations();
   const [receipt, setReceipt] = useState<IReceipt | null>(null);
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [loading, setLoading] = useState(true);
@@ -37,9 +38,10 @@ export default function ReceiptDetail({ id, token }: ReceiptDetailProps) {
           token
         );
         setInvoice(invoiceData);
-      } catch (err) {
+      } catch (err: unknown) {
+        if (err instanceof Error) 
         setError(
-          err instanceof Error ? err.message : "Error al cargar los datos"
+          err.message
         );
       } finally {
         setLoading(false);
@@ -50,8 +52,8 @@ export default function ReceiptDetail({ id, token }: ReceiptDetailProps) {
   }, [id, token]);
 
   if (loading) return <ReceiptDetailSkeleton />;
-  if (error) return <div>Error: {error}</div>;
-  if (!receipt || !invoice) return <div>No se encontraron datos</div>;
+  if (error) return <div>{t("error.error")} {error}</div>;
+  if (!receipt || !invoice) return <div>{t("error.notFound")}</div>;
 
   const handlePrintReceipt = async () => {
     if (!receipt) return;
@@ -81,11 +83,11 @@ export default function ReceiptDetail({ id, token }: ReceiptDetailProps) {
           }, 3000);
         });
       } else {
-        toast("error", "No se pudo abrir la ventana de impresión.");
+        toast("error", t("error.noPrint"));
         setIsPrinting(false);
       }
     } catch {
-      toast("error", "Error al imprimir el recibo.");
+      toast("error", t("error.errorPrintReceipt"));
     }
   };
 
@@ -100,7 +102,7 @@ export default function ReceiptDetail({ id, token }: ReceiptDetailProps) {
           }}
           disabled={isPrinting}
         >
-          Volver
+          {t("button.toReturn")}
         </Button>
         <div
           className={hasNavigatedBack ? "pointer-events-none opacity-50" : ""}
@@ -110,18 +112,18 @@ export default function ReceiptDetail({ id, token }: ReceiptDetailProps) {
       </div>
       <div className="p-6 max-w-4xl mx-auto">
         <div className="flex items-center justify-between mt-12 mb-6">
-          <h1 className="text-2xl font-bold">Detalle del Recibo</h1>
+          <h1 className="text-2xl font-bold">{t("receipts.details.title")}</h1>
         </div>
         <div className="bg-white shadow rounded-lg p-6 space-y-6">
           <section className="space-y-4">
-            <h2 className="text-xl font-semibold">Información del Recibo</h2>
+            <h2 className="text-xl font-semibold">{t("receipts.details.information")}</h2>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-gray-600">Número de recibo</p>
+                <p className="text-gray-600">{t("receipts.details.receiptNumber")}</p>
                 <p className="font-medium">{receipt.receiptNumber}</p>
               </div>
               <div>
-                <p className="text-gray-600">Fecha de emisión</p>
+                <p className="text-gray-600">{t("receipts.details.issueDate")}</p>
                 <p className="font-medium">
                   {(() => {
                     const [year, month, day] = receipt.issueDate.split("-");
@@ -137,7 +139,7 @@ export default function ReceiptDetail({ id, token }: ReceiptDetailProps) {
 
           {/* Métodos de Pago */}
           <section className="space-y-4">
-            <h2 className="text-xl font-semibold">Métodos de Pago</h2>
+            <h2 className="text-xl font-semibold">{t("receipts.details.paymentMethods")}</h2>
             <div className="space-y-2">
               {receipt.paymentMethods.map((pm, index) => (
                 <div
@@ -158,32 +160,32 @@ export default function ReceiptDetail({ id, token }: ReceiptDetailProps) {
 
           {/* Datos de la Factura */}
           <section className="space-y-4">
-            <h2 className="text-xl font-semibold">Datos de la Factura</h2>
+            <h2 className="text-xl font-semibold">{t("receipts.details.invoiceData")}</h2>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-gray-600">Número de factura</p>
+                <p className="text-gray-600">{t("receipts.details.invoiceNumber")}</p>
                 <p className="font-medium">{invoice.invoiceNumber}</p>
               </div>
               <div>
-                <p className="text-gray-600">RUC</p>
+                <p className="text-gray-600">{t("receipts.details.ruc")}</p>
                 <p className="font-medium">{invoice.ruc}</p>
               </div>
               <div>
-                <p className="text-gray-600">Cliente</p>
+                <p className="text-gray-600">{t("receipts.details.client")}</p>
                 <p className="font-medium">{invoice.clientName}</p>
               </div>
               <div>
-                <p className="text-gray-600">Tipo</p>
+                <p className="text-gray-600">{t("receipts.details.type")}</p>
                 <p className="font-medium">
                   {invoice.type === "CASH"
-                    ? "Contado"
+                    ? t("invoices.type.cash")
                     : invoice.type === "CREDIT"
-                    ? "Crédito"
+                    ? t("invoices.type.credit")
                     : invoice.type}
                 </p>
               </div>
               <div>
-                <p className="text-gray-600">Total</p>
+                <p className="text-gray-600">{t("receipts.details.total")}</p>
                 <p className="font-medium">
                   {invoice.total.toLocaleString("es-PY", {
                     style: "currency",
@@ -192,7 +194,7 @@ export default function ReceiptDetail({ id, token }: ReceiptDetailProps) {
                 </p>
               </div>
               <div>
-                <p className="text-gray-600">IVA Total</p>
+                <p className="text-gray-600">{t("receipts.details.iva")}</p>
                 <p className="font-medium">
                   {invoice.totalVat.toLocaleString("es-PY", {
                     style: "currency",

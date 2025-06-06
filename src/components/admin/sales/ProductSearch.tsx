@@ -7,6 +7,7 @@ import { ProductWithExtraData as Product } from "@/lib/products/IProducts"
 import { useFetch } from "@/hooks/api/useFetch"
 import { PRODUCT_API, STOCK_DETAILS_API } from "@/lib/urls"
 import SearchBar from "@/components/global/SearchBar"
+import { useTranslations } from "next-intl"
 
 type ProductSearchProps = {
   onSelectProduct: (product: Product) => void
@@ -25,6 +26,8 @@ export default function ProductSearch({ onSelectProduct, token, stockId }: Produ
   const [searchTerm, setSearchTerm] = useState("")
   const [isCommandOpen, setIsCommandOpen] = useState(false)
   const [products, setProducts] = useState<Product[]>([])
+
+  const t = useTranslations();
 
   const { get } = useFetch<{ data: Product[] }>("", token)
   const { get:anotherGet } = useFetch<{ data: StockProductResponse []}>("", token)
@@ -71,10 +74,8 @@ export default function ProductSearch({ onSelectProduct, token, stockId }: Produ
   }
 
   const formatCategory = (category: string) => {
-    return category === "SERVICE" ? "Servicio" : category === "PRODUCT" ? "Producto" : category
+    return category === "SERVICE" ? t("sales.category.service") : category === "PRODUCT" ? t("sales.category.product") : category
   }
-
-  console.log("Products fetched:", products)
 
   return (
     <div className="space-y-2">
@@ -85,7 +86,7 @@ export default function ProductSearch({ onSelectProduct, token, stockId }: Produ
               onSearch={handleSearch}
               defaultQuery={searchTerm}
               debounceDelay={400}
-              placeholder="Buscar por código o nombre del producto"
+              placeholder={t("search.searchByCodeOrName")}
             />
           </div>
 
@@ -94,7 +95,7 @@ export default function ProductSearch({ onSelectProduct, token, stockId }: Produ
               <Command className="rounded-lg border shadow-md">
                 <CommandList>
                   {products.length === 0 ? (
-                    <CommandEmpty>No se encontraron productos ni servicios</CommandEmpty>
+                    <CommandEmpty>{t("error.notFound")}</CommandEmpty>
                   ) : (
                     products.map((product) => (
                       <CommandItem key={product.id} onSelect={() => handleSelectProduct(product)}>

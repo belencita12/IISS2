@@ -13,7 +13,6 @@ export const getRaces = async (token: string) => {
     const data = await response.json();
     return data?.data || [];
   } catch (error) {
-    console.error("Error en getRaces:", error);
     throw error;
   }
 };
@@ -27,7 +26,6 @@ export const getAllRaces = async (token: string, queryParams?: string) => {
     const data = await response.json();
     return data as PaginationResponse<Race>;
   } catch (error) {
-    console.error("Error en getAllRaces:", error);
     throw error;
   }
 };

@@ -88,7 +88,6 @@ export const useProductTag = (token: string, externalPageSize: number = 5) => {
         setFilteredProducts(firstPageProducts);
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Error al filtrar productos por etiquetas.";
-        console.error("Error al filtrar por tags:", error);
         toast("error", errorMessage); 
         setFilteredProducts([]);
         setAllTagProducts([]);

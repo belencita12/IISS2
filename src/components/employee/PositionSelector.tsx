@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getWorkPosition } from "@/lib/employee/getWorkPosition";
 import { Select } from "@/components/ui/select";
+import { useTranslations } from "next-intl";
 
 interface Position {
   id: number;
@@ -17,6 +18,8 @@ export default function PositionSelector({ token, value, onChange }: Props) {
   const [positions, setPositions] = useState<Position[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const t = useTranslations();
+
   useEffect(() => {
     setLoading(true);
     getWorkPosition(token)
@@ -26,7 +29,7 @@ export default function PositionSelector({ token, value, onChange }: Props) {
 
   return (
     <Select value={value} onValueChange={onChange} disabled={loading}>
-      <option value="">Selecciona un puesto</option>
+      <option value="">{t("placeholder.select")}</option>
       {positions.map((pos) => (
         <option key={pos.id} value={pos.id}>
           {pos.name}

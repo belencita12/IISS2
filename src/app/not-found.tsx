@@ -4,16 +4,19 @@ import Link from "next/link"
 import { AlertTriangle, Home, ArrowLeft, RefreshCw } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { useState} from "react"
+import { useState } from "react"
+import { useTranslations } from "next-intl"
 
 export default function NotFound() {
   const router = useRouter()
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
+  const t = useTranslations("notFound")
+
   const handleBack = () => {
-  if (loading) return;
-  setLoading(true);
-  router.back();
-};
+    if (loading) return
+    setLoading(true)
+    router.back()
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#d8b4fe]/20 to-[#f9a8d4]/20 p-4">
@@ -27,9 +30,13 @@ export default function NotFound() {
             404
           </h1>
 
-          <h2 className="mt-4 text-2xl font-semibold text-center text-gray-800">Página no encontrada</h2>
+          <h2 className="mt-4 text-2xl font-semibold text-center text-gray-800">
+            {t("title")}
+          </h2>
 
-          <p className="mt-3 text-center text-gray-600">Lo sentimos, no pudimos encontrar el recurso solicitado.</p>
+          <p className="mt-3 text-center text-gray-600">
+            {t("description")}
+          </p>
 
           <div className="mt-8 space-y-3">
             <Link
@@ -37,16 +44,16 @@ export default function NotFound() {
               className="flex items-center justify-center gap-2 w-full py-2 px-4 bg-myPurple-primary hover:bg-myPurple-hover text-white font-medium rounded-md transition-colors"
             >
               <Home className="h-4 w-4" />
-              Ir a la página de inicio
+              {t("home")}
             </Link>
 
-            <Button 
-            disabled={loading}
-            onClick={() => router.back()} 
-            className="flex items-center justify-center gap-2 w-full py-2 px-4 bg-white border border-myPink-primary text-myPink-primary hover:bg-[#fbcfe8]/20 font-medium rounded-md transition-colors"
+            <Button
+              disabled={loading}
+              onClick={handleBack}
+              className="flex items-center justify-center gap-2 w-full py-2 px-4 bg-white border border-myPink-primary text-myPink-primary hover:bg-[#fbcfe8]/20 font-medium rounded-md transition-colors"
             >
               <ArrowLeft className="h-4 w-4" />
-              Volver atrás
+              {t("back")}
             </Button>
 
             <Button
@@ -54,13 +61,13 @@ export default function NotFound() {
               className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-white border-2 border-myPurple-tertiary text-myPurple-primary hover:bg-[#e9d5ff]/30 font-medium rounded-md transition-colors"
             >
               <RefreshCw className="h-4 w-4" />
-              Intentar de nuevo
+              {t("retry")}
             </Button>
           </div>
         </div>
 
         <div className="px-6 py-2 bg-[#f9a8d4]/10 border-t border-[#f9a8d4]/30 text-sm text-center text-myPink-focus">
-          Si crees que esto es un error, por favor contacta con soporte.
+          {t("contact")}
         </div>
       </div>
     </div>

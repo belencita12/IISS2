@@ -31,16 +31,13 @@ export default function ProductSearch({
   hasSearched = false,
 }: ProductSearchProps) {
 
-  const p = useTranslations("ProductDetail");
-  const b = useTranslations("Button");
-  const ph = useTranslations("Placeholder");
-  const e = useTranslations ("Error");
+  const t = useTranslations();
 
   const columns: Column<Product>[] = [
-    { header: p("code"), accessor: "code" },
-    { header: p("name"), accessor: "name" },
+    { header: t("product.details.code"), accessor: "code" },
+    { header: t("product.details.name"), accessor: "name" },
     {
-      header: p("quantity"),
+      header: t("product.details.quantity"),
       accessor: (product) => (
         <Input
           type="number"
@@ -67,7 +64,7 @@ export default function ProductSearch({
           }}
           className="border border-black px-4 py-2 bg-white text-black"
           >
-          {b("add")}
+          {t("button.add")}
         </Button>
       ),
     },
@@ -78,7 +75,7 @@ export default function ProductSearch({
       <SearchBar
         onSearch={onSearch}
         debounceDelay={400}
-        placeholder={ph("getBy", {field: "nombre del producto"})}
+        placeholder={t("search.searchByProductName")}
       />
       {isLoading ? (
         <PurchaseSearchSkeleton />
@@ -92,7 +89,7 @@ export default function ProductSearch({
       ) : (
         hasSearched &&
         !isLoading && (
-          <p className="text-center mt-4">{e("notFound")}</p>
+          <p className="text-center mt-4">{t("error.notFoundProduct")}</p>
         )
       )}
     </div>

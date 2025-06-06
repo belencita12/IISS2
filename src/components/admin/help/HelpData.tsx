@@ -7,8 +7,11 @@ import ClientAppointmentHelp from "./ClientApoimentHelp";
 import InventoryHelp from "./InventoryHelp";
 import FinancialHelp from "./FinancialHelp";
 import DashboardHelp from "./DashboardHelp";
+import { useTranslations } from "next-intl";
 
 export default function HelpData() {
+
+  const t = useTranslations();
   const [activeSection, setActiveSection] = useState("dashboard");
   const [inputValue, setInputValue] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -25,10 +28,10 @@ export default function HelpData() {
   return (
     <div className="min-h-screen">
       <Head>
-        <title>Centro de Ayuda | Sistema Veterinario</title>
+        <title>{t("help.head.title")}</title>
         <meta
           name="description"
-          content="Centro de ayuda para el sistema de veterinaria"
+          content={t("help.head.description")}
         />
       </Head>
 
@@ -37,10 +40,9 @@ export default function HelpData() {
           <div className="flex justify-center mb-4">
             <CircleHelpIcon className="w-16 h-16" />
           </div>
-          <h1 className="text-3xl font-bold mb-2">Centro de Ayuda</h1>
+          <h1 className="text-3xl font-bold mb-2">{t("help.data.title")}</h1>
           <p className="text-gray-600">
-            Encuentra respuestas a preguntas comunes sobre el sistema de
-            veterinaria
+            {t("help.data.description")}
           </p>
         </div>
 
@@ -48,7 +50,7 @@ export default function HelpData() {
           <div className="relative w-full">
             <input
               type="text"
-              placeholder="Buscar ayuda..."
+              placeholder={t("search.searchHelp")}
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               className="border rounded py-2 pl-10 pr-10 w-full"
@@ -59,7 +61,7 @@ export default function HelpData() {
             {inputValue && (
               <button
                 onClick={clearSearch}
-                title="Borrar búsqueda"
+                title={t("help.delete")}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-black"
               >
                 <X size={18} />
@@ -70,7 +72,7 @@ export default function HelpData() {
             onClick={handleSearch}
             className="bg-black text-white px-4 py-2 rounded ml-2"
           >
-            Buscar
+            {t("button.search")}
           </button>
         </div>
 
@@ -83,7 +85,7 @@ export default function HelpData() {
                 : "text-gray-500 hover:bg-gray-200"
             }`}
           >
-            Dashboard
+            {t("help.data.dashboard")}
           </button>
           <button
             onClick={() => setActiveSection("clientes")}
@@ -93,7 +95,7 @@ export default function HelpData() {
                 : "text-gray-500 hover:bg-gray-200"
             }`}
           >
-            Clientes y Citas
+             {t("help.data.clientsAndAppointments")}
           </button>
           <button
             onClick={() => setActiveSection("inventario")}
@@ -103,7 +105,7 @@ export default function HelpData() {
                 : "text-gray-500 hover:bg-gray-200"
             }`}
           >
-            Inventario
+             {t("help.data.inventory")}
           </button>
           <button
             onClick={() => setActiveSection("finanzas")}
@@ -113,7 +115,7 @@ export default function HelpData() {
                 : "text-gray-500 hover:bg-gray-200"
             }`}
           >
-            Finanzas
+             {t("help.data.financial")}
           </button>
         </div>
 

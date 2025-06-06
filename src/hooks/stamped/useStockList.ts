@@ -29,7 +29,6 @@ export function useStockList(token: string, currentStockId?: number) {
       setCurrentPage(page);
       setError(null);
     } catch (error) {
-      console.error("Error al obtener depósitos:", error);
       setError(error instanceof Error ? error.message : "Error al obtener los depósitos");
     } finally {
       setIsLoading(false);

@@ -12,6 +12,7 @@ import { Species } from "@/lib/pets/IPet";
 import { registerSpecies } from "@/lib/pets/species/registerSpecies";
 import { updateSpecies } from "@/lib/pets/species/updateSpecie";
 import { toast } from "@/lib/toast";
+import { useTranslations } from "next-intl";
 
 const schema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
@@ -46,6 +47,8 @@ export default function SpeciesFormModal({
     },
   });
 
+  const t = useTranslations();
+
   useEffect(() => {
     if (defaultValues) {
       reset({ name: defaultValues.name });
@@ -58,15 +61,15 @@ export default function SpeciesFormModal({
     try {
       if (defaultValues) {
         await updateSpecies(defaultValues.id, data, token);
-        toast("success", "Especie actualizada correctamente");
+        toast("success", t("success.successUpdateSpecie"));
       } else {
         await registerSpecies(data, token);
-        toast("success", "Especie creada correctamente");
+        toast("success", t("success.successRegisterSpecie"));
       }
       onSuccess();
       onClose();
-    } catch (error) {
-        console.error("error al guardar la especie");
+    } catch (error:unknown) {
+      if (error instanceof Error ) toast("error", error.message)    
     }
   };
 
@@ -74,12 +77,12 @@ export default function SpeciesFormModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={defaultValues ? "Editar Especie" : "Crear Especie"}
+      title={defaultValues ? t("species.table.titleUpdate") : t("species.table.titleRegister")}
       size="sm"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 px-1 py-2">
         <div>
-          <Label htmlFor="name">Nombre</Label>
+          <Label htmlFor="name">{t("species.form.name")}</Label>
           <Input id="name" {...register("name")} />
           {errors.name && (
             <p className="text-sm text-red-600 mt-1">{errors.name.message}</p>
@@ -88,10 +91,10 @@ export default function SpeciesFormModal({
 
         <div className="flex justify-end gap-2 pt-2">
           <Button type="button" variant="outline" onClick={onClose}>
-            Cancelar
+            {t("button.cancel")}
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {defaultValues ? "Actualizar" : "Crear"}
+            {defaultValues ? t("button.save") : t("button.add")}
           </Button>
         </div>
       </form>

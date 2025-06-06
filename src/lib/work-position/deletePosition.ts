@@ -12,10 +12,13 @@ export async function deleteWorkPosition(token: string, id: number) {
     },
   });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Error al eliminar puesto: ${errorText}`);
-  }
+    if (!response.ok) {
+            const errorData = await response.json().catch(() => ({})); 
+            const message = errorData?.message || `Error HTTP: ${response.status}`;
+            throw new Error(message);
+        }
+
+
 
   const contentType = response.headers.get("content-type");
   const hasBody = contentType && contentType.includes("application/json");

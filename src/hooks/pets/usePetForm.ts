@@ -9,6 +9,7 @@ import { mapToFormData } from "@/lib/utils";
 import { registerPet } from "@/lib/pets/registerPet";
 import { image } from "@/lib/schemas";
 import { ClientData } from "@/lib/admin/client/IClient";
+import { useTranslations } from "next-intl";
 
 const petFormSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
@@ -28,6 +29,7 @@ export type PetFormValues = z.infer<typeof petFormSchema>;
 
 export const usePetRegisterForm = (token: string) => {
   const router = useRouter();
+  const t = useTranslations();
 
   const form = useForm<PetFormValues>({
     resolver: zodResolver(petFormSchema),
@@ -81,10 +83,10 @@ export const usePetRegisterForm = (token: string) => {
     try {
       await registerPet(formData, token);
       form.reset();
-      toast("success", "Mascota registrada con éxito!");
+      toast("success", t("success.successRegisterPet"));
       router.push("/dashboard/settings/pets");
-    } catch {
-      toast("error", "Hubo un error al registrar la mascota.");
+    } catch (error : unknown) {
+      if (error instanceof Error) toast("error", error.message);
     }
   };
   return {

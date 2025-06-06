@@ -25,13 +25,11 @@ const PurchaseDetail: React.FC<PurchaseDetailProps> = ({ token, purchaseInfo, in
   
   const { data: purchaseDetails, totalPages, loading, error } = usePurchaseDetail(id as string, token, page);
 
-  const p = useTranslations("PurchaseDetail");
-  const e = useTranslations("Error");
-  const b = useTranslations("Button");
+  const t = useTranslations();
 
   useEffect(() => {
     if (!loading && !toastShown && (!purchaseDetails || purchaseDetails.length === 0)) {
-      toast("warning", e("notFound"));
+      toast("warning", t("error.notFound"));
       setToastShown(true);
     }
   }, [purchaseDetails, toastShown, loading]);
@@ -66,11 +64,11 @@ const PurchaseDetail: React.FC<PurchaseDetailProps> = ({ token, purchaseInfo, in
             onClick={() => router.push('/dashboard/purchases')}
             className="border-black border-solid w-fit"
           >
-            {b("toReturn")}
+            {t("button.toReturn")}
           </Button>
           
           <h1 className="text-xl sm:text-2xl font-bold text-center sm:absolute sm:left-1/2 sm:transform sm:-translate-x-1/2">
-            {p("titleDetail")}
+            {t("purchase.details.title")}
           </h1>
         </div>
       </div>

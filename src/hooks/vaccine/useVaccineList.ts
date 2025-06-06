@@ -37,9 +37,9 @@ export const useVaccineList = (token: string | null) => {
             pageSize: results.size || 4,
           },
         });
-      } catch (error) {
-        toast("error", "Error al cargar vacunas");
-        console.error("Error cargando vacunas:", error);
+      } catch (error:unknown) {
+        if (error instanceof Error)
+        toast("error", error.message);
       } finally {
         setLoading(false);
       }
@@ -67,9 +67,9 @@ export const useVaccineList = (token: string | null) => {
             pageSize: result.size || 4,
           },
         });
-      } catch (error) {
-        toast("error", "Error al buscar vacunas");
-        console.error("Error en búsqueda:", error);
+      } catch (error: unknown) {
+        if (error instanceof Error)
+        toast("error", error.message);
       } finally {
         setLoading(false);
       }

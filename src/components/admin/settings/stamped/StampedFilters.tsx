@@ -7,6 +7,7 @@ import { getStocks } from "@/lib/stock/getStock";
 import { DataList } from "@/components/ui/datalist";
 import { StockData } from "@/lib/stock/IStock";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
 
 interface Props {
   fromDate: string | undefined;
@@ -38,6 +39,8 @@ export function StampedFilters({
   const [stocks, setStocks] = useState<StockData[]>([]);
   const [stockText, setStockText] = useState("");
 
+  const t = useTranslations();
+
   useEffect(() => {
     if(!stockId) setStockText("")
     const fetchStocks = async () => {
@@ -60,11 +63,11 @@ export function StampedFilters({
 
       <div className="flex flex-row gap-4 items-center">
         <div className="flex-1">
-          <Label>Deposito</Label>
+          <Label>{t("stamped.table.stock")}</Label>
           <DataList
             datas={stocks.map(stock => ({ text: stock.name, value: stock.id?.toString() ?? "" }))}
             handleSelect={(value) => setStockId(value ? parseInt(value) : undefined)}
-            placeholder="Buscar por Deposito"
+            placeholder={t("search.searchByStockName")}
             className="w-full"
             onChange={(e) => typeof e === "string" && setStockText(e)}
             handleReset={() => {
@@ -77,10 +80,10 @@ export function StampedFilters({
         </div>
 
         <div className="flex-1">
-          <Label>Número de Timbrado</Label>
-          <Input
+          <Label>{t("stamped.table.stampedNumber")}</Label>
+          <Input 
             type="text"
-            placeholder="Buscar por número de timbrado"
+            placeholder={t("search.searchByStampedNumber")}
             onChange={(e) => {
               const value = e.target.value;
               if (/^\d{0,8}$/.test(value)) setStampedNumber(value);
@@ -94,7 +97,7 @@ export function StampedFilters({
 
       <div className="flex flex-row gap-4 items-center">
         <div className="flex-1">
-          <Label>Fecha Desde</Label>
+          <Label>{t("stamped.table.startDate")}</Label>
           <Input
             type="date"
             value={fromDate || ""}
@@ -103,7 +106,7 @@ export function StampedFilters({
           />
         </div>
         <div className="flex-1">
-          <Label>Fecha Hasta</Label>
+          <Label>{t("stamped.table.endDate")}</Label>
           <Input
             type="date"
             value={toDate || ""}

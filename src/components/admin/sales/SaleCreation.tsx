@@ -60,9 +60,7 @@ export default function SaleCreation({ token }: Props) {
   const [isPrinting, setIsPrinting] = useState(false);
   const [createdInvoiceId, setCreatedInvoiceId] = useState<string | null>(null);
 
-  const s = useTranslations("Sales");
-  const b = useTranslations("Button");
-
+  const t = useTranslations();
 
   // Calcular el total de la factura
   const total = products.reduce((sum, product) => sum + product.total, 0);
@@ -147,13 +145,13 @@ export default function SaleCreation({ token }: Props) {
           });
         });
       } else {
-        toast("error", "No se pudo abrir la ventana de impresión.");
+        toast("error", t("error.noPrint"));
       }
 
       setShowPrintModal(false);
       router.push("/dashboard/invoices");
     } catch {
-      toast("error", "Error al imprimir la factura");
+      toast("error", t("error.errorPrintInvoice"));
     } finally {
       setIsPrinting(false);
     }
@@ -161,18 +159,18 @@ export default function SaleCreation({ token }: Props) {
 
   const handleFinalizeSale = async () => {
     if (!selectedStock) {
-      setDepositError("Debe seleccionar un depósito");
-      toast("error", "Debe seleccionar un depósito");
+      setDepositError(t("error.selectStock"));
+      toast("error", t("error.selectStock"));
       return;
     }
 
     if (!selectedCustomer && saleCondition === "CREDIT") {
-      toast("error", "Debe seleccionar un cliente");
+      toast("error", t("error.selectCustomer"));
       return;
     }
 
     if (products.length === 0) {
-      toast("error", "Debe agregar al menos un producto");
+      toast("error", t("error.selectProduct"));
       return;
     }
 
@@ -203,7 +201,7 @@ export default function SaleCreation({ token }: Props) {
     try {
       const response = await post(saleData);
       if (!response.error && !loading) {
-        toast("success", "Venta finalizada con éxito");
+        toast("success", t("success.successCreateSales"));
 
         // Verificamos si la respuesta contiene datos y un ID
         // Usamos una aserción de tipo o verificación con tipo any para acceder al id
@@ -242,7 +240,7 @@ export default function SaleCreation({ token }: Props) {
         <div className="lg:col-span-1 space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>{s("SaleCreation.condition")}</CardTitle>
+              <CardTitle>{t("sales.create.condition")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <Select
@@ -255,18 +253,18 @@ export default function SaleCreation({ token }: Props) {
                 }}
               >
                 <SelectTrigger id="sale-condition">
-                  <SelectValue placeholder="Seleccionar condición" />
+                  <SelectValue placeholder={t("placeholder.select")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="CASH">{s("SaleCreation.cash")}</SelectItem>
-                  <SelectItem value="CREDIT">{s("SaleCreation.credit")}</SelectItem>
+                  <SelectItem value="CASH">{t("sales.type.cash")}</SelectItem>
+                  <SelectItem value="CREDIT">{t("sales.type.credit")}</SelectItem>
                 </SelectContent>
               </Select>
             </CardContent>
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>{s("SaleCreation.client")}</CardTitle>
+              <CardTitle>{t("sales.create.client")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <CustomerSearch
@@ -294,7 +292,7 @@ export default function SaleCreation({ token }: Props) {
 
               {!selectedCustomer && saleCondition === "CREDIT" && (
                 <p className="text-center py-8 text-muted-foreground">
-                  Selecciona un cliente para continuar.
+                  {t("sales.create.selectACustomer")}
                 </p>
               )}
             </CardContent>
@@ -315,12 +313,12 @@ export default function SaleCreation({ token }: Props) {
         <div className="lg:col-span-2 space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>{s("SaleCreation.products")}</CardTitle>
+              <CardTitle>{t("sales.create.products")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {!selectedStock ? (
                 <div className="text-center py-8 text-muted-foreground">
-                  Selecciona un depósito para continuar.
+                  {t("sales.create.selectStock")}
                 </div>
               ) : (
                 <>
@@ -342,36 +340,36 @@ export default function SaleCreation({ token }: Props) {
 
           <Card>
             <CardHeader>
-              <CardTitle>{s("SaleCreation.summary")}</CardTitle>
+              <CardTitle>{t("sales.create.summary")}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 <div className="flex justify-between font-bold text-lg">
-                  <span>{s("SaleCreation.total")}:</span>
-                  <span>{total.toLocaleString("ES-PY")} {s("SaleCreation.gs")}</span>
+                  <span>{t("sales.create.total")}</span>
+                  <span>{total.toLocaleString("ES-PY")} {t("sales.create.gs")}</span>
                 </div>
 
                 {paymentMethods.length > 0 && (
                   <>
                     <div className="h-px bg-gray-200 my-2"></div>
                     <div className="flex justify-between">
-                      <span>{s("SaleCreation.totalPaid")}:</span>
-                      <span>{totalPaid.toLocaleString("ES-PY")} {s("SaleCreation.gs")}</span>
+                      <span>{t("sales.create.totalPaid")}:</span>
+                      <span>{totalPaid.toLocaleString("ES-PY")} {t("sales.create.gs")}</span>
                     </div>
                     {remainingBalance > 0 && (
                       <div className="flex justify-between text-red-500 font-medium">
                         <span>
-                          Faltan {remainingBalance.toLocaleString("ES-PY")} {s("SaleCreation.gs")}
-                          para completar el pago.
+                          {t("sales.create.paymentMissing", {total :remainingBalance.toLocaleString("ES-PY")})}
+                        
                         </span>
                       </div>
                     )}
                     {remainingBalance < 0 && (
                       <div className="flex justify-between text-red-500 font-medium">
                         <span>
-                          El monto excede por{" "}
+                          {t("sales.create.exceededAmount")}{" "}
                           {Math.abs(remainingBalance).toLocaleString("ES-PY")}{" "}
-                          {s("SaleCreation.gs")}
+                          {t("sales.create.gs")}
                         </span>
                       </div>
                     )}
@@ -391,14 +389,14 @@ export default function SaleCreation({ token }: Props) {
                 }
                 title={
                   remainingBalance > 0 && saleCondition === "CASH"
-                    ? "El pago total debe cubrir el monto completo de la venta"
+                    ? t("error.amountNotCovered")
                     : !selectedStock
-                    ? "Debe seleccionar un depósito"
+                    ? t("error.selectStock")
                     : ""
                 }
                 onClick={handleFinalizeSale}
               >
-                {loading ? b("finalizing") : b("finish")}
+                {loading ? t("button.finalizing") : t("button.finish")}
               </Button>
             </CardFooter>
           </Card>

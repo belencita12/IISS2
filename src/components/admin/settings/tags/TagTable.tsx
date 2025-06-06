@@ -7,6 +7,7 @@ import { Tag } from "@/lib/tags/types";
 import { Pencil, Trash, Undo2 } from "lucide-react";
 import React from "react";
 import TagTableSkeleton from "./TagTableSkeleton";
+import { useTranslations } from "next-intl";
 
 export type TagTableProps = Omit<
   GenericTableProps<Tag>,
@@ -27,11 +28,14 @@ const TagTable = ({
   isLoading,
   ...props
 }: TagTableProps) => {
+
+  const t = useTranslations();
+
   if (isLoading) return <TagTableSkeleton />;
 
   const columns: Column<Tag>[] = [
     {
-      header: "Tag",
+      header: t("tags.table.name"),
       accessor: "name",
     },
   ];
@@ -41,7 +45,7 @@ const TagTable = ({
       ? [
           {
             icon: <Undo2 className={`w-4 h-4 ${isRestoring ? 'opacity-50' : ''}`} />,
-            label: isRestoring ? "Restaurando..." : "Restaurar",
+            label: isRestoring ? t("button.restoring") : t("button.restore"),
             onClick: (tag: Tag) => {
               if (!isRestoring && handleRestore) {
                 handleRestore(tag);
@@ -52,12 +56,12 @@ const TagTable = ({
       : [
           {
             icon: <Pencil className="w-4 h-4" />,
-            label: "Editar",
+            label: t("button.edit"),
             onClick: handleEdit,
           },
           {
             icon: <Trash className="w-4 h-4" />,
-            label: "Eliminar",
+            label: t("button.delete"),
             onClick: handleDel,
           },
         ]),

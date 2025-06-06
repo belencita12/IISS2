@@ -12,13 +12,11 @@ export const deleteRaceByID = async (token: string, id: number): Promise<boolean
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.error(`Error HTTP ${response.status}:`, errorText);
             throw new Error(`Error ${response.status}: ${errorText}`);
         }
 
         return true; 
     } catch (error) {
-        console.error("Error en deleteRaceByID:", error);
         return false; 
     }
 };

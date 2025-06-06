@@ -27,8 +27,8 @@ export default function InvoiceDetail({ token }: Props) {
   );
   const [isPrinting, setIsPrinting] = useState(false);
 
-  const i = useTranslations("InvoiceTable");
-  const b = useTranslations("Button");
+  const t = useTranslations();
+
   const { isFormOpen, selectedInvoice, onOpen, onClose } = usePaymentForm();
 
   useEffect(() => {
@@ -61,10 +61,10 @@ export default function InvoiceDetail({ token }: Props) {
           });
         });
       } else {
-        toast("error", "No se pudo abrir la ventana de impresión.");
+        toast("error", t("error.noPrint"));
       }
     } catch {
-      toast("error", "Error al imprimir la factura");
+      toast("error", t("error.errorPrintInvoice"));
     } finally {
       setIsPrinting(false);
     }
@@ -77,7 +77,7 @@ export default function InvoiceDetail({ token }: Props) {
       <div className="flex justify-between items-center mb-4 mt-4">
         <Link href="/dashboard/invoices">
           <Button variant="outline" className="border-black border-solid">
-            {b("toReturn")}
+            {t("button.toReturn")}
           </Button>
         </Link>
 
@@ -85,7 +85,7 @@ export default function InvoiceDetail({ token }: Props) {
           {invoice &&
             invoice.type === "CREDIT" &&
             invoice.total !== invoice.totalPayed && (
-              <Button onClick={() => onOpen(invoice)}>Pagar Factura</Button>
+              <Button onClick={() => onOpen(invoice)}>{t("button.payInvoice")}</Button>
             )}
           <PrintButton onClick={handlePrintInvoice} isLoading={isPrinting} />
         </div>
@@ -94,7 +94,7 @@ export default function InvoiceDetail({ token }: Props) {
       {invoice && <InvoiceDetailCard invoice={invoice} />}
 
       <h3 className="text-xl font-semibold text-black mb-3 mt-3">
-        {i("invoiceDetail")}
+        {t("invoices.table.titleDetails")}
       </h3>
 
       <div className="w-full">

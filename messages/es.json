@@ -141,6 +141,7 @@
     "transfer": "Transferencia",
     "minAmount": "Ej: 100.000",
     "maxAmount": "Ej: 1.000.000"
+   
   },
   "EmployeeTable": {
     "name": "Nombre",
@@ -287,7 +288,7 @@
     "race": "Raza",
     "serviceSelected": "Servicio",
     "price": "Precio",
-    "title": "Agendar cita",
+    "title": "Agendar Cita",
     "descriptionClient": "Ingresa los datos para agendar tu cita veterinaria",
     "availabilityHour": "Horario disponible",
     "otherService": "Selecciona otro servicio"
@@ -541,9 +542,17 @@
     }
   },
   "button": {
+    "search": "Buscar",
+    "payInvoice": "Pagar Factura",
+    "addSchedule": "Agregar horario",
+    "seeActive": "Ver activos",
+    "seeDeleted": "Ver eliminados",
+    "restore": "Restaurar",
+    "restoring": "Restaurando",
     "edit": "Editar",
     "editing": "Editando...",
     "save":"Guardar",
+    "update": "Actualizar",
     "cancel": "Cancelar",
     "saving": "Guardando...",
     "cancelling": "Cancelando...",
@@ -560,6 +569,7 @@
     "searching": "Buscando...",
     "updating": "Actualizando...",
     "finish": "Finalizar",
+    "finalizing": "Finalizando...",
     "confirm": "Confirmar",
     "delete": "Eliminar",
     "add": "Agregar",
@@ -572,6 +582,10 @@
   },
 
   "placeholder":{
+    "colabs": "Ingrese el número máximo de colaboradores",
+    "durationExample": "Ej: 30",
+    "slugExample": "Ej: servicio-veterinario",
+    "businessNameExample": "Ej: Tech Supplies Inc.",
     "name": "Ingrese el nombre",
     "address": "Ingrese la dirección",
     "ruc": "Ingrese el RUC",
@@ -589,7 +603,8 @@
     "iva":"Ingrese el IVA",
     "description": "Ingrese una descripción",
     "minAmount":"Ej: 100.000",
-    "maxAmount":"Ej: 1.000.000"
+    "maxAmount":"Ej: 1.000.000",
+    "since": "Desde (HH:MM)"
 
   },
   "error": {
@@ -641,7 +656,33 @@
     "unexpectedError": "Ocurrió un error inesperado",
     "errorLoadStock": "Ocurrió un error al cargar los depósitos",
     "notFoundStock": "No se encontraron depósitos",
-    "errorDeleteStock": "No se pudo eliminar el depósito"
+    "errorDeleteStock": "No se pudo eliminar el depósito",
+    "noSelectProduct": "No se seleccionó producto",
+    "noPrint": "No se pudo abrir la ventana de impresión.",
+    "errorPrintInvoice": "No se pudo imprimir la factura",
+    "errorPrintReceipt": "No se pudo imprimir el recibo",
+    "selectStock": "Debe seleccionar un depósito",
+    "selectCustomer": "Debe seleccionar un cliente",
+    "selectProduct": "Debe seleccionar al menos un producto",
+    "amountNotCovered": "El pago total debe cubrir el monto completo de la venta",
+    "noAddedProducts": "No hay productos agregados. Busca y agrega productos a la venta.",
+    "errorDeleteRace": "Ocurrió un error al intentar eliminar la raza",
+    "errorRestoreRace": "Ocurrió un error al intentar restaurar la raza",
+    "errorDeleteSpecie": "Ocurrió un error al intentar eliminar la especie",
+    "errorRestoreSpecie": "Ocurrió un error al intentar restaurar la especie",
+    "defaultValues": "Modifica los valores predeterminados antes de agregar un nuevo horario",
+    "maintainASchedule": "Debe mantener al menos un horario",
+    "defaultValuesBeforeSave": "Modifica los valores predeterminados antes de guardar",
+    "beforeEndTime": "La hora de finalización debe ser posterior a la de inicio {startTime}",
+    "errorLoadProviderDetails": "Error al cargar detalles del proveedor:",
+    "errorSaveProvider" : "Ocurrió un error al guardar el proveedor",
+    "errorLoadTags": "Error al cargar las etiquetas",
+    "errorRestoreTag": "Ocurrió un error al intentar restaurar la etiqueta",
+    "errorDeleteTag": "Ocurrió un error al intentar eliminar la etiqueta",
+    "errorSaveTag": "Ocurrió un error al agregar la etiqueta",
+    "notAccessDetails": "No se puede acceder al detalle",
+    "reasonCancel": "El motivo de la cancelación debe tener al menos 12 carácteres"
+    
     
   },
   "profileTabs": {
@@ -712,7 +753,7 @@
     "race": "Raza",
     "serviceSelected": "Servicio",
     "price": "Precio",
-    "title": "Agendar cita",
+    "title": "Agendar Cita",
     "description": "Ingresa los datos para agendar tu cita veterinaria",
     "availabilityHour": "Horario disponible",
     "otherService": "Selecciona otro servicio",
@@ -743,6 +784,7 @@
   },
 
   "pet": {
+    "title": "Mascotas",
     "form": {
       "title": "Registro de Mascota",
       "description": "Ingrese los datos de la mascota",
@@ -755,7 +797,10 @@
       "female": "Hembra",
       "male": "Macho",
       "image": "Imagen de tu mascota",
-      "optional": "Opcional"
+      "optional": "Opcional",
+      "titleAdmin": "Registro de Mascota (Admin)",
+      "imageOpcional": "Imagen (Opcional)",
+      "client": "Cliente"
     },
     "details": {
       "name": "Nombre",
@@ -766,7 +811,8 @@
       "sex": "Género",
       "female": "Hembra",
       "male": "Macho",
-      "vaccineControl": "Control de vacunas"
+      "vaccineControl": "Control de vacunas",
+      "owner":"Dueño"
     },
     "myPets": "Mis mascotas",
     "addPet": "Comienza agregando una nueva mascota",
@@ -774,11 +820,40 @@
       "emptyMessage": "No hay mascotas registradas"
     }
 
-
+  },
+  "paymentMethods":{
+    "title": "Métodos de Pago",
+    "amount": "Monto",
+    "method": "Método"
+  },
+  "sales":{
+    "searchStock": "Buscar Depósito",
+    "total": "Total",
+    "category":{
+      "service": "Servicio",
+      "product": "Producto"
+    },
+    "type":{
+      "cash": "Contado",
+      "credit":"Crédito"
+    },
+    "create":{
+      "condition": "Condición de venta",
+      "client": "Cliente",
+      "products": "Productos",
+      "summary": "Resumen de venta",
+      "total": "Total:",
+      "gs": "Gs.",
+      "selectACustomer": "Selecciona un cliente para continuar.",
+      "selectStock": "Selecciona un depósito para continuar",
+      "paymentMissing": "Faltan {total} Gs. para completar el pago.",
+      "exceededAmount": "El monto excede por",
+      "totalPaid": "Total Pagado"
+    }
   },
   
   "success": {
-    "successRegisterPet": "Mascota registrada con éxito",
+    "successRegisterPet": "Mascota registrada correctamente",
     "successUpdatePet": "Mascota actualizada correctamente",
     "successRegisterAppointment": "Cita agendada con éxito",
     "successDeleteClient": "{client} fue eliminado correctamente",
@@ -793,7 +868,34 @@
     "successDeleteManufacturer": "Fabricante eliminado correctamente",
     "successUpdateManufacturer": "Fabricante actualizado correctamente",
     "successRegisterManufacturer": "Fabricante registrado correctamente",
-    "successDeleteStock": "Depósito eliminado correctamente"
+    "successDeleteStock": "Depósito eliminado correctamente",
+    "successCreateSales":"Venta finalizada con éxito",
+    "successRegisterEmployee": "Empleado registrado con éxito",
+    "successUpdateEmployee": "Empleado actualizado correctamente",
+    "successDeleteRace": "Raza eliminada correctamente",
+    "successRestoreRace": "Raza restaurada correctamente",
+    "successRegisterRace": "Raza registrada correctamente",
+    "successUpdateRace": "Raza actualizada con éxito",
+    "successDeleteSpecie": "Especie eliminada correctamente",
+    "successRestoreSpecie": "Especie restaurada correctamente",
+    "successUpdateSpecie": "Especie actualizada con éxito",
+    "successRegisterSpecie": "Especie registrada correctamente",
+    "successDeletePosition": "Puesto eliminado correctamente",
+    "successUpdatePosition": "Puesto actualizado con éxito",
+    "successRegisterPosition": "Puesto registrado correctamente",
+    "successDeleteProvider": "Proveedor eliminado correctamente",
+    "successRegisterProvider": "Proveedor agregado correctamente",
+    "successUpdateProvider": "Proveedor actualizado con éxito",
+    "successRestoreTag": "Etiqueta restaurada correctamente",
+    "successDeleteTag": "Etiqueta eliminada correctamente",
+    "successRegisterTag": "Etiqueta agregada correctamente",
+    "successUpdateTag": "Etiqueta actualizada con éxito",
+    "successDeleteService": "Servicio eliminado correctamente",
+    "successRegisterService": "Servicio agregado correctamente",
+    "successUpdateService": "Servicio actualizado con éxito",
+    "successDeletePet": "Mascota eliminada correctamente",
+    "successDeleteStamped": "Timbrado eliminado correctamente",
+    "successRegister": "Has sido registrado correctamente"
   },
   "vaccine": {
     "table": {
@@ -846,7 +948,14 @@
     "searchByCodeOrName": "Buscar por código o nombre...",
     "searchByEmployeeRuc": "Buscar por RUC del encargado...",
     "searchByProductName": "Buscar por nombre del producto...",
-    "searchByNameOrRucEmployee": "Buscar por nombre o RUC del empleado..."
+    "searchByNameOrRucEmployee": "Buscar por nombre o RUC del empleado...",
+    "searchByNameOrRucProvider": "Buscar por razón social o RUC del proveedor...",
+    "searchByPetName": "Buscar por nombre de la mascota...",
+    "searchByOwnerName": "Buscar por nombre del dueño...",
+    "searchByReceiptNumber": "Buscar por Nro de recibo...",
+    "searchByStockName": "Buscar por nombre de depósito...",
+    "searchByStampedNumber": "Buscar por nro de timbrado...",
+    "searchHelp": "Buscar ayuda..."
   },
   "productCatalog": {
     "selectedTags": "Etiquetas seleccionadas:",
@@ -899,6 +1008,7 @@
       "quantity": "Cantidad"
     },
     "details": {
+      "product":"Producto",
       "quantityDeposit":"Cantidad por depósitos",
       "name": "Nombre",
       "description": "Descripción",
@@ -969,6 +1079,26 @@
       "workPosition": "Puesto",
       "title": "Empleados",
       "emptyMessage": "No hay empleados registrados"
+    },
+    "form":{
+      "titleRegister": "Registro de Empleado",
+      "titleUpdate": "Actualizar datos de Empleado",
+      "ruc": "RUC",
+      "name": "Nombre",
+      "email": "Correo electrónico",
+      "phone": "Teléfono",
+      "workPosition": "Puesto",
+      "address": "Dirección",
+      "image": "Foto del empleado (Opcional)"
+    },
+    "details":{
+      "employeePerfil": "Perfil de Empleado",
+      "ruc": "RUC",
+      "email": "Correo electrónico",
+      "phone": "Teléfono",
+      "address": "Dirección",
+      "programmedAppointments": "Citas Programadas",
+      "appointmentList": "Lista de citas asignadas a este empleado"
     }
   },
   "purchase": {
@@ -980,6 +1110,18 @@
     "list":{
       "title": "Compras",
       "emptyMessage": "No hay compras registradas"
+    },
+    "details":{
+      "title": "Detalles de Compra"
+    },
+    "form": {
+      "title": "Registrar Compra",
+      "provider": "Proveedor",
+      "stock": "Depósito",
+      "date": "Fecha",
+      "selectedProducts":"Productos seleccionados",
+      "titleEditQuantity": "Actualizar cantidad",
+      "selectAProvider": "Selecciona un proveedor para buscar productos"
     }
   },
 
@@ -990,6 +1132,7 @@
       "cash": "Contado"
     },
     "table": {
+      "titleDetails":"Detalle de factura",
       "title": "Facturas",
       "invoiceNumber": "Factura N°",
       "client": "Cliente",
@@ -999,7 +1142,24 @@
       "total": "Total",
       "totalPayed": "Total pagado",
       "actions": "Acciones",
-      "emptyMessage": "No hay facturas registradas"
+      "emptyMessage": "No hay facturas registradas",
+      "product": "Producto",
+      "unitCost": "Costo unitario",
+      "iva": "IVA",
+      "subTotal": "Sub. Total",
+      "quantity": "Cantidad"
+    },
+    "card":{
+      "stamped": "Timbrado:",
+      "customerInformation": "Información del Cliente",
+      "payInformation": "Información de Pago",
+      "client": "Cliente",
+      "ruc": "RUC",
+      "total": "Total",
+      "totalPayed": "Total pagado",
+      "condition": "Condición de venta",
+      "iva": "IVA"
+
     }
   },
 
@@ -1043,6 +1203,15 @@
   },
 
   "filters": {
+    "invoices":{
+      "type": "Tipo de factura"
+    },
+    "receipts":{
+      "receiptNumber": "El número de recibo debe ser mayor a 0.",
+      "minAmount": "El monto mínimo debe ser mayor a 0.",
+      "maxAmount": "El monto máximo debe ser mayor a 0."
+    },
+    "clearFilters": "Limpiar filtros",
     "title": "Filtros",
     "type": "Tipo",
     "provider": "Proveedor",
@@ -1080,6 +1249,8 @@
       "product": "Producto"
     },
     "priceRange": {
+      "minAmount": "Monto mínimo",
+      "maxAmount": "Monto máximo",
       "from": "Desde",
       "to":"Hasta",
       "errorNumericMin": "No puede ser menor al mínimo"
@@ -1087,9 +1258,46 @@
     "total": {
       "minTotal": "Total mínimo",
       "maxTotal": "Total máximo"
+    },
+    "pet":{
+      "specie": "Especie",
+      "race": "Raza"
     }
   },
+
   "confirmationModal":{
+    "stamped": {
+      "titleDelete": "Eliminar timbrado",
+      "messageDelete": "¿Estás seguro de que deseas eliminar el timbrado Nro {stamped}?"
+    },
+    "pet":{
+      "titleDelete": "Eliminar mascota",
+      "messageDelete": "¿Estás seguro de que deseas eliminar la mascota {pet}?"
+    },
+    "serviceTypes":{
+      "titleDelete": "Eliminar servicio",
+      "messageDelete":"¿Estás seguro de que deseas eliminar el servicio {service}?"
+    },
+    "tag": {
+      "titleDelete": "Eliminar etiqueta",
+      "messageDelete":"¿Estás seguro de que deseas eliminar la etiqueta {tag}?"
+    },
+    "providers":{
+      "titleDelete": "Eliminar proveedor",
+      "messageDelete": "¿Estás seguro de que deseas eliminar el proveedor {provider}?"
+    },
+    "positions":{
+      "titleDelete": "Eliminar puesto de trabajo",
+      "messageDelete": "¿Estás seguro de que deseas eliminar el puesto {position}?"
+    },
+    "species":{
+      "titleDelete": "Eliminar raza",
+      "messageDelete":"¿Estás seguro de que deseas eliminar la especie {specie}?"
+    },
+    "races":{
+      "titleDelete": "Eliminar raza",
+      "messageDelete":"¿Estás seguro de que deseas eliminar la raza {race}?"
+    },
     "stock":{
       "titleDelete": "Eliminar depósito",
       "messageDelete":"¿Estás seguro de que deseas eliminar el {stock}?"
@@ -1125,6 +1333,28 @@
     },
     "tags": "Etiquetas"
   },
+
+  "stamped":{
+    "date": {
+      "from": "Fecha desde",
+      "to": "Fecha hasta"
+    },
+    "table": {
+      "title": "Timbrado",
+      "stampedNumber": "Número de timbrado",
+      "stock": "Depósito",
+      "address": "Dirección",
+      "startDate": "Fecha de inicio",
+      "endDate": "Fecha de fin",
+      "numberRange": "Rango de números",
+      "status": "Estado",
+      "emptyMessage": "No hay timbrados registrados"
+    },
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo"
+    }
+  },
    "Stamped": {
     "title": "Timbrado",
     "stampedNumber": "Número de timbrado",
@@ -1154,5 +1384,707 @@
       "delete": "Error al eliminar el timbrado"
     },
     "noStampedFound": "No se encontraron timbrados"
+  },
+  "species":{
+    "table":{
+      "name": "Nombre",
+      "titleDeleted": "Especies eliminazas",
+      "title": "Especies",
+      "emptyMessage": "No hay especies registradas",
+      "titleRegister": "Agregar especie",
+      "titleUpdate": "Editar especie"
+    },
+    "form":{
+      "name": "Nombre"
+    }
+  },
+
+  "races":{
+    "table":{
+      "name": "Nombre",
+      "specie": "Especie",
+      "emptyMessage": "No hay razas registradas",
+      "titleRegister": "Agregar raza",
+      "titleEdit": "Editar raza",
+      "title": "Razas",
+      "titleDeleted": "Razas eliminadas"
+    },
+    "form":{
+      "selectASpeccie": "Seleccione una especie",
+      "specie": "Especie",
+      "name": "Nombre"
+    }
+  },
+
+  "positions":{
+    "table":{
+      "name": "Nombre",
+      "title": "Puestos de trabajo",
+      "emptyMessage": "No hay puestos de trabajo registrados"
+    },
+    "details":{
+      "title": "Turnos",
+      "weekDay": "Día de la semana",
+      "startTime": "Inicio",
+      "endTime": "Fin"
+    },
+    "form":{
+      "name": "Nombre",
+      "schedule": "Horario",
+      "since": "Desde",
+      "until": "Hasta",
+      "mondayToFriday": "Lunes a Viernes",
+      "mondayToSaturday": "Lunes a Sábado"
+    }
+  },
+
+  "providers": {
+    "table": {
+      "name": "Razón social",
+      "ruc": "RUC",
+      "title": "Proveedores",
+      "emptyMessage": "No hay proveedores registrados"
+    },
+    "details": {
+      "description": "Descripción:",
+      "contact": "Contacto:",
+      "phone": "Teléfono",
+      "ruc": "RUC"
+    },
+    "form":{
+      "titleRegister": "Agregar Proveedor",
+      "titleUpdate": "Editar Proveedor",
+      "name": "Razón social",
+      "description": "Descripción",
+      "phone": "Teléfono",
+      "ruc": "RUC"
+    }
+  },
+
+  "tags": {
+    "table": {
+      "name": "Nombre",
+      "title": "Tags",
+      "titleDeleted": "Tags eliminados",
+      "emptyMessage": "No hay etiquetas registradas"
+    },
+    "form":{
+      "titleRegister": "Agregar etiqueta",
+      "titleUpdate": "Editar etiqueta"
+    }
+  },
+  "serviceTypes": {
+    "table":{
+      "title": "Tipos de Servicio",
+      "name": "Nombre",
+      "description": "Descripción",
+      "duration": "Duración (Min)",
+      "price": "Precio",
+      "priceGs": "{price} Gs.",
+      "tags": "Etiqueta/s",
+      "emptyMessage": "No hay servicios registrados"
+    },
+    "form":{
+      "titleRegister": "Agregar Tipo de Servicio",
+      "titleUpdate": "Editar Tipo de Servicio",
+      "enterTheData": "Ingrese los datos del Tipo de Servicio",
+      "updateTheData": "Modifique los datos del Tipo de Servicio",
+      "image": "Imagen (Opcional)",
+      "name": "Nombre",
+      "slug": "Identificador",
+      "description": "Descripción",
+      "durationMin": "Duración (Minutos)",
+      "price": "Precio",
+      "iva": "IVA (%)",
+      "cost": "Costo",
+      "colabs": "Número máximo de colaboradores (Opcional)",
+      "isPublic": "Público",
+      "tags": "Etiqueta/s"
+    },
+    "details": {
+      "title": "Detalle de Servicio",
+      "description": "Descripción",
+      "slug": "Identificador: {slug}",
+      "duration": "Duración",
+      "durationMin": "{duration} minutos",
+      "cost": "Costo",
+      "price": "Precio",
+      "colabs": "Número de colaboradores",
+      "iva": "IVA",
+      "ivaPercentage":"{iva} %",
+      "status": "Estado",
+      "tags": "Etiqueta/s"
+    },
+    "status": {
+      "public": "Público",
+      "private": "Privado"
+    }
+  },
+  "receipts":{
+    "table":{
+      "receiptNumber": "Número de recibo",
+      "total": "Total",
+      "issueDate": "Fecha de emisión",
+      "paymentMethods": "Métodos de pago",
+      "actions": "Acciones",
+      "title": "Recibos"
+    },
+    "details":{
+      "title": "Detalle de Recibo",
+      "receiptNumber": "Número de recibo",
+      "information": "Información del recibo",
+      "issueDate": "Fecha de emisión",
+      "paymentMethods": "Métodos de pago",
+      "invoiceData": "Datos de la factura",
+      "invoiceNumber": "Número de factura",
+      "ruc": "RUC",
+      "client":"Cliente",
+      "invoiceType": "Tipo de factura",
+      "total": "Total",
+      "iva": "IVA",
+      "type": "Tipo"
+    }
+  },
+
+ "settings": {
+  "races": {
+    "name": "Razas",
+    "description": "Listar, crear, editar o eliminar las razas soportadas por el sistema.",
+    "icon": "🐶"
+  },
+  "species": {
+    "name": "Especies",
+    "description": "Gestionar las especies disponibles en el sistema.",
+    "icon": "🐾"
+  },
+  "position": {
+    "name": "Puestos",
+    "description": "Administrar los puestos soportados en la veterinaria.",
+    "icon": "🏥"
+  },
+  "providers": {
+    "name": "Proveedores",
+    "description": "Administrar los proveedores de productos y servicios.",
+    "icon": "🚚"
+  },
+  "tags": {
+    "name": "Tags",
+    "description": "Administra las etiquetas que soporta el sistema para un mejor filtrado y búsqueda de productos.",
+    "icon": "🏷️"
+  },
+  "vaccineRegistry": {
+    "name": "Historial de Vacunación",
+    "description": "Gestionar y revisar los registros de vacunación de las mascotas.",
+    "icon": "💉"
+  },
+  "serviceTypes": {
+    "name": "Tipos de servicio",
+    "description": "Administrar los diferentes tipos de servicios disponibles en la veterinaria.",
+    "icon": "🛁"
+  },
+  "pets": {
+    "name": "Mascotas",
+    "description": "Consulta y gestiona todas las mascotas registradas en el sistema.",
+    "icon": "🦴"
+  },
+  "receipts": {
+    "name": "Recibos",
+    "description": "Consulta los recibos de las facturas registradas.",
+    "icon": "🧾"
+  },
+  "stamping": {
+    "name": "Timbrado",
+    "description": "Configura el timbrado de las facturas electrónicas.",
+    "icon": "📜"
+  },
+  "configure": "Configurar"
+},
+  "login":{
+    "error":{
+      "credentials": "Credenciales incorrectas. Inténtalo de nuevo."
+    },
+    "form": {
+      "title": "Iniciar Sesión",
+      "description": "Ingresa tus credenciales para acceder a tu cuenta."
+      
+    },
+    "placeholder":{
+      "email": "Ingrese su correo electrónico",
+      "password": "Ingrese su contraseña"
+    },
+    "button": {
+      "forgotPassword": "Olvidé mi contraseña",
+      "login": "Iniciar sesión",
+      "question": "¿Aún no estás registrado?",
+      "register": "Regístrate!"
+    }
+  },
+  "register":{
+    "form": {
+      "title": "Registro",
+      "description": "Complete el formulario para crear una nueva cuenta",
+      "name": "Nombre",
+      "lastName": "Apellido",
+      "email": "Correo electrónico",
+      "ruc": "RUC/CI",
+      "address": "Dirección",
+      "password": "Contraseña",
+      "confirmPassword": "Confirmar contraseña",
+      "phone": "Número de teléfono"
+    },
+    "button": {
+      "haveAnAccount": "Tengo una cuenta",
+      "register": "Registrarme"
+    }
+  },
+"about": {
+  "aboutUs": "Sobre Nosotros",
+  "subtitle": "Conoce más sobre nuestra clínica veterinaria y los servicios que ofrecemos para tus mascotas",
+  "weAre": "Somos NicoPets",
+  "description1": "Somos una veterinaria con más de 8 años de experiencia cuidando de la salud y bienestar de perros y gatos. Nuestro equipo está formado por profesionales apasionados por los animales, dedicados a ofrecer el mejor servicio y atención.",
+  "description2": "En NicoPets entendemos que tu mascota es parte de tu familia, por eso nos esforzamos en brindar un servicio personalizado y de calidad, en un ambiente cálido y acogedor donde tu mascota se sienta cómoda y segura.",
+  "personalizedCare": "Atención personalizada",
+  "professionalTeam": "Equipo profesional",
+  "emergencyService": "Servicio de emergencias",
+  "ourServices": "Nuestros Servicios",
+
+  "services": {
+    "vaccinationTitle": "Vacunación y Desparasitación",
+    "vaccinationDesc": "Mantén un registro de todas las vacunas aplicadas, fechas de aplicación y próxima dosis, con notificaciones automáticas para recordar a los dueños de mascotas. También puedes incluir los tratamientos de desparasitación.",
+    
+    "medicationsTitle": "Medicamentos y Tratamientos",
+    "medicationsDesc": "Gestión de medicamentos recetados y tratamientos, incluyendo historial de prescripciones, dosis, y frecuencia. Ideal para el seguimiento de enfermedades crónicas o condiciones que requieran un control constante.",
+    
+    "hygieneTitle": "Baños y Cuidado de Higiene",
+    "hygieneDesc": "Servicio para agendar baños, corte de uñas, limpieza de oídos y otros cuidados básicos de higiene. Este servicio permite a los dueños reservar citas y llevar un seguimiento del historial de higiene.",
+    
+    "groomingTitle": "Peluquería Canina/Felina",
+    "groomingDesc": "Los usuarios pueden solicitar el servicio de peluquería para cortar, estilizar y acondicionar el pelaje de sus mascotas. Incluye opciones para especificar el tipo de corte y un historial de cortes previos.",
+    
+    "checkupTitle": "Control de Salud y Check-Ups",
+    "checkupDesc": "Servicio de control de salud rutinario para evaluar el bienestar general de la mascota, detectar posibles enfermedades y llevar un registro de los resultados de cada chequeo.",
+    
+    "productsTitle": "Productos de la Veterinaria",
+    "productsDesc": "Catálogo de productos a la venta en la veterinaria, como alimentos, juguetes, productos de higiene y accesorios. Los usuarios pueden ver disponibilidad, precios y especificaciones de cada producto.",
+    
+    "emergencyTitle": "Servicio de Urgencias y Emergencias",
+    "emergencyDesc": "Información sobre la disponibilidad de atención de emergencias, contacto rápido y guía para el cuidado de la mascota en caso de una situación crítica.",
+    
+    "daycareTitle": "Servicio de Guardería y Hotel para Mascotas",
+    "daycareDesc": "Opción de reservar estancias temporales para mascotas en caso de viaje o necesidades especiales. Incluye detalles sobre instalaciones, alimentación y actividades diarias.",
+    
+    "onlineTitle": "Asesoría y Consultas Veterinarias en Línea",
+    "onlineDesc": "Posibilidad de realizar consultas con veterinarios a través de la app para resolver dudas rápidas o recibir orientación sin necesidad de acudir a la clínica."
   }
+},
+  "contact": {
+    "title": "Contacto",
+    "description": "¿Tiene alguna pregunta o necesita más información? Estamos aquí para ayudarle. Póngase en contacto con nosotros utilizando la información a continuación.",
+    "sectionTitle": "Información de Contacto",
+    "sectionDescription": "Puede contactarnos a través de los siguientes medios:",
+    "address": {
+      "title": "Dirección",
+      "value": "Calle Rio Paraguay, Ka'aguy Rory, Encarnación"
+    },
+    "phone": {
+      "title": "Teléfono",
+      "value": "+595975769892"
+    },
+    "email": {
+      "title": "Correo electrónico",
+      "value": "nicopetsveterinaria@gmail.com"
+    },
+    "hours": {
+      "title": "Horario",
+      "value": "Lunes a Viernes, 8:00 AM - 6:00 PM"
+    },
+    "social": {
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "twitter": "Twitter"
+  }
+},
+"footer":{
+  "title":"Sistema de Veterinaria",
+  "reserved": "© 2025 Todos los derechos reservados",
+  "terms": "Términos & Condiciones"
+},
+  "terms": {
+    "pageTitle": "Términos y Condiciones",
+    "lastUpdated": "Última actualización:",
+    "introTitle": "Términos y Condiciones",
+    "introDescription": "Estos términos y condiciones describen las reglas y regulaciones para el uso de nuestros servicios veterinarios. Al acceder a nuestros servicios, usted acepta estar sujeto a estos términos. Por favor, léalos cuidadosamente.",
+    "introSlogan": "Cuidamos a tus mascotas como si fueran nuestras",
+    "acceptanceNotice": "Al utilizar nuestros servicios, usted confirma que ha leído, entendido y aceptado estos términos y condiciones.",
+    "sections": {
+      "1": {
+        "title": "Aceptación de Términos",
+        "content": "Al acceder a nuestros servicios, usted acepta estar sujeto a estos términos y condiciones, todas las leyes y regulaciones aplicables, y acepta que es responsable del cumplimiento de las leyes locales aplicables. Si no está de acuerdo con alguno de estos términos, está prohibido utilizar o acceder a nuestros servicios."
+      },
+      "2": {
+        "title": "Servicios Veterinarios",
+        "contentIntro": "NicoPets ofrece servicios de atención veterinaria para mascotas. Nuestros servicios incluyen pero no se limitan a:",
+        "items": [
+          "Consultas médicas y exámenes de rutina",
+          "Vacunaciones y desparasitaciones",
+          "Cirugías y procedimientos médicos",
+          "Servicios de emergencia",
+          "Análisis clínicos y diagnósticos",
+          "Venta de medicamentos y alimentos para mascotas"
+        ]
+      },
+      "3": {
+        "title": "Citas y Atención",
+        "paragraphs": [
+          "Las citas deben ser programadas con anticipación, excepto en casos de emergencia. NicoPets se reserva el derecho de priorizar la atención según la gravedad de los casos.",
+          "El propietario de la mascota debe llegar puntualmente a su cita programada. En caso de no poder asistir, se solicita cancelar con al menos 24 horas de anticipación. Las citas no canceladas o canceladas con menos de 24 horas de anticipación podrían estar sujetas a un cargo por inasistencia."
+        ]
+      },
+      "4": {
+        "title": "Responsabilidades del Propietario",
+        "intro": "El propietario de la mascota es responsable de:",
+        "items": [
+          "Proporcionar información precisa y completa sobre la salud y el historial médico de su mascota",
+          "Seguir las recomendaciones y tratamientos prescritos por nuestros veterinarios",
+          "Mantener el control de su mascota durante la visita a nuestras instalaciones",
+          "Realizar los pagos correspondientes por los servicios prestados"
+        ]
+      },
+      "5": {
+        "title": "Pagos y Facturación",
+        "paragraphs": [
+          "Los pagos por servicios veterinarios deben realizarse al momento de la prestación del servicio, a menos que se haya acordado previamente un plan de pago.",
+          "Aceptamos pagos en efectivo, tarjetas de crédito/débito y transferencias bancarias. Para tratamientos extensos o procedimientos costosos, podría requerirse un depósito previo.",
+          "Las facturas no pagadas podrían resultar en la adición de cargos por intereses y/o la remisión a una agencia de cobros."
+        ]
+      },
+      "6": {
+        "title": "Consentimiento para Tratamiento",
+        "content": "Al solicitar nuestros servicios, el propietario de la mascota otorga consentimiento para que NicoPets realice los procedimientos diagnósticos y terapéuticos necesarios para el cuidado de su mascota. En casos de procedimientos que impliquen riesgos significativos, se solicitará un consentimiento específico por escrito."
+      },
+      "7": {
+        "title": "Confidencialidad y Privacidad",
+        "content": "NicoPets se compromete a mantener la confidencialidad de la información médica de las mascotas y la información personal de sus propietarios. No compartiremos esta información con terceros sin su consentimiento, excepto cuando sea requerido por ley o para proteger la salud pública."
+      },
+      "8": {
+        "title": "Limitación de Responsabilidad",
+        "content": "Aunque nos esforzamos por proporcionar el mejor cuidado posible, NicoPets no puede garantizar resultados específicos de los tratamientos. No seremos responsables por daños indirectos, incidentales o consecuentes relacionados con nuestros servicios. Nuestra responsabilidad se limita al costo de los servicios prestados."
+      },
+      "9": {
+        "title": "Modificaciones a los Términos",
+        "content": "NicoPets se reserva el derecho de modificar estos términos y condiciones en cualquier momento. Las modificaciones entrarán en vigor inmediatamente después de su publicación. El uso continuado de nuestros servicios después de tales modificaciones constituirá su aceptación de los nuevos términos."
+      },
+      "10": {
+        "title": "Ley Aplicable",
+        "content": "Estos términos y condiciones se rigen por las leyes del país/estado donde NicoPets opera, sin consideración a conflictos de principios legales."
+      }
+    }
+  }
+,
+
+  "unauthorized": {
+    "title": "401",
+    "subtitle": "Acceso no autorizado",
+    "description": "Para acceder a este contenido, necesitas iniciar sesión con una cuenta autorizada.",
+    "home": "Ir a la página de inicio",
+    "back": "Volver atrás",
+    "signout": "Cerrar sesión",
+    "footer": "Si crees que deberías tener acceso, por favor contacta con el administrador."
+  },
+
+    "notFound": {
+      "title": "Página no encontrada",
+      "description": "Lo sentimos, no pudimos encontrar el recurso solicitado.",
+      "home": "Ir a la página de inicio",
+      "back": "Volver atrás",
+      "retry": "Intentar de nuevo",
+      "contact": "Si crees que esto es un error, por favor contacta con soporte."
+  },
+
+"shop":{
+  "title": "Tienda NicoPets",
+  "description": "Encuentra los mejores productos para el cuidado de tus mascotas"
+},
+
+ "help": {
+  "delete": "Borrar búsqueda",
+  "head":{
+    "title": "Centro de Ayuda | Sistema Veterinario",
+    "description": "Centro de ayuda para el sistema de veterinaria"
+  },
+  "data": {
+    "title": "Centro de Ayuda",
+    "description": "Encuentra respuestas a preguntas comunes sobre el sistema de veterinaria",
+    "dashboard": "Dashboard",
+    "clientsAndAppointments": "Clientes y Citas",
+    "inventory": "Inventario",
+    "financial": "Finanzas"
+  },
+  "card":{
+    "video": "Video explicativo"
+  },
+   "financial": {
+      "purchases": {
+        "title": "Compras",
+        "description": "Gestión de compras a proveedores",
+        "compras1": {
+          "id": "compras1",
+          "question": "¿Cómo registro una nueva compra?",
+          "answer": "En la sección 'Compras', haz clic en 'Registrar compra'. Luego selecciona el proveedor, el depósito e ingresa los productos correspondientes."
+        },
+        "compras2": {
+          "id": "compras2",
+          "question": "¿Dónde puedo ver el listado de compras?",
+          "answer": "El listado de compras se encuentra en la vista principal de la sección 'Compras', donde se muestran los detalles de cada operación registrada."
+        },
+        "compras3": {
+          "id": "compras3",
+          "question": "¿Cómo visualizo el detalle de una compra?",
+          "answer": "Haz clic sobre la compra deseada en el listado para acceder a su detalle completo."
+        }
+      },
+      "sales": {
+        "title": "Ventas",
+        "description": "Proceso de ventas y facturación",
+        "ventas1": {
+          "id": "ventas1",
+          "question": "¿Cómo creo una nueva venta?",
+          "answer": "Accede a la opción 'Crear Venta' desde el menú lateral. Primero selecciona un depósito, luego elige la condición de venta, busca un cliente, selecciona los productos disponibles, define el método de pago, ingresa el monto y haz clic en 'Finalizar Venta'."
+        },
+        "ventas2": {
+          "id": "ventas2",
+          "question": "¿Por qué no puedo agregar productos a la venta?",
+          "answer": "Debes seleccionar un depósito antes de agregar productos. Solo así se cargarán los productos disponibles en ese depósito."
+        },
+        "ventas3": {
+          "id": "ventas3",
+          "question": "¿Qué métodos de pago puedo utilizar y cómo los agrego?",
+          "answer": "Puedes utilizar Pago Móvil, Efectivo, Transferencia Bancaria, Tarjeta de Débito o Crédito. Selecciona el método, ingresa el monto y haz clic en 'Agregar'. Puedes combinar varios métodos si es necesario."
+        },
+        "ventas4": {
+          "id": "ventas4",
+          "question": "¿Cómo verifico el total de la venta antes de finalizar?",
+          "answer": "El total de la venta se actualiza automáticamente en el panel derecho 'Resumen de Venta' a medida que agregas productos y métodos de pago."
+        },
+        "ventas5": {
+          "id": "ventas5",
+          "question": "¿Puedo realizar ventas a crédito?",
+          "answer": "Sí. En el campo 'Condición de Venta', selecciona la opción 'Crédito' si está habilitada. Asegúrate de tener los permisos necesarios para operar con esta modalidad."
+        }
+      },
+      "invoices": {
+        "title": "Facturas",
+        "description": "Gestión de documentos fiscales",
+        "facturas1": {
+          "id": "facturas1",
+          "question": "¿Cómo consulto una factura específica?",
+          "answer": "Utiliza los filtros disponibles (como RUC, monto mínimo/máximo, o rango de fechas) para ubicar la factura deseada. Luego haz clic en el ícono de 'ver' (ojo) en la columna de acciones."
+        },
+        "facturas2": {
+          "id": "facturas2",
+          "question": "¿Cómo sé si una factura está pagada?",
+          "answer": "En la columna 'Pagado', puedes verificar si el monto abonado coincide con el total de la factura. Si ambos valores son iguales, la factura está saldada."
+        },
+        "facturas3": {
+          "id": "facturas3",
+          "question": "¿Dónde puedo ver todas las facturas?",
+          "answer": "En la sección 'Facturas', tienes acceso al listado completo de facturas emitidas. Puedes filtrarlas por fecha, cliente o estado de pago."
+        }
+      },
+      "employees": {
+        "title": "Empleados",
+        "description": "Gestión de personal y usuarios del sistema",
+        "empleados1": {
+          "id": "empleados1",
+          "question": "¿Cómo registro un nuevo empleado?",
+          "answer": "Haz clic en el botón 'Agregar' en la parte superior derecha de la sección 'Empleados'. Completa los campos requeridos como nombre, correo, RUC y cargo."
+        },
+        "empleados2": {
+          "id": "empleados2",
+          "question": "¿Cómo edito los datos de un empleado?",
+          "answer": "En el listado de empleados, haz clic en el ícono de lápiz en la columna de acciones del empleado que deseas modificar. Realiza los cambios y guarda la información."
+        },
+        "empleados3": {
+          "id": "empleados3",
+          "question": "¿Cómo elimino a un empleado?",
+          "answer": "Haz clic en el ícono de papelera correspondiente al empleado que deseas eliminar. Se te pedirá confirmación antes de realizar la acción."
+        },
+        "empleados4": {
+          "id": "empleados4",
+          "question": "¿Cómo accedo a las citas programadas de un empleado?",
+          "answer": "Haz clic en el ícono de 'ver' (ojo) para ingresar al perfil del empleado. Allí podrás ver la lista de citas en las que está asignado."
+        }
+      }
+    },
+
+  "dashboard": {
+    "title": "Dashboard",
+    "description": "Vista general del sistema y métricas clave",
+    "dashboard1": {
+      "id": "dashboard1",
+      "question": "¿Qué datos generales muestra el dashboard?",
+      "answer": "El dashboard muestra el total facturado, la cantidad de facturas emitidas y el número de citas agendadas."
+    },
+    "dashboard2": {
+      "id": "dashboard2",
+      "question": "¿Qué información contiene el gráfico de 'Distribución por tipo de factura'?",
+      "answer": "Muestra la cantidad de facturas emitidas según el tipo: contado o crédito."
+    },
+    "dashboard3": {
+      "id": "dashboard3",
+      "question": "¿Qué representa el gráfico de ingresos mensuales?",
+      "answer": "Este gráfico muestra los ingresos obtenidos por mes, permitiendo visualizar la evolución del monto facturado a lo largo del tiempo."
+    },
+    "dashboard4": {
+      "id": "dashboard4",
+      "question": "¿Qué indica el gráfico de 'Citas por mes'?",
+      "answer": "Refleja la cantidad de citas agendadas en cada mes, facilitando el seguimiento de la actividad mensual."
+    }
+  },
+  "inventory": {
+      "products": {
+        "title": "Productos",
+        "description": "Gestión de productos y servicios",
+        "productos1": {
+          "id": "productos1",
+          "question": "¿Cómo añado un nuevo producto al inventario?",
+          "answer": "Ve al menú lateral y selecciona 'Productos'. Luego, haz clic en el botón 'Agregar' para registrar un nuevo producto completando el formulario."
+        },
+        "productos2": {
+          "id": "productos2",
+          "question": "¿Cómo actualizo el precio de un producto?",
+          "answer": "En la sección de Productos, haz clic en el ícono de 'ver'(ojo) para ver el detalle del producto. Dentro del detalle, presiona 'Editar' y modifica el precio en el campo correspondiente. Guarda los cambios para actualizarlos."
+        },
+        "productos3": {
+          "id": "productos3",
+          "question": "¿Cómo elimino un producto?",
+          "answer": "Accede al detalle del producto haciendo clic en el ícono de 'ver'(ojo). Luego, presiona el botón 'Eliminar' y confirma la acción para remover el producto del sistema."
+        }
+      },
+      "vaccines": {
+        "title": "Vacunas",
+        "description": "Control y registro de vacunaciones",
+        "vacunas1": {
+          "id": "vacunas1",
+          "question": "¿Cómo registro una vacunación?",
+          "answer": "Ingresa al perfil de la mascota, haz clic en 'Agregar al historial' en la sección de vacunación y completa los campos requeridos."
+        },
+        "vacunas2": {
+          "id": "vacunas2",
+          "question": "¿Cómo veo el calendario de vacunación de una mascota?",
+          "answer": "Dentro del perfil de la mascota, dirígete a la sección 'Historial de vacunación' y haz clic en el ícono de 'ver'(ojo) para ver los detalles de cada aplicación."
+        },
+        "vacunas3": {
+          "id": "vacunas3",
+          "question": "¿Cómo configuro recordatorios de vacunación?",
+          "answer": "Al registrar una nueva vacunación, puedes indicar la fecha de la aplicación actual y la fecha estimada para la próxima dosis utilizando el calendario disponible."
+        }
+      },
+      "stock": {
+        "title": "Depósitos",
+        "description": "Gestión de múltiples ubicaciones de inventario",
+        "depositos1": {
+          "id": "depositos1",
+          "question": "¿Cómo creo un nuevo depósito?",
+          "answer": "Ve a la sección 'Depósitos' desde el menú lateral y haz clic en el botón 'Registrar Depósito'. Completa el formulario con la información requerida."
+        },
+        "depositos2": {
+          "id": "depositos2",
+          "question": "¿Cómo edito o elimino un depósito existente?",
+          "answer": "En la lista de depósitos, localiza el que deseas modificar. Usa el ícono de lápiz para editar sus datos o el ícono de papelera para eliminarlo definitivamente."
+        },
+        "depositos3": {
+          "id": "depositos3",
+          "question": "¿Puedo buscar depósitos por nombre?",
+          "answer": "Sí. En la parte superior de la sección 'Depósitos' encontrarás una barra de búsqueda donde puedes escribir el nombre del depósito que deseas encontrar."
+        }
+      },
+      "movements": {
+        "title": "Movimientos",
+        "description": "Registro de entradas, salidas y transferencias",
+        "movimientos1": {
+          "id": "movimientos1",
+          "question": "¿Cómo registro una entrada de inventario?",
+          "answer": "Ve a la sección 'Movimientos' y haz clic en 'Registrar Movimiento'. Selecciona el tipo 'Ingreso', deja el campo de depósito de origen vacío, y completa los demás campos del formulario."
+        },
+        "movimientos2": {
+          "id": "movimientos2",
+          "question": "¿Cómo registro una salida de inventario?",
+          "answer": "En 'Movimientos', haz clic en 'Registrar Movimiento'. Elige el tipo 'Egreso', deja vacío el campo de depósito de destino, y completa el resto de los datos."
+        },
+        "movimientos3": {
+          "id": "movimientos3",
+          "question": "¿Cómo transfiero productos entre depósitos?",
+          "answer": "Desde la sección 'Movimientos', selecciona 'Registrar Movimiento'. Escoge el tipo 'Transferencia', luego selecciona tanto el depósito de origen como el de destino, y llena el resto del formulario."
+        }
+      }
+    },
+  
+  "clientAppointmentHelp":{
+     "clients": {
+      "title": "Clientes",
+      "description": "Gestión de clientes y sus mascotas",
+        "questions": {
+          "1": {
+            "question": "¿Cómo registro un nuevo cliente?",
+            "answer": "Para registrar un nuevo cliente, haz clic en 'Clientes', luego selecciona 'Agregar' y completa todos los datos solicitados."
+          },
+          "2": {
+            "question": "¿Cómo añado una mascota a un cliente existente?",
+            "answer": "En la sección 'Clientes', selecciona el cliente deseado haciendo clic en el ícono de 'ver' (ojo), haz clic en 'Agregar' y completa la información requerida."
+          },
+          "3": {
+            "question": "¿Cómo veo el historial médico de una mascota?",
+            "answer": "Dentro del perfil del cliente, selecciona la mascota correspondiente haciendo clic en el ícono de 'ver' (ojo) para ver su detalle. Allí encontrarás el historial de vacunación y las visitas registradas."
+          }
+        }
+      },
+    "appointments": {
+      "title": "Citas",
+      "description": "Programación y gestión de citas",
+      "questions": {
+        "1": {
+          "question": "¿Cómo programo una nueva cita?",
+          "answer": "Desde la sección 'Citas', haz clic en 'Agendar' y completa la información requerida para programar la cita."
+        },
+        "2": {
+          "question": "¿Cómo cancelo una cita?",
+          "answer": "En la lista de citas dentro de la sección 'Citas', haz clic en 'Cancelar', ingresa el motivo de la cancelación y confirma la acción."
+        },
+        "3": {
+          "question": "¿Cómo finalizo una cita?",
+          "answer": "En la sección 'Citas', desde la lista de citas, haz clic en 'Finalizar' y luego confirma para completar el proceso."
+        }
+    }
+  }
+  }
+},
+"dashboard":{
+  "groupedServiceData": "Distribución por servicio",
+  "invoiceTypeChart": "Distribución por tipo de factura",
+  "monthlyRevenue": "Ingresos mensuales",
+  "monthlyAppointments": "Citas por mes",
+  "statCard":{
+    "totalRenueve": "Total facturado",
+    "totalRenueveGs": "Gs. {totalRenueve}",
+    "invoiceCount": "Facturas emitidas",
+    "appointmentCount": "Citas agendadas"
+  }
+},
+"home": {
+  "account": "@NicoPetsPy",
+  "serviceBanner":{
+    "our": "Nuestros",
+    "services": "SERVICIOS"
+  },
+  "productBanner":{
+    "our": "Nuestros",
+    "products": "PRODUCTOS"
+  },
+  "hero": {
+    "description":"Regístrate con nosotros y accede a una amplia gama de servicios para tu mascota.",
+    "register": "Registrarse",
+    "login": "Iniciar sesión"
+  }
+}
 }

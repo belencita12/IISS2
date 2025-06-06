@@ -6,7 +6,7 @@ import GenericTable, {
   TableAction,
 } from "@/components/global/GenericTable";
 import { Stamped } from "@/lib/stamped/IStamped";
-import { Eye, Pencil, Trash } from "lucide-react";
+import { Pencil, Trash } from "lucide-react";
 import React from "react";
 import {StampedTableSkeleton} from "./StampedTableSkeleton";
 import { useTranslations } from "next-intl";
@@ -35,7 +35,7 @@ const StampedTable = ({
   ...props
 }: StampedTableProps) => {
 
-  const t = useTranslations("Stamped");
+  const t = useTranslations();
   
   if (isLoading) return <StampedTableSkeleton />;
 
@@ -43,34 +43,34 @@ const StampedTable = ({
 
   const columns: Column<Stamped>[] = [
     {
-      header: t("stampedNumber"),
+      header: t("stamped.table.stampedNumber"),
       accessor: (stamped) => stamped.stampedNum,
     },
     {
-      header: t("deposit"),
+      header: t("stamped.table.stock"),
       accessor: (stamped) => stamped.stock.name,
     },
     {
-      header: t("address"),
+      header: t("stamped.table.address"),
       accessor: (stamped) => stamped.stock.address,
     },
     {
-      header: t("startDate"),
+      header: t("stamped.table.startDate"),
       accessor: (stamped) => format(new Date(stamped.fromDate), "dd/MM/yyyy", { locale: es }),
     },
     {
-      header: t("endDate"),
+      header: t("stamped.table.endDate"),
       accessor: (stamped) => format(new Date(stamped.toDate), "dd/MM/yyyy", { locale: es }),
     },
     {
-      header: t("numberRange"),
+      header: t("stamped.table.numberRange"),
       accessor: (stamped) => `${stamped.fromNum} - ${stamped.toNum}`,
     },
     {
-      header: t("status"),
+      header: t("stamped.table.status"),
       accessor: (stamped) => (
         <Badge variant={stamped.isActive ? "default" : "destructive"}>
-          {stamped.isActive ? t("active") : t("inactive")}
+          {stamped.isActive ? t("stamped.status.active") : t("stamped.status.inactive")}
         </Badge>
       ),
     },
@@ -79,12 +79,12 @@ const StampedTable = ({
   const actions: TableAction<Stamped>[] = [
     {
       icon: <Pencil className="w-4 h-4" />,
-      label: t("edit"),
+      label: t("button.edit"),
       onClick: handleEdit || (() => {}),
     },
     {
       icon: <Trash className="w-4 h-4" />,
-      label: t("delete"),
+      label: t("button.delete"),
       onClick: handleDel || (() => {}),
     },
   ];
@@ -96,7 +96,7 @@ const StampedTable = ({
       columns={columns}
       actions={actions}
       isLoading={isLoading}
-      emptyMessage={t("noStampedFound")}
+      emptyMessage={t("stamped.table.emptyMessage")}
     />
   );
 } 

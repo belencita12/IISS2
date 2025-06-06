@@ -12,6 +12,7 @@ import { Eye, Pencil, Trash } from "lucide-react";
 import { useServiceTypeList, ServiceType } from "@/hooks/service-types/useServiceTypeList";
 import { useServiceTypeApi } from "@/lib/service-types/service";
 import ServiceTypeTableSkeleton from "./Skeleton/ServiceTypeTableSkeleton";
+import { useTranslations } from "next-intl";
 
 interface ServiceTypeListProps {
   token: string;
@@ -22,6 +23,8 @@ export default function ServiceTypeList({ token }: ServiceTypeListProps) {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedServiceType, setSelectedServiceType] = useState<ServiceType | null>(null);
+
+  const t = useTranslations();
 
   const {
     serviceTypes,
@@ -37,27 +40,27 @@ export default function ServiceTypeList({ token }: ServiceTypeListProps) {
 
   const columns: Column<ServiceType>[] = [
     { 
-      header: "Nombre", 
+      header: t("serviceTypes.table.name"), 
       accessor: "name",
       className: "font-medium"
     },
     { 
-      header: "Descripción", 
+      header: t("serviceTypes.table.description"), 
       accessor: "description",
       className: "text-gray-600"
     },
     { 
-      header: "Duración (min)", 
+      header: t("serviceTypes.table.duration"), 
       accessor: (service: ServiceType) => `${service.durationMin} min`,
       className: "text-gray-600"
     },
     { 
-      header: "Precio", 
-      accessor: (service: ServiceType) => `Gs. ${service.price.toLocaleString('es-PY', { maximumFractionDigits: 0 })}`,
+      header: t("serviceTypes.table.price"), 
+      accessor: (service: ServiceType) => t("serviceTypes.table.priceGs", {price:service.price.toLocaleString('es-PY', { maximumFractionDigits: 0 })}),
       className: "font-medium"
     },
     { 
-      header: "Tags", 
+      header:t("serviceTypes.table.tags"), 
       accessor: (service: ServiceType) => service.tags?.join(", ") || "-",
       className: "text-gray-600"
     }
@@ -76,10 +79,11 @@ export default function ServiceTypeList({ token }: ServiceTypeListProps) {
     
     try {
       await deleteServiceType(selectedServiceType.id);
-      toast("success", "Tipo de servicio eliminado correctamente");
+      toast("success", t("success.successDeleteService"));
       onPageChange(pagination.currentPage);
-    } catch (error) {
-      toast("error", "Error al eliminar el tipo de servicio. Por favor, intente nuevamente.");
+    } catch (error: unknown) {
+      if (error instanceof Error)
+      toast("error", error.message);
     } finally {
       setIsModalOpen(false);
       setSelectedServiceType(null);
@@ -95,17 +99,17 @@ export default function ServiceTypeList({ token }: ServiceTypeListProps) {
     { 
       icon: <Eye className="w-4 h-4" />, 
       onClick: handleView, 
-      label: "Ver detalles" 
+      label: t("button.seeDetails")
     },
     { 
       icon: <Pencil className="w-4 h-4" />, 
       onClick: handleEdit, 
-      label: "Editar tipo de servicio" 
+      label: t("button.edit")
     },
     { 
       icon: <Trash className="w-4 h-4" />, 
       onClick: handleDeleteClick, 
-      label: "Eliminar tipo de servicio" 
+      label: t("button.delete")
     }
   ];
 
@@ -114,18 +118,18 @@ export default function ServiceTypeList({ token }: ServiceTypeListProps) {
       <div className="flex items-center gap-4 mb-4">
         <SearchBar 
           onSearch={handleSearch} 
-          placeholder="Buscar tipo de servicio..." 
+          placeholder={t("placeholder.name")}
         />
       </div>
 
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-3xl font-bold">Tipos de Servicio</h2>
+        <h2 className="text-3xl font-bold">{t("serviceTypes.table.title")}</h2>
         <Button 
           variant="outline" 
           className="px-6" 
           onClick={() => router.push("/dashboard/settings/service-types/register")}
         >
-          Agregar
+          {t("button.add")}
         </Button>
       </div>
 
@@ -137,7 +141,7 @@ export default function ServiceTypeList({ token }: ServiceTypeListProps) {
         onPageChange={onPageChange}
         isLoading={isLoading}
         skeleton={<ServiceTypeTableSkeleton />}
-        emptyMessage="No se encontraron tipos de servicio"
+        emptyMessage={t("serviceTypes.table.emptyMessage")}
         className="mt-4"
       />
 
@@ -145,10 +149,10 @@ export default function ServiceTypeList({ token }: ServiceTypeListProps) {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleDelete}
-        title="¿Estás seguro de eliminar este tipo de servicio?"
-        message={`El tipo de servicio ${selectedServiceType?.name} será eliminado permanentemente.`}
-        confirmText="Eliminar"
-        cancelText="Cancelar"
+        title={t("confirmationModal.serviceTypes.titleDelete")}
+        message={t("confirmationModal.serviceTypes.messageDelete", {service : selectedServiceType?.name ?? ""})}
+        confirmText={t("button.delete")}
+        cancelText={t("button.cancel")}
         variant="danger"
       />
     </div>

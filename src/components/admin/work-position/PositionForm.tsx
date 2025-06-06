@@ -16,6 +16,7 @@ import { ShiftSelector } from "./ShiftSelector";
 import { useRouter } from "next/navigation";
 import { PositionFormValues } from "@/lib/work-position/IPosition";
 import TimeField from "react-simple-timefield";
+import { useTranslations } from "next-intl";
 
 
 interface PositionFormProps {
@@ -25,6 +26,8 @@ interface PositionFormProps {
 
 export default function PositionForm({ token, position }: PositionFormProps) {
     const router = useRouter();
+
+    const t = useTranslations();
     const isEditing = !!position;
     const defaultValues: PositionFormValues = isEditing
         ? { name: position.name, shifts: position.shifts }
@@ -49,7 +52,7 @@ export default function PositionForm({ token, position }: PositionFormProps) {
 
     const addShift = () => {
         if (areDefaultShifts(getCurrentShifts())) {
-            toast("info", "Modifica los valores predeterminados antes de agregar un nuevo horario");
+            toast("info", t("error.defaultValues"));
             return;
         }
         append(DEFAULT_SHIFT);
@@ -57,7 +60,7 @@ export default function PositionForm({ token, position }: PositionFormProps) {
 
     const removeShift = (index: number) => {
         if (fields.length === 1) {
-            toast("info", "Debe mantener al menos un horario");
+            toast("info", t("error.maintainASchedule"));
             return;
         }
         remove(index);
@@ -73,7 +76,7 @@ export default function PositionForm({ token, position }: PositionFormProps) {
 
     const onSubmit = async (data: PositionFormValues) => {
         if (areDefaultShifts(getCurrentShifts())) {
-            toast("info", "Modifica los valores predeterminados antes de guardar");
+            toast("info", t("error.defaultValuesBeforeSave"));
             return;
         }
 
@@ -92,10 +95,10 @@ export default function PositionForm({ token, position }: PositionFormProps) {
         try {
             if (isEditing && position?.id) {
                 await updatePosition(position.id, normalizedData, token);
-                toast("success", "Puesto actualizado con éxito");
+                toast("success", t("success.successUpdatePosition"));
             } else {
                 await registerPosition(normalizedData, token);
-                toast("success", "Puesto registrado con éxito!");
+                toast("success", t("success.successRegisterPosition"));
                 reset({
                     name: "",
                     shifts: [DEFAULT_SHIFT],
@@ -103,8 +106,8 @@ export default function PositionForm({ token, position }: PositionFormProps) {
             }
             router.refresh()
 
-        } catch (error) {
-            toast("error", error instanceof Error ? error.message : "Ocurrió un error. Intenta nuevamente.");
+        } catch (error: unknown) {
+            if (error instanceof Error) toast("error", error.message);
         }
     };
 
@@ -113,14 +116,14 @@ export default function PositionForm({ token, position }: PositionFormProps) {
             <h1 className="text-2xl font-bold text-center mt-2">{isEditing ? "Editar puesto de trabajo" : "Agregar puesto de trabajo"}</h1>
             <form className="space-y-6 mt-8" onSubmit={handleSubmit(onSubmit)}>
                 <div>
-                    <Label className="text-base font-medium">Nombre</Label>
+                    <Label className="text-base font-medium">{t("positions.form.name")}</Label>
                     <Input {...register("name")} placeholder="Ingrese un nombre" className="mt-2 w-full rounded-md border p-3 placeholder-gray-500" />
                     {errors.name && <p className="text-red-500">{errors.name.message}</p>}
                 </div>
                 <div>
                     <div className="flex justify-between items-center mb-4">
-                        <Label className="text-base font-medium">Horario</Label>
-                        <Button type="button" onClick={addShift} variant="outline" className="border border-black px-4 py-2 bg-white text-black">Agregar Horario</Button>
+                        <Label className="text-base font-medium">{t("positions.form.schedule")}</Label>
+                        <Button type="button" onClick={addShift} variant="outline" className="border border-black px-4 py-2 bg-white text-black">{t("button.addSchedule")}</Button>
                     </div>
                     <div className="space-y-2">
                         {fields.map((field, index) => {
@@ -142,9 +145,9 @@ export default function PositionForm({ token, position }: PositionFormProps) {
                                                             value={value}
                                                             onChange={onChange}
                                                             colon=":"
-                                                            input={<input className="w-full border rounded-md p-2 pl-16" placeholder="Desde (HH:MM)" />}
+                                                            input={<input className="w-full border rounded-md p-2 pl-16" placeholder={t("placeholder.since")} />}
                                                         />
-                                                        <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none pr-8">Desde</span>
+                                                        <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none pr-8">{t("positions.form.since")}</span>
                                                     </div>
                                                 )}
                                             />
@@ -162,14 +165,14 @@ export default function PositionForm({ token, position }: PositionFormProps) {
                                                                 const newValue = e.target.value;
                                                                 onChange(newValue);
                                                                 if (isTimeBefore(newValue, startTimeValue)) {
-                                                                    toast("info", `La hora de finalización debe ser posterior a la de inicio ${startTimeValue}`);
+                                                                    toast("info",  t("error.beforeEndTime", {startTime: startTimeValue}));
                                                                     return newValue;
                                                                 }
                                                             }}
                                                             colon=":"
                                                             input={<input className="w-full border rounded-md p-2 pl-16" />}
                                                         />
-                                                        <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none pr-8">Hasta</span>
+                                                        <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none pr-8">{t("positions.form.until")}</span>
                                                     </div>
                                                 )}
                                             />
@@ -189,11 +192,11 @@ export default function PositionForm({ token, position }: PositionFormProps) {
                         className="py-3 border border-black rounded-md px-6"
                         onClick={() => router.back()} 
                     >
-                        Cancelar
+                        {t("button.cancel")}
                     </Button>
 
                     <Button type="submit" className="py-3 bg-black text-white rounded-md px-6" disabled={isSubmitting}>
-                        {isSubmitting ? (isEditing ? "Actualizando..." : "Agregando...") : (isEditing ? "Actualizar Puesto" : "Agregar Puesto")}
+                        {isSubmitting ? (isEditing ? t("button.updating") : t("button.adding")) : (isEditing ? t("button.update") : t("button.add"))}
                     </Button>
                 </div>
             </form>

@@ -8,14 +8,12 @@ export const getWorkPosition = async (token: string) => {
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.error(`Error HTTP ${response.status}:`, errorText);
             throw new Error(`Error ${response.status}: ${errorText}`);
           }
 
         const data = await response.json();
         return data?.data || [];
     } catch (error) {
-        console.error("Error en getWorkPosition:", error);
         throw error;
     }
 };

@@ -20,7 +20,6 @@ export const usePurchaseDetail = (id: string, token: string, page: number = 1) =
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : "Ocurrió un error. Intenta nuevamente.";
         setError(errorMessage);
-        console.error("Error al obtener detalles de compra: ", errorMessage);
       } finally {
         setLoading(false);
       }
