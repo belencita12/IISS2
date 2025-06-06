@@ -16,6 +16,7 @@ import {
   SettingsIcon,
   CircleHelpIcon,
   CalendarIcon,
+  BellIcon,
 } from "lucide-react";
 
 const linksUser = [
@@ -36,6 +37,7 @@ const linksUser = [
     icon: SettingsIcon,
   },
   { name: "Ayuda", href: "/dashboard/help", icon: CircleHelpIcon },
+  { name: "Notificaciones", href: "/dashboard/notifications", icon: BellIcon },
 ];
 
 export default function NavLinks() {

@@ -1,4 +1,3 @@
-
 import { useState, useContext, useEffect } from 'react';
 import { useFetch } from '@/hooks/api/useFetch';
 import { NOTIFICATION_API } from '@/lib/urls';
@@ -6,7 +5,7 @@ import { toast } from '@/lib/toast';
 import { Notification } from '@/lib/notifications/utils';
 import { NotificationContext } from '@/context/notification/NotificationContext';
 
-export const useNotification = (token: string) => {
+export const useNotification = (token: string, userId: number) => {
   // Context
   const ctx = useContext(NotificationContext);
   if (!ctx) {
@@ -14,7 +13,6 @@ export const useNotification = (token: string) => {
       "useNotification debe ser usado dentro de un NotificationProvider"
     );
   }
-
 
   // Estado local y lógica de notificaciones
   const [page, setPage] = useState(1);
@@ -26,6 +24,7 @@ export const useNotification = (token: string) => {
     isRead: "ALL",
     dateFrom: "",
     dateTo: "",
+    userId: userId,
   });
 
   // Hooks de fetch
@@ -57,6 +56,7 @@ export const useNotification = (token: string) => {
     ...(filters.isRead !== "ALL" && { isRead: filters.isRead }),
     ...(filters.dateFrom && { fromArrivalDate: filters.dateFrom }),
     ...(filters.dateTo && { toArrivalDate: filters.dateTo }),
+    ...(filters.userId !== undefined && filters.userId !== null && { userId: filters.userId.toString() }),
   });
 
   useEffect(() => {
@@ -69,7 +69,6 @@ const updateFilters = (key: string, value: string) => {
   setFilters(updatedFilters);
   setPage(1);
 };
-
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -105,6 +104,7 @@ const updateFilters = (key: string, value: string) => {
     isRead: "ALL",
     dateFrom: "",
     dateTo: "",
+    userId: userId,
   });
   setPage(1);
 };
