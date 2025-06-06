@@ -14,8 +14,9 @@ export const useManufacturerDetail = (id: number, token: string) => {
       try {
         const response = await getManufacturerById(token, id);
         setManufacturer({ id: response.id, name: response.name });
-      } catch (error) {
-        toast("error", "No se pudo obtener el fabricante");
+      } catch (error:unknown) {
+        if(error instanceof Error)
+        toast("error", error.message);
       } finally {
         setLoading(false);
       }

@@ -14,9 +14,11 @@ export const deleteClient = async (token: string, clientId: number) => {
       data = await response.json();
     } catch (jsonError) {}
 
-    if (!response.ok) {
-      throw new Error(data?.message || "Error al eliminar el cliente");
-    }
+       if (!response.ok) {
+            const errorData = await response.json().catch(() => ({})); 
+            const message = errorData?.message || `Error HTTP: ${response.status}`;
+            throw new Error(message);
+        }
     return { success: true };
   } catch (error: unknown) {
     if (error instanceof Error) {

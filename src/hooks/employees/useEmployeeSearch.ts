@@ -18,7 +18,6 @@ export const useEmployeeSearch = (token: string) => {
       setEmployees(data.data || []); // <--- asumiendo backend devuelve { content: [...] }
       setHasSearched(true);
     } catch (error) {
-      console.error("Error buscando empleados", error);
     } finally {
       setIsLoading(false);
     }

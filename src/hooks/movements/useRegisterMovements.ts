@@ -94,7 +94,6 @@ export const useRegisterMovement = (token: string) => {
       };
 
       await registerMovement(movementData, token);
-      console.log("Enviando datos:", movementData);
       toast("success", "Movimiento registrado con éxito!");
       reset();
       return true;

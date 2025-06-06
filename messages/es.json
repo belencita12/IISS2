@@ -680,7 +680,8 @@
     "errorRestoreTag": "Ocurrió un error al intentar restaurar la etiqueta",
     "errorDeleteTag": "Ocurrió un error al intentar eliminar la etiqueta",
     "errorSaveTag": "Ocurrió un error al agregar la etiqueta",
-    "notAccessDetails": "No se puede acceder al detalle"
+    "notAccessDetails": "No se puede acceder al detalle",
+    "reasonCancel": "El motivo de la cancelación debe tener al menos 12 carácteres"
     
     
   },
@@ -1089,6 +1090,15 @@
       "workPosition": "Puesto",
       "address": "Dirección",
       "image": "Foto del empleado (Opcional)"
+    },
+    "details":{
+      "employeePerfil": "Perfil de Empleado",
+      "ruc": "RUC",
+      "email": "Correo electrónico",
+      "phone": "Teléfono",
+      "address": "Dirección",
+      "programmedAppointments": "Citas Programadas",
+      "appointmentList": "Lista de citas asignadas a este empleado"
     }
   },
   "purchase": {
