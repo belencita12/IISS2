@@ -7,9 +7,9 @@ describe("Formulario de Creación de Ventas - Flujo Completo", () => {
 
     const DEPOSIT_SEARCH = "Deposito Reserva";
     const CUSTOMER_SEARCH = "Jose";
-    const PRODUCT_SEARCH = "Correa de pecho";
-    const INVOICE_NUMBER = "001-001-0000144";
-    const TIMBRADO_NUMBER = "12345678";
+    const PRODUCT_SEARCH = "vacuna";
+    //const INVOICE_NUMBER = "001-001-0000144";
+    //const TIMBRADO_NUMBER = "12345678";
 
     beforeEach(() => {
         cy.clearCookies();
@@ -44,8 +44,8 @@ describe("Formulario de Creación de Ventas - Flujo Completo", () => {
         cy.contains(DEPOSIT_SEARCH).should("be.visible");
 
         /* === PASO 2: Completar datos de factura === */
-        cy.get('input[placeholder*="123-123-1234567"]').type(INVOICE_NUMBER);
-        cy.get('input[placeholder*="12345678"]').type(TIMBRADO_NUMBER);
+        //cy.get('input[placeholder*="123-123-1234567"]').type(INVOICE_NUMBER);
+        //cy.get('input[placeholder*="12345678"]').type(TIMBRADO_NUMBER);
 
         /* === PASO 3: Seleccionar cliente === */
         cy.get('input[placeholder="Buscar cliente..."]').type(CUSTOMER_SEARCH);
@@ -57,6 +57,7 @@ describe("Formulario de Creación de Ventas - Flujo Completo", () => {
 
         /* === PASO 4: Buscar y agregar producto === */
         cy.get('[placeholder="Buscar por código o nombre del producto"]').type(PRODUCT_SEARCH);
+        cy.wait(10000);
 
         // Esperar la respuesta de la API
         cy.wait("@searchProducts").then((interception) => {
@@ -84,8 +85,8 @@ describe("Formulario de Creación de Ventas - Flujo Completo", () => {
         });
 
         /* === PASO 7: Finalizar venta === */
-        cy.get("button").contains("Finalizar Venta").click();
-
+        cy.get("button").contains("Finalizar").click();
+        cy.get("button").contains("Cancelar").click();
         /* === PASO 8: Verificar éxito === */
         cy.wait("@createInvoice");
         cy.contains("Venta finalizada con éxito").should("be.visible");
@@ -93,25 +94,28 @@ describe("Formulario de Creación de Ventas - Flujo Completo", () => {
         cy.get('button:has(svg.lucide-eye)').first().click();
         cy.url().should("match", /\/dashboard\/invoices\/\d+/);
     });
-    it("Debe mostrar error si se usa un número de factura ya existente", () => {
-        cy.intercept("POST", "**/invoice*").as("createInvoice");
-        cy.intercept("GET", "**/payment-method*").as("getPaymentMethods");
-        cy.get('input[placeholder*="depósito"]').type(DEPOSIT_SEARCH);
-        cy.get('div[role="option"]').contains(DEPOSIT_SEARCH).click();
-
-        cy.get('input[placeholder*="123-123-1234567"]').type(INVOICE_NUMBER); // Ya usado
-        cy.get('input[placeholder*="12345678"]').type(TIMBRADO_NUMBER);
-
-        cy.get('input[placeholder="Buscar cliente..."]').type(CUSTOMER_SEARCH);
-        cy.get('div[role="option"]').contains(CUSTOMER_SEARCH).click();
-
-        cy.get('[placeholder="Buscar por código o nombre del producto"]').type(PRODUCT_SEARCH);
-        cy.get('div[role="option"]').contains(PRODUCT_SEARCH).click();
-
-        cy.wait("@getPaymentMethods");
 
 
-        cy.contains('label', 'Efectivo').click();
+    //FUERA DE USO PORQUE YA MANEJAMOS TIMBRADO Y NRO DE FACTURA
+    /*it("Debe mostrar error si se usa un número de factura ya existente", () => {
+      #  cy.intercept("POST", "**///invoice*").as("createInvoice");
+      //  cy.intercept("GET", "**/payment-method*").as("getPaymentMethods");
+      //  cy.get('input[placeholder*="depósito"]').type(DEPOSIT_SEARCH);
+      //  cy.get('div[role="option"]').contains(DEPOSIT_SEARCH).click();
+
+        //cy.get('input[placeholder*="123-123-1234567"]').type(INVOICE_NUMBER); // Ya usado
+        //cy.get('input[placeholder*="12345678"]').type(TIMBRADO_NUMBER);
+
+       // cy.get('input[placeholder="Buscar cliente..."]').type(CUSTOMER_SEARCH);
+       // cy.get('div[role="option"]').contains(CUSTOMER_SEARCH).click();
+
+       // cy.get('[placeholder="Buscar por código o nombre del producto"]').type(PRODUCT_SEARCH);
+       // cy.get('div[role="option"]').contains(PRODUCT_SEARCH).click();
+
+       // cy.wait("@getPaymentMethods");
+
+
+       /* cy.contains('label', 'Efectivo').click();
         // Ahora configuramos el monto a pagar
         cy.get("span:contains('Total:')").next().then(($total) => {
             const total = parseInt($total.text().replace(/[^\d]/g, ''));
@@ -119,23 +123,24 @@ describe("Formulario de Creación de Ventas - Flujo Completo", () => {
             cy.contains("button", "Agregar").click();
         });
 
-        cy.get("button").contains("Finalizar Venta").click();
+        cy.get("button").contains("Finalizar").click();
+        cy.get("button").contains("Cancelar").click();
 
         /* === PASO 8: Verificar falla === */
-        cy.wait("@createInvoice");
+       /* cy.wait("@createInvoice");
         cy.contains("uso").should("be.visible");
-    });
+    });*/
 
 
-    it("Debe mostrar errores si el formato de número de factura o timbrado es incorrecto", () => {
+ /*   it("Debe mostrar errores si el formato de número de factura o timbrado es incorrecto", () => {
         cy.get('input[placeholder*="depósito"]').type(DEPOSIT_SEARCH);
         cy.get('div[role="option"]').contains(DEPOSIT_SEARCH).click();
 
-        cy.get('input[placeholder*="123-123-1234567"]').type("001-1-000125");
-        cy.get('input[placeholder*="12345678"]').type("12345"); // Timbrado con menos dígitos
+       // cy.get('input[placeholder*="123-123-1234567"]').type("001-1-000125");
+       // cy.get('input[placeholder*="12345678"]').type("12345"); // Timbrado con menos dígitos
 
         cy.contains("El número de timbrado debe tener 8 dígitos").should("be.visible");
         cy.contains("El número de factura debe tener el formato 123-123-1234567").should("be.visible");
-    });
+    });*/
 
 });

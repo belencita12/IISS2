@@ -32,7 +32,7 @@ describe('Lista de empleados', () => {
 
 
     it('Debe buscar empleados correctamente filtrandolos por nombre', () => {
-        cy.get('input[placeholder="Buscar..."]').type('Bryan Myers');
+        cy.get('input[placeholder="Buscar por nombre o RUC del empleado..."]').type('Bryan Myers');
         cy.wait(5000);
         cy.get('table tbody tr').should('contain', 'Bryan Myers');
     });

@@ -140,7 +140,7 @@ describe("Registro completo de cita (cliente)", () => {
 
     // === Fecha dinámica: mañana ===
     const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setDate(tomorrow.getDate() + 3);
     const formattedDate = tomorrow.toISOString().split("T")[0];
 
     cy.get('input[type="date"]').type(formattedDate);

@@ -21,8 +21,8 @@ describe("Registro de Cita", () => {
     cy.contains("Coni").should("exist").click(); // o el nombre que devuelva
 
     // Buscar empleado
-    cy.get('input[placeholder="Buscar por nombre..."]').eq(1).type("Bryan");
-    cy.contains("Bryan").should("exist").click();
+    cy.get('input[placeholder="Buscar por nombre..."]').eq(1).type("Agus");
+    cy.contains("Agus").should("exist").click();
 
     // Seleccionar servicio
     /*cy.get('[class*="SelectTrigger"]').first().click();
@@ -44,7 +44,7 @@ describe("Registro de Cita", () => {
 
     // Seleccionar fecha
     const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setDate(tomorrow.getDate() + 3);
     const dateStr = tomorrow.toISOString().split("T")[0];
     cy.get('input[type="date"]').type(dateStr);
 
