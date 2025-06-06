@@ -12,6 +12,7 @@ import { useTagForm } from "@/hooks/tags/useTagForm";
 import { usePaginatedFetch } from "@/hooks/api/usePaginatedFetch";
 import { TAG_API } from "@/lib/urls";
 import { useFetch } from "@/hooks/api";
+import { useTranslations } from "next-intl";
 
 type TagListProps = {
   token: string;
@@ -23,6 +24,8 @@ const TagList = ({ token }: TagListProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const { selectedTag, isFormOpen, setSelectedTag, onCreate, onEdit, onClose } =
     useTagForm();
+
+
 
   const {
     data,
@@ -41,6 +44,8 @@ const TagList = ({ token }: TagListProps) => {
     },
   });
 
+  const t = useTranslations();
+
   const { delete: deleteTag, loading: isDelLoading } = useFetch<void, null>(
     "",
     token
@@ -51,7 +56,7 @@ const TagList = ({ token }: TagListProps) => {
     token
   );
 
-  if (error) toast("error", error.message || "Error al cargar las etiquetas");
+  if (error) toast("error", error.message || t("error.errorLoadTags"));
 
   const handleSearch = (query: string) => {
     setSearchQuery(query)
@@ -71,10 +76,10 @@ const TagList = ({ token }: TagListProps) => {
     const { ok, error } = await restoreTag(null, `${TAG_API}/restore/${tag.id}`);
 
     if (!ok) {
-      return toast("error", error?.message || "Error al restaurar la etiqueta");
+      return toast("error", error?.message || t("error.errorRestoreTag"));
     }
 
-    toast("success", "Etiqueta restaurada con éxito");
+    toast("success", t("success.successRestoreTag"));
     refresh();
   };
 
@@ -92,10 +97,10 @@ const TagList = ({ token }: TagListProps) => {
     const { ok, error } = await deleteTag(null, `${TAG_API}/${selectedTag.id}`);
 
     if (!ok) {
-      return toast("error", error?.message || "Error al eliminar la etiqueta");
+      return toast("error", error?.message || t("error.errorDeleteTag"));
     }
 
-    toast("success", "Etiqueta eliminada con éxito");
+    toast("success", t("success.successDeleteTag"));
     refresh();
     onCloseDelModal();
   };
@@ -108,29 +113,29 @@ const TagList = ({ token }: TagListProps) => {
     <>
       <div className="p-4 mx-auto">
         <div className="flex items-center gap-4 mb-4">
-          <SearchBar onSearch={handleSearch} placeholder="Buscar tag..." />
+          <SearchBar onSearch={handleSearch} placeholder={t("search.searchByName")} />
         </div>
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
-          <h2 className="text-3xl font-bold">{showDeleted ? "Tags eliminados" : "Tags"}</h2>
+          <h2 className="text-3xl font-bold">{showDeleted ? t("tags.table.titleDeleted") : t("tags.table.title")}</h2>
           <div className="flex gap-2">
             <Button 
               variant={showDeleted ? "secondary" : "outline"}
               onClick={toggleDeletedTags}
               disabled={isRestoring}
             >
-              {showDeleted ? "Ver activos" : "Ver eliminados"}
+              {showDeleted ? t("button.seeActive") : t("button.seeDeleted")}
             </Button>
             <Button 
               onClick={onCreate} 
               className="px-6"
               disabled={isRestoring}
             >
-              Agregar
+              {t("button.add")}
             </Button>
           </div>
         </div>
         <TagTable
-          emptyMessage="No se encontraron tags"
+          emptyMessage={t("tags.table.emptyMessage")}
           onPageChange={setPage}
           handleEdit={onEdit}
           handleDel={onOpenDelModal}
@@ -159,10 +164,10 @@ const TagList = ({ token }: TagListProps) => {
         isLoading={isDelLoading}
         onClose={onCloseDelModal}
         onConfirm={handleDelete}
-        title="Eliminar"
-        message={`¿Seguro que quieres eliminar el tag "${selectedTag?.name}?"`}
-        confirmText="Eliminar"
-        cancelText="Cancelar"
+        title={t("confirmationModal.tag.titleDelete")}
+        message={t("confirmationModal.tag.messageDelete", { tag: selectedTag?.name ?? "" })}
+        confirmText={t("button.delete")}
+        cancelText={t("button.cancel")}
         variant="danger"
       />
     </>

@@ -22,10 +22,7 @@ export default function ProductList({
   const [tempQuantity, setTempQuantity] = useState<number>(1);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const p = useTranslations("ProductDetail");
-  const b = useTranslations("Button");
-  const e = useTranslations("Error");
-  const m = useTranslations("ModalConfirmation");
+  const t = useTranslations()
 
   if (details.length === 0) return null;
 
@@ -35,10 +32,10 @@ export default function ProductList({
   }));
 
   const columns: Column<(typeof data)[number]>[] = [
-    { header: p("code"), accessor: "code" },
-    { header: p("name"), accessor: "name" },
+    { header: t("product.details.code"), accessor: "code" },
+    { header: t("product.details.name"), accessor: "name" },
     {
-      header: p("quantity"),
+      header: t("product.details.quantity"),
       accessor: (row) => row.quantity,
     },
     {
@@ -53,7 +50,7 @@ export default function ProductList({
             setEditingId(row.productId);
             setTempQuantity(row.quantity);
           }}
-          aria-label={b("edit")}
+          aria-label={t("button.edit")}
         >
           <Pencil className="w-5 h-5" />
         </Button>
@@ -68,7 +65,7 @@ export default function ProductList({
           variant="ghost"
           size="sm"
           onClick={() => onRemove(row.productId)}
-          aria-label={b("delete")}
+          aria-label={t("button.delete")}
         >
           <Trash className="w-5 h-5" />
         </Button>
@@ -102,17 +99,17 @@ export default function ProductList({
       <GenericTable
         data={data}
         columns={columns}
-        emptyMessage={e("noSelect", {field: "producto"})}
+        emptyMessage={t("error.noSelectProduct")}
       />
 
       <Modal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        title={m("titleUpdate", {field: "cantidad"})}
+        title={t("purchase.form.titleEditQuantity")}
         size="sm"
       >
         <div className="flex flex-col">
-          <label className="text-sm font-medium">{p("quantity")}</label>
+          <label className="text-sm font-medium">{t("product.details.quantity")}</label>
           <Input
             type="number"
             min={1}
@@ -123,10 +120,10 @@ export default function ProductList({
           />
           <div className="flex justify-end gap-4">
             <Button variant="outline" onClick={() => setModalOpen(false)} type="button">
-              {b("cancel")}
+              {t("button.cancel")}
             </Button>
             <Button onClick={handleSave} type="button">
-              {b("update")}
+              {t("button.update")}
             </Button>
           </div>
         </div>

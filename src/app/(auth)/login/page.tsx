@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button"
 import { ValidatedInput } from "@/components/global/ValidatedInput"
+import { useTranslations } from "next-intl";
 
 interface ILoginData {
     email: string;
@@ -17,6 +18,8 @@ export default function LoginForm() {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+
+    const t = useTranslations();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -51,9 +54,9 @@ export default function LoginForm() {
         <div className="mt-10 flex items-center justify-center px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col md:flex-row justify-between items-center w-full max-w-3xl mx-auto gap-8">
                 <div className="w-full md:w-1/2 text-center md:text-left">
-                    <h1 className="text-2xl font-semibold text-black">Login</h1>
+                    <h1 className="text-2xl font-semibold text-black">{t("login.form.title")}</h1>
                     <p className="text-sm text-gray-600 mt-2 mb-6">
-                        Ingresa tus credenciales para acceder a tu cuenta.
+                        {t("login.form.description")}
                     </p>
                 </div>
 
@@ -65,7 +68,7 @@ export default function LoginForm() {
                         <ValidatedInput
                             type="email"
                             name="email"
-                            placeholder="Ingrese su correo"
+                            placeholder={t("login.placeholder.email")}
                             value={loginData.email}
                             onChange={handleChange}
                             required
@@ -74,7 +77,7 @@ export default function LoginForm() {
                         <ValidatedInput
                             type="password"
                             name="password"
-                            placeholder="Ingrese su contraseña"
+                            placeholder={t("login.placeholder.password")}
                             value={loginData.password}
                             onChange={handleChange}
                             required
@@ -82,18 +85,18 @@ export default function LoginForm() {
 
                         <div className="flex justify-end">
                             <Button variant="outline" className="flex-1" asChild>
-                                <Link href="/forgot-password">Olvide mi contraseña</Link>
+                                <Link href="/forgot-password">{t("login.button.forgotPassword")}</Link>
                             </Button>
                         </div>
 
                         <Button type="submit" variant="default" className="w-full" disabled={loading}>
-                            {loading ? "Cargando..." : "Iniciar Sesión"}
+                            {loading ? t("button.loading") : t("login.button.login")}
                         </Button>
 
                         <p className="text-center text-sm text-gray-600 mt-2">
-                            ¿Aún no estás registrado? {" "}
+                            {t("login.button.question")} {" "}
                             <Link href="/register" className="text-black hover:underline">
-                                Regístrate!
+                                {t("login.button.register")}
                             </Link>
                         </p>
                     </form>

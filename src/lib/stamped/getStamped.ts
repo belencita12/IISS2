@@ -11,7 +11,6 @@ export const getAllStamped = async (token: string, queryParams?: string) => {
     const data = await response.json();
     return data as PaginationResponse<Stamped>;
   } catch (error) {
-    console.error("Error en getAllStamped:", error);
     throw error;
   }
 }; 

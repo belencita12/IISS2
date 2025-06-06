@@ -1,6 +1,9 @@
 import { Phone, Mail, Clock, MapPin } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 export default function ContactPage() {
+
+  const t = useTranslations("contact");
   return (
     <div className="min-h-screen bg-white">
       {/* Decorative header background */}
@@ -15,11 +18,10 @@ export default function ContactPage() {
           {/* Page Header */}
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-myPurple-primary to-myPink-primary bg-clip-text text-transparent">
-              Contacto
+              {t("title")}
             </h1>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              ¿Tiene alguna pregunta o necesita más información? Estamos aquí para ayudarle. Póngase en contacto con
-              nosotros utilizando la información a continuación.
+              {t("description")}
             </p>
           </div>
 
@@ -28,8 +30,8 @@ export default function ContactPage() {
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mt-32 -mr-32"></div>
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -mb-24 -ml-24"></div>
 
-            <h2 className="text-2xl font-bold mb-6 relative z-10">Información de Contacto</h2>
-            <p className="mb-6 relative z-10">Puede contactarnos a través de los siguientes medios:</p>
+            <h2 className="text-2xl font-bold mb-6 relative z-10">{t("sectionTitle")}</h2>
+            <p className="mb-6 relative z-10">{t("sectionDescription")}</p>
 
             <div className="grid md:grid-cols-2 gap-6 relative z-10">
               <div className="flex items-start gap-4">
@@ -37,8 +39,8 @@ export default function ContactPage() {
                   <MapPin className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-1">Dirección</h3>
-                  <p className="text-white/80">Av. Principal #123, Ciudad</p>
+                  <h3 className="font-semibold mb-1">{t("address.title")}</h3>
+                  <p className="text-white/80">{t("address.value")}</p>
                 </div>
               </div>
 
@@ -47,8 +49,8 @@ export default function ContactPage() {
                   <Phone className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-1">Teléfono</h3>
-                  <p className="text-white/80">(123) 456-7890</p>
+                  <h3 className="font-semibold mb-1">{t("phone.title")}</h3>
+                  <p className="text-white/80">{t("phone.value")}</p>
                 </div>
               </div>
 
@@ -57,8 +59,8 @@ export default function ContactPage() {
                   <Mail className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-1">Email</h3>
-                  <p className="text-white/80">info@nikopets.com</p>
+                  <h3 className="font-semibold mb-1">{t("email.title")}</h3>
+                  <p className="text-white/80">{t("email.value")}</p>
                 </div>
               </div>
 
@@ -67,8 +69,8 @@ export default function ContactPage() {
                   <Clock className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-1">Horario</h3>
-                  <p className="text-white/80">Lunes a Sábado, 8:00 AM - 7:00 PM</p>
+                  <h3 className="font-semibold mb-1">{t("hours.title")}</h3>
+                  <p className="text-white/80">{t("hours.value")}</p>
                 </div>
               </div>
             </div>
@@ -78,7 +80,7 @@ export default function ContactPage() {
                 href="#"
                 className="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 transition-colors"
               >
-                <span className="sr-only">Facebook</span>
+                <span className="sr-only">{t("social.facebook")}</span>
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path
                     fillRule="evenodd"
@@ -91,7 +93,7 @@ export default function ContactPage() {
                 href="#"
                 className="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 transition-colors"
               >
-                <span className="sr-only">Instagram</span>
+                <span className="sr-only">{t("social.instagram")}</span>
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path
                     fillRule="evenodd"
@@ -104,7 +106,7 @@ export default function ContactPage() {
                 href="#"
                 className="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 transition-colors"
               >
-                <span className="sr-only">Twitter</span>
+                <span className="sr-only">{t("social.twitter")}</span>
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
                 </svg>

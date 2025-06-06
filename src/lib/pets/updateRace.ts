@@ -15,7 +15,6 @@ export const updateRace = async (raceId: number, raceData: { name: string, speci
 
         return await response.json();
     } catch (error) {
-        //console.error("Error en updateRace:", error);
         throw error;
     }
 };

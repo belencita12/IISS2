@@ -41,10 +41,7 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
-  const e = useTranslations("EmployeeTable");
-  const b = useTranslations("Button");
-  const ph= useTranslations("Placeholder");
-  const s = useTranslations("Success");
+  const t = useTranslations();
 
   const {
     register,
@@ -113,7 +110,7 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
     setIsSubmitting(true);
     try {
       await registerEmployee(formData, token);
-      toast("success", s("successRegister", {field: "Empleado"}));
+      toast("success", t("success.successRegisterEmployee"));
       router.push("/dashboard/employee");
     } catch (error: unknown) {
       if (typeof error === "object" && error !== null && "message" in error) {
@@ -128,25 +125,25 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
 
   return (
     <div className="max-w-5xl mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-6">{e("titleRegister")}</h1>
+      <h1 className="text-3xl font-bold mb-6">{t("employee.form.titleRegister")}</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div>
-          <Label>{e("ruc")}</Label>
-          <Input {...register("ruc")} placeholder={ph("ruc")} />
+          <Label>{t("employee.form.ruc")}</Label>
+          <Input {...register("ruc")} placeholder={t("placeholder.ruc")} />
           {errors.ruc && <p className="text-red-500">{errors.ruc.message}</p>}
         </div>
         <div>
-          <Label>{e("name")}</Label>
-          <Input {...register("fullName")} placeholder={ph("name")} />
+          <Label>{t("employee.form.name")}</Label>
+          <Input {...register("fullName")} placeholder={t("placeholder.name")} />
           {errors.fullName && <p className="text-red-500">{errors.fullName.message}</p>}
         </div>
         <div>
-          <Label>{e("email")}</Label>
-          <Input {...register("email")} placeholder={ph("email")} type="email" />
+          <Label>{t("employee.form.email")}</Label>
+          <Input {...register("email")} placeholder={t("placeholder.email")} type="email" />
           {errors.email && <p className="text-red-500">{errors.email.message}</p>}
         </div>
         <div>
-          <Label>{e("position")}</Label>
+          <Label>{t("employee.form.workPosition")}</Label>
           <Select
             onValueChange={(value) => {
               setValue("position", value);
@@ -154,7 +151,7 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
             }}
           >
             <SelectTrigger>
-              <SelectValue placeholder={ph("select")} />
+              <SelectValue placeholder={t("placeholder.select")} />
             </SelectTrigger>
             <SelectContent>
               {positions.map((pos) => (
@@ -167,17 +164,17 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
           {errors.position && <p className="text-red-500">{errors.position.message}</p>}
         </div>
         <div>
-          <Label>{e("address")}</Label>
-          <Input {...register("adress")} placeholder={ph("address")} />
+          <Label>{t("employee.form.address")}</Label>
+          <Input {...register("adress")} placeholder={t("placeholder.address")} />
           {errors.adress && <p className="text-red-500">{errors.adress.message}</p>}
         </div>
         <div>
-          <Label>{e("phone")}</Label>
-          <Input {...register("phoneNumber")} placeholder={ph("phone")}/>
+          <Label>{t("employee.form.phone")}</Label>
+          <Input {...register("phoneNumber")} placeholder={t("placeholder.phone")}/>
           {errors.phoneNumber && <p className="text-red-500">{errors.phoneNumber.message}</p>}
         </div>
         <div>
-          <Label>{e("image")}</Label>
+          <Label>{t("employee.form.image")}</Label>
           <Input type="file" accept="image/*" onChange={handleImageChange} />
           {previewImage && (
             <Image src={previewImage} alt="Vista previa" width={96} height={96} className="mt-4 w-24 h-24 rounded-full" />
@@ -186,10 +183,10 @@ export default function EmployeeForm({ token }: EmployeeFormProps) {
         </div>
         <div className="flex justify-end gap-4">
           <Button type="button" variant="outline"  disabled={isSubmitting} onClick={() => router.push("/dashboard/employee")}>
-            {b("cancel")}
+            {t("button.cancel")}
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? b("registering") : b("register")}
+            {isSubmitting ? t("button.registering") : t("button.register")}
           </Button>
         </div>
       </form>

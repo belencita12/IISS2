@@ -28,7 +28,6 @@ export const createVaccineRegistry = async (
 
     return result;
   } catch (error) {
-    console.error("Error al registrar la vacunación:", error);
     throw error;
   }
 };

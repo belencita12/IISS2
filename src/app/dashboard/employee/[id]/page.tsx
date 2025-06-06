@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 export default async function Page({
     params,
@@ -24,6 +25,8 @@ export default async function Page({
 }) {
     const resolvedParams = await params;
     const employeeId = Number(resolvedParams.id);
+
+    const t = await getTranslations();
 
     if (isNaN(employeeId)) return notFound();
 
@@ -44,7 +47,7 @@ export default async function Page({
                         variant="outline"
                         className="border-black border-solid"
                     >
-                        Volver
+                        {t("button.toReturn")}
                     </Button>
                 </Link>
             </div>
@@ -52,7 +55,7 @@ export default async function Page({
             <Card className="mb-8 shadow-md w-full relative">
                 <CardHeader className="pb-0">
                     <h1 className="text-3xl font-bold tracking-tight">
-                        Perfil de Empleado
+                        {t("employee.details.employeePerfil")}
                     </h1>
                 </CardHeader>
                 <CardContent>
@@ -88,7 +91,7 @@ export default async function Page({
                                     </div>
                                     <div className="min-w-0 flex-1">
                                         <p className="text-sm text-muted-foreground">
-                                            RUC
+                                            {t("employee.details.ruc")}
                                         </p>
                                         <p className="font-medium truncate">
                                             {employee.ruc}
@@ -102,7 +105,7 @@ export default async function Page({
                                     </div>
                                     <div className="min-w-0 flex-1">
                                         <p className="text-sm text-muted-foreground">
-                                            Correo Electrónico
+                                            {t("employee.details.email")}
                                         </p>
                                         <TooltipProvider>
                                             <Tooltip>
@@ -125,7 +128,7 @@ export default async function Page({
                                     </div>
                                     <div className="min-w-0 flex-1">
                                         <p className="text-sm text-muted-foreground">
-                                            Teléfono
+                                            {t("employee.details.phone")}
                                         </p>
                                         <p className="font-medium truncate">
                                             {employee.phoneNumber}
@@ -140,7 +143,7 @@ export default async function Page({
                                         </div>
                                         <div className="min-w-0 flex-1">
                                             <p className="text-sm text-muted-foreground">
-                                                Dirección
+                                                {t("employee.details.address")}
                                             </p>
                                             <TooltipProvider>
                                                 <Tooltip>
@@ -168,10 +171,10 @@ export default async function Page({
             <Card className="shadow-md">
                 <CardHeader className="pb-2">
                     <h2 className="text-2xl font-bold tracking-tight">
-                        Citas Programadas
+                        {t("employee.details.programmedAppointments")}
                     </h2>
                     <p className="text-muted-foreground">
-                        Lista de citas asignadas a este empleado
+                        {t("employee.details.appointmentList")}
                     </p>
                 </CardHeader>
                 <CardContent>
@@ -181,7 +184,7 @@ export default async function Page({
                             searchEmployee={employee.ruc}
                         />
                     ) : (
-                        <div>Cargando.....</div>
+                        <div>{t("button.loading")}</div>
                     )}
                 </CardContent>
             </Card>

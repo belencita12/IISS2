@@ -12,7 +12,6 @@ interface PurchaseCardProps {
 const PurchaseCard = ({ purchase }: PurchaseCardProps) => {
   const router = useRouter();
 
-  const p = useTranslations("PurchaseDetail");
   const t = useTranslations();
 
   const handleViewDetail = () => {

@@ -17,7 +17,6 @@ export const getVaccineRegistryById = async (
     const data = await res.json();
     return data as VaccineRecord;
   } catch (error) {
-    console.error("Error al obtener el registro de vacunación:", error);
     return null;
   }
 };

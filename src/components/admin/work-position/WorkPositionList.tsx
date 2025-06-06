@@ -12,6 +12,7 @@ import { deleteWorkPosition } from "@/lib/work-position/deletePosition";
 import SearchBar from "@/components/global/SearchBar";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import { Position } from "@/lib/work-position/IPosition";
+import { useTranslations } from "next-intl";
 
 interface Props {
   token: string;
@@ -27,6 +28,7 @@ export default function WorkPositionList({ token }: Props) {
     pagination: { currentPage: 1, totalPages: 1, totalItems: 0, pageSize: 10 },
   });
 
+  const t = useTranslations();
   const [filteredData, setFilteredData] = useState<Position[]>([]);
   const [loading, setLoading] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -39,15 +41,15 @@ export default function WorkPositionList({ token }: Props) {
     try {
       if (!positionToDelete.id) return;
       await deleteWorkPosition(token, positionToDelete.id);
-      toast("success", "Puesto eliminado exitosamente");
+      toast("success", t("success.successDeletePosition"));
 
       const currentPage = data.pagination.currentPage;
       const isLastItemOnPage = data.positions.length === 1;
       const newPage = isLastItemOnPage && currentPage > 1 ? currentPage - 1 : currentPage;
 
       await loadWorkPositions(newPage);
-    } catch (error) {
-      toast("error", "Error al eliminar el puesto");
+    } catch (error: unknown) { 
+      if (error instanceof Error) toast("error", error.message);
     } finally {
       setIsDeleteModalOpen(false);
       setPositionToDelete(null);
@@ -69,9 +71,8 @@ export default function WorkPositionList({ token }: Props) {
           },
         });
         setFilteredData(result.data);
-      } catch (error) {
-        toast("error", "Error al cargar puestos");
-        console.error(error);
+      } catch (error: unknown) {
+        if (error instanceof Error) toast("error", error.message);
       } finally {
         setLoading(false);
       }
@@ -104,9 +105,8 @@ export default function WorkPositionList({ token }: Props) {
       });
 
       setFilteredData(result.data);
-    } catch (error) {
-      toast("error", "Error al buscar puestos");
-      console.error(error);
+    } catch (error: unknown) {
+      if (error instanceof Error) toast("error",error.message);
     } finally {
       setLoading(false);
     }
@@ -121,7 +121,7 @@ export default function WorkPositionList({ token }: Props) {
 
 
   const columns: Column<Position>[] = [
-    { header: "Nombre", accessor: "name" }
+    { header: t("positions.table.name"), accessor: "name" }
   ];
   
 
@@ -129,12 +129,12 @@ export default function WorkPositionList({ token }: Props) {
     {
       icon: <Eye className="w-4 h-4" />,
       onClick: (p) => router.push(`/dashboard/settings/positions/${p.id}`),
-      label: "Ver detalles",
+      label: t("button.seeDetails"),
     },
     {
       icon: <Pencil className="w-4 h-4" />,
       onClick: (p) => router.push(`/dashboard/settings/positions/update/${p.id}`),
-      label: "Editar",
+      label:t("button.edit"),
     },
     {
       icon: <Trash className="w-4 h-4" />,
@@ -142,7 +142,7 @@ export default function WorkPositionList({ token }: Props) {
         setPositionToDelete(p);
         setIsDeleteModalOpen(true);
       },
-      label: "Eliminar",
+      label: t("button.delete"),
     },
   ];
 
@@ -150,14 +150,14 @@ export default function WorkPositionList({ token }: Props) {
     <div className="p-4 mx-auto">
       <SearchBar
         onSearch={handleSearch}
-        placeholder="Buscar por nombre"
+        placeholder={t("search.searchByName")}
         debounceDelay={400}
       />
 
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-3xl font-bold">Puestos de trabajo</h2>
+        <h2 className="text-3xl font-bold">{t("positions.table.title")}</h2>
         <Button onClick={() => router.push("/dashboard/settings/positions/register")}>
-          Agregar nuevo puesto
+          {t("button.add")}
         </Button>
       </div>
 
@@ -169,7 +169,7 @@ export default function WorkPositionList({ token }: Props) {
         onPageChange={handlePageChange}
         isLoading={loading}
         skeleton={<WorkPositionTableSkeleton />}
-        emptyMessage="No se encontraron puestos"
+        emptyMessage={t("positions.table.emptyMessage")}
       />
 
 
@@ -177,10 +177,10 @@ export default function WorkPositionList({ token }: Props) {
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
-        title="¿Estás seguro de eliminar este puesto?"
-        message="Esta acción no se puede deshacer."
-        confirmText="Eliminar"
-        cancelText="Cancelar"
+        title={t("confirmationModal.positions.titleDelete")}
+        message={t("confirmationModal.positions.messageDelete", {position : positionToDelete?.name ?? ""})}
+        confirmText={t("button.delete")}
+        cancelText={t("button.cancel")}
         variant="danger"
       />
     </div>

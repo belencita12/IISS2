@@ -9,10 +9,13 @@ export const getAllAppointments = async (
         Authorization: `Bearer ${token}`,
       },
     });
-  
+    
     if (!response.ok) {
-      throw new Error("Error al obtener las citas");
-    }
+            const errorData = await response.json().catch(() => ({})); 
+            const message = errorData?.message || `Error HTTP: ${response.status}`;
+            throw new Error(message);
+        }
+
   
     const data = await response.json();
     return data as AppointmentData;

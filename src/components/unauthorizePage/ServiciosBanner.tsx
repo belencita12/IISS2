@@ -1,7 +1,10 @@
 import { PawPrint, Heart } from "lucide-react";
 import Image from "next/image";
+import { useTranslations
+ } from "next-intl";
 
 const ServiciosBanner = () => {
+  const t = useTranslations();
   return (
     <section className="relative bg-white overflow-hidden py-12 px-6">
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center gap-8 relative z-10">
@@ -23,9 +26,9 @@ const ServiciosBanner = () => {
         {/* Contenido a la derecha */}
         <div className="w-full sm:w-3/5 text-center sm:text-left relative">
           <div>
-            <h3 className="text-myPink-primary text-sm sm:text-lg font-semibold tracking-widest uppercase pl-12">Nuestros</h3>
-            <h1 className="text-[40px] sm:text-[50px] md:text-[60px] font-extrabold text-myPurple-primary leading-none mt-2">SERVICIOS</h1>
-            <p className="text-gray-600 mt-4 text-sm sm:text-base pl-24">@NicoPetspy</p>
+            <h3 className="text-myPink-primary text-sm sm:text-lg font-semibold tracking-widest uppercase pl-12">{t("home.serviceBanner.our")}</h3>
+            <h1 className="text-[40px] sm:text-[50px] md:text-[60px] font-extrabold text-myPurple-primary leading-none mt-2">{t("home.serviceBanner.services")}</h1>
+            <p className="text-gray-600 mt-4 text-sm sm:text-base pl-24">{t("home.account")}</p>
           </div>
           {/* Íconos decorativos */}
           <div className="absolute -top-8 right-0 w-16 h-16 sm:-top-4 sm:right-1/4 md:-top-8 md:right-1/3">

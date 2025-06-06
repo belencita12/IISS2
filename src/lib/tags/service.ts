@@ -8,7 +8,11 @@ export const getAllTags = async (token?: string, queryStr?: string) => {
     : {};
   const response = await fetch(`${TAG_API}?${queryStr}`, { headers });
 
-  if (!response.ok) throw new Error("Error al obtener etiquetas");
+    if (!response.ok) {
+            const errorData = await response.json().catch(() => ({})); 
+            const message = errorData?.message || `Error HTTP: ${response.status}`;
+            throw new Error(message);
+        }
 
   const data = await response.json();
   return data as PaginationResponse<Tag>;

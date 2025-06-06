@@ -22,6 +22,7 @@ import { Modal } from "@/components/global/Modal";
 import { Button } from "@/components/ui/button";
 import AppointmentListSkeleton from "./Skeleton/AppointmentListSkeleton";
 import { Textarea } from "@/components/ui/textarea";
+import { useTranslations } from "next-intl";
 
 interface AppointmentListProps {
     token: string;
@@ -37,6 +38,8 @@ const AppointmentList = ({ token, searchEmployee }: AppointmentListProps) => {
         toDesignatedDate: undefined,
         status: undefined,
     });
+
+    const t = useTranslations();
 
     const [isProcessing, setIsProcessing] = useState(false);
     const [selectedAppointment, setSelectedAppointment] =
@@ -134,7 +137,7 @@ const AppointmentList = ({ token, searchEmployee }: AppointmentListProps) => {
         if (modalAction === "cancel" && cancelDescription.length < 12) {
             toast(
                 "error",
-                "El motivo de la cancelación debe tener al menos 12 caracteres"
+                t("error.reasonCancel")
             );
             return;
         }
@@ -164,8 +167,9 @@ const AppointmentList = ({ token, searchEmployee }: AppointmentListProps) => {
                 toDesignatedDate: filters.toDesignatedDate,
                 status: filters.status,
             });
-        } catch (error) {
-            toast("error", "Ocurrió un error al actualizar la cita");
+        } catch (error: unknown) {
+            if (error instanceof Error)
+            toast("error", error.message);
         } finally {
             setIsProcessing(false);
             setIsRefreshing(false);
@@ -178,7 +182,7 @@ const AppointmentList = ({ token, searchEmployee }: AppointmentListProps) => {
     };
 
     if (error) {
-        toast("error", error.message || "Error al cargar las citas");
+        toast("error", error.message);
     }
 
     return (
@@ -192,7 +196,7 @@ const AppointmentList = ({ token, searchEmployee }: AppointmentListProps) => {
                     className="text-sm h-8 px-2 text-gray-600 mr-[10px]"
                     disabled={isFiltering}
                     >
-                    Limpiar filtros
+                    {t("filters.clearFilters")}
                     </Button>
                 </div>
             )}
@@ -219,7 +223,7 @@ const AppointmentList = ({ token, searchEmployee }: AppointmentListProps) => {
             </div>
 
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-3xl font-bold">Citas</h2>
+                <h2 className="text-3xl font-bold">{t("appointmentTable.title")}</h2>
             </div>
 
             {isLoading ? (
@@ -239,7 +243,7 @@ const AppointmentList = ({ token, searchEmployee }: AppointmentListProps) => {
                             />
                         ))
                     ) : (
-                        <p>No se encontraron citas.</p>
+                        <p>{t("appointmentTable.emptyMessage")}</p>
                     )}
                 </div>
             )}
@@ -280,10 +284,10 @@ const AppointmentList = ({ token, searchEmployee }: AppointmentListProps) => {
                         }
                     }}
                     onConfirm={handleConfirmAction}
-                    title="Confirmar Finalización"
-                    message="¿Estás seguro de que quieres finalizar esta cita?"
-                    confirmText="Confirmar"
-                    cancelText="Cancelar"
+                    title={t("confirmationModal.appointment.confirmFinish")}
+                    message={t("confirmationModal.appointment.confirmFinishDescription")}
+                    confirmText={t("button.confirm")}
+                    cancelText={t("button.cancel")}
                     isLoading={isProcessing}
                 />
             )}
@@ -299,12 +303,12 @@ const AppointmentList = ({ token, searchEmployee }: AppointmentListProps) => {
                             setCancelDescription("");
                         }
                     }}
-                    title="Motivo de cancelación"
+                    title={t("confirmationModal.appointment.cancelTitle")}
                     size="md"
                 >
                     <Textarea
                         className="w-full h-32 p-2 border border-gray-300 rounded"
-                        placeholder="Escribe una razón para cancelar la cita"
+                        placeholder={t("placeholder.reason")}
                         value={cancelDescription}
                         onChange={(e) => setCancelDescription(e.target.value)}
                         disabled={isProcessing}
@@ -322,7 +326,7 @@ const AppointmentList = ({ token, searchEmployee }: AppointmentListProps) => {
                             }}
                             disabled={isProcessing || isRefreshing}
                         >
-                            Cancelar
+                            {t("button.cancel")}
                         </Button>
                         <Button
                             className="bg-red-600 text-white px-4 py-2 rounded border hover:bg-red-700"
@@ -333,7 +337,7 @@ const AppointmentList = ({ token, searchEmployee }: AppointmentListProps) => {
                                 isRefreshing
                             }
                         >
-                            {isProcessing ? "Cancelando..." : "Confirmar"}
+                            {isProcessing ? t("button.cancelling") : t("button.confirm")}
                         </Button>
                     </div>
                 </Modal>

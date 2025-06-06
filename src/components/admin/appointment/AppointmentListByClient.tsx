@@ -19,6 +19,7 @@ import {
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import AppointmentListSkeleton from "./Skeleton/AppointmentListSkeleton";
 import { Textarea } from "@/components/ui/textarea";
+import { useTranslations } from "next-intl";
 
 interface ClientAppointmentListProps {
   token: string;
@@ -44,6 +45,7 @@ const ClientAppointmentList = ({
   const [cancelDescription, setCancelDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const t = useTranslations();
 
   const { data, error, pagination, fetchData, refresh } =
     usePaginatedFetch<AppointmentData>(APPOINTMENT_API, token, {
@@ -84,7 +86,7 @@ const ClientAppointmentList = ({
     if (modalAction === "cancel" && cancelDescription.length < 12) {
       toast(
         "error",
-        "El motivo de la cancelación debe tener al menos 12 caracteres"
+         t("error.reasonCancel")
       );
       return;
     }
@@ -109,8 +111,8 @@ const ClientAppointmentList = ({
         } con éxito`
       );
       await fetchData(filters.page || 1, { clientRuc });
-    } catch (error) {
-      toast("error", "Ocurrió un error al actualizar la cita");
+    } catch (error: unknown) {
+      if (error instanceof Error) toast("error", error.message);
     } finally {
       setIsProcessing(false);
       setIsRefreshing(false);
@@ -123,7 +125,7 @@ const ClientAppointmentList = ({
   };
 
   if (error) {
-    toast("error", error.message || "Error al cargar las citas");
+    toast("error", error.message);
   }
 
   return (
@@ -145,7 +147,7 @@ const ClientAppointmentList = ({
           ))}
         </div>
       ) : (
-        <p>No se encontraron citas.</p>
+        <p>{t("error.notFound")}</p>
       )}
 
       <GenericPagination
@@ -169,10 +171,10 @@ const ClientAppointmentList = ({
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onConfirm={handleConfirmAction}
-          title="Confirmar Finalización"
-          message="¿Estás seguro de que quieres finalizar esta cita?"
-          confirmText="Confirmar"
-          cancelText="Cancelar"
+          title={t("confirmationModal.appointment.confirmFinish")}
+          message={t("confirmationModal.appointment.confirmFinishDescription")}
+          confirmText={t("button.confirm")}
+          cancelText={t("button.cancel")}
           isLoading={isProcessing}
         />
       )}
@@ -181,12 +183,12 @@ const ClientAppointmentList = ({
         <Modal
           isOpen={cancelModalOpen}
           onClose={() => setCancelModalOpen(false)}
-          title="Motivo de cancelación"
+          title={t("confirmationModal.appointment.cancelTitle")}
           size="md"
         >
           <Textarea
             className="w-full h-32 p-2 border border-gray-300 rounded"
-            placeholder="Escribe una razón para cancelar la cita"
+            placeholder={t("placeholder.reason")}
             value={cancelDescription}
             onChange={(e) => setCancelDescription(e.target.value)}
           />
@@ -196,14 +198,14 @@ const ClientAppointmentList = ({
               onClick={() => setCancelModalOpen(false)}
               disabled={isProcessing}
             >
-              Cancelar
+              {t("button.cancel")}
             </Button>
             <Button
               className="bg-red-600 text-white px-4 py-2 rounded border hover:bg-red-700"
               onClick={handleConfirmAction}
               disabled={isProcessing || !cancelDescription.trim()}
             >
-              {isProcessing ? "Cancelando..." : "Confirmar"}
+              {isProcessing ? t("button.cancelling") : t("button.confirm")}
             </Button>
           </div>
         </Modal>

@@ -1,89 +1,10 @@
 import HelpCard from "./HelpCard";
 import { BoneIcon, StoreIcon, BoxIcon, SyringeIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 
-const productQuestions = [
-  {
-    id: "productos1",
-    question: "¿Cómo añado un nuevo producto al inventario?",
-    answer:
-      "Ve al menú lateral y selecciona 'Productos'. Luego, haz clic en el botón 'Agregar' para registrar un nuevo producto completando el formulario.",
-  },
-  {
-    id: "productos2",
-    question: "¿Cómo actualizo el precio de un producto?",
-    answer:
-      "En la sección de Productos, haz clic en el ícono de 'ver'(ojo) para ver el detalle del producto. Dentro del detalle, presiona 'Editar' y modifica el precio en el campo correspondiente. Guarda los cambios para actualizarlos.",
-  },
-  {
-    id: "productos3",
-    question: "¿Cómo elimino un producto?",
-    answer:
-      "Accede al detalle del producto haciendo clic en el ícono de 'ver'(ojo). Luego, presiona el botón 'Eliminar' y confirma la acción para remover el producto del sistema.",
-  },
-];
-
-const vaccineQuestions = [
-  {
-    id: "vacunas1",
-    question: "¿Cómo registro una vacunación?",
-    answer:
-      "Ingresa al perfil de la mascota, haz clic en 'Agregar al historial' en la sección de vacunación y completa los campos requeridos.",
-  },
-  {
-    id: "vacunas2",
-    question: "¿Cómo veo el calendario de vacunación de una mascota?",
-    answer:
-      "Dentro del perfil de la mascota, dirígete a la sección 'Historial de vacunación' y haz clic en el ícono de 'ver'(ojo) para ver los detalles de cada aplicación.",
-  },
-  {
-    id: "vacunas3",
-    question: "¿Cómo configuro recordatorios de vacunación?",
-    answer:
-      "Al registrar una nueva vacunación, puedes indicar la fecha de la aplicación actual y la fecha estimada para la próxima dosis utilizando el calendario disponible.",
-  },
-];
-
-const warehouseQuestions = [
-  {
-    id: "depositos1",
-    question: "¿Cómo creo un nuevo depósito?",
-    answer:
-      "Ve a la sección 'Depósitos' desde el menú lateral y haz clic en el botón 'Registrar Depósito'. Completa el formulario con la información requerida.",
-  },
-  {
-    id: "depositos2",
-    question: "¿Cómo edito o elimino un depósito existente?",
-    answer:
-      "En la lista de depósitos, localiza el que deseas modificar. Usa el ícono de lápiz para editar sus datos o el ícono de papelera para eliminarlo definitivamente.",
-  },
-  {
-    id: "depositos3",
-    question: "¿Puedo buscar depósitos por nombre?",
-    answer:
-      "Sí. En la parte superior de la sección 'Depósitos' encontrarás una barra de búsqueda donde puedes escribir el nombre del depósito que deseas encontrar.",
-  },
-];
-
-const movementQuestions = [
-  {
-    id: "movimientos1",
-    question: "¿Cómo registro una entrada de inventario?",
-    answer:
-      "Ve a la sección 'Movimientos' y haz clic en 'Registrar Movimiento'. Selecciona el tipo 'Ingreso', deja el campo de depósito de origen vacío, y completa los demás campos del formulario.",
-  },
-  {
-    id: "movimientos2",
-    question: "¿Cómo registro una salida de inventario?",
-    answer:
-      "En 'Movimientos', haz clic en 'Registrar Movimiento'. Elige el tipo 'Egreso', deja vacío el campo de depósito de destino, y completa el resto de los datos.",
-  },
-  {
-    id: "movimientos3",
-    question: "¿Cómo transfiero productos entre depósitos?",
-    answer:
-      "Desde la sección 'Movimientos', selecciona 'Registrar Movimiento'. Escoge el tipo 'Transferencia', luego selecciona tanto el depósito de origen como el de destino, y llena el resto del formulario.",
-  },
-];
+interface InventoryHelpPops{
+    searchTerm: string;
+}
 
 function normalize(text: string | undefined | null): string {
   if (typeof text !== "string") return "";
@@ -95,7 +16,98 @@ function normalize(text: string | undefined | null): string {
     .trim();
 }
 
-export default function InventoryHelp({ searchTerm }: { searchTerm: string }) {
+
+export default function InventoryHelp({ 
+  searchTerm,
+ }: InventoryHelpPops) {
+
+const t = useTranslations("help");
+
+const productQuestions = [
+  {
+    id: t("inventory.products.productos1.id"),
+    question: t("inventory.products.productos1.question"),
+    answer:
+      t("inventory.products.productos1.answer"),
+  },
+  {
+    id: t("inventory.products.productos2.id"),
+    question: t("inventory.products.productos2.question"),
+    answer:
+      t("inventory.products.productos2.answer") },
+  {
+    id: t("inventory.products.productos3.id"),
+    question: t("inventory.products.productos3.question"),
+    answer:
+     t("inventory.products.productos3.answer"),
+  },
+];
+
+const vaccineQuestions = [
+  {
+    id: t("inventory.vaccines.vacunas1.id"),
+    question: t("inventory.vaccines.vacunas1.question"),
+    answer:
+     t("inventory.vaccines.vacunas1.answer"),
+  },
+  {
+    id: t("inventory.vaccines.vacunas2.id"),
+    question: t("inventory.vaccines.vacunas2.question"),
+    answer:
+     t("inventory.vaccines.vacunas2.answer"),
+  },
+  {
+    id: t("inventory.vaccines.vacunas3.id"),
+    question: t("inventory.vaccines.vacunas3.question"),
+    answer:
+      t("inventory.vaccines.vacunas3.answer"),
+  },
+];
+
+const warehouseQuestions = [
+  {
+    id: t("inventory.stock.depositos1.id"),
+    question: t("inventory.stock.depositos1.question"),
+    answer:
+      t("inventory.stock.depositos1.answer"),
+  },
+  {
+    id: t("inventory.stock.depositos2.id"),
+    question: t("inventory.stock.depositos2.question"),
+    answer:
+     t("inventory.stock.depositos2.answer"),
+  },
+  {
+    id: t("inventory.stock.depositos3.id"),
+    question: t("inventory.stock.depositos3.question"),
+    answer:
+     t("inventory.stock.depositos3.answer"),
+  },
+];
+
+const movementQuestions = [
+  {
+    id: t("inventory.movements.movimientos1.id"),
+    question: t("inventory.movements.movimientos1.question"),
+    answer:
+     t("inventory.movements.movimientos1.answer"),
+  },
+  {
+    id: t("inventory.movements.movimientos2.id"),
+    question: t("inventory.movements.movimientos2.question"),
+    answer:
+      t("inventory.movements.movimientos2.answer"),
+  },
+  {
+    id: t("inventory.movements.movimientos3.id"),
+    question: t("inventory.movements.movimientos3.question"),
+    answer:
+      t("inventory.movements.movimientos3.answer"),
+  },
+];
+
+
+
   const normalizedSearch = normalize(searchTerm);
 
   const filter = (q: { question: string; answer: string }) =>
@@ -105,29 +117,29 @@ export default function InventoryHelp({ searchTerm }: { searchTerm: string }) {
   const cards = [
     {
       icon: <BoneIcon />,
-      title: "Productos",
-      description: "Gestión de productos y servicios",
+      title: t("inventory.products.title"),
+      description: t("inventory.products.description"),
       questions: productQuestions.filter(filter),
       videoId: "l2JQjgj9-BI"
     },
     {
       icon: <SyringeIcon />,
-      title: "Vacunas",
-      description: "Control y registro de vacunaciones",
+      title: t("inventory.vaccines.title"),
+      description: t("inventory.vaccines.description"),
       questions: vaccineQuestions.filter(filter),
       videoId: "laZi1g-s528"
     },
     {
       icon: <StoreIcon />,
-      title: "Depósitos",
-      description: "Gestión de múltiples ubicaciones de inventario",
+      title: t("inventory.stock.title"),
+      description: t("inventory.stock.description"),
       questions: warehouseQuestions.filter(filter),
       videoId: "zf4qMQNyM58"
     },
     {
       icon: <BoxIcon />,
-      title: "Movimientos",
-      description: "Registro de entradas, salidas y transferencias",
+      title: t("inventory.movements.title"),
+      description: t("inventory.movements.description"),
       questions: movementQuestions.filter(filter),
       videoId: "j1sLZWj0dEw"
     },

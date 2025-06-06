@@ -14,9 +14,11 @@ import { toast } from "@/lib/toast";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
 import { deleteProviderById } from "@/lib/provider/deleteProviderById";
 import ProviderTableSkeleton from "./skeleton/ProviderTableSkeleton";
+import { useTranslations } from "next-intl";
 
 export default function ProviderList({ token }: { token: string }) {
   const router = useRouter();
+  const t = useTranslations();
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [providers, setProviders] = useState<Provider[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -45,8 +47,9 @@ export default function ProviderList({ token }: { token: string }) {
         pageSize: response.pageSize,
       });
 
-    } catch (error) {
-      toast("error", "Error al obtener proveedores");
+    } catch (error: unknown) {
+      if (error instanceof Error)
+      toast("error", error.message);
     } finally {
       setIsLoading(false);
     }
@@ -79,22 +82,23 @@ export default function ProviderList({ token }: { token: string }) {
     if (!id) return;
     try {
       await deleteProviderById(token, id);
-      toast("success", "Proveedor eliminado exitosamente");
+      toast("success", t("success.successDeleteProvider"));
 
       await fetchProviders({
         page: 1,
       });
 
-    } catch (error) {
-      toast("error", "Error al eliminar proveedor");
+    } catch (error:unknown) {
+      if (error instanceof Error)
+      toast("error", error.message);
     } finally {
       setProviderIdToDelete(null);
     }
   }
 
   const columns: Column<Provider>[] = [
-    { header: "Nombre", accessor: "businessName" },
-    { header: "RUC", accessor: "ruc" }
+    { header: t("providers.table.name"), accessor: "businessName" },
+    { header: t("providers.table.ruc"), accessor: "ruc" }
   ];
 
   const actions: TableAction<Provider>[] = [
@@ -103,19 +107,19 @@ export default function ProviderList({ token }: { token: string }) {
       onClick: (p) => {
         setSelectedProviderId(p.id ?? null);
       },
-      label: "Ver detalles",
+      label: t("button.seeDetails"),
     },
     {
       icon: <Pencil className="w-4 h-4" />,
       onClick: (p) => router.push(`/dashboard/settings/providers/update/${p.id}`),
-      label: "Editar",
+      label: t("button.edit"),
     },
     {
       icon: <Trash className="w-4 h-4" />,
       onClick: (p) => {
         setProviderIdToDelete(p.id ?? null);
       },
-      label: "Eliminar",
+      label: t("button.edit"),
     },
   ];
 
@@ -123,10 +127,10 @@ export default function ProviderList({ token }: { token: string }) {
     <div className="p-6 mx-auto">
       <SearchBar
         onSearch={handleSearch}
-        placeholder="Buscar proveedor por su RUC o razón social"
+        placeholder={t("search.searchByNameOrRucProvider")}
       />
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-4 mt-6">
-          <h2 className="text-3xl font-bold">Lista de Proveedores</h2>
+          <h2 className="text-3xl font-bold">{t("providers.table.title")}</h2>
           <Button
               variant="outline"
               onClick={() => {
@@ -135,7 +139,7 @@ export default function ProviderList({ token }: { token: string }) {
               }}
               disabled={isRedirecting}
             >
-            Agregar
+            {t("button.add")}
           </Button>
         </div>
 
@@ -147,7 +151,7 @@ export default function ProviderList({ token }: { token: string }) {
         onPageChange={handlePageChange}
         isLoading={isLoading}
         skeleton={<ProviderTableSkeleton />}
-        emptyMessage="No se encontraron proveedores"
+        emptyMessage={t("providers.table.emptyMessage")}
       />
 
       {/* Modal que muestra los detalles del proveedor seleccionado */}
@@ -170,10 +174,10 @@ export default function ProviderList({ token }: { token: string }) {
         isOpen={!!providerIdToDelete}
         onClose={() => setProviderIdToDelete(null)}
         onConfirm={() => handleDelete(providerIdToDelete ?? null)}
-        title={`¿Estás seguro de eliminar este proveedor? `}
-        message={`${providers.find(p => p.id === providerIdToDelete)?.businessName} será eliminado de la lista de proveedores.`}
-        confirmText="Eliminar"
-        cancelText="Cancelar"
+        title={t("confirmationModal.providers.titleDelete")}
+        message={t("confirmationModal.providers.messageDelete", {provider : providers.find(p => p.id === providerIdToDelete)?.businessName ?? ""})}
+        confirmText={t("button.delete")}
+        cancelText={t("button.cancel")}
         variant="danger"
       />
     </div>

@@ -10,16 +10,14 @@ export const deleteEmployeeByID = async (token: string, id: number): Promise<boo
             },
         });
         
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error(`Error HTTP ${response.status}:`, errorText);
-            throw new Error(`Error ${response.status}: ${errorText}`);
+    if (!response.ok) {
+            const errorData = await response.json().catch(() => ({})); 
+            const message = errorData?.message || `Error HTTP: ${response.status}`;
+            throw new Error(message);
         }
 
         return true; 
     } catch (error) {
-        console.error("Error en deleteEmployeeByID:", error);
-        return false; 
+        throw error; 
     }
 };

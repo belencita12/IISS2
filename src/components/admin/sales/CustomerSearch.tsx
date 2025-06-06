@@ -15,6 +15,7 @@ import { ClientData } from "@/lib/admin/client/IClient";
 import { CLIENT_API } from "@/lib/urls";
 import { useFetch } from "@/hooks/api";
 import useDebounce from "@/hooks/useDebounce";
+import { useTranslations } from "next-intl";
 
 
 type CustomerSearchProps = {
@@ -39,6 +40,7 @@ export default function CustomerSearch({
   const [isCommandOpen, setIsCommandOpen] = useState(false);
   const [customers, setCustomers] = useState<ClientData[]>([]);
 
+  const t = useTranslations();
     const debouncedSearch = useDebounce(searchTerm, 500);
   
     const { data, get, loading } = useFetch<CustomerResponse>("", token);
@@ -71,7 +73,7 @@ export default function CustomerSearch({
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Buscar cliente..."
+            placeholder={t("search.searchByName")}
             className="pl-8"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -82,7 +84,7 @@ export default function CustomerSearch({
               <Command className="rounded-lg border shadow-md">
                 <CommandList>
                     <CommandEmpty>
-                      {loading ? "Cargando..." : "No se encontraron clientes."}
+                      {loading ? t("button.loading") : t("error.notFoundClients")}
                     </CommandEmpty>
                   <CommandGroup>
                     {customers.map((customer) => (

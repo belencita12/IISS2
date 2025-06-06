@@ -18,6 +18,7 @@ import { TagFilter } from "@/components/admin/product/filter/TagFilter";
 import { ServiceTypeFormData } from '@/lib/service-types/types';
 import { useServiceTypeApi } from '@/lib/service-types/service';
 import NumericInput from "@/components/global/NumericInput";
+import { useTranslations } from "next-intl";
 
 const MAX_FILE_SIZE = 1024 * 1024; // 1MB
 
@@ -77,13 +78,15 @@ export default function ServiceTypeForm({
   const [_isLoadingTags, setIsLoadingTags] = useState(true);
   const [tags, setTags] = useState<string[]>(_initialData?.tags || []);
 
+  const t = useTranslations()
+
   useEffect(() => {
     const loadTags = async () => {
       try {
         const response = await getAllTags(token, "page=1");
         setAvailableTags(response.data);
-      } catch (error) {
-        toast("error", "Error al cargar las etiquetas");
+      } catch (error: unknown) {
+        if (error instanceof Error) toast("error", error.message);
       } finally {
         setIsLoadingTags(false);
       }
@@ -123,7 +126,7 @@ export default function ServiceTypeForm({
       
       // Usar el token que viene como prop
       if (!token) {
-        toast("error", "No se encontró el token de autenticación");
+        toast("error", t("error.authError"));
         return;
       }
 
@@ -161,7 +164,7 @@ export default function ServiceTypeForm({
       }
       
       if (response) {
-        const successMessage = id ? "Tipo de servicio actualizado con éxito" : "Tipo de servicio creado con éxito";
+        const successMessage = id ? t("success.successUpdateService") : t("success.successRegisterService");
         toast("success", successMessage, {
           duration: 2000,
           onAutoClose: () => router.push("/dashboard/settings/service-types"),
@@ -171,12 +174,8 @@ export default function ServiceTypeForm({
     } catch (error: unknown) {
       if (error instanceof Error) {
         if (error.message?.includes("ya están en uso")) {
-          toast("error", "El nombre o Identificador del servicio ya está en uso. Por favor, elige otros valores.");
-        } else {
-          toast("error", error.message || `Error al ${id ? 'actualizar' : 'registrar'} el tipo de servicio. Por favor, intente nuevamente.`);
+          toast("error", error.message);
         }
-      } else {
-        toast("error", `Error al ${id ? 'actualizar' : 'registrar'} el tipo de servicio. Por favor, intente nuevamente.`);
       }
     }
   };
@@ -211,16 +210,16 @@ export default function ServiceTypeForm({
       <div className="flex flex-col pt-6 md:flex-row gap-8">
         <div className="flex flex-col items-center space-y-4 w-full md:w-1/3">
           <h1 className="text-2xl font-bold self-start">
-            {id ? "Actualizar Tipo de Servicio" : "Registro de Tipo de Servicio"}
+            {id ? t("serviceTypes.form.titleUpdate") : t("serviceTypes.form.titleRegister")}
           </h1>
           <p className="text-gray-600 self-start">
             {id
-              ? "Modifique los datos del tipo de servicio"
-              : "Ingresa los datos del tipo de servicio"}
+              ? t("serviceTypes.form.updateTheData")
+              : t("serviceTypes.form.enterTheData")}
           </p>
           <div className="w-full">
             <h3 className="text-sm font-semibold mb-2 text-gray-700">
-              Imagen (Opcional)
+              {t("serviceTypes.form.image")}
             </h3>
             <div className="w-full aspect-square max-w-[250px] mx-auto">
               <FormImgUploader
@@ -241,10 +240,10 @@ export default function ServiceTypeForm({
           noValidate
         >
           <div>
-            <Label>Nombre</Label>
+            <Label>{t("serviceTypes.form.name")}</Label>
             <Input
               {...register("name")}
-              placeholder="Ingrese el nombre del servicio"
+              placeholder={t("placeholder.name")}
             />
             {errors.name && (
               <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
@@ -252,15 +251,15 @@ export default function ServiceTypeForm({
           </div>
 
           <div>
-            <Label>Identificador</Label>
-            <Input {...register("slug")} placeholder="servicio-veterinario" />
+            <Label>{t("serviceTypes.form.slug")}</Label>
+            <Input {...register("slug")} placeholder={t("placeholder.slugExample")} />
             {errors.slug && (
               <p className="text-red-500 text-sm mt-1">{errors.slug.message}</p>
             )}
           </div>
 
           <div>
-            <Label>Descripción</Label>
+            <Label>{t("serviceTypes.form.description")}</Label>
             <Textarea {...register("description")} className="min-h-[100px]" />
             {errors.description && (
               <p className="text-red-500 text-sm mt-1">
@@ -272,11 +271,11 @@ export default function ServiceTypeForm({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Duración */}
             <div>
-              <Label>Duración (minutos)</Label>
+              <Label>{t("serviceTypes.form.durationMin")}</Label>
               <NumericInput
                 id="durationMin"
                 type="formattedNumber"
-                placeholder="Ejemplo: 60"
+                placeholder={t("placeholder.durationExample")}
                 value={watch("durationMin")} // Sincroniza el valor con el formulario
                 onChange={(e) => setValue("durationMin", Number(e.target.value))} // Actualiza el valor en el formulario
               />
@@ -289,11 +288,11 @@ export default function ServiceTypeForm({
 
             {/* Precio */}
             <div>
-              <Label>Precio</Label>
+              <Label>{t("serviceTypes.form.price")}</Label>
               <NumericInput
                 id="_price"
                 type="formattedNumber"
-                placeholder="Ejemplo: 100.000"
+                placeholder={t("placeholder.price")}
                 value={watch("_price")} // Sincroniza el valor con el formulario
                 onChange={(e) => setValue("_price", Number(e.target.value))} // Actualiza el valor en el formulario
               />
@@ -306,11 +305,11 @@ export default function ServiceTypeForm({
 
             {/* IVA */}
             <div>
-              <Label>IVA (%)</Label>
+              <Label>{t("serviceTypes.form.iva")}</Label>
               <NumericInput
                 id="_iva"
                 type="formattedNumber"
-                placeholder="Ejemplo: 10"
+                placeholder={t("placeholder.iva")}
                 value={watch("_iva")} // Sincroniza el valor con el formulario
                 onChange={(e) => setValue("_iva", Number(e.target.value))} // Actualiza el valor en el formulario
               />
@@ -323,11 +322,11 @@ export default function ServiceTypeForm({
 
             {/* Costo */}
             <div>
-              <Label>Costo</Label>
+              <Label>{t("serviceTypes.form.cost")}</Label>
               <NumericInput
                 id="cost"
                 type="formattedNumber"
-                placeholder="Ejemplo: 50.000"
+                placeholder={t("placeholder.cost")}
                 value={watch("cost")} // Sincroniza el valor con el formulario
                 onChange={(e) => setValue("cost", Number(e.target.value))} // Actualiza el valor en el formulario
               />
@@ -340,11 +339,11 @@ export default function ServiceTypeForm({
 
             {/* MaxColabs */}
             <div>
-              <Label>Número de colaboradores máximo (opcional)</Label>
+              <Label>{t("serviceTypes.form.colabs")}</Label>
               <NumericInput
                 id="maxColabs"
                 type="formattedNumber"
-                placeholder="Ejemplo: 5"
+                placeholder={t("placeholder.colabs")}
                 value={watch("maxColabs")} // Sincroniza el valor con el formulario
                 onChange={(e) => setValue("maxColabs", Number(e.target.value))} // Actualiza el valor en el formulario
               />
@@ -364,11 +363,11 @@ export default function ServiceTypeForm({
               //{...register("isPublic")}
               //defaultChecked={_initialData?.isPublic}
             />
-            <Label htmlFor="isPublic">Público</Label>
+            <Label htmlFor="isPublic">{t("serviceTypes.form.isPublic")}</Label>
           </div>
 
           <div>
-            <Label>Etiquetas</Label>
+            <Label>{t("serviceTypes.form.tags")}</Label>
             <TagFilter
               token={token}
               selectedTags={tags}
@@ -406,12 +405,12 @@ export default function ServiceTypeForm({
               variant="outline"
               onClick={() => router.push("/dashboard/settings/service-types")}
             >
-              Cancelar
+              {t("button.cancel")}
             </Button>
             <Button type="submit" disabled={formIsSubmitting}>
               {id
-                ? (formIsSubmitting ? "Actualizando..." : "Actualizar")
-                : (formIsSubmitting ? "Registrando..." : "Registrar")
+                ? (formIsSubmitting ? t("button.saving") : t("button.save"))
+                : (formIsSubmitting ? t("button.adding") : t("button.add"))
               }
             </Button>
           </div>

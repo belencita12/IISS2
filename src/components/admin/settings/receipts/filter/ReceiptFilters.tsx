@@ -7,6 +7,7 @@ import useDebounce from "@/hooks/useDebounce";
 import { useEffect, useState } from "react";
 import SearchBar from "@/components/global/SearchBar";
 import clsx from "clsx";
+import { useTranslations } from "next-intl";
 
 interface Props {
   filters: ReceiptFiltersParams;
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export default function ReceiptFilters({ filters, reset, setFilters }: Props) {
+   const t = useTranslations();
   const [min, setMin] = useState(filters.fromTotal?.toString() ?? "");
   const [max, setMax] = useState(filters.toTotal?.toString() ?? "");
   const [receipt, setReceipt] = useState(
@@ -51,22 +53,22 @@ export default function ReceiptFilters({ filters, reset, setFilters }: Props) {
     let hasErrors = false;
 
     if (receiptNumber !== undefined && receiptNumber <= 0) {
-      newErrors.receipt = "El número de recibo debe ser mayor a 0.";
+      newErrors.receipt = t("filters.receipts.receiptNumber");
       hasErrors = true;
     }
 
     if (minNumber !== undefined && minNumber <= 0) {
-      newErrors.min = "El monto mínimo debe ser mayor a 0.";
+      newErrors.min = t("filters.receipts.minAmount");
       hasErrors = true;
     }
 
     if (maxNumber !== undefined && maxNumber <= 0) {
-      newErrors.max = "El monto máximo debe ser mayor a 0.";
+      newErrors.max = t("filters.receipts.maxAmount");
       hasErrors = true;
     }
 
     if (isMaxLessThanMin) {
-      newErrors.max = "El monto máximo no puede ser menor al mínimo.";
+      newErrors.max = t("filters.priceRange.errorNumericMin");
       hasErrors = true;
     }
 
@@ -94,7 +96,7 @@ export default function ReceiptFilters({ filters, reset, setFilters }: Props) {
       <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4">
         <div className="space-y-2">
           <SearchBar
-            placeholder="Buscar cliente por nombre o RUC"
+            placeholder={t("search.searchByNameOrRuc")}
             defaultQuery={filters.searchTerm ?? ""}
             onSearch={(value) => {
               // Eliminar las comas
@@ -110,7 +112,7 @@ export default function ReceiptFilters({ filters, reset, setFilters }: Props) {
             id="receiptNumber"
             type="formattedNumber"
             value={receipt}
-            placeholder="Buscar por Nro. de Recibo"
+            placeholder={t("search.searchByReceiptNumber")}
             onChange={(e) => setReceipt(e.target.value)}
             className={clsx(
               "w-full border px-3 py-2 rounded",
@@ -125,12 +127,12 @@ export default function ReceiptFilters({ filters, reset, setFilters }: Props) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="fromTotal">Monto mínimo</Label>
+          <Label htmlFor="fromTotal">{t("filters.priceRange.minAmount")}</Label>
           <NumericInput
             id="fromTotal"
             type="formattedNumber"
             value={min}
-            placeholder="Ej. 10.000"
+            placeholder={t("placeholder.minAmount")}
             onChange={(e) => setMin(e.target.value)}
             className={clsx(
               "w-full border px-3 py-2 rounded",
@@ -143,12 +145,12 @@ export default function ReceiptFilters({ filters, reset, setFilters }: Props) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="toTotal">Monto máximo</Label>
+          <Label htmlFor="toTotal">{t("filters.priceRange.maxAmount")}</Label>
           <NumericInput
             id="toTotal"
             type="formattedNumber"
             value={max}
-            placeholder="Ej. 50.000"
+            placeholder={t("placeholder.maxAmount")}
             onChange={(e) => setMax(e.target.value)}
             className={clsx(
               "w-full border px-3 py-2 rounded",

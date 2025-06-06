@@ -3,9 +3,12 @@ import authOptions from "@/lib/auth/options";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 
 export default async function Hero() {
   const session = await getServerSession(authOptions);
+  const t = await getTranslations();
   const isAuthenticated = !!session;
 
   return (
@@ -18,18 +21,18 @@ export default async function Hero() {
         {!isAuthenticated && (
           <>
             <p className="text-white mb-6 text-xs sm:text-sm lg:text-base">
-              Regístrate con nosotros y accede a una amplia gama de servicios para tu mascota.
+              {t("home.hero.description")}
             </p>
             <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 w-full">
               <Link href="/register" className="w-full sm:w-auto">
                 <Button className="bg-white text-myPink-primary px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg border border-myPink-primary hover:bg-gray-100 cursor-pointer transition-all duration-300 text-xs sm:text-sm w-full sm:w-[140px] lg:w-[160px] text-center">
-                  Registrarse
+                     {t("home.hero.register")}
                 </Button>
               </Link>
 
               <Link href="/login" className="w-full sm:w-auto">
                 <Button className="bg-myPink-primary text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg hover:bg-myPink-hover cursor-pointer transition-all duration-300 text-xs sm:text-sm w-full sm:w-[140px] lg:w-[160px] text-center">
-                  Iniciar Sesión
+                   {t("home.hero.login")}
                 </Button>
               </Link>
             </div>
