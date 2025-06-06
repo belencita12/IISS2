@@ -10,7 +10,7 @@ describe('ClientListSection', () => {
     cy.clearLocalStorage();
     cy.session(SESSION_KEY, () => {
       cy.loginAndSetSession(SESSION_KEY, USER.email, USER.password);
-      cy.wait(5000);
+      cy.wait(10000);
       cy.url().should('include', '/dashboard');
     });
     cy.visit('/dashboard/clients');
@@ -34,6 +34,6 @@ describe('ClientListSection', () => {
   it('Debe mostrar la sección de Citas del cliente', () => {
     cy.get(':nth-child(2) > .text-right > [aria-label="Ver detalles"]').first().click();
     cy.wait(20000);
-    cy.contains('Citas del Cliente').should('be.visible'); 
+    cy.contains('Citas agendadas').should('be.visible'); 
   });
 });

@@ -45,10 +45,10 @@ describe('Página de Lista de Movimientos', () => {
       cy.visit('/dashboard/movement');
     
       // Buscar por nombre de producto
-      cy.get('input[placeholder="Buscar por nombre de producto"]').type('Correa');
+      cy.get('input[placeholder="Buscar por nombre del producto..."]').type('Correa');
       cy.wait(10000);
       // Hacer clic en el movimiento que contiene ese producto
-      cy.contains('Movimiento Entrante').click();
+      cy.contains('Entrante').click();
     
       // Verificar que la URL ahora sea la de detalle del movimiento
       cy.url().should('include', '/dashboard/movement/');

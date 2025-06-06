@@ -26,7 +26,7 @@ describe('Detalle de la Factura', () => {
         cy.visit('/dashboard/invoices/24', { timeout: 20000 });
         cy.url().should('include', '/dashboard/invoices/24');
         cy.get("div.animate-pulse", { timeout: 30000 }).should("not.exist");
-        cy.contains("Factura Nº", { timeout: 20000 });
+        cy.contains("Factura N°", { timeout: 20000 });
 
     });
 });

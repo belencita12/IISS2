@@ -39,10 +39,10 @@ describe('Página de Lista de Compras', () => {
 
     it('Debe abrir la página de registrar compras y mostrar que los datos deben ser ingresados, volver con cancelar', () => {
         cy.visit('/dashboard/purchases');
-        cy.get('button').contains('Registrar Compra').click();
+        cy.get('button').contains('Registrar').click();
         cy.wait(5000);
         cy.url().should('include', '/dashboard/purchases/register');
-        cy.get('button').contains('Registrar Compra').click();
+        cy.get('button').contains('Registrar').click();
         cy.wait(5000);
         cy.get('button').contains('Cancelar').click();
         cy.wait(5000);

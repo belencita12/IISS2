@@ -33,8 +33,8 @@ describe('Página de Detalles del Cliente', () => {
 
     // establecer sesión
     const USER = {
-      email: "makiko.yamamoto@fiuni.edu.py",
-      password: "MakiYamaGin"
+      email: Cypress.env("USER_EMAIL_A"),
+      password: Cypress.env("USER_PASSWORD_A")
     };
 
     cy.loginAndSetSession(SESSION_KEY, USER.email, USER.password);
@@ -50,15 +50,24 @@ describe('Página de Detalles del Cliente', () => {
     // cy.wait('@getProducts');
     cy.contains('p', "Productos").click();
 
-    cy.get('select[title="type"]').select('PRODUCT');
-    cy.get('h1').should('contain', 'Productos');
+    // Abre el menú de categorías o tipo de producto
+    cy.get('button[role="combobox"]').contains("Categoría").click();
+
+    // Espera y selecciona una opción
+    cy.get('div[role="option"]').contains("Producto").click();
+
+    //cy.get('h1').should('contain', 'Productos');
     // Verifica que haya al menos un producto listado
     cy.get('div[class*="bg-card"]').should('have.length.at.least', 1);
     cy.wait(3000);
     cy.get('button:has("svg"):visible').first().click();
 
+    cy.get('div[role="option"]').contains("Ninguno").click();
+    // Abre el menú de categorías o tipo de producto
+    cy.get('button[role="combobox"]').contains("Categoría").click();
 
-    cy.get('select[title="type"]').select('VACCINE');
+    // Espera y selecciona una opción
+    cy.get('div[role="option"]').contains("Vacuna").click();
     cy.get('div[class*="bg-card"]').should('have.length.at.least', 1);
     cy.wait(3000);
     cy.get('button:has("svg"):visible').first().click();

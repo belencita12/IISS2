@@ -1,5 +1,5 @@
 describe("Detalle de cita (admin)", () => {
-  const SESSION_KEY = "clientSession";
+  const SESSION_KEY = "adminSession";
   const USER = {
     email: Cypress.env("USER_EMAIL_A"),
     password: Cypress.env("USER_PASSWORD_A"),
