@@ -23,8 +23,8 @@ describe('Reporte de Facturas - Admin', () => {
     });
 
     it('debe generar un PDF correctamente al elegir un rango de fechas válido', () => {
-        cy.get('#startDate').type('2024-05-01');
-        cy.get('#endDate').type('2024-05-20');
+        cy.get('#startDate').type('2025-05-01');
+        cy.get('#endDate').type('2025-05-30');
         cy.wait(6000);
         cy.get('button').contains('Exportar').click();
     });
