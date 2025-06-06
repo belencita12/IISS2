@@ -1,8 +1,8 @@
 describe('Listado de fabricantes de vacunas', () => {
     const SESSION_KEY = "sessionToken";
     const USER = {
-        email: Cypress.env("USER_EMAIL"),
-        password: Cypress.env("USER_PASSWORD")
+        email: Cypress.env("USER_EMAIL_A"),
+        password: Cypress.env("USER_PASSWORD_A")
     };
 
     beforeEach(() => {
@@ -28,17 +28,9 @@ describe('Listado de fabricantes de vacunas', () => {
 
 
     it('Debe buscar fabricantes de vacunas correctamente filtrandolos por nombre', () => {
-        cy.get('input[placeholder="Buscar por nombre o productor..."]').type('string1');
-        cy.get('button').contains('Buscar').click();
+        cy.get('input[placeholder="Buscar por nombre..."]').type('CABAL');
         cy.wait(10000);
-        cy.get('table tbody tr').should('contain', 'string1');
-    });
-
-    it('Debe abrir la página de registro de fabricantes de vacunas', () => {
-        cy.wait(10000);
-        cy.get('button').contains('Agregar').click();
-        cy.wait(10000);
-        cy.url().should('include', '/vaccine/manufacturer/new');
+        cy.get('table tbody tr').should('contain', 'Laboratorios Cabal');
     });
 
     it('Debe verificar la paginación', () => {

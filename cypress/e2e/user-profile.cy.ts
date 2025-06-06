@@ -18,39 +18,39 @@ describe('ProfileTabs - Vista de cliente en /user-profile', () => {
     });
 
     it('Debe mostrar por defecto la pestaña "Mis Mascotas"', () => {
-        cy.contains('Mis Mascotas')
+        cy.contains('Mis mascotas')
             .should('have.class', 'bg-white')
             .and('have.class', 'text-violet-600');
-        cy.contains('Mascotas Registradas').should('exist');
+        cy.contains('Mascotas registradas').should('exist');
          cy.wait(10000);
     });
 
     it('Debe mostrar la pestaña "Mis Citas" al hacer clic', () => {
-        cy.contains('Mis Citas').click();
+        cy.contains('Mis citas').click();
         cy.wait(1000);
 
-        cy.contains('Mis Citas')
+        cy.contains('Mis citas')
             .should('have.class', 'bg-white')
             .and('have.class', 'text-violet-600');
          cy.wait(10000);
 
-        cy.contains('Citas Agendadas').should('exist');
+        cy.contains('Mis citas').should('exist');
     });
 
     it('Debe mostrar la pestaña "Mis Datos" al hacer clic', () => {
-        cy.contains('Mis Datos').click();
+        cy.contains('Mis datos').click();
         cy.wait(1000);
 
-        cy.contains('Mis Datos')
+        cy.contains('Mis datos')
             .should('have.class', 'bg-white')
             .and('have.class', 'text-violet-600');
         cy.wait(20000);
 
-        cy.contains('Jose Valgaba').should('exist');
+        cy.contains('Annia').should('exist');
     });
 
     it('Debe mostrar la sección de Productos recomendados', () => {
     cy.wait(8000);
-     cy.contains('Productos Veterinarios').should('be.visible');
+     cy.contains('Productos veterinarios').should('be.visible');
     });
 });

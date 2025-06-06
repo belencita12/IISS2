@@ -20,7 +20,7 @@ describe("Registro de Producto", () => {
     it("Debe registrar un producto exitosamente con imagen válida", () => {
         const random = Math.floor(Math.random() * 100000);
 
-        cy.get('input[placeholder="Ingrese el nombre del producto"]').type(
+        cy.get('input[placeholder="Ingrese el nombre"]').type(
             `Producto ${random}`
         );
         cy.get("textarea").type("Descripción de prueba");
@@ -48,16 +48,17 @@ describe("Registro de Producto", () => {
         cy.get('input[type="file"]').selectFile("cypress/fixtures/images/Producto-Valido.png", {
             force: true,
         });
-
+        cy.get("body").click(0, 0);
+        cy.wait(2000)
         // Enviar formulario
-        cy.contains("button", "Guardar").click();
+        cy.contains("button", "Registrar").click();
 
         // Confirmación de éxito
-        cy.contains("Producto registrado con éxito", { timeout: 20000 }).should("be.visible");
+        cy.contains("Producto agregado correctamente", { timeout: 20000 }).should("be.visible");
     });
 
     it("Debe mostrar errores al intentar enviar vacío", () => {
-        cy.contains("button", "Guardar").click();
+        cy.contains("button", "Registrar").click();
 
         cy.contains("El nombre es obligatorio").should("be.visible");
         cy.contains("Complete con valores numéricos adecuados").should("be.visible");
@@ -68,14 +69,14 @@ describe("Registro de Producto", () => {
         cy.get('input[type="file"]').selectFile("cypress/fixtures/images/ProductoG.jpg", {
             force: true,
         });
-        cy.contains("button", "Guardar").click();
+        cy.contains("button", "Registrar").click();
         cy.contains("La imagen no debe superar 1MB").should("be.visible");
     });
 
     it("Debe registrar un producto sin descripción", () => {
         const random = Math.floor(Math.random() * 100000);
 
-        cy.get('input[placeholder="Ingrese el nombre del producto"]').type(
+        cy.get('input[placeholder="Ingrese el nombre"]').type(
             `Producto ${random}`
         );
 
@@ -98,8 +99,11 @@ describe("Registro de Producto", () => {
                 cy.get("[role=combobox]").click();
             });
         cy.get("[role=option]").eq(1).click();
-        cy.contains("button", "Guardar").click();
-        cy.contains("Producto registrado con éxito", { timeout: 10000 }).should(
+
+        cy.get("body").click(0, 0);
+        cy.wait(2000)
+        cy.contains("button", "Registrar").click();
+        cy.contains("Producto agregado correctamente", { timeout: 10000 }).should(
             "be.visible"
         );
     });
@@ -107,7 +111,7 @@ describe("Registro de Producto", () => {
     it("Debe mostrar error si no se selecciona un proveedor", () => {
         const random = Math.floor(Math.random() * 100000);
 
-        cy.get('input[placeholder="Ingrese el nombre del producto"]').type(
+        cy.get('input[placeholder="Ingrese el nombre"]').type(
             `Producto ${random}`
         );
         cy.get("textarea").type("Producto sin proveedor");
@@ -123,7 +127,9 @@ describe("Registro de Producto", () => {
             });
         cy.get("[role=option]").eq(1).click();
 
-        cy.contains("button", "Guardar").click();
+        cy.get("body").click(0, 0);
+        cy.wait(2000)
+        cy.contains("button", "Registrar").click();
 
         // Verifica mensaje de error del proveedor
         cy.contains("Selecciona un proveedor").should("be.visible");

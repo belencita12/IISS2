@@ -6,9 +6,8 @@ describe('Registro de Vacunación en Configuración', () => {
     };
 
     // Datos de prueba
-    const CLIENT_SEARCH = "Jose";
-    const PET_SEARCH = "Brucito";
-    const VACCINE_SEARCH = "Nobivac";
+    const PET_SEARCH = "RUF";
+    const VACCINE_SEARCH = "Parvo";
     const DOSE = "0.5";
     const INVALID_DOSE = "0";
     const APPLICATION_DATE = "2023-04-18T10:00";
@@ -26,7 +25,27 @@ describe('Registro de Vacunación en Configuración', () => {
         cy.visit("/dashboard/settings/vaccine-registry/new");
     });
 
-    it('Debe completar el registro de vacunación correctamente', () => {
+   
+    it('Debe mostrar validación cuando faltan campos requeridos', () => {
+
+
+        cy.get('input[placeholder*="Buscar mascota..."]').type(PET_SEARCH);
+
+        cy.get('div.absolute.z-50.w-full.bg-white.border.rounded.shadow.max-h-48.overflow-y-auto')
+            .should('be.visible')
+            .find('div.p-2.hover\\:bg-gray-100.cursor-pointer')
+            .contains(PET_SEARCH)
+            .click();
+
+        // Intentar enviar sin completar ningún campo
+        cy.contains('button', 'Registrar').click();
+        // Verificar mensajes de error
+        cy.contains('Debe seleccionar una vacuna').should('be.visible');
+        cy.contains('La fecha esperada es obligatoria').should('be.visible');
+    });
+
+
+     it('Debe completar el registro de vacunación correctamente', () => {
         // Interceptar las APIs
         cy.intercept("GET", "**/client*").as("searchClients");
         cy.intercept("GET", "**/pet*").as("searchPets");
@@ -36,19 +55,7 @@ describe('Registro de Vacunación en Configuración', () => {
         // Verificar que estamos en la página correcta
         cy.contains('h2', 'Nuevo Registro de Vacunación').should('be.visible');
 
-        cy.get('input[placeholder*="Buscar por nombre o cédula"]').type(CLIENT_SEARCH);
-        cy.wait("@searchClients").then((interception) => {
-            expect(interception.response?.statusCode).to.eq(200);
-            expect(interception.response?.body.data).to.have.length.gt(0);
-        });
-        // Esperar a que la lista de opciones sea visible y seleccionar la primera opción
-        cy.get('div.absolute.z-50.w-full.bg-white.border.rounded.shadow.max-h-48.overflow-y-auto')
-            .should('be.visible')
-            .find('div.p-2.hover\\:bg-gray-100.cursor-pointer')
-            .contains(CLIENT_SEARCH)
-            .click();
-
-        cy.get('input[placeholder*="Buscar mascota"]').type(PET_SEARCH);
+        cy.get('input[placeholder*="Buscar mascota..."]').type(PET_SEARCH);
         cy.wait("@searchPets").then((interception) => {
             expect(interception.response?.statusCode).to.eq(200);
             expect(interception.response?.body.data).to.have.length.gt(0);
@@ -82,27 +89,7 @@ describe('Registro de Vacunación en Configuración', () => {
 
     });
 
-    it('Debe mostrar validación cuando faltan campos requeridos', () => {
-        // Interceptar la API de búsqueda de clientes
-        cy.intercept("GET", "**/client*").as("searchClients");
 
-        cy.get('input[placeholder*="Buscar por nombre o cédula"]').type(CLIENT_SEARCH);
-        cy.wait("@searchClients").then((interception) => {
-            expect(interception.response?.statusCode).to.eq(200);
-            expect(interception.response?.body.data).to.have.length.gt(0);
-        });
-        cy.get('div.absolute.z-50.w-full.bg-white.border.rounded.shadow.max-h-48.overflow-y-auto')
-            .should('be.visible')
-            .find('div.p-2.hover\\:bg-gray-100.cursor-pointer')
-            .contains(CLIENT_SEARCH)
-            .click();
-
-        // Intentar enviar sin completar ningún campo
-        cy.contains('button', 'Registrar').click();
-        // Verificar mensajes de error
-        cy.contains('La mascota es obligatoria').should('be.visible');
-        cy.contains('La mascota es obligatoria').should('be.visible');
-    });
     it('Debe mostrar validación cuando la dosis es 0', () => {
         // Interceptar las APIs
         cy.intercept("GET", "**/client*").as("searchClients");
@@ -110,7 +97,7 @@ describe('Registro de Vacunación en Configuración', () => {
         cy.intercept("GET", "**/vaccine*").as("searchVaccines");
 
         // Seleccionar cliente
-        cy.get('input[placeholder*="Buscar por nombre o cédula"]').type(CLIENT_SEARCH);
+       /* cy.get('input[placeholder*="Buscar por nombre o cédula"]').type(CLIENT_SEARCH);
         cy.wait("@searchClients").then((interception) => {
             expect(interception.response?.statusCode).to.eq(200);
             expect(interception.response?.body.data).to.have.length.gt(0);
@@ -119,7 +106,7 @@ describe('Registro de Vacunación en Configuración', () => {
             .should('be.visible')
             .find('div.p-2.hover\\:bg-gray-100.cursor-pointer')
             .contains(CLIENT_SEARCH)
-            .click();
+            .click();*/
 
         // Seleccionar mascota
         cy.get('input[placeholder*="Buscar mascota"]').type(PET_SEARCH);
@@ -166,7 +153,7 @@ describe('Registro de Vacunación en Configuración', () => {
         cy.intercept("GET", "**/vaccine*").as("searchVaccines");
 
         // Seleccionar cliente
-        cy.get('input[placeholder*="Buscar por nombre o cédula"]').type(CLIENT_SEARCH);
+       /* cy.get('input[placeholder*="Buscar por nombre o cédula"]').type(CLIENT_SEARCH);
         cy.wait("@searchClients").then((interception) => {
             expect(interception.response?.statusCode).to.eq(200);
             expect(interception.response?.body.data).to.have.length.gt(0);
@@ -175,10 +162,10 @@ describe('Registro de Vacunación en Configuración', () => {
             .should('be.visible')
             .find('div.p-2.hover\\:bg-gray-100.cursor-pointer')
             .contains(CLIENT_SEARCH)
-            .click();
+            .click();*/
 
         // Seleccionar mascota
-        cy.get('input[placeholder*="Buscar mascota"]').type(PET_SEARCH);
+        cy.get('input[placeholder*="Buscar mascota..."]').type(PET_SEARCH);
         cy.wait("@searchPets").then((interception) => {
             expect(interception.response?.statusCode).to.eq(200);
             expect(interception.response?.body.data).to.have.length.gt(0);
@@ -214,4 +201,8 @@ describe('Registro de Vacunación en Configuración', () => {
         // Asegurarse de que no se envíe el formulario
         cy.url().should("include", "/dashboard/settings/vaccine-registry/new");
     });
+
+
+
+   
 });
