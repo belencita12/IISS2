@@ -168,7 +168,7 @@ export default function ProductListPage({ token }: ProductListProps) {
               className="text-sm h-8 px-2 text-gray-600 mr-[10px]"
               disabled={isFiltering}
               >
-              Limpiar filtros
+              {t("filters.clearFilters")}
               </Button>
           </div>
       )}
