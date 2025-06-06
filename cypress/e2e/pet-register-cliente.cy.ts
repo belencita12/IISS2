@@ -14,7 +14,7 @@ describe("Detalle de cita (cliente)", () => {
 
     it("Debe mostrar errores si se intenta registrar sin completar datos", () => {
 
-        cy.contains("button", "Registrar Mascota").click();
+        cy.contains("button", "Registrar").click();
 
         cy.contains("El nombre es obligatorio").should("exist");
         cy.contains("La fecha de nacimiento es obligatoria").should("exist");
@@ -58,7 +58,7 @@ describe("Detalle de cita (cliente)", () => {
         cy.get("#genderMale").click();
 
         // Enviar
-        cy.contains("Registrar Mascota").click();
+        cy.contains("Registrar").click();
 
         // Redirección
         cy.url().should("include", "/user-profile");

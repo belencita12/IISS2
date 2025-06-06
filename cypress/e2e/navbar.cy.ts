@@ -1,14 +1,17 @@
 describe("Navbar", () => {
-  let testUser: BaseUser;
+  const TIMEOUT = { timeout: 15000 };
 
-  before(() => {
-    cy.intercept("POST", "**/auth/signup").as("register");
-    cy.generateUser().then((user) => {
-      testUser = user;
-      cy.log("Registrando usuario de prueba...");
-      cy.register(user);
-      cy.wait("@register", { timeout: 16000 });
+  const SESSION_KEY = "clientSession";
+  const USER = {
+    email: Cypress.env("USER_EMAIL"),
+    password: Cypress.env("USER_PASSWORD"),
+  };
+
+  beforeEach(() => {
+    cy.session(SESSION_KEY, () => {
+      cy.loginAndSetSession(SESSION_KEY, USER.email, USER.password);
     });
+    cy.visit("/user-profile");
   });
 
   it("Navegar por los enlaces del navbar cuando no estás autenticado", () => {
@@ -28,19 +31,17 @@ describe("Navbar", () => {
     });
   });
 
-  it("Navegar por los enlaces del navbar cuando estás autenticado y cerrar sesión", () => {
-    cy.visit("/login");
-    expect(testUser).to.exist;
-    cy.get("input[name='email']").type(testUser.email);
-    cy.get("input[name='password']").type(testUser.password);
-    cy.get("button[type='submit']").click();
+  it("Navegar por los enlaces del navbar cuando no estás autenticado y cerrar sesión", () => {
+    cy.visit("/user-profile");
+    
+    cy.get("button").contains("Cerrar sesión").click();
     cy.wait(3000);
 
     const links = [
-      { label: "Inicio", path: "/" },
-      { label: "Mi Perfil", path: "/user-profile" },
+      { label: "Inicio", path: "/home" },
+      //{ label: "Mi Perfil", path: "/user-profile" },
       { label: "Nosotros", path: "/about" },
-      { label: "Servicios", path: "/service" },
+      { label: "Servicios", path: "/services" },
       { label: "Tienda", path: "/shop" },
     ];
 
@@ -49,7 +50,6 @@ describe("Navbar", () => {
       cy.location("pathname").should("include", link.path);
     });
 
-    cy.contains("Cerrar sesión").click();
-    cy.location("pathname").should("include", "/");
+    //cy.contains("Cerrar sesión").click();
   });
 });

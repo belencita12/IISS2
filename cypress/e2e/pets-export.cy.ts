@@ -1,8 +1,8 @@
 describe("Reporte de mascotas - Admin", () => {
   const SESSION_KEY = "adminSession";
   const USER = {
-    email: Cypress.env("USER_EMAIL_ADMIN"),
-    password: Cypress.env("USER_PASSWORD_ADMIN"),
+    email: Cypress.env("USER_EMAIL_A"),
+    password: Cypress.env("USER_PASSWORD_A"),
   };
 
   beforeEach(() => {

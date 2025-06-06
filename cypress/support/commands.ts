@@ -86,7 +86,7 @@ Cypress.Commands.add(
     cy.get("input[name='password']").type(password, {
       log: false,
     });
-    cy.contains("Iniciar Sesión").click();
+    cy.get("form").submit();
 
     cy.wait("@login").then((interception) => {
       if (interception.response?.statusCode === 200) {
