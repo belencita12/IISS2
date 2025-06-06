@@ -1684,15 +1684,15 @@
     "sectionDescription": "Puede contactarnos a través de los siguientes medios:",
     "address": {
       "title": "Dirección",
-      "value": "Av. Principal #123, Ciudad"
+      "value": "Calle Rio Paraguay, Ka'aguy Rory, Encarnación"
     },
     "phone": {
       "title": "Teléfono",
-      "value": "(123) 456-7890"
+      "value": "+595975769892"
     },
     "email": {
-      "title": "Email",
-      "value": "info@nikopets.com"
+      "title": "Correo electrónico",
+      "value": "nicopetsveterinaria@gmail.com"
     },
     "hours": {
       "title": "Horario",
@@ -1703,6 +1703,11 @@
       "instagram": "Instagram",
       "twitter": "Twitter"
   }
+},
+"footer":{
+  "title":"Sistema de Veterinaria",
+  "reserved": "© 2025 Todos los derechos reservados",
+  "terms": "Términos & Condiciones"
 },
   "terms": {
     "pageTitle": "Términos y Condiciones",
@@ -2064,6 +2069,22 @@
     "totalRenueveGs": "Gs. {totalRenueve}",
     "invoiceCount": "Facturas emitidas",
     "appointmentCount": "Citas agendadas"
+  }
+},
+"home": {
+  "account": "@NicoPetsPy",
+  "serviceBanner":{
+    "our": "Nuestros",
+    "services": "SERVICIOS"
+  },
+  "productBanner":{
+    "our": "Nuestros",
+    "products": "PRODUCTOS"
+  },
+  "hero": {
+    "description":"Regístrate con nosotros y accede a una amplia gama de servicios para tu mascota.",
+    "register": "Registrarse",
+    "login": "Iniciar sesión"
   }
 }
 }
