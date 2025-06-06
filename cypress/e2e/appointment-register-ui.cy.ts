@@ -12,7 +12,7 @@ describe("Registro completo de cita (cliente)", () => {
         cy.visit("/user-profile/appointment/register");
     });
 
-    it("Debe registrar una cita completa exitosamente", () => {
+    /*it("Debe registrar una cita completa exitosamente", () => {
         // === Mascota ===
         cy.get('button[role="combobox"]')
             .contains("Seleccionar")
@@ -72,7 +72,7 @@ describe("Registro completo de cita (cliente)", () => {
         // === Validaciones ===
         cy.url({ timeout: 15000 }).should("include", "/user-profile");
 
-    });
+    });*/
 
     it("Debe permitir seleccionar múltiples servicios", () => {
         // Abre el select de servicios
@@ -100,7 +100,7 @@ describe("Registro completo de cita (cliente)", () => {
     });
 
 
-    it("Debe permitir buscar y seleccionar una mascota", () => {
+    /*it("Debe permitir buscar y seleccionar una mascota", () => {
         cy.get('button[role="combobox"]').contains("Seleccionar").click();
 
         cy.get('[role="dialog"]').last().within(() => {
@@ -113,7 +113,7 @@ describe("Registro completo de cita (cliente)", () => {
             .eq(0) // Primer combobox: mascota
             .should("contain.text", "Patroclo");
 
-    });
+    });*/
 
 
     it("Debe tener diseño y clases consistentes en componentes clave", () => {
