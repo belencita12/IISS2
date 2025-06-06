@@ -109,8 +109,13 @@ export function formatTimeUTC(dateString: string): string {
   const date = new Date(dateString);
   if (isNaN(date.getTime())) return "--:--";
 
-  const hours = date.getUTCHours().toString().padStart(2, "0");
-  const minutes = date.getUTCMinutes().toString().padStart(2, "0");
+  // Ajustar UTC -3 (hora estándar de Paraguay)
+  const offsetMillis = -4 * 60 * 60 * 1000;
+  const localDate = new Date(date.getTime() + offsetMillis);
+
+  const hours = localDate.getUTCHours().toString().padStart(2, "0");
+  const minutes = localDate.getUTCMinutes().toString().padStart(2, "0");
+
   return `${hours}:${minutes}`;
 }
 
