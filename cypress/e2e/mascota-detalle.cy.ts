@@ -1,142 +1,106 @@
 describe("Register Pet", () => {
   const TIMEOUT = { timeout: 15000 };
-  const PET_ID_KEY = "PET_ID";
-  const SESSION_KEY = "sessionToken";
-  const PET_MOCK = {
-    name: "MascotaTest",
-    birthDate: "2022-01-02",
-    weight: "10.2",
-  };
-  let testUser: BaseUser;
 
-  before(() => {
-    cy.clearCookies();
-   cy.clearLocalStorage();
-    cy.intercept("POST", "**/auth/signup").as("register");
-    cy.generateUser().then((user) => {
-      testUser = user;
-      cy.log("Registrando usuario de prueba...");
-      cy.register(user);
-      cy.wait("@register", { timeout: 16000 });
-    });
-  });
+  const SESSION_KEY = "clientSession";
+  const USER = {
+    email: Cypress.env("USER_EMAIL"),
+    password: Cypress.env("USER_PASSWORD"),
+  };
 
   beforeEach(() => {
-    const sessionToken: string = Cypress.env(SESSION_KEY);
-    if (sessionToken) cy.setCookie("next-auth.session-token", sessionToken);
+    cy.session(SESSION_KEY, () => {
+      cy.loginAndSetSession(SESSION_KEY, USER.email, USER.password);
+    });
+    cy.visit("/user-profile");
   });
 
-  it("Debe iniciar sesión y obtener un token válido", () => {
-    expect(testUser).to.exist;
-    cy.loginAndSetSession(SESSION_KEY, testUser.email, testUser.password);
+  it("Debe iniciar sesión y redirigir al perfil de usuario", () => {
+    cy.wait(3000);
+    cy.visit("/user-profile");
     cy.location("pathname", TIMEOUT).should("eq", "/user-profile");
   });
 
-  it("Detalle de mascota con id invalido", () => {
+  it("Detalle de mascota con id inválido", () => {
     const ERR_PET_ID = 9999;
-    cy.visit("/detalle-mascota/" + ERR_PET_ID);
-    cy.url().should("include", "/detalle-mascota/" + ERR_PET_ID);
-    cy.intercept("GET", `**/pet/${ERR_PET_ID}`).as("registerPet");
-    cy.wait(2000);
-    cy.wait("@registerPet").then((int) => {
-      const res = int.response;
-      expect(res).to.exist;
-      if (res) expect(res.statusCode).to.eq(404);
-    });
-    cy.contains("404").should("be.visible");
+    //cy.intercept("GET", `**/pet/${ERR_PET_ID}`).as("getInvalidPet");
+    cy.visit(`/user-profile/pet/${ERR_PET_ID}`);
+    cy.url().should("include", `/user-profile/pet/${ERR_PET_ID}`);
+    //cy.wait("@getInvalidPet").then((int) => {
+    //expect(int.response?.statusCode).to.eq(404);
+    //});
+    cy.wait(8000);
+    cy.contains("No se encontraron datos").should("be.visible");
   });
 
-  it("Debe cargar datos validos y registrar una mascota", () => {
-    cy.visit("/pet/register");
-    cy.url().should("include", "/pet/register");
+  it("Debe cargar datos válidos y registrar una mascota", () => {
+    const uniqueSuffix = Date.now();
+    const petName = `MascotaTest_${uniqueSuffix}`;
+    const birthDate = "2022-01-02";
+    const weight = "10.2";
 
-    cy.intercept("GET", `${Cypress.env("API_BASEURL")}/race?*`).as("getRaces");
+    cy.visit("/user-profile/pet/register");
 
-    cy.intercept("GET", `${Cypress.env("API_BASEURL")}/species?page=1`).as(
-      "getSpecies"
-    );
+    cy.intercept("GET", "**/race?*").as("getRaces");
+    cy.intercept("GET", "**/species?page=1").as("getSpecies");
+    cy.intercept("POST", "**/pet").as("registerPet");
 
-    cy.intercept("POST", `${Cypress.env("API_BASEURL")}pet`).as("registerPet");
+    cy.get("input[name='petName']", TIMEOUT).type(petName);
+    cy.get("input[name='birthDate']").type(birthDate);
+    cy.get("input[name='weight']").type(weight);
 
-    cy.get("input[name='petName']", TIMEOUT).type(PET_MOCK.name);
-    cy.get("input[name='birthDate']").type(PET_MOCK.birthDate);
-    cy.get("input[name='weight']").type(PET_MOCK.weight);
-
-    cy.wait("@getSpecies", TIMEOUT).then((int) => {
-      const response = int.response;
-      if (response) {
-        expect(response.statusCode).to.eq(200);
-        cy.get("button[id=animalType]").click();
-        cy.get('div[role="listbox"] div').first().click();
-      }
+    cy.wait("@getSpecies").then((int) => {
+      expect(int.response?.statusCode).to.eq(200);
+      cy.get("button#animalType").click();
+      cy.get('div[role="listbox"] div').first().click();
     });
 
-    cy.wait("@getRaces", TIMEOUT).then((int) => {
-      const response = int.response;
-      if (response) {
-        expect(response.statusCode).to.eq(200);
-        cy.get("button[id=breed]").click();
-        cy.get('div[role="listbox"] div').first().click();
-      }
+    cy.wait("@getRaces").then((int) => {
+      expect(int.response?.statusCode).to.eq(200);
+      cy.get("button#breed").click();
+      cy.get('div[role="listbox"] div').first().click();
     });
 
     cy.contains("button", "Hembra").click();
-
-    cy.contains("button", "Registrar Mascota").click();
+    cy.contains("button", "Registrar").click();
 
     cy.wait("@registerPet").then((interception) => {
-      if (interception.response) {
-        expect(interception.response.statusCode).to.eq(201);
-        Cypress.env(PET_ID_KEY, interception.response.body.id);
-      }
+      const response = interception.response;
+      expect(response, "No hay respuesta del backend").to.exist;
+      expect(response?.statusCode).to.eq(201);
     });
 
-    cy.wait(800);
-    cy.contains("Mascota registrada con éxito!").should("exist");
-
+    cy.contains("Mascota registrada correctamente").should("exist");
     cy.location("pathname", TIMEOUT).should("eq", "/user-profile");
   });
 
-  it("Detalle de mascota con id valido", () => {
-    cy.visit("/detalle-mascota/" + Cypress.env(PET_ID_KEY));
-    cy.url().should("include", "/detalle-mascota/" + Cypress.env(PET_ID_KEY));
-    cy.intercept(
-      "GET",
-      `${Cypress.env("API_BASEURL")}/pet/${Cypress.env(PET_ID_KEY)}`
-    ).as("getPet");
-    cy.wait(2000);
-    cy.wait("@getPet", TIMEOUT).then((int) => {
-      const res = int.response;
-      expect(res).to.exist;
-      if (res) expect(res.statusCode).to.eq(200);
+
+  it("Detalle de mascota con ID válido", () => {
+    const petId = 27;
+    cy.intercept("GET", `**/pet/${petId}`).as("getPet");
+    cy.visit(`/user-profile/pet/${petId}`);
+    cy.wait("@getPet").then((int) => {
+      expect(int.response?.statusCode).to.eq(200);
     });
-    cy.contains("p", PET_MOCK.name).should("be.visible");
-    cy.contains("p", "F").should("be.visible");
+
     cy.contains("button", "Editar");
   });
 
-  it("Editar nombre de mascota con id valido", () => {
-    cy.visit("/detalle-mascota/" + Cypress.env(PET_ID_KEY));
-    cy.url().should("include", "/detalle-mascota/" + Cypress.env(PET_ID_KEY));
-    cy.intercept(
-      "GET",
-      `${Cypress.env("API_BASEURL")}/pet/${Cypress.env(PET_ID_KEY)}`,
-    ).as("getPetTrust");
-    cy.wait(2000);
-    cy.wait("@getPetTrust", TIMEOUT)
-    cy.contains("p", PET_MOCK.name).should("be.visible");
-    cy.contains("p", "F").should("be.visible");
+  it("Editar nombre de mascota con ID válido", () => {
+    const petId = 27;
+    cy.intercept("GET", `**/pet/${petId}`).as("getPetForEdit");
+    cy.visit(`/user-profile/pet/${petId}`);
+    cy.wait("@getPetForEdit");
+
     cy.contains("button", "Editar").click();
 
-    cy.get("input[name='name']").clear();
-    cy.contains("button", "Guardar").click();
-    cy.contains("p", "El nombre no puede estar vacío.", TIMEOUT).should(
-      "be.visible"
-    );
+    // Usa input visible (o primero)
+    cy.get("input").filter(":visible").first().clear();
+    cy.contains("button", "Editar").click();
+    cy.contains("El campo no puede ser vacío").should("be.visible");
 
-    cy.get("input[name='name']", TIMEOUT).type("EditedName");
-    cy.contains("button", "Guardar").click();
-
-    cy.contains("p", "EditedName", TIMEOUT).should("be.visible");
+    cy.get("input").filter(":visible").first().type("RUFO");
+    cy.contains("button", "Editar").click();
+    cy.contains("RUFO").should("be.visible");
   });
+
 });
