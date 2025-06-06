@@ -12,7 +12,7 @@ describe("Catalogo y detalle de productos de catalogo", () => {
 
         cy.visit("/user-profile");
         cy.contains("Ver más", { timeout: 10000 }).click();
-        cy.url({ timeout: 10000 }).should("include", "/user-profile/product");
+        cy.url({ timeout: 10000 }).should("include", "/shop");
         cy.get("div.animate-pulse", { timeout: 15000 }).should("not.exist");
     });
 
@@ -26,7 +26,7 @@ describe("Catalogo y detalle de productos de catalogo", () => {
         cy.get("div.animate-pulse", { timeout: 25000 }).should("not.exist");
         cy.contains("perro", { matchCase: false }).should("be.visible");
         cy.contains("Ver detalles").first().should("be.visible").click();
-        cy.url().should("include", "/user-profile/product/");
+        cy.url().should("include", "/shop/product/");
         cy.get("h1", { timeout: 20000 })
             .should("be.visible")
             .and("contain.text", "perro", { matchCase: false });
