@@ -9,7 +9,10 @@ export interface Image {
 export interface PetData {
   id?: number;
   name: string;
-  userId: number;
+  owner: {
+    id: number;
+    name: string;
+  };
   species: Species;
   race: Race;
   weight: number;
@@ -22,12 +25,15 @@ export interface Race {
   id: number;
   name: string;
   speciesId: number;
+  species: {
+    name: string;
+  };
 }
 
 export interface Species {
-    id: number;
-    name: string;
-    deletedAt?: string | null;
+  id: number;
+  name: string;
+  deletedAt?: string | null;
 }
 
 export interface SpeciesQueryParams extends BaseQueryParams {
@@ -40,3 +46,15 @@ export interface RacesQueryParams extends BaseQueryParams {
 }
 
 export type PetDataResponse = PaginationResponse<PetData>;
+
+export interface ListPetData {
+  id: number;
+  name: string;
+  owner: {
+    id: number;
+    name: string;
+  };
+  species: Species;
+  race: Race;
+  profileImg?: Image | null;
+}

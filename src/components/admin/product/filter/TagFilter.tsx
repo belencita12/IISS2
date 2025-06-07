@@ -1,5 +1,5 @@
 "use client";
-import { Check, ChevronsUpDown, X } from "lucide-react";
+import { Check, ChevronDown, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,7 +28,7 @@ interface TagFilterProps {
 }
 
 export function TagFilter({
-  title = "Tags",
+  title = "Etiqueta",
   selectedTags,
   onChange,
   className,
@@ -67,7 +67,7 @@ export function TagFilter({
   };
 
   return (
-    <div className={cn("w-full max-w-[180px] relative", className)}>
+    <div className={cn("w-full relative", className)}>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -80,10 +80,10 @@ export function TagFilter({
             )}
           >
             <span className="truncate">{title}</span>
-            <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+            <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[180px] p-0">
+        <PopoverContent className="w-full relative">
           <Command>
             {/* SearchBar con la X oculta */}
             <div className="flex items-center border-b px-2 pt-2">
@@ -93,7 +93,6 @@ export function TagFilter({
                   placeholder="Buscar"
                   debounceDelay={400}
                   defaultQuery={searchQuery}
-                  
                 />
               </div>
             </div>

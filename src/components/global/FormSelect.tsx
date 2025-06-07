@@ -19,6 +19,7 @@ type FormSelectProps = {
   id?: string;
   name: string;
   register: UseFormRegisterReturn;
+  defaultValue?: string;
 };
 
 export type SelectOptions = {
@@ -34,12 +35,13 @@ const FormSelect = ({
   id,
   disabled,
   placeholder,
+  defaultValue,
 }: FormSelectProps) => {
   return (
     <div className="flex flex-col gap-1">
       <div className="flex flex-col gap-2">
         {label && <Label>{label}</Label>}
-        <Select disabled={disabled} onValueChange={onChange}>
+        <Select disabled={disabled} onValueChange={onChange} defaultValue={defaultValue}>
           <SelectTrigger id={id}>
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>

@@ -9,6 +9,7 @@ import { useProductTag } from "@/hooks/product/useProductTag";
 import GenericPagination from "@/components/global/GenericPagination";
 import ProductListSkeleton from "./skeleton/ProductListSkeleton";
 import { Product } from "@/lib/products/IProducts";
+import { useTranslations } from "next-intl";
 
 interface ProductListProps {
   token: string;
@@ -17,10 +18,11 @@ interface ProductListProps {
 export default function ProductListPage({ token }: ProductListProps) {
   const router = useRouter();
 
+  const t = useTranslations();
+
   // Hook para filtrado normal
   const {
     products,
-    stockMap,
     isLoading,
     pagination,
     inputFilters,
@@ -44,6 +46,8 @@ export default function ProductListPage({ token }: ProductListProps) {
 
   // Estado para almacenar productos combinados
   const [combinedProducts, setCombinedProducts] = useState<Product[]>([]);
+  const [isFiltering, setIsFiltering] = useState(false);
+  const [resetCounter, setResetCounter] = useState(0);
 
   useEffect(() => {
     syncPageSize(pagination.pageSize);
@@ -57,9 +61,12 @@ export default function ProductListPage({ token }: ProductListProps) {
     const tagProductIds = getFilteredProductIds();
 
     // Filtrar productos que coincidan con tags Y con otros filtros
-    const filteredByBoth = products.filter((product) => 
-      tagProductIds.has(product.id) && 
-      (inputFilters.category ? product.category === inputFilters.category : true)
+    const filteredByBoth = products.filter(
+      (product) =>
+        tagProductIds.has(product.id) &&
+        (inputFilters.category
+          ? product.category === inputFilters.category
+          : true)
     );
 
     // Recalcular paginación
@@ -75,7 +82,7 @@ export default function ProductListPage({ token }: ProductListProps) {
   }, [
     selectedTags,
     products,
-    inputFilters.category, 
+    inputFilters.category,
     getFilteredProductIds,
     recalculatePagination,
     tagPagination.currentPage,
@@ -88,13 +95,13 @@ export default function ProductListPage({ token }: ProductListProps) {
     } else {
       setCombinedProducts([]);
     }
-  }, [selectedTags, products, inputFilters.category, combineFilters]); 
+  }, [selectedTags, products, inputFilters.category, combineFilters]);
 
   const displayedProducts = useMemo(() => {
     if (selectedTags.length > 0) {
       return combinedProducts;
     }
-    return products; 
+    return products;
   }, [selectedTags, combinedProducts, products]);
 
   // Maneja el cambio de tags seleccionados
@@ -123,8 +130,48 @@ export default function ProductListPage({ token }: ProductListProps) {
     : handlePageChange;
   const loading = isLoading || isTagFiltering;
 
+  const hasActiveFilters = useMemo(() => {
+    const hasInputFilters = Object.values(inputFilters).some(
+      (value) => value !== "" && value !== undefined && value !== null
+    );
+    const hasTags = selectedTags.length > 0;
+
+    return hasInputFilters || hasTags;
+  }, [inputFilters, selectedTags]);
+
+
+  const resetFilters = () => {
+    setIsFiltering(true)
+    setInputFilters({
+      searchTerm: "",
+      category: "",
+      minPrice: "",
+      maxPrice: "",
+      minCost: "",
+      maxCost: "",
+    });
+    handleTagsChange([]); 
+    handleSearch(); 
+    setIsFiltering(false)
+    setResetCounter((prev) => prev + 1);
+  };
+
+
   return (
     <div className="max-w-screen-xl mx-auto p-4">
+      {hasActiveFilters && (
+          <div className="flex justify-end">
+              <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => resetFilters()}
+              className="text-sm h-8 px-2 text-gray-600 mr-[10px]"
+              disabled={isFiltering}
+              >
+              {t("filters.clearFilters")}
+              </Button>
+          </div>
+      )}
       <div className="mb-2">
         <ProductFilters
           filters={inputFilters}
@@ -138,33 +185,35 @@ export default function ProductListPage({ token }: ProductListProps) {
           preventInvalidKeys={preventInvalidKeys}
           selectedTags={selectedTags}
           onTagsChange={handleTagsChange}
+          resetCounter= {resetCounter}
           token={token}
         />
       </div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Productos</h1>
+      <div className="mt-8 mb-6 flex justify-between items-center">
+        <h1 className="text-2xl font-bold">{t("product.list.title")}</h1>
         <Button
           variant="outline"
           onClick={() => router.push(`/dashboard/products/register`)}
           className="px-6"
         >
-          Agregar
+          {t("button.add")}
         </Button>
       </div>
 
       {loading ? (
         <ProductListSkeleton />
       ) : displayedProducts.length === 0 ? (
-        <p className="text-center py-4">No hay productos disponibles</p>
+        <p className="text-center py-4">{t("error.notFoundProducts")}</p>
       ) : (
-        displayedProducts.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            stock={stockMap[product.id] || 0}
-            onClick={handleCardClick}
-          />
-        ))
+        <div className="flex flex-wrap justify-between gap-y-4">
+          {displayedProducts.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              onClick={handleCardClick}
+            />
+          ))}
+        </div>
       )}
 
       <GenericPagination

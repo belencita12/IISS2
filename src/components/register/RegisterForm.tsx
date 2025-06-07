@@ -4,11 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { phoneNumber, ruc } from "@/lib/schemas";
+import { phoneNumber, rucOrCi } from "@/lib/schemas";
 import { signup } from "@/lib/auth/signup";
 import { useRouter } from "next/navigation";
 import { toast } from "@/lib/toast";
 import FormInput from "../global/FormInput";
+import { useTranslations } from "next-intl";
 // Define the schema for registration
 export const RegisterFormSchema = z
   .object({
@@ -24,7 +25,7 @@ export const RegisterFormSchema = z
         "Ingrese una dirección válida. Ej: Av. España 1234, Asunción, Paraguay"
       ),
     phoneNumber: phoneNumber(),
-    ruc: ruc(),
+    ruc: rucOrCi(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Las contraseñas no coinciden",
@@ -45,10 +46,12 @@ export function RegisterForm() {
 
   const router = useRouter();
 
+  const t = useTranslations();
+
   const onSubmit = async (data: RegisterFormValues) => {
     try {
       await signup(data);
-      toast("success", "Registro exitoso");
+      toast("success", t("success.successRegister"));
       router.push("/login");
     } catch (error) {
       toast("error", (error as Error).message);
@@ -62,13 +65,13 @@ export function RegisterForm() {
         <FormInput
           register={register("name")}
           error={errors.name?.message}
-          placeholder="Nombre"
+          placeholder={t("register.form.name")}
           name="name"
         />
         <FormInput
           register={register("lastname")}
           error={errors.lastname?.message}
-          placeholder="Apellido"
+          placeholder={t("register.form.lastName")}
           name="lastname"
         />
       </div>
@@ -77,7 +80,7 @@ export function RegisterForm() {
       <FormInput
         register={register("email")}
         error={errors.email?.message}
-        placeholder="Correo electrónico"
+        placeholder={t("register.form.email")}
         name="email"
       />
 
@@ -85,7 +88,7 @@ export function RegisterForm() {
       <FormInput
         register={register("address")}
         error={errors.address?.message}
-        placeholder="Dirección"
+        placeholder={t("register.form.address")}
         name="address"
       />
 
@@ -94,13 +97,13 @@ export function RegisterForm() {
         <FormInput
           register={register("phoneNumber")}
           error={errors.phoneNumber?.message}
-          placeholder="Número de teléfono"
+          placeholder={t("register.form.phone")}
           name="phoneNumber"
         />
         <FormInput
           register={register("ruc")}
           error={errors.ruc?.message}
-          placeholder="RUC"
+          placeholder={t("register.form.ruc")}
           name="ruc"
         />
       </div>
@@ -110,14 +113,14 @@ export function RegisterForm() {
         <FormInput
           register={register("password")}
           error={errors.password?.message}
-          placeholder="Contraseña"
+          placeholder={t("register.form.password")}
           name="password"
           type="password"
         />
         <FormInput
           register={register("confirmPassword")}
           error={errors.confirmPassword?.message}
-          placeholder="Confirmar contraseña"
+          placeholder={t("register.form.confirmPassword")}
           name="confirmPassword"
           type="password"
         />
@@ -126,10 +129,10 @@ export function RegisterForm() {
       {/* Botones */}
       <div className="flex justify-between mt-4">
         <Button variant="outline" asChild>
-          <Link href="/login">Tengo una cuenta</Link>
+          <Link href="/login">{t("register.button.haveAnAccount")}</Link>
         </Button>
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Registrando..." : "Registrarme"}
+          {isSubmitting ? t("button.registering"): t("register.button.register")}
         </Button>
       </div>
     </form>

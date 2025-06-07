@@ -57,10 +57,10 @@ export async function apiFetch<T>(
     console.log("No valid token provided to apiFetch");
   }
 
-  // Si el body no es FormData, establecer el Content-Type a JSON
   if (body && !(body instanceof FormData)) {
     headers["Content-Type"] = "application/json";
   }
+
 
   try {
     // Configurar opciones del fetch

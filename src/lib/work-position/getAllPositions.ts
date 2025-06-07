@@ -39,15 +39,16 @@ export async function getWorkPositions(
 
     if (response.status === 404) return null;
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Respuesta error:", errorText);
-      throw new Error('Error al obtener puestos de trabajo');
-    }
+     if (!response.ok) {
+            const errorData = await response.json().catch(() => ({})); 
+            const message = errorData?.message || `Error HTTP: ${response.status}`;
+            throw new Error(message);
+        }
+
+
 
     return await response.json();
   } catch (error) {
-    console.error("Catch error:", error);
     throw error;
   }
 }

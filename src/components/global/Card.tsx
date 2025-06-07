@@ -16,6 +16,7 @@ interface ICardProps {
   bgColor?: string;
   textColor?: string;
   children?: React.ReactNode;
+  imageClassName?: string;
 }
 
 export function Card({
@@ -33,6 +34,7 @@ export function Card({
   bgColor = "bg-gray-200",
   textColor = "text-gray-900",
   children,
+  imageClassName = "",
 }: ICardProps) {
   const isHorizontal = layout === "horizontal";
   const showImage = !!image; 
@@ -51,7 +53,7 @@ export function Card({
             alt={alt}
             width={imageWidth}
             height={imageHeight}
-            className="w-full h-auto object-cover"
+            className={`w-full object-cover ${imageClassName ? imageClassName : "h-auto"}`}
           />
         </div>
       )}

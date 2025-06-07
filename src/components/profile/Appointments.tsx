@@ -1,56 +1,224 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { CalendarIcon, ClockIcon, Syringe} from "lucide-react";
 import Link from "next/link";
+import { APPOINTMENT_API } from "@/lib/urls";
+import { useFetch } from "@/hooks/api/useFetch";
+import { formatDate, formatTimeUTC } from "@/lib/utils";
+import { Plus, Eye } from "lucide-react";
+import { AppointmentData } from "@/lib/appointment/IAppointment";
+import AppointmentsTableSkeleton from "@/components/profile/skeleton/AppointmentsSkeleton";
+import GenericTable, {
+  Column,
+  TableAction,
+} from "@/components/global/GenericTable";
+import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
-export const Appointments = () => {
-    const appointments = [
-        {
-            id: 1,
-            title: "Control Veterinario",
-            date: "23/09/2022",
-            time: "9:00 AM",
-            icon: <CalendarIcon className="w-10 h-10 text-gray-700" />,
-        },
-        {
-            id: 2,
-            title: "Vacunación",
-            date: "15/10/2022",
-            time: "11:30 AM",
-            icon:  <Syringe className="w-10 h-10 text-gray-700" />,
-        },
-    ];
+interface AppointmentsData {
+  data: AppointmentData[];
+  total: number;
+}
 
-    return (
-        <section className="max-w-5xl mx-auto mt-10 p-6 bg-white">
-            <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold">Citas Agendadas</h2>
+interface AppointmentsProps {
+  clientId: number;
+  token: string;
+  ruc: string | null;
+  onFetchError?: (error: string) => void;
+}
 
-                <Button asChild className="mt-2 flex items-center gap-2">
-                    <Link href="/">
-                        <CalendarIcon className="w-5 h-5" />
-                        Agendar una cita
-                    </Link>
-                </Button>
+export const Appointments = ({
+  token,
+  ruc,
+  onFetchError,
+}: AppointmentsProps) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+  const [executed, setExecuted] = useState(false);
+  const router = useRouter();
+  const t = useTranslations();
 
-            </div>
 
-            <div className="mt-6">
-                {appointments.map((appointment) => (
-                    <div key={appointment.id} className="flex justify-between items-center py-4 border-b">
-                        <div className="flex items-center gap-4">
-                        {appointment.icon}
-                            <div>
-                                <p className="font-semibold">{appointment.title}</p>
-                                <p className="text-gray-500 text-sm">{appointment.date}</p>
-                            </div>
-                        </div>
-                        <p className="font-medium flex items-center gap-2">
-                            <ClockIcon className="w-5 h-5" />
-                            {appointment.time}
-                        </p>
-                    </div>
-                ))}
-            </div>
-        </section>
-    );
+
+  const {
+    data: appointmentsResponse,
+    loading,
+    error: fetchError,
+    execute,
+  } = useFetch<AppointmentsData>(APPOINTMENT_API, token, { immediate: false });
+
+  useEffect(() => {
+    if (ruc && !executed) {
+      fetchAppointments(currentPage);
+      setExecuted(true);
+    }
+  }, [ruc, executed]);
+
+  const error = !ruc
+    ? t("error.notGetRuc")
+    : fetchError?.message || null;
+  useEffect(() => {
+    if (fetchError) {
+      onFetchError?.(t("error.errorLoadAppointments"));
+    }
+  }, [fetchError, onFetchError]);
+
+  const fetchAppointments = (page: number) => {
+    if (!ruc) {
+      onFetchError?.(t("error.notGetRuc"));
+      return;
+    }
+
+    const url = new URL(APPOINTMENT_API);
+    url.searchParams.append("search", ruc);
+    url.searchParams.append("page", page.toString());
+    url.searchParams.append("size", pageSize.toString());
+
+    execute(undefined, url.toString());
+    setCurrentPage(page);
+  };
+
+  const handlePageChange = (page: number) => {
+    fetchAppointments(page);
+  };
+
+  const appointments = appointmentsResponse?.data || [];
+  const totalItems = appointmentsResponse?.total || 0;
+  const totalPages = Math.ceil(totalItems / pageSize);
+
+  const statusInfo = (st: AppointmentData["status"]) => {
+    switch (st) {
+      case "COMPLETED":
+        return { txt: t("appointmentStatus.completed"), style: "bg-green-100 text-green-800" };
+      case "CANCELLED":
+        return { txt: t("appointmentStatus.cancelled"), style: "bg-red-100 text-red-800" };
+      case "IN_PROGRESS":
+        return { txt: t("appointmentStatus.inProgress"), style: "bg-blue-100 text-blue-800" };
+      default:
+        return { txt: t("appointmentStatus.pending"), style: "bg-yellow-100 text-yellow-800" };
+    }
+  };
+
+  // Definir las columnas para la tabla genérica
+  const columns: Column<AppointmentData>[] = [
+    {
+      header: t("appointmentTable.pet"),
+      accessor: (app) => (
+        <div>
+          <p className="font-medium">{app.pet.name}</p>
+        </div>
+      ),
+    },
+    {
+      header: t("appointmentTable.services"),
+      accessor: (app) => (
+        <div className="flex items-center gap-3">
+          <div>
+            <p className="font-medium">
+              {app.services?.length
+                ? app.services.map((s) => s.name).join(", ")
+                : t("error.withoutServices")}
+            </p>
+          </div>
+        </div>
+      ),
+    },
+    {
+      header: t("appointmentTable.employee"),
+      accessor: (app) => (
+        <div className="text-sm font-medium text-myPurple-primary">
+          {app.employee?.name || t("error.noAsigned")}
+        </div>
+      ),
+    },
+    {
+      header: t("appointmentTable.details"),
+      accessor: (app) => (
+        <div className="flex items-start gap-2">
+          <p className="font-medium">{app.details || t("error.noDetails")}</p>
+        </div>
+      ),
+    },
+    {
+      header: t("appointmentTable.date"),
+      accessor: (app) => (
+        <div>
+          <p className="font-medium">{formatDate(app.designatedDate)}</p>
+        </div>
+      ),
+    },
+    {
+      header: t("appointmentTable.time"),
+      accessor: (app) => (
+        <div>
+          <p className="font-medium">{formatTimeUTC(app.designatedDate)}</p>
+        </div>
+      ),
+    },
+    {
+      header: t("appointmentTable.status"),
+      accessor: (app) => (
+        <span
+          className={`px-2 py-1 rounded text-xs ${
+            statusInfo(app.status).style
+          }`}
+        >
+          {statusInfo(app.status).txt}
+        </span>
+      ),
+    },
+  ];
+
+  const actions: TableAction<AppointmentData>[] = [
+    {
+      icon: <Eye size={16} />,
+      onClick: (item) => router.push(`/user-profile/appointment/${item.id}`),
+      label: t("button.seeDetails"),
+    },
+  ];
+
+  return (
+    <section className="w-full px-6 mt-5 bg-white rounded-lg shadow-sm pb-5 min-h-[80vh]">
+      <div className="text-center">
+        <h3 className="text-3xl font-bold mt-2 text-purple-600">
+          {t("myAppointmentsSection.title")}
+        </h3>
+        <p className="text-gray-500 mt-2 text-sm">
+          {t("myAppointmentsSection.description")}
+        </p>
+
+        <div className="flex gap-4 mt-4 justify-center flex-wrap">
+          <Link href="/user-profile/appointment/register">
+            <Button className="bg-pink-500 text-white flex items-center gap-2 hover:bg-pink-600">
+              <Plus className="w-5 h-5" />
+              {t("button.schedule")}
+            </Button>
+          </Link>
+        </div>
+      </div>
+      <div className="mt-10">
+        {loading ? (
+          <AppointmentsTableSkeleton />
+        ) : (
+          <GenericTable
+          data={appointments}
+          columns={columns}
+          actions={actions}
+          actionsTitle={t("appointmentTable.actions")}
+          isLoading={loading}
+          emptyMessage={t("appointmentTable.emptyMessage")}
+          className="w-full"
+             pagination={{
+              currentPage,
+              totalPages,
+              totalItems,
+              pageSize,
+            }}
+            onPageChange={handlePageChange}
+        />
+        )}
+      </div>
+    </section>
+  );
 };

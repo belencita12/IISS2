@@ -10,10 +10,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label"; 
 import { useRouter } from "next/navigation"; 
 import { updateClient } from "@/lib/client/updateClient"; 
-import { FormClient } from "@/lib/client/IUserProfile"; 
 import { phoneNumber, ruc } from "@/lib/schemas"; 
 import { notFound } from "next/navigation";
 import { getClientById } from "@/lib/client/getClientById";
+import FormImgUploader from "@/components/global/FormImgUploader";
+import { useTranslations } from "next-intl";
 
 const clientFormSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
@@ -25,6 +26,7 @@ const clientFormSchema = z.object({
   adress: z.string().optional(),
   phoneNumber: phoneNumber(),
   ruc: ruc(),
+  profileImg: z.any().optional(),
 });
 
 type ClientFormValues = z.infer<typeof clientFormSchema>;
@@ -36,16 +38,22 @@ interface EditClientFormProps {
 
 export default function EditClientForm({ token, clientId }: EditClientFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const router = useRouter(); 
+  const t = useTranslations();
+
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
+    watch,
   } = useForm<ClientFormValues>({
     resolver: zodResolver(clientFormSchema), 
   });
+
+  const profileImg = watch("profileImg");
 
   useEffect(() => {
     const fetchClientData = async () => {
@@ -55,6 +63,7 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
         if (!clientData) {
           notFound();
         }
+        
         
         // Dividir el nombre completo en nombre y apellido
         const [name, ...lastnameParts] = clientData.fullName.split(' ');
@@ -66,8 +75,12 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
         setValue('adress', clientData.adress);
         setValue('phoneNumber', clientData.phoneNumber);
         setValue('ruc', clientData.ruc);
-      } catch (error) {
-        toast("error", "Error al cargar los datos del cliente");
+
+        if (clientData.image?.originalUrl) {
+          setPreviewImage(clientData.image.originalUrl);
+        }
+      } catch (error:unknown) {
+        toast("error", error instanceof Error ? error.message : t("error.errorGetData"));
         router.push("/dashboard/clients");
       }
     };
@@ -76,27 +89,32 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
   }, [clientId, token, setValue, router]);
 
   const onSubmit = async (data: ClientFormValues) => {
-    const fullName = `${data.name.trim()} ${data.lastname.trim()}`;
-    const clientData: FormClient = {
-      fullName,
-      email: data.email,
-      adress: data.adress,
-      phoneNumber: data.phoneNumber,
-      ruc: data.ruc,
-    };
-  
-    setIsSubmitting(true); 
     try {
-      const response = await updateClient(clientId, clientData, token);
+      const fullName = `${data.name.trim()} ${data.lastname.trim()}`;
+      
+      const formData = new FormData();
+      formData.append("fullName", fullName);
+      formData.append("email", data.email);
+      if (data.adress) formData.append("adress", data.adress);
+      formData.append("phoneNumber", data.phoneNumber);
+      formData.append("ruc", data.ruc);
+
+      if (data.profileImg instanceof File) {
+        formData.append("profileImg", data.profileImg);
+      }
+    
+      setIsSubmitting(true); 
+      
+      const response = await updateClient(clientId, formData, token);
       
       if ('error' in response) {
-        toast("error", response.error || "No se pudo guardar los cambios del cliente");
+        toast("error", response.error || t("error.noUpdate"));
       } else {
-        toast("success", "Cliente actualizado con éxito"); 
+        toast("success", t("success.successUpdateClient")); 
         router.push("/dashboard/clients"); 
       }
-    } catch (error) {
-      toast("error", "Hubo un error al actualizar el cliente");
+    } catch (error:unknown) {
+      toast("error", t("error.noUpdate"));
     } finally {
       setIsSubmitting(false);
     }
@@ -104,46 +122,79 @@ export default function EditClientForm({ token, clientId }: EditClientFormProps)
 
   return (
     <div className="max-w-5xl mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-6">Editar Cliente</h1>
+      <h1 className="text-3xl font-bold mb-6">{t("client.form.titleUpdate")}</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
+
         <div>
-          <Label>Nombre</Label>
-          <Input {...register("name")} placeholder="Ingrese el nombre del cliente" />
+          <Label>{t("client.form.name")}</Label>
+          <Input {...register("name")} placeholder={t("placeholder.name")} />
           {errors.name && <p className="text-red-500">{errors.name.message}</p>}
         </div>
         <div>
-          <Label>Apellido</Label>
-          <Input {...register("lastname")} placeholder="Ingrese el apellido del cliente" />
+          <Label>{t("client.form.lastName")}</Label>
+          <Input {...register("lastname")} placeholder={t("placeholder.lastName")} />
           {errors.lastname && <p className="text-red-500">{errors.lastname.message}</p>}
         </div>
         <div>
-          <Label>Correo Electrónico</Label>
-          <Input {...register("email")} placeholder="ejemplo@gmail.com" type="email" />
+          <Label>{t("client.form.email")}</Label>
+          <Input {...register("email")} placeholder={t("placeholder.exampleEmail")} type="email" />
           {errors.email && <p className="text-red-500">{errors.email.message}</p>}
         </div>
         <div>
-          <Label>Dirección</Label>
-          <Input {...register("adress")} placeholder="Ingrese la dirección del cliente" />
+          <Label>{t("client.form.address")}</Label>
+          <Input {...register("adress")} placeholder={t("placeholder.address")} />
           {errors.adress && <p className="text-red-500">{errors.adress.message}</p>}
         </div>
         <div>
-          <Label>Número de Teléfono</Label>
-          <Input {...register("phoneNumber")} placeholder="Ingrese el número de teléfono" />
+          <Label>{t("client.form.phone")}</Label>
+          <Input {...register("phoneNumber")} placeholder={t("placeholder.phone")} />
           {errors.phoneNumber && <p className="text-red-500">{errors.phoneNumber.message}</p>}
         </div>
         <div>
-          <Label>RUC</Label>
-          <Input {...register("ruc")} placeholder="Ingrese el RUC del cliente" />
+          <Label>{t("client.form.ruc")}</Label>
+          <Input {...register("ruc")} placeholder={t("placeholder.ruc")} />
           {errors.ruc && <p className="text-red-500">{errors.ruc.message}</p>}
         </div>
-        <div className="flex gap-4">
-          <Button type="button" variant="outline" onClick={() => router.push("/dashboard/clients")}>
-            Cancelar
+
+                 {/* Imagen alineada a la izquierda */}
+        <div className="mt-10 flex justify-start">
+          <FormImgUploader
+            onChange={(file) => {
+              if (file) {
+                try {
+                  setValue("profileImg", file, { shouldValidate: false });
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    setPreviewImage(reader.result as string);
+                  };
+                  reader.readAsDataURL(file);
+                } catch (error: unknown) {
+                  if (error instanceof Error) toast("error", error.message);
+                }
+              }
+            }}
+            error={errors.profileImg?.message?.toString()}
+            prevClassName="w-40 h-40  object-cover shadow-md border-2 border-gray-300"
+            prevWidth={160}
+            defaultImage={previewImage}
+          />
+        </div>
+
+        {/* Botones abajo a la derecha */}
+        <div className="mt-6 flex justify-end gap-4">
+          <Button
+            type="button"
+            variant="outline"
+            disabled={isSubmitting}
+            onClick={() => router.push("/dashboard/clients")}
+          >
+            {isSubmitting ? t("button.cancelling") : t("button.cancel")}
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Guardando..." : "Guardar cambios"}
+            {isSubmitting ? t("button.saving") : t("button.save")}
           </Button>
         </div>
+
       </form>
     </div>
   );

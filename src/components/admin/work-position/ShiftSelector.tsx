@@ -6,7 +6,7 @@ import { getDayText, getDayValue, getAvailableDays, DAYS } from "@/lib/work-posi
 import { Shift } from "@/lib/work-position/IPosition";
 import { PositionFormValues } from "@/lib/work-position/IPosition";
 import { Control } from "react-hook-form";
-
+import { useTranslations } from "next-intl";
 interface ShiftSelectorProps {
   index: number;
   shift: Shift;
@@ -16,6 +16,7 @@ interface ShiftSelectorProps {
 }
 
 export function ShiftSelector({ index, shift, shifts, control, onSelectDay }: ShiftSelectorProps) {
+  const t = useTranslations();
   return (
     <Controller
       name={`shifts.${index}.weekDay`}
@@ -26,13 +27,13 @@ export function ShiftSelector({ index, shift, shifts, control, onSelectDay }: Sh
           value={getDayValue(shift.weekDay)}
         >
           <SelectTrigger className="w-full p-2 rounded-md border">
-            <SelectValue placeholder="Seleccionar día">
+            <SelectValue placeholder={t("placeholder.select")}>
               {getDayText(shift.weekDay)}
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="weekdays">Lunes a Viernes</SelectItem>
-            <SelectItem value="weekdays_saturday">Lunes a Sábado</SelectItem>
+            <SelectItem value="weekdays">{t("positions.form.mondayToFriday")}</SelectItem>
+            <SelectItem value="weekdays_saturday">{t("positions.form.mondayToSaturday")}</SelectItem>
             {getAvailableDays(shifts, index).map((day) => (
               <SelectItem key={day} value={String(day)}>
                 {DAYS[day]}

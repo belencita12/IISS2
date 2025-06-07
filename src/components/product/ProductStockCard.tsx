@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
+import { useTranslations } from "next-intl";
 
 interface ImageType {
   id: number;
@@ -26,6 +27,7 @@ interface ProductStockCardProps {
 }
 
 const ProductStockCard: React.FC<ProductStockCardProps> = ({ product, onClick }) => {
+  const t = useTranslations("ProductStockCard");
   return (
     <Card
       className="overflow-hidden mb-4 cursor-pointer hover:shadow-md transition-shadow"
@@ -51,23 +53,23 @@ const ProductStockCard: React.FC<ProductStockCardProps> = ({ product, onClick })
           <h3 className="text-lg font-semibold mb-4">{product.name}</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             <div className="flex flex-col">
-              <p className="text-sm text-gray-500">Código</p>
-              <p className="text-sm text-gray-500 mt-2">Proveedor</p>
-              <p className="text-sm text-gray-500 mt-2">Categoría</p>
-              <p className="text-sm text-gray-500 mt-2">Precio Unitario</p>
+              <p className="text-sm text-gray-500">{t("code")}</p>
+              <p className="text-sm text-gray-500 mt-2">{t("provider")}</p>
+              <p className="text-sm text-gray-500 mt-2">{t("category")}</p>
+              <p className="text-sm text-gray-500 mt-2">{t("unitPrice")}</p>
             </div>
             <div className="flex flex-col">
               <p className="text-sm">{product.code}</p>
-              <p className="text-sm mt-2">La Mascota S.A.</p>
+              <p className="text-sm mt-2">{t("title")}</p>
               <p className="text-sm mt-2">{product.category}</p>
-              <p className="text-sm mt-2">{product.price.toLocaleString()} Gs</p>
+              <p className="text-sm mt-2">{product.price.toLocaleString()} {t("gs")}</p>
             </div>
             <div className="flex flex-col">
-              <p className="text-sm text-gray-500">Costo</p>
-              <p className="text-sm text-gray-500 mt-2">Stock</p>
+              <p className="text-sm text-gray-500">{t("cost")}</p>
+              <p className="text-sm text-gray-500 mt-2">{t("stock")}</p>
             </div>
             <div className="flex flex-col">
-              <p className="text-sm">{product.cost.toLocaleString()} Gs</p>
+              <p className="text-sm">{product.cost.toLocaleString()} {t("gs")}</p>
               <p className="text-sm mt-2">{product.stock.toLocaleString()}</p>
             </div>
           </div>

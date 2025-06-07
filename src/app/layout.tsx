@@ -3,8 +3,16 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { clientLinks } from "@/constants/navbar";
 import Footer from "@/components/global/Footer";
-import NavbarWrapped from "@/components/global/Navbar";
+import { Navbar } from "@/components/global/Navbar";
 import { Toaster } from "@/components/ui/sonner";
+import { headers } from "next/headers";
+import Script from "next/script";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale } from "next-intl/server";
+import ClientLayout from "@/layout/ClientLayout";
+import { getServerSession } from "next-auth";
+import authOptions from "@/lib/auth/options";
+import DynamicFooter from "@/components/global/DynamicFooter";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,7 +24,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-
 export const metadata: Metadata = {
   title: "NicoPets",
   description: "Servicios y productos para tus mascotas",
@@ -27,20 +34,38 @@ export const viewport: Viewport = {
   initialScale: 1.0,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession(authOptions);
+  const headersList = await headers();
+  const nonce = headersList.get("x-nonce") || undefined;
+  const locale = await getLocale();
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <NavbarWrapped links={clientLinks} />
-        {children}
-        <Footer />
-        <Toaster  theme="light"/>
+        <NextIntlClientProvider>
+          <ClientLayout>
+            <Navbar links={clientLinks} />
+            {children}
+              {/* Agregado del DynamicFooter*/}
+            <DynamicFooter />
+            <Toaster theme="light" />
+
+            <Script
+              id="csp-script"
+              nonce={nonce}
+              dangerouslySetInnerHTML={{
+                __html: `console.log("CSP con nonce aplicado correctamente")`,
+              }}
+            />
+          </ClientLayout>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

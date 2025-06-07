@@ -22,7 +22,24 @@ export type VaccineRecord = {
   createdAt: string;
   updatedAt: string;
   deletedAt?: string | null;
-  vaccine: Vaccine;
+  vaccine: {
+    id: number;
+    speciesId: number;
+    name: string;
+    productId: number;
+    manufacturer: {
+      name: string;
+    };
+  };
+  pet: {
+    name: string;
+    client: {
+      user: {
+        fullName: string;
+      };
+    };
+  };
 };
+
 
 export type VaccineRegistryDataResponse = PaginationResponse<VaccineRecord>;

@@ -17,6 +17,9 @@ import { useProductSearch } from "@/hooks/purchases/useProductSearch";
 import ProductSearch from "./PurchaseItemSearch";
 import ProductList from "./PurchaseItems";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useEffect } from "react";
+
 export default function PurchaseForm({ token }: { token: string }) {
   const {
     register,
@@ -27,9 +30,11 @@ export default function PurchaseForm({ token }: { token: string }) {
     errors,
     control,
     watch,
+    setValue,
     updateQuantity,
     isSubmitting,
   } = usePurchase(token);
+  const selectedProviderId = watch("providerId");
   const { providers, stocks } = useInitialData(token);
   const {
     searchProducts,
@@ -40,9 +45,19 @@ export default function PurchaseForm({ token }: { token: string }) {
     setProductQuantity,
     resetSearch,
     isLoading,
-  } = useProductSearch(token);
+  } = useProductSearch(token, selectedProviderId);
   const details = watch("details") || [];
   const router = useRouter();
+
+  const t = useTranslations();
+  
+  useEffect(() => {
+  setValue("details", []);
+  resetSearch();
+  handleSearchProduct(searchQuery);
+}, [selectedProviderId]);
+
+
   const handleAddProduct = (product: Product, quantity: number) => {
     if (quantity > 0) {
       addProduct(product, quantity);
@@ -56,112 +71,139 @@ export default function PurchaseForm({ token }: { token: string }) {
     };
     await submitPurchase(formattedData);
   };
+
   return (
-    <div className="flex flex-col justify-center items-center p-6">
+    <div className="flex justify-center items-center p-6">
       <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-4xl p-6">
-      <fieldset disabled={isSubmitting}>
-        <h2 className="text-2xl font-bold mb-6">Registrar Compra</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="flex flex-col space-y-1">
-            <label className="text-sm font-medium">Proveedor</label>
-            <Controller
-              name="providerId"
-              control={control}
-              render={({ field }) => (
-                <Select
-                onValueChange={(value) => field.onChange(Number(value))}
-                value={field.value ? field.value.toString() : ""}
-                >
-                  <SelectTrigger
-                    className={`w-full ${
-                      errors.providerId ? "border-red-500" : ""
-                    }`}
+      
+        <fieldset disabled={isSubmitting}>
+          <h2 className="text-2xl font-bold mb-6">{t("purchase.form.title")}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="flex flex-col space-y-1">
+              <label className="text-sm font-medium">{t("purchase.form.provider")}</label>
+              <Controller
+                name="providerId"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    onValueChange={(value) => field.onChange(Number(value))}
+                    value={field.value ? field.value.toString() : ""}
                   >
-                    <SelectValue placeholder="Seleccionar proveedor" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {providers.map((provider) => (
-                      <SelectItem key={provider.id} value={String(provider.id)}>
-                        {provider.businessName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                    <SelectTrigger
+                      className={`w-full ${
+                        errors.providerId ? "border-red-500" : ""
+                      }`}
+                    >
+                      <SelectValue placeholder={t("placeholder.select")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {providers.map((provider) => (
+                        <SelectItem
+                          key={provider.id}
+                          value={String(provider.id)}
+                        >
+                          {provider.businessName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.providerId && (
+                <p className="text-red-500 text-sm">
+                  {errors.providerId.message}
+                </p>
               )}
-            />
-            {errors.providerId && (
-              <p className="text-red-500 text-sm">
-                {errors.providerId.message}
-              </p>
-            )}
-          </div>
-          <div className="flex flex-col space-y-1">
-            <label className="text-sm font-medium">Depósito</label>
-            <Controller
-              name="stockId"
-              control={control}
-              render={({ field }) => (
-                <Select
-                onValueChange={(value) => field.onChange(Number(value))}
-                value={field.value ? field.value.toString() : ""}
-                >
-                  <SelectTrigger
-                    className={`w-full ${
-                      errors.stockId ? "border-red-500" : ""
-                    }`}
+            </div>
+            <div className="flex flex-col space-y-1">
+              <label className="text-sm font-medium">{t("purchase.form.stock")}</label>
+              <Controller
+                name="stockId"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    onValueChange={(value) => field.onChange(Number(value))}
+                    value={field.value ? field.value.toString() : ""}
                   >
-                    <SelectValue placeholder="Seleccionar depósito" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {stocks.map((stock) => (
-                      <SelectItem key={stock.id} value={String(stock.id)}>
-                        {stock.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                    <SelectTrigger
+                      className={`w-full ${
+                        errors.stockId ? "border-red-500" : ""
+                      }`}
+                    >
+                      <SelectValue placeholder={t("placeholder.select")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {stocks.map((stock) => (
+                        <SelectItem key={stock.id} value={String(stock.id)}>
+                          {stock.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.stockId && (
+                <p className="text-red-500 text-sm">{errors.stockId.message}</p>
               )}
-            />
-            {errors.stockId && (
-              <p className="text-red-500 text-sm">{errors.stockId.message}</p>
-            )}
+            </div>
+            <div className="flex flex-col space-y-1">
+              <label className="text-sm font-medium">{t("purchase.form.date")}</label>
+              <Input
+                type="date"
+                max={new Date().toISOString().split("T")[0]}
+                className={`w-full ${errors.date ? "border-red-500" : ""}`}
+                {...register("date")}
+              />
+              {errors.date && (
+                <p className="text-red-500 text-sm">{errors.date.message}</p>
+              )}
+            </div>
           </div>
-          <div className="flex flex-col space-y-1">
-            <label className="text-sm font-medium">Fecha</label>
-            <Input
-              type="date"
-              max={new Date().toISOString().split("T")[0]}
-              className={`w-full ${errors.date ? "border-red-500" : ""}`}
-              {...register("date")}
+          {selectedProviderId ? (
+            <ProductSearch
+              searchProducts={searchProducts}
+              searchQuery={searchQuery}
+              hasSearched={hasSearched}
+              onSearch={handleSearchProduct}
+              getQuantity={getProductQuantity}
+              setQuantity={setProductQuantity}
+              onAddProduct={handleAddProduct}
+              resetSearch={resetSearch}
+              isLoading={isLoading}
             />
-            {errors.date && (
-              <p className="text-red-500 text-sm">{errors.date.message}</p>
-            )}
+          ) : (
+            <div className="mt-4 text-sm text-gray-500">
+              {t("purchase.form.selectAProvider")}
+            </div>
+          )}
+
+          {details.length > 0 && (
+            <>
+              <h2 className="p-4 font-bold">{t("purchase.form.selectedProducts")}</h2>
+              <ProductList
+                details={details}
+                onRemove={removeProduct}
+                onUpdateQuantity={updateQuantity}
+              />
+            </>
+          )}
+          {errors.details && (
+            <p className="text-red-500 text-sm mt-2">
+              {errors.details.message}
+            </p>
+          )}
+          <div className="flex justify-end gap-4 mt-6">
+            <Button
+              variant="outline"
+              type="button"
+              onClick={() => router.push("/dashboard/purchases")}
+            >
+              {t("button.cancel")}
+            </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? t("button.registering") : t("button.register")}
+            </Button>
           </div>
-        </div>
-        <ProductSearch
-          searchProducts={searchProducts}
-          searchQuery={searchQuery}
-          hasSearched={hasSearched}
-          onSearch={handleSearchProduct}
-          getQuantity={getProductQuantity}
-          setQuantity={setProductQuantity}
-          onAddProduct={handleAddProduct}
-          resetSearch={resetSearch}
-          isLoading={isLoading}
-        />
-        {details.length > 0 && (
-          <>
-            <h2 className="p-4 font-bold">Productos Seleccionados</h2>
-            <ProductList details={details} onRemove={removeProduct} onUpdateQuantity={updateQuantity}
-            />
-          </>
-        )}
-        {errors.details && (<p className="text-red-500 text-sm mt-2">{errors.details.message}</p>)}
-        <div className="flex justify-end gap-4 mt-6">
-        <Button variant="outline" type="button" onClick={() => router.push("/dashboard/purchases")}>Cancelar</Button>
-        <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Registrando..." : "Registrar Compra"}</Button>
-        </div>
         </fieldset>
       </form>
     </div>

@@ -15,6 +15,7 @@ import { getStocks } from "@/lib/stock/getStock";
 import { Provider } from "@/lib/provider/IProvider";
 import { getProviders } from "@/lib/provider/getProviders";
 import { toast } from "@/lib/toast";
+import { useTranslations } from "next-intl";
 
 interface Props {
   token: string;
@@ -34,24 +35,26 @@ export default function PurchaseSelectFilter({
         setFilters({ ...filters, [key]: value });
       };
 
+      const t = useTranslations();
+
       const [stocks, setStocks] = useState<StockData[]>([]);
       const [providers, setProviders] = useState<Provider[]>([]);
 
       useEffect(() => {
-        getStocks({ page: 1 }, token)
+        getStocks({ page: 1, size: 100 }, token)
           .then((res) => setStocks(res.data))
-          .catch((err:unknown) => toast("error", err instanceof Error ? err.message : "Error inesperado"));
+          .catch((err:unknown) => toast("error", err instanceof Error ? err.message : t("error.notGetData")));
 
-          getProviders(token, { page: 1 })
+          getProviders(token, { page: 1, size: 100 })
           .then((res) => setProviders(res.data))
-          .catch((err) => toast("error", err instanceof Error ? err.message : "Error inesperado"));
+          .catch((err) => toast("error", err instanceof Error ? err.message : t("error.notGetData")));
       
       }, [token]);
 
 return (
   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div className="space-y-2">
-          <Label>Proveedor</Label>
+          <Label>{t("filters.provider")}</Label>
           <Select
             value={filters.providerId?.toString() ?? "ALL"}
             onValueChange={(value) =>
@@ -59,10 +62,10 @@ return (
             }
           >
             <SelectTrigger>
-              <SelectValue placeholder="Seleccione proveedor" />
+              <SelectValue placeholder={t("placeholder.select")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">Todos</SelectItem>
+              <SelectItem value="ALL">{t("filters.all")}</SelectItem>
               {Array.isArray(providers) &&
                 providers.map((p) => (
                     <SelectItem key={p.id} value={p.id?.toString() || ""}>
@@ -74,7 +77,7 @@ return (
         </div>
 
         <div className="space-y-2">
-          <Label>Depósito</Label>
+          <Label>{t("filters.stock")}</Label>
           <Select
             value={filters.stockId?.toString() ?? "ALL"}
             onValueChange={(value) =>
@@ -82,10 +85,10 @@ return (
             }
           >
             <SelectTrigger>
-              <SelectValue placeholder="Seleccione depósito" />
+              <SelectValue placeholder={t("placeholder.select")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">Todos</SelectItem>
+              <SelectItem value="ALL">{t("filters.all")}</SelectItem>
               {stocks.map((s) => (
         <SelectItem key={s.id} value={s.id?.toString() || ""}>
                   {s.name}

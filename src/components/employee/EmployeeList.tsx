@@ -11,6 +11,7 @@ import { deleteEmployeeByID } from "@/lib/employee/deleteEmployeeByID";
 import { ConfirmationModal } from "../global/Confirmation-modal";
 import SearchBar from "../global/SearchBar";
 import EmployeeTableSkeleton from "./skeleton/EmployeeTableSkeleton";
+import { useTranslations } from "next-intl";
 
 interface EmployeesTableProps {
   token: string | null;
@@ -30,13 +31,15 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
   });
   const [loading, setLoading] = useState(false);
 
+  const t = useTranslations();
+
   const loadEmployees = useCallback(
     async (page: number = 1, query: string = "") => {
       if (!token) return;
       setLoading(true);
       try {
         const results = await fetchEmployees(page, query, token);
-        if (!results?.data?.length && query) toast("info", "No se encontraron empleados!");
+        if (!results?.data?.length && query) toast("info", t("error.notFoundEmployees"));
         setData({
           employees: results?.data || [],
           pagination: {
@@ -46,9 +49,9 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
             pageSize: results?.size || 8,
           },
         });
-      } catch (error) {
-        toast("error", "Error al cargar empleados");
-        console.error("Error cargando empleados:", error);
+      } catch (error:unknown) {
+        if (error instanceof Error) {
+          toast("error", error.message)};
       } finally {
         setLoading(false);
       }
@@ -89,10 +92,10 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
         : false;
     
       if (success) {
-        toast("success", "Empleado eliminado correctamente.");
+        toast("success", t("success.successDeleteEmployee", {employee: selectedEmployee.fullName}));
         loadEmployees(data.pagination.currentPage);
       } else {
-        toast("error", "No se pudo eliminar el empleado.");
+        toast("error", t("error.errorDeleteEmployee"));
       }
     
       setIsModalOpen(false);
@@ -101,10 +104,10 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
     
 
   const columns: Column<EmployeeData>[] = [
-    { header: "Nombre", accessor: "fullName" },
-    { header: "Correo", accessor: "email" },
-    { header: "Ruc", accessor: "ruc" },
-    { header: "Cargo", accessor: (employee) => employee.position.name },
+    { header: t("employee.table.name"), accessor: "fullName" },
+    { header: t("employee.table.email"), accessor: "email" },
+    { header: t("employee.table.ruc"), accessor: "ruc" },
+    { header: t("employee.table.workPosition"), accessor: (employee) => employee.position.name },
   
   ];
 
@@ -113,32 +116,38 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
       icon: <Eye className="w-4 h-4" />,
       onClick: (employee) => {
         if (!employee.id || isNaN(Number(employee.id))) {
-          toast("error", "ID de empleado inválido");
+          toast("error", t("error.notFoundEmployee"));
           return;
         }
         router.push(`/dashboard/employee/${employee.id}`);
       },
-      label: "Ver detalles",
+      label: t("button.seeDetails"),
     },
     {
-      icon: <Pencil className="w-4 h-4" />, 
-      onClick: (employee) => console.log("Editar", employee), 
-      label: "Editar",
+      icon: <Pencil className="w-4 h-4" />,
+      onClick: (employee) => {
+        if (!employee.id || isNaN(Number(employee.id))) {
+          toast("error", t("error.notFoundEmployee"));
+          return;
+        }
+        router.push(`/dashboard/employee/update/${employee.id}`);
+      },
+      label: t("button.edit"),
     },
     {
       icon: <Trash className="w-4 h-4" />,
       onClick: confirmDelete, 
-      label: "Eliminar",
+      label: t("button.delete"),
     },
   ];
 
   return (
     <div className="p-4 mx-auto">
-        <SearchBar onSearch={handleSearch} />
+        <SearchBar onSearch={handleSearch} placeholder={t("search.searchByNameOrRucEmployee")} />
         <div className="flex justify-between items-center mb-4">
-            <h2 className="text-3xl font-bold">Empleados</h2>
+            <h2 className="text-3xl font-bold">{t("employee.table.title")}</h2>
             <Button variant="outline" className="px-6" onClick={() => router.push("/dashboard/employee/register")}>
-                    Agregar
+                    {t("button.register")}
             </Button>
         </div>
         <GenericTable
@@ -149,16 +158,16 @@ export default function EmployeesTable({ token }: EmployeesTableProps) {
           onPageChange={handlePageChange}
           isLoading={loading}
           skeleton={<EmployeeTableSkeleton />}
-          emptyMessage="No se encontraron empleados"
+          emptyMessage={t("employee.table.emptyMessage")}
       />
       <ConfirmationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleDelete}
-        title="Eliminar Empleado"
-        message={`¿Seguro que quieres eliminar a ${selectedEmployee?.fullName}?`}
-        confirmText="Eliminar"
-        cancelText="Cancelar"
+        title={t("confirmationModal.employee.titleDelete")}
+        message={t("confirmationModal.employee.messageDelete", {employee: selectedEmployee?.fullName ?? ""})}
+        confirmText={t("button.delete")}
+        cancelText={t("button.cancel")}
         variant="danger"
       />
     </div>

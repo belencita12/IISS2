@@ -5,6 +5,7 @@ import { Trash, Pencil } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/global/Modal";
+import { useTranslations } from "next-intl";
 
 type ProductListProps = {
   details: ExtendedPurchaseDetail[];
@@ -21,6 +22,8 @@ export default function ProductList({
   const [tempQuantity, setTempQuantity] = useState<number>(1);
   const [modalOpen, setModalOpen] = useState(false);
 
+  const t = useTranslations()
+
   if (details.length === 0) return null;
 
   const data = details.map((detail) => ({
@@ -29,10 +32,10 @@ export default function ProductList({
   }));
 
   const columns: Column<(typeof data)[number]>[] = [
-    { header: "Código", accessor: "code" },
-    { header: "Nombre", accessor: "name" },
+    { header: t("product.details.code"), accessor: "code" },
+    { header: t("product.details.name"), accessor: "name" },
     {
-      header: "Cantidad",
+      header: t("product.details.quantity"),
       accessor: (row) => row.quantity,
     },
     {
@@ -47,7 +50,7 @@ export default function ProductList({
             setEditingId(row.productId);
             setTempQuantity(row.quantity);
           }}
-          aria-label="Editar cantidad"
+          aria-label={t("button.edit")}
         >
           <Pencil className="w-5 h-5" />
         </Button>
@@ -62,7 +65,7 @@ export default function ProductList({
           variant="ghost"
           size="sm"
           onClick={() => onRemove(row.productId)}
-          aria-label="Eliminar producto"
+          aria-label={t("button.delete")}
         >
           <Trash className="w-5 h-5" />
         </Button>
@@ -96,17 +99,17 @@ export default function ProductList({
       <GenericTable
         data={data}
         columns={columns}
-        emptyMessage="No hay productos seleccionados"
+        emptyMessage={t("error.noSelectProduct")}
       />
 
       <Modal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        title="Actualizar Cantidad"
+        title={t("purchase.form.titleEditQuantity")}
         size="sm"
       >
         <div className="flex flex-col">
-          <label className="text-sm font-medium">Cantidad</label>
+          <label className="text-sm font-medium">{t("product.details.quantity")}</label>
           <Input
             type="number"
             min={1}
@@ -117,10 +120,10 @@ export default function ProductList({
           />
           <div className="flex justify-end gap-4">
             <Button variant="outline" onClick={() => setModalOpen(false)} type="button">
-              Cancelar
+              {t("button.cancel")}
             </Button>
             <Button onClick={handleSave} type="button">
-              Actualizar
+              {t("button.update")}
             </Button>
           </div>
         </div>

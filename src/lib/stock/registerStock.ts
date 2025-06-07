@@ -19,7 +19,6 @@ export const registerStock = async (stockData: { name: string; address: string }
       
         return result;
     } catch (error) {
-        console.error("Error al registrar el deposito:", error);
         throw error;
     }
 };

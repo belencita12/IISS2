@@ -1,17 +1,26 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from 'next-intl/plugin';
+
+const csp = `
+  default-src 'self';
+  connect-src *;
+  script-src 'self' 'unsafe-inline' https://www.youtube.com https://drive.google.com;
+  style-src 'self' 'unsafe-inline';
+  img-src 'self' data: https://asnavagyfjmrbewjgasb.supabase.co;
+  frame-src https://www.youtube.com https://drive.google.com https://docs.google.com;
+  child-src https://www.youtube.com https://drive.google.com https://docs.google.com;
+  object-src 'none';
+  base-uri 'self';
+`.replace(/\s{2,}/g, " ").trim();
 
 const securityHeaders = [
   {
     key: "Content-Security-Policy",
-    value: "default-src 'self'; connect-src 'self' https://iiss2-backend-production.up.railway.app; img-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'self';",
+    value: csp,
   },
   {
     key: "Strict-Transport-Security",
     value: "max-age=63072000; includeSubDomains; preload",
-  },
-  {
-    key: "X-Frame-Options",
-    value: "DENY",
   },
   {
     key: "X-Content-Type-Options",
@@ -35,6 +44,7 @@ const securityHeaders = [
   },
 ];
 
+
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
@@ -44,6 +54,8 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+
+  
   async headers() {
     return [
       {
@@ -54,4 +66,6 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+const withNextIntl = createNextIntlPlugin();
+
+export default withNextIntl(nextConfig);

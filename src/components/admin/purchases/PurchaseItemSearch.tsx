@@ -6,6 +6,7 @@ import GenericTable, { Column } from "@/components/global/GenericTable";
 import { Product } from "@/lib/products/IProducts";
 import PurchaseSearchSkeleton from "./skeleton/PurchaseSearchSkeleton";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
 
 type ProductSearchProps = {
   searchProducts: Product[];
@@ -29,11 +30,14 @@ export default function ProductSearch({
   isLoading = false,
   hasSearched = false,
 }: ProductSearchProps) {
+
+  const t = useTranslations();
+
   const columns: Column<Product>[] = [
-    { header: "Código", accessor: "code" },
-    { header: "Nombre", accessor: "name" },
+    { header: t("product.details.code"), accessor: "code" },
+    { header: t("product.details.name"), accessor: "name" },
     {
-      header: "Cantidad",
+      header: t("product.details.quantity"),
       accessor: (product) => (
         <Input
           type="number"
@@ -60,7 +64,7 @@ export default function ProductSearch({
           }}
           className="border border-black px-4 py-2 bg-white text-black"
           >
-          Agregar
+          {t("button.add")}
         </Button>
       ),
     },
@@ -71,7 +75,7 @@ export default function ProductSearch({
       <SearchBar
         onSearch={onSearch}
         debounceDelay={400}
-        placeholder="Buscar por nombre del producto..."
+        placeholder={t("search.searchByProductName")}
       />
       {isLoading ? (
         <PurchaseSearchSkeleton />
@@ -85,7 +89,7 @@ export default function ProductSearch({
       ) : (
         hasSearched &&
         !isLoading && (
-          <p className="text-center mt-4">No se encontró el producto.</p>
+          <p className="text-center mt-4">{t("error.notFoundProduct")}</p>
         )
       )}
     </div>

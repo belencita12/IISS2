@@ -1,6 +1,6 @@
 "use client";
 
-import { useState,useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { fetchUsers } from "@/lib/client/getUsers";
 import { deleteClient } from "@/lib/client/deleteClient";
@@ -16,12 +16,19 @@ import ClientTableSkeleton from "./skeleton/ClientTableSkeleton";
 import { useRouter } from "next/navigation";
 import { IUserProfile } from "@/lib/client/IUserProfile";
 import { ConfirmationModal } from "@/components/global/Confirmation-modal";
+import { useTranslations } from "next-intl";
+import DateFilter from "./filter/ClientDateFilter";
+import { getClientReport } from "@/lib/client/getClientReport";
+import { downloadFromBlob } from "@/lib/utils";
+import ExportButton from "@/components/global/ExportButton";
 
 interface ClientListProps {
     token: string;
 }
 
 export default function ClientList({ token }: ClientListProps) {
+    const t = useTranslations();
+
     const router = useRouter();
     const [data, setData] = useState<{
         users: IUserProfile[];
@@ -34,6 +41,12 @@ export default function ClientList({ token }: ClientListProps) {
     const [filteredData, setFilteredData] = useState<IUserProfile[]>([]);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [clientToDelete, setClientToDelete] = useState<IUserProfile | null>(null);
+    const [from, setFrom] = useState<string | undefined>();
+    const [to, setTo] = useState<string | undefined>();
+    const [isGettingReport, setIsGettingReport] = useState(false);
+    const [isFiltering, setIsFiltering] = useState(false);
+    const [resetCounter, setResetCounter] = useState(0);
+    const [searchQuery, setSearchQuery] = useState("");
 
     const loadUsers = useCallback(
         async (page: number = 1, query: string = "") => {
@@ -41,9 +54,9 @@ export default function ClientList({ token }: ClientListProps) {
             setLoading(true);
 
             try {
-                const results = await fetchUsers(page, query, token);
+                const results = await fetchUsers(page, query, token, from, to);
                 if (!results.data.length && query)
-                    toast("info", "No se ha encontrado el cliente!");
+                    toast("info", t("error.notFoundClients"));
 
                 setData({
                     users: results.data,
@@ -55,21 +68,22 @@ export default function ClientList({ token }: ClientListProps) {
                     },
                 });
                 setFilteredData(results.data);
-            } catch (error) {
-                toast("error", "Error al cargar clientes");
+            } catch (error: unknown) {
+                if (error instanceof Error) toast("error", error.message);
             } finally {
                 setLoading(false);
             }
         },
-        [token]
+        [token, from, to]
     );
 
     useEffect(() => {
         if (token) loadUsers(data.pagination.currentPage);
-    }, [token, data.pagination.currentPage, loadUsers]);
+    }, [token, data.pagination.currentPage, loadUsers, from, to]);
 
     const handleSearch = useCallback(
         (query: string) => {
+            setSearchQuery(query);
             loadUsers(data.pagination.currentPage, query);
         },
         [data.pagination.currentPage, loadUsers]
@@ -86,11 +100,41 @@ export default function ClientList({ token }: ClientListProps) {
         setIsDeleteModalOpen(true);
     };
 
+    const resetFilters = () => {
+        setIsFiltering(true);
+        setTo(undefined)
+        setFrom(undefined)
+        setResetCounter((prev) => prev + 1);
+        setIsFiltering(false);
+    };
+
+    const hasActiveFilters = Boolean(
+        to || 
+        from ||
+        searchQuery
+    );
+
+    const handleGetClientReport = async () => {
+        if (!from || !to) {
+            toast("error", t("error.errorLimitDate"));
+        } else {
+            setIsGettingReport(true);
+            const result = await getClientReport({
+                token,
+                from,
+                to,
+            });
+            if (!(result instanceof Blob)) toast("error", result.message);
+            else downloadFromBlob(result);
+            setIsGettingReport(false);
+        }
+    };
+
     const handleConfirmDelete = async () => {
         if (!clientToDelete) return;
         try {
             await deleteClient(token, clientToDelete.id);
-            toast("success", "Cliente eliminado correctamente");
+            toast("success", t("success.successDeleteClient", {client : clientToDelete.fullName}));
             setIsDeleteModalOpen(false);
             setClientToDelete(null);
             loadUsers(data.pagination.currentPage);
@@ -98,54 +142,84 @@ export default function ClientList({ token }: ClientListProps) {
             if (error instanceof Error) {
                 toast("error", error.message);
             } else {
-                toast("error", "Ocurrió un error al eliminar el cliente");
+                toast("error", t("error.errorDelete", {field: clientToDelete.fullName}));
             }
         }
     };
 
     const columns: Column<IUserProfile>[] = [
-        { header: "Nombre", accessor: "fullName" },
-        { header: "Email", accessor: "email" },
-        { header: "RUC", accessor: "ruc" },
-        { header: "Dirección", accessor: "adress" },
-        { header: "Teléfono", accessor: "phoneNumber" },
+        { header: t("client.details.fullName"), accessor: "fullName" },
+        { header: t("client.details.email"), accessor: "email" },
+        { header: t("client.details.ruc"), accessor: "ruc" },
+        { header: t("client.details.address"), accessor: "adress" },
+        { header: t("client.details.phone"), accessor: "phoneNumber" },
     ];
 
     const actions: TableAction<IUserProfile>[] = [
         {
             icon: <Eye className="w-4 h-4" />,
             onClick: (user) => router.push(`/dashboard/clients/${user.id}`),
-            label: "Ver detalles",
+            label: t("button.seeDetails"),
         },
         {
             icon: <Pencil className="w-4 h-4" />,
             onClick: (user) => router.push(`/dashboard/clients/${user.id}/edit`),
-            label: "Editar",
+            label: t("button.edit"),
         },
         {
             icon: <Trash className="w-4 h-4" />,
             onClick: handleDeleteClick,
-            label: "Eliminar",
+            label: t("button.delete"),
         },
     ];
 
     return (
         <div className="p-4 mx-auto">
+            {hasActiveFilters && (
+                <div className="flex justify-end">
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => resetFilters()}
+                        className="text-sm h-8 px-2 text-gray-600 mr-[10px]"
+                        disabled={isFiltering}
+                    >
+                        {t("filters.clearFilters")}
+                    </Button>
+                </div>
+            )}
             <SearchBar
                 onSearch={handleSearch}
-                placeholder="Buscar por nombre,correo o ruc"
+                placeholder={t("search.searchByNameOrRucOrEmail")}
                 debounceDelay={400}
+                resetTrigger={resetCounter}
             />
-            <div className="flex justify-between items-center mb-4">
-                <h2 className="text-3xl font-bold">Clientes</h2>
-                <Button
-                    variant="outline"
-                    className="px-6"
-                    onClick={() => router.push("/dashboard/clients/register")}
-                >
-                    Agregar
-                </Button>
+            <div className="p-2 mb-2">
+                <DateFilter
+                    to={to}
+                    from={from}
+                    setDateTo={setTo}
+                    setDateFrom={setFrom}
+                />
             </div>
+            <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
+                <h2 className="text-3xl font-bold text-gray-800">{t("client.table.title")}</h2>
+                <div className="flex gap-2">
+                    <Button
+                        variant="outline"
+                        disabled={isGettingReport}
+                        className="px-6"
+                        onClick={() => router.push("/dashboard/clients/register")}
+                    >
+                        {t("button.add")}
+                    </Button>
+                    <ExportButton
+                        handleGetReport={handleGetClientReport}
+                        isLoading={isGettingReport}
+                    />
+                </div>
+            </div>
+
             <GenericTable
                 data={filteredData}
                 columns={columns}
@@ -154,16 +228,16 @@ export default function ClientList({ token }: ClientListProps) {
                 onPageChange={handlePageChange}
                 isLoading={loading}
                 skeleton={<ClientTableSkeleton />}
-                emptyMessage="No se encontraron clientes"
+                emptyMessage={t("client.table.emptyMessage")}
             />
             <ConfirmationModal
                 isOpen={isDeleteModalOpen}
                 onClose={() => setIsDeleteModalOpen(false)}
                 onConfirm={handleConfirmDelete}
-                title="Eliminar Cliente"
-                message={`¿Seguro que quieres eliminar a ${clientToDelete?.fullName}?`}
-                confirmText="Eliminar"
-                cancelText="Cancelar"
+                title={t("confirmationModal.client.titleDelete")}
+                message={t("confirmationModal.client.messageDelete", {client: clientToDelete?.fullName ?? ""})}
+                confirmText={t("button.delete")}
+                cancelText={t("button.cancel")}
                 variant="danger"
             />
         </div>

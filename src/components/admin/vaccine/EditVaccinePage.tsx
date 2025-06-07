@@ -2,28 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "@/lib/toast";
-import VaccineForm from "@/components/admin/vaccine/NewVaccineForm"; 
+import VaccineForm from "@/components/admin/vaccine/NewVaccineForm";
 import { getVaccineById } from "@/lib/vaccine/getVaccineById";
-
-interface Manufacturer {
-  id: number;
-  name: string;
-}
-
-interface Species {
-  id: number;
-  name: string;
-}
-
-interface Vaccine {
-  id: number;
-  name: string;
-  manufacturer: Manufacturer;
-  species: Species;
-  cost: number;
-  iva: number;   
-  price: number;
-}
+import { VaccineFormValues } from "@/lib/vaccine/IVaccine";
+import { Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface EditVaccinePageProps {
   token: string;
@@ -31,34 +14,60 @@ interface EditVaccinePageProps {
 }
 
 export default function EditVaccinePage({ token, id }: EditVaccinePageProps) {
-  const [vaccineData, setVaccineData] = useState<Vaccine | null>(null);
+  const [vaccineData, setVaccineData] = useState<VaccineFormValues | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
+
+  const t = useTranslations();
+  const e = useTranslations("Error");
 
   useEffect(() => {
     if (!token || !id) return;
 
     getVaccineById(token, Number(id))
       .then((data) => {
-        console.log("Datos de la vacuna (API):", data);
-
- 
-        const adaptedData = {
-          ...data,
-          iva: data.IVA,  
+        const adaptedData: VaccineFormValues = {
+          id: data.id,
+          name: data.name,
+          manufacturer: {
+            id: data.manufacturer.id,
+            name: data.manufacturer.name,
+          },
+          species: {
+            id: data.species.id,
+            name: data.species.name,
+          },
+          cost: Number(data.product.cost),
+          iva: Number(data.product.iva),
+          price: Number(data.product.price),
+          productImgUrl: data.product?.image?.previewUrl || "",
+          description: data.product?.description || "",
+          providerId: data.product?.provider?.id ?? 0,
+          provider: data.product?.provider
+            ? {
+                id: data.product.provider.id,
+                businessName: data.product.provider.name, // renombramos "name" a "businessName"
+              }
+            : undefined,
         };
-
 
         setVaccineData(adaptedData);
       })
-      .catch((error) => {
-        console.error(error);
-        toast("error", "Error al cargar los datos de la vacuna");
+      .catch((error : unknown) => {
+        toast("error", error instanceof Error ? error.message : t("error.errorLoadVaccine"));
       })
       .finally(() => setLoading(false));
   }, [token, id]);
 
-  if (loading) return <p>Cargando datos...</p>;
-  if (!vaccineData) return <p>No se encontró la vacuna</p>;
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-60">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+      </div>
+    );
+
+  if (!vaccineData) return <p>{t("error.notFound")}</p>;
 
   return <VaccineForm token={token} initialData={vaccineData} />;
 }

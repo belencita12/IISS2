@@ -2,24 +2,29 @@
 
 import { Position } from "@/lib/work-position/IPosition";
 import { WEEKDAYS } from "@/constants/workPositions.constants";
+import { useTranslations } from "next-intl";
 
 interface Props {
   position: Position;
 }
 
 export default function PositionDetail({ position }: Props) {
+  const t = useTranslations();
+
   return (
     <div className="px-8 py-6 w-full">
       <h1 className="text-4xl font-bold mb-10">{position.name}</h1>
 
-      <h2 className="text-2xl font-semibold mb-4">Turnos</h2>
+      <div className="mb-4">
+        <h2 className="text-2xl font-semibold">{t("positions.details.title")}</h2>
+      </div>
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse">
           <thead>
             <tr className="bg-gray-100 text-left">
-              <th className="p-3">Día de la semana</th>
-              <th className="p-3">Inicio</th>
-              <th className="p-3">Fin</th>
+              <th className="p-3">{t("positions.details.weekDay")}</th>
+              <th className="p-3">{t("positions.details.startTime")}</th>
+              <th className="p-3">{t("positions.details.endTime")}</th>
             </tr>
           </thead>
           <tbody>

@@ -1,47 +1,49 @@
 "use client";
 
 import GenericTable, { Column } from "@/components/global/GenericTable";
-import { Bell} from "lucide-react";
-import PetsTableSkeleton from "../admin/pet/skeleton/PetsTableSkeleton";
 import { VaccineRecord } from "@/lib/vaccine-registry/IVaccineRegistry";
 import { useEffect, useState } from "react";
 import { getByPetId } from "@/lib/vaccine-registry/getByPetId";
 import { formatDate } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import PetVaccinationListSkeleton from "./skeleton/PetVaccinationTableSkeleton";
+import { useTranslations } from "next-intl";
+import { toast } from "@/lib/toast";
 
-
-export default function PetVaccinationTable(
-  { token,petId }: { token: string ,petId:number}
-) {
-    const onReminder = (vac: VaccineRecord) => {
+export default function PetVaccinationTable({
+  token,
+  petId,
+  Id,
+}: {
+  token: string;
+  petId: number;
+  Id: number;
+}) {
+  const onReminder = (vac: VaccineRecord) => {
     console.log("reminder", vac);
-    }
+  };
+  const router = useRouter();
+  
+  const t = useTranslations();
 
   const columns: Column<VaccineRecord>[] = [
     {
-      header: "Fecha",
-      accessor: (vac)=>formatDate(vac.applicationDate || vac.createdAt),
-      className: "font-medium"
+      header: t("vaccine.table.date"),
+      accessor: (vac) => formatDate(vac.applicationDate || vac.createdAt),
+      className: "font-medium",
     },
     {
-      header: "Detalles de la Vacuna",
-      accessor: (vac) => vac.vaccine.name
+      header: t("vaccine.table.details"),
+      accessor: (vac) => vac.vaccine.name,
     },
     {
-      header: "Fecha Prevista",
-      accessor: (vac) => formatDate(vac.expectedDate)
+      header: t("vaccine.table.expectedDate"),
+      accessor: (vac) => formatDate(vac.expectedDate),
     },
     {
-      header: "Dosis",
-      accessor: (vac) => vac.dose
+      header: t("vaccine.table.dosis"),
+      accessor: (vac) => vac.dose,
     },
-  ];
-
-  const actions = [
-    {
-      icon: <Bell className="w-4 h-4" />,
-      onClick: onReminder,
-      label: "Recordatorio"
-    }
   ];
 
   const [vaccines, setVaccines] = useState<VaccineRecord[]>([]);
@@ -51,15 +53,15 @@ export default function PetVaccinationTable(
     currentPage: 1,
     totalPages: 1,
     totalItems: 0,
-    pageSize: 4
+    pageSize: 5,
   });
 
   useEffect(() => {
     const fetchVaccines = async () => {
       try {
         setIsLoading(true);
-        const data = await getByPetId(petId, token,pagination.currentPage);
-        if(!data) {
+        const data = await getByPetId(petId, token, pagination.currentPage);
+        if (!data) {
           setVaccines([]);
           return;
         }
@@ -68,12 +70,11 @@ export default function PetVaccinationTable(
           currentPage: data.currentPage,
           totalPages: data.totalPages,
           totalItems: data.total,
-          pageSize: data.size
+          pageSize: data.size,
         });
-      } catch (error) {
-        console.error("Error al obtener vacunas", error);
-      }
-      finally {
+      } catch (error: unknown) {
+        if (error instanceof Error) toast("error", error.message);
+      } finally {
         setIsLoading(false);
       }
     };
@@ -81,18 +82,17 @@ export default function PetVaccinationTable(
     fetchVaccines();
   }, [pagination.currentPage, token, petId]);
 
-
   return (
     <GenericTable
       data={vaccines}
       columns={columns}
-      actions={actions}
-      actionsTitle="Recordatorio"
       pagination={pagination}
       isLoading={isLoading}
-      skeleton={<PetsTableSkeleton />}
-      onPageChange={(page) => setPagination({ ...pagination, currentPage: page })}
-      emptyMessage="No hay vacunas registradas"
+      skeleton={<PetVaccinationListSkeleton />}
+      onPageChange={(page) =>
+        setPagination({ ...pagination, currentPage: page })
+      }
+      emptyMessage={t("vaccine.table.emptyMessage")}
     />
   );
 }

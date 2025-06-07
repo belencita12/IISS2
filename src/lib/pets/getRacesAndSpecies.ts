@@ -8,12 +8,15 @@ export const getSpecies = async (token: string) => {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    if (!response.ok) throw new Error("Error al obtener especies");
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({})); // fallback si no es JSON
+            const message = errorData?.message || `Error HTTP: ${response.status}`;
+            throw new Error(message);
+        }
 
     const data = await response.json();
     return data?.data || [];
   } catch (error) {
-    console.error("Error en getSpecies:", error);
     throw error;
   }
 };
@@ -23,27 +26,34 @@ export const getAllSpecies = async (token: string, queryParams?: string) => {
     const response = await fetch(`${SPECIES_API}?${queryParams}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    if (!response.ok) throw new Error("Error al obtener especies");
+    
+    if (!response.ok) {
+            const errorData = await response.json().catch(() => ({})); // fallback si no es JSON
+            const message = errorData?.message || `Error HTTP: ${response.status}`;
+            throw new Error(message);
+        }
     const data = await response.json();
     return data as PaginationResponse<Species>;
   } catch (error) {
-    console.error("Error en getAllSpecies:", error);
     throw error;
   }
 };
 
-export const getRacesBySpecies = async (speciesId: number, token: string) => {
+export const getRacesBySpecies = async (speciesId: number, token: string, includeDeleted?: boolean, pageSize?: number) => {
   try {
-    const response = await fetch(`${RACE_API}?page=1&speciesId=${speciesId}`, {
+    const response = await fetch(`${RACE_API}?page=1&size=${pageSize ?? 16}&speciesId=${speciesId}&includeDeleted=${includeDeleted?.toString() ?? 'false'}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    if (!response.ok) throw new Error("Error al obtener razas");
+    if (!response.ok) {
+            const errorData = await response.json().catch(() => ({})); // fallback si no es JSON
+            const message = errorData?.message || `Error HTTP: ${response.status}`;
+            throw new Error(message);
+        }
 
     const data = await response.json();
     return data?.data || [];
   } catch (error) {
-    console.error("Error en getRacesBySpecies:", error);
     throw error;
   }
 };

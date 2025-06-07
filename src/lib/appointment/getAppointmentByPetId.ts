@@ -1,0 +1,28 @@
+import { AppointmentData } from "./IAppointment";
+import { APPOINTMENT_API } from "../urls";
+
+export async function getAppointmentByPetId(
+  petId: number,
+  token: string,
+  page: number = 1,
+  size: number = 100
+): Promise<AppointmentData[]> {
+  const url = `${APPOINTMENT_API}?petId=${encodeURIComponent(petId)}&page=${page}&size=${size}`;
+  const res = await fetch(
+    url,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+    }
+  );
+     if (!res.ok) {
+            const errorData = await res.json().catch(() => ({})); 
+            const message = errorData?.message || `Error HTTP: ${res.status}`;
+            throw new Error(message);
+        }
+  const data = await res.json();
+  return data.data ?? [];
+}

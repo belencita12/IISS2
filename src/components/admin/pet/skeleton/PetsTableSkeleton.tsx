@@ -5,27 +5,46 @@ export default function PetsTableSkeleton() {
     <div className="rounded-md border">
       <div className="p-4">
         <div className="space-y-3">
-          {/* Table header skeleton */}
-          <div className="grid grid-cols-4 gap-4 py-3 border-b">
-            <Skeleton className="h-5 w-20" />
-            <Skeleton className="h-5 w-24" />
-            <Skeleton className="h-5 w-24" />
-            <Skeleton className="h-5 w-16" />
-          </div>
-          
-          {/* Table rows skeleton */}
-          {Array(3).fill(null).map((_, index) => (
-            <div key={index} className="grid grid-cols-4 gap-4 py-4 border-b">
-              <Skeleton className="h-5 w-32" />
-              <Skeleton className="h-5 w-24" />
+          {/* Header */}
+          <div className="grid grid-cols-6 gap-x-4 py-3 border-b">
+            <div className="col-span-2 flex justify-start">
               <Skeleton className="h-5 w-20" />
-              <div className="flex gap-2">
-                <Skeleton className="h-8 w-8 rounded-md" />
-                <Skeleton className="h-8 w-8 rounded-md" />
-                <Skeleton className="h-8 w-8 rounded-md" />
-              </div>
             </div>
-          ))}
+            <div className="col-span-2">
+              <Skeleton className="h-5 w-16" />
+            </div>
+            <div className="col-span-1">
+              <Skeleton className="h-5 w-20" />
+            </div>
+            <div className="col-span-1 flex justify-end">
+              <Skeleton className="h-5 w-16" />
+            </div>
+          </div>
+
+          {/* Rows */}
+          {Array(3)
+            .fill(null)
+            .map((_, index) => (
+              <div
+                key={index}
+                className="grid grid-cols-6 gap-x-4 py-4 border-b"
+              >
+                <div className="col-span-2 flex justify-start">
+                  <Skeleton className="h-5 w-32" />
+                </div>
+                <div className="col-span-2">
+                  <Skeleton className="h-5 w-16" />
+                </div>
+                <div className="col-span-1">
+                  <Skeleton className="h-5 w-20" />
+                </div>
+                <div className="col-span-1 flex justify-end gap-2">
+                  <Skeleton className="h-8 w-8 rounded-md" />
+                  <Skeleton className="h-8 w-8 rounded-md" />
+                  <Skeleton className="h-8 w-8 rounded-md" />
+                </div>
+              </div>
+            ))}
         </div>
       </div>
     </div>

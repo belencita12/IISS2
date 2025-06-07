@@ -16,18 +16,19 @@ import {
   SettingsIcon,
   CircleHelpIcon,
   CalendarIcon,
+  BellIcon,
 } from "lucide-react";
 
 const linksUser = [
   { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
-  { name: "Citas", href: "/dashboard/citas", icon: CalendarIcon },
+  { name: "Citas", href: "/dashboard/appointment", icon: CalendarIcon },
   { name: "Clientes", href: "/dashboard/clients", icon: UserIcon },
   { name: "Productos", href: "/dashboard/products", icon: BoneIcon },  
   { name: "Vacunas", href: "/dashboard/vaccine", icon: SyringeIcon },
   { name: "Depositos", href: "/dashboard/stock", icon: StoreIcon },
   { name: "Movimientos", href: "/dashboard/movement", icon: BoxIcon },
   { name: "Compras", href: "/dashboard/purchases", icon: CircleDollarSignIcon },
-  { name: "Crear Venta", href: "/dashboard/ventas", icon: HandCoinsIcon },
+  { name: "Crear Venta", href: "/dashboard/new-sale", icon: HandCoinsIcon },
   { name: "Empleados", href: "/dashboard/employee", icon: BookUserIcon },
   { name: "Facturas", href: "/dashboard/invoices", icon: FileIcon },
   {
@@ -35,7 +36,8 @@ const linksUser = [
     href: "/dashboard/settings",
     icon: SettingsIcon,
   },
-  { name: "Ayuda", href: "/dashboard/ayuda", icon: CircleHelpIcon },
+  { name: "Ayuda", href: "/dashboard/help", icon: CircleHelpIcon },
+  { name: "Notificaciones", href: "/dashboard/notifications", icon: BellIcon },
 ];
 
 export default function NavLinks() {
@@ -45,7 +47,8 @@ export default function NavLinks() {
     <>
       {linksUser.map((link) => {
         const LinkIcon = link.icon;
-        const isActive = pathname === link.href;
+        const isActive = pathname === link.href || (pathname.startsWith(link.href) && link.href !== "/dashboard");
+
 
         return (
           <Link

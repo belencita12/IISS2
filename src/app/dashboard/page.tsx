@@ -1,39 +1,15 @@
+import { getServerSession } from "next-auth";
+import authOptions from "@/lib/auth/options";
+import { redirect } from "next/navigation";
+import DashboardContent from "@/components/dashboard/DashboardContent";
 
-import { LineChart, PieChart, BarChart } from '@/components/admin/Charts';
-import { DollarSign, Users } from 'lucide-react';
+export default async function DashboardPage() {
+  const session = await getServerSession(authOptions);
+  const token = session?.user?.token;
 
-export default function Dashboard() {
+  if (!token) {
+    redirect("/login");
+  }
 
-  return (
-    <div className="text-sm sm:text-base flex flex-col gap-3">
-      <div className="flex md:flex-row flex-col items-center w-full gap-3">
-        <div className="bg-white w-full md:flex-1 p-4 shadow rounded-lg flex items-center justify-between my-4">
-          <div>
-            <h3 className="text-sm text-gray-500">Total Facturado</h3>
-            <p className="text-2xl font-bold">$10,000</p>
-          </div>
-          <DollarSign size={32} className="text-green-500" />
-        </div>
-        <div className="bg-white w-full md:flex-1 p-4 shadow rounded-lg flex items-center justify-between">
-          <div>
-            <h3 className="text-sm text-gray-500">Clientes</h3>
-            <p className="text-2xl font-bold">150</p>
-          </div>
-          <Users size={32} className="text-blue-500" />
-        </div>
-      </div>
-      <div className="flex flex-col lg:flex-row gap-4">
-        <div className="flex flex-col flex-1 gap-4">
-          <LineChart />
-          <BarChart />
-        </div>
-        <div className="flex-1">
-          <PieChart />
-        </div>
-      </div>
-
-
-    </div>
-
-  );
+  return <DashboardContent token={token} />;
 }

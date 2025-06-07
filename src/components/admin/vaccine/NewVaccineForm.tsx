@@ -1,278 +1,72 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { toast } from "@/lib/toast";
-import { getManufacturers } from "@/lib/vaccine-manufacturer/getVaccineManufacturerById";
-import { getSpecies } from "@/lib/pets/getRacesAndSpecies";
-import { Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import NumericInput from "@/components/global/NumericInput";
+import Image from "next/image";
+import { useVaccineForm } from "@/hooks/vaccine/useVaccineForm";
+import { VaccineFormValues } from "@/lib/vaccine/IVaccine";
+import { useTranslations } from "next-intl";
 
-// Interfaces
-interface Manufacturer {
-  id: number;
-  name: string;
-}
-
-interface Species {
-  id: number;
-  name: string;
-}
-
-// Definición del esquema de validación con Zod
-const vaccineSchema = z.object({
-  name: z.string().min(1, "El nombre es obligatorio"),
-  manufacturerId: z
-    .number({ required_error: "Seleccione un fabricante" })
-    .min(1, "Seleccione un fabricante"),
-  speciesId: z
-    .number({ required_error: "Seleccione una especie" })
-    .min(1, "Seleccione una especie"),
-  cost: z
-    .number({ message: "Complete con valores numéricos adecuados" })
-    .min(1, "El costo debe ser mayor a 0"),
-  iva: z
-    .number({ message: "Complete con valores numéricos adecuados" })
-    .min(1, "El IVA debe ser mayor a 0"),
-  price: z
-    .number({ message: "Complete con valores numéricos adecuados" })
-    .min(1, "El precio debe ser mayor a 0"),
-  productImg: z
-    .any()
-    .optional()
-    .refine((file) => {
-      if (!file) return true;
-      return (
-        file instanceof File &&
-        ["image/jpeg", "image/png", "image/gif", "image/webp"].includes(
-          file.type
-        )
-      );
-    }, "El archivo debe ser una imagen válida (JPG, PNG, GIF, WEBP)")
-    .refine((file) => {
-      if (!file) return true;
-      return file.size <= 1 * 1024 * 1024;
-    }, "La imagen no debe superar los 1MB"),
-});
-
-// Tipado basado en el esquema
-type VaccineFormData = z.infer<typeof vaccineSchema>;
-
-// Props para el formulario unificado: si se pasan datos iniciales, se asume edición
 interface VaccineFormProps {
   token: string | null;
-  initialData?: {
-    id: number;
-    name: string;
-    manufacturer: Manufacturer;
-    species: Species;
-    cost: number;
-    iva: number;
-    price: number;
-  };
+  initialData?: VaccineFormValues;
 }
 
 export default function VaccineForm({ token, initialData }: VaccineFormProps) {
-  const router = useRouter();
-  const isEdit = Boolean(initialData);
-
-  // Estados para fabricantes, especies y búsqueda
-  const [manufacturers, setManufacturers] = useState<Manufacturer[]>([]);
-  const [species, setSpecies] = useState<Species[]>([]);
-  const [manufacturerSearch, setManufacturerSearch] = useState(
-    initialData ? initialData.manufacturer.name : ""
-  );
-  const [speciesSearch, setSpeciesSearch] = useState(
-    initialData ? initialData.species.name : ""
-  );
-  const [isManufacturerListVisible, setIsManufacturerListVisible] =
-    useState(false);
-  const [isSpeciesListVisible, setIsSpeciesListVisible] = useState(false);
-  const [selectedManufacturerId, setSelectedManufacturerId] = useState<
-    number | null
-  >(initialData ? initialData.manufacturer.id : null);
-  const [selectedSpeciesId, setSelectedSpeciesId] = useState<number | null>(
-    initialData ? initialData.species.id : null
-  );
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Configuración de React Hook Form
   const {
     register,
     handleSubmit,
+    onSubmit,
     setValue,
-    watch, // 
-    formState: { errors },
-  } = useForm<VaccineFormData>({
-    resolver: zodResolver(vaccineSchema),
-    defaultValues: {
-      name: initialData?.name || "",
-      manufacturerId: initialData?.manufacturer.id,
-      speciesId: initialData?.species.id,
-      cost: initialData?.cost,
-      iva: initialData?.iva,
-      price: initialData?.price,
-    },
-  });
-  
+    watch,
+    errors,
+    isSubmitting,
+    isEdit,
+    manufacturerSearch,
+    speciesSearch,
+    setManufacturerSearch,
+    setSpeciesSearch,
+    isManufacturerListVisible,
+    isSpeciesListVisible,
+    validateManufacturerSelection,
+    validateSpeciesSelection,
+    setIsSpeciesListVisible,
+    setIsManufacturerListVisible,
+    manufacturers,
+    species,
+    goToManufacturerPage,
+    goBackToVaccineList,
+    providerSearch,
+    setProviderSearch,
+    setIsProviderListVisible,
+    isProviderListVisible,
+    filteredProviders,
+    validateProviderSelection,
+    setSelectedProviderId,
+    setSelectedManufacturerId,
+    setSelectedSpeciesId,
+    isLoadingSpecies,
+    isLoadingManufacturers,
+    isLoadingProviders,
+  } = useVaccineForm(token, initialData);
 
-  useEffect(() => {
-    if (token) {
-      // Cargar fabricantes
-      getManufacturers(token)
-        .then(({ data }) => {
-          const sorted = data.sort((a: Manufacturer, b: Manufacturer) =>
-            a.name.localeCompare(b.name)
-          );
-          setManufacturers(sorted);
-        })
-        .catch((error) => {
-          console.error("Error cargando fabricantes:", error);
-          toast("error", "Error al cargar fabricantes");
-        });
-      // Cargar especies
-      getSpecies(token)
-        .then((data) => {
-          const sorted = data.sort((a: Species, b: Species) =>
-            a.name.localeCompare(b.name)
-          );
-          setSpecies(sorted);
-        })
-        .catch((error) => {
-          console.error("Error cargando especies:", error);
-          toast("error", "Error al cargar especies");
-        });
-    }
-  }, [token]);
 
-  const filteredManufacturers = manufacturers.filter((manu) =>
-    manu.name.toLowerCase().includes(manufacturerSearch.toLowerCase())
-  );
-  const filteredSpecies = species.filter((spec) =>
-    spec.name.toLowerCase().includes(speciesSearch.toLowerCase())
-  );
-
-  // Función para enviar el formulario
-  const onSubmit = async (data: VaccineFormData) => {
-    if (isSubmitting) return;
-    setIsSubmitting(true);
-
-    // Validación de selección
-    const isManufacturerValid = manufacturers.some(
-      (m) => m.id === selectedManufacturerId
-    );
-    const isSpeciesValid = species.some((s) => s.id === selectedSpeciesId);
-
-    if (!isManufacturerValid || !isSpeciesValid) {
-      toast(
-        "error",
-        "Debe seleccionar un fabricante y una especie válidos de la lista."
-      );
-      setIsSubmitting(false);
-      return;
-    }
-
-    try {
-      const formData = new FormData();
-      formData.append("name", data.name);
-      formData.append(
-        "manufacturerId",
-        selectedManufacturerId?.toString() || "0"
-      );
-      formData.append("speciesId", selectedSpeciesId?.toString() || "0");
-      formData.append("cost", data.cost.toString());
-      formData.append("iva", data.iva.toString());
-      formData.append("price", data.price.toString());
-
-      if (data.productImg instanceof File) {
-        formData.append("productImg", data.productImg);
-      }
-
-      // Si es edición, llamamos a PUT; si es creación, a POST
-      const url = isEdit
-        ? `${process.env.NEXT_PUBLIC_BASE_URL}/vaccine/${initialData?.id}`
-        : `${process.env.NEXT_PUBLIC_BASE_URL}/vaccine`;
-      const method = isEdit ? "PUT" : "POST";
-
-      const response = await fetch(url, {
-        method,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error(
-          isEdit ? "Error al actualizar la vacuna" : "Error al crear la vacuna"
-        );
-      }
-
-      toast(
-        "success",
-        isEdit
-          ? "Vacuna actualizada exitosamente"
-          : "Vacuna creada exitosamente"
-      );
-      router.push("/dashboard/vaccine");
-    } catch (error) {
-      console.error(error);
-      toast(
-        "error",
-        isEdit ? "Error al actualizar la vacuna" : "Error al crear la vacuna"
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const validateManufacturerSelection = () => {
-    setTimeout(() => setIsManufacturerListVisible(false), 200);
-    const found = manufacturers.find(
-      (m) => m.name.toLowerCase() === manufacturerSearch.toLowerCase()
-    );
-    if (!found) {
-      setManufacturerSearch("");
-      setSelectedManufacturerId(null);
-      setValue("manufacturerId", 0);
-    } else {
-      setSelectedManufacturerId(found.id);
-      setValue("manufacturerId", found.id);
-    }
-  };
-
-  const validateSpeciesSelection = () => {
-    setTimeout(() => setIsSpeciesListVisible(false), 200);
-    const found = species.find(
-      (s) => s.name.toLowerCase() === speciesSearch.toLowerCase()
-    );
-    if (!found) {
-      setSpeciesSearch("");
-      setSelectedSpeciesId(null);
-      setValue("speciesId", 0);
-    } else {
-      setSelectedSpeciesId(found.id);
-      setValue("speciesId", found.id);
-    }
-  };
+  const t = useTranslations();
 
   return (
     <div className="p-4 mx-auto max-w-4xl">
       <h2 className="text-3xl font-bold mb-6">
-        {isEdit ? "Editar Vacuna" : "Agregar Vacuna"}
+        {isEdit ? t("vaccine.form.titleUpdate") : t("vaccine.form.titleRegister")}
       </h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Nombre */}
         <div>
-          <label className="block text-sm font-medium mb-2">Nombre</label>
+          <label className="block text-sm font-medium mb-2">{t("vaccine.form.name")}</label>
           <Input
             {...register("name")}
-            placeholder="Ingrese un nombre"
+            placeholder={t("placeholder.name")}
             className="mb-2"
           />
           {errors.name && (
@@ -283,7 +77,7 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
         {/* Fabricante */}
         <div>
           <div className="flex items-center justify-between">
-            <label className="block text-sm font-medium mb-2">Fabricante</label>
+            <label className="block text-sm font-medium mb-2">{t("vaccine.form.manufacturer")}</label>
           </div>
           <div className="relative">
             <Input
@@ -292,33 +86,39 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
               onChange={(e) => setManufacturerSearch(e.target.value)}
               onBlur={validateManufacturerSelection}
               onFocus={() => setIsManufacturerListVisible(true)}
-              placeholder="Buscar fabricante..."
+              placeholder={t("search.searchByName")}
               className="w-full mb-2 pr-10"
             />
             <button
               type="button"
-              onClick={() => router.push("/dashboard/vaccine/manufacturer/new")}
+              onClick={() => goToManufacturerPage()}
               className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-black rounded-full"
-              title="Agregar Fabricante"
+              title={t("button.add")}
             >
               <Plus size={18} />
             </button>
             {isManufacturerListVisible && (
               <div className="absolute z-50 w-full bg-white border rounded shadow-lg max-h-40 overflow-y-auto">
-                {filteredManufacturers.map((manu) => (
-                  <div
-                    key={manu.id}
-                    className="p-2 hover:bg-gray-100 cursor-pointer"
-                    onClick={() => {
-                      setSelectedManufacturerId(manu.id);
-                      setManufacturerSearch(manu.name);
-                      setValue("manufacturerId", manu.id);
-                      setIsManufacturerListVisible(false);
-                    }}
-                  >
-                    {manu.name}
+                {isLoadingManufacturers ? (
+                  <div className="flex justify-center p-2">
+                    <Loader2 className="animate-spin" />
                   </div>
-                ))}
+                ) : (
+                  manufacturers.map((manu) => (
+                    <div
+                      key={manu.id}
+                      onMouseDown={() => {
+                        setSelectedManufacturerId(manu.id);
+                        setManufacturerSearch(manu.name);
+                        setValue("manufacturerId", manu.id);
+                        setIsManufacturerListVisible(false);
+                      }}
+                      className="p-2 hover:bg-gray-100 cursor-pointer"
+                    >
+                      {manu.name}
+                    </div>
+                  ))
+                )}
               </div>
             )}
           </div>
@@ -331,7 +131,7 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
 
         {/* Especie */}
         <div>
-          <label className="block text-sm font-medium mb-2">Especie</label>
+          <label className="block text-sm font-medium mb-2">{t("vaccine.form.specie")}</label>
           <div className="relative">
             <Input
               type="text"
@@ -339,40 +139,43 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
               onChange={(e) => setSpeciesSearch(e.target.value)}
               onFocus={() => setIsSpeciesListVisible(true)}
               onBlur={validateSpeciesSelection}
-              placeholder="Buscar especie..."
+              placeholder={t("search.searchByName")}
               className="w-full mb-2"
             />
             {isSpeciesListVisible && (
               <div className="absolute z-50 w-full bg-white border rounded shadow-lg max-h-40 overflow-y-auto">
-                {filteredSpecies.map((spec) => (
-                  <div
-                    key={spec.id}
-                    className="p-2 hover:bg-gray-100 cursor-pointer"
-                    onClick={() => {
-                      setSelectedSpeciesId(spec.id);
-                      setSpeciesSearch(spec.name);
-                      setValue("speciesId", spec.id);
-                      setIsSpeciesListVisible(false);
-                    }}
-                  >
-                    {spec.name}
+                {isLoadingSpecies ? (
+                  <div className="flex justify-center p-2">
+                    <Loader2 className="animate-spin" />
                   </div>
-                ))}
+                ) : (
+                  species.map((spec) => (
+                    <div
+                      key={spec.id}
+                      onMouseDown={() => {
+                        setSelectedSpeciesId(spec.id);
+                        setSpeciesSearch(spec.name);
+                        setValue("speciesId", spec.id);
+                        setIsSpeciesListVisible(false);
+                      }}
+                      className="p-2 hover:bg-gray-100 cursor-pointer"
+                    >
+                      {spec.name}
+                    </div>
+                  ))
+                )}
               </div>
             )}
           </div>
-          {errors.speciesId && (
-            <p className="text-red-500 text-sm">{errors.speciesId.message}</p>
-          )}
         </div>
 
         {/* Costo */}
         <div>
-          <label className="block text-sm font-medium mb-2">Costo</label>
+          <label className="block text-sm font-medium mb-2">{t("vaccine.form.cost")}</label>
           <NumericInput
             id="cost"
             type="formattedNumber"
-            placeholder="Ingrese el costo"
+            placeholder={t("placeholder.cost")}
             value={watch("cost") ?? ""}
             onChange={(e) =>
               setValue("cost", Number(e.target.value), { shouldValidate: true })
@@ -384,11 +187,11 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
 
         {/* IVA */}
         <div>
-          <label className="block text-sm font-medium mb-2">IVA</label>
+          <label className="block text-sm font-medium mb-2">{t("vaccine.form.iva")}</label>
           <NumericInput
             id="iva"
             type="formattedNumber"
-            placeholder="Ingrese el IVA"
+            placeholder={t("placeholder.iva")}
             value={watch("iva") ?? ""}
             onChange={(e) =>
               setValue("iva", Number(e.target.value), { shouldValidate: true })
@@ -400,11 +203,11 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
 
         {/* Precio */}
         <div>
-          <label className="block text-sm font-medium mb-2">Precio</label>
+          <label className="block text-sm font-medium mb-2">{t("vaccine.form.price")}</label>
           <NumericInput
             id="price"
             type="formattedNumber"
-            placeholder="Ingrese el precio"
+            placeholder={t("placeholder.price")}
             value={watch("price") ?? ""}
             onChange={(e) =>
               setValue("price", Number(e.target.value), {
@@ -416,44 +219,114 @@ export default function VaccineForm({ token, initialData }: VaccineFormProps) {
           />
         </div>
 
-        {/* Imagen */}
+        <div>
+          <label className="block text-sm font-medium mb-2">{t("vaccine.form.description")}</label>
+          <Input
+            {...register("description")}
+            placeholder={t("placeholder.description")}
+            className="mb-2"
+          />
+          {errors.description && (
+            <p className="text-red-500 text-sm">{errors.description.message}</p>
+          )}
+        </div>
+
+        {/* Proveedor */}
+        <div>
+          <label className="block text-sm font-medium mb-2">{t("vaccine.form.provider")}</label>
+          <div className="relative">
+            <Input
+              type="text"
+              value={providerSearch}
+              onChange={(e) => setProviderSearch(e.target.value)}
+              onFocus={() => setIsProviderListVisible(true)}
+              onBlur={validateProviderSelection}
+              placeholder={t("placeholder.name")}
+              className="w-full mb-2"
+            />
+            {isProviderListVisible && (
+              <div className="absolute z-50 w-full bg-white border rounded shadow-lg max-h-40 overflow-y-auto">
+                {isLoadingProviders ? (
+                  <div className="flex justify-center p-2">
+                    <Loader2 className="animate-spin" />
+                  </div>
+                ) : (
+                  filteredProviders.map((prov) => (
+                    <div
+                      key={prov.id}
+                      className="p-2 hover:bg-gray-100 cursor-pointer"
+                      onMouseDown={() => {
+                        setSelectedProviderId(prov.id ?? null);
+                        setProviderSearch(prov.businessName);
+                        setValue("providerId", prov.id ?? 0);
+                        setIsProviderListVisible(false);
+                      }}
+                    >
+                      {prov.businessName} - {prov.ruc}
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+          {errors.providerId && (
+            <p className="text-red-500 text-sm">{errors.providerId.message}</p>
+          )}
+        </div>
+
         <div>
           <label className="block text-sm font-medium mb-2">
-            Imagen del producto (opcional)
+            {t("vaccine.form.image")}
           </label>
-          <Input
-            type="file"
-            className="mb-2"
-            accept="image/*"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              setValue("productImg", file);
-            }}
-          />
-          {errors.productImg?.message && (
-            <p className="text-red-500 text-sm">
-              {String(errors.productImg.message)}
-            </p>
-          )}
+
+          <div className="flex items-center justify-center gap-4 mb-4">
+            {/* Imagen opcional*/}
+            {isEdit && initialData?.productImgUrl && (
+              <div className="flex items-center">
+                <Image
+                  src={initialData.productImgUrl}
+                  alt="Imagen actual"
+                  width={40}
+                  height={40}
+                  className="object-contain border rounded"
+                />
+              </div>
+            )}
+
+            <Input
+              type="file"
+              className="mb-0"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                setValue("productImg", file);
+              }}
+            />
+            {errors.productImg?.message && (
+              <p className="text-red-500 text-sm">
+                {String(errors.productImg.message)}
+              </p>
+            )}
+          </div>
         </div>
 
         <div className="flex justify-end gap-4">
           <Button
             type="button"
             variant="outline"
-            onClick={() => router.push("/dashboard/vaccine")}
+            onClick={() => goBackToVaccineList()}
             disabled={isSubmitting}
           >
-            Cancelar
+            {t("button.cancel")}
           </Button>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting
               ? isEdit
-                ? "Guardando cambios..."
-                : "Guardando..."
+                ? t("button.saving")
+                : t("button.adding")
               : isEdit
-              ? "Guardar Cambios"
-              : "Agregar Vacuna"}
+              ? t("button.save")
+              : t("button.add")}
           </Button>
         </div>
       </form>

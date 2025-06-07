@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { GetPurchaseQueryParams } from "@/lib/purchases/IPurchase";
 import useDebounce from "@/hooks/useDebounce";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface Props {
   filters: GetPurchaseQueryParams;
@@ -12,6 +13,8 @@ interface Props {
 }
 
 export default function PurchaseNumericFilter({ filters, setFilters }: Props) {
+  const t = useTranslations();
+
   const [min, setMin] = useState(filters.totalMin?.toString() ?? "");
   const [max, setMax] = useState(filters.totalMax?.toString() ?? "");
 
@@ -31,27 +34,32 @@ export default function PurchaseNumericFilter({ filters, setFilters }: Props) {
     }
   }, [debouncedMin, debouncedMax]);
 
+  useEffect(()=>{
+    setMin(filters.totalMin?.toString() ?? "")
+    setMax(filters.totalMax?.toString() ?? "")
+  },[filters.totalMin, filters.totalMax])
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div className="space-y-2">
-        <Label htmlFor="totalMin">Total mínimo</Label>
+        <Label htmlFor="totalMin">{t("filters.total.minTotal")}</Label>
         <NumericInput
           id="totalMin"
           type="formattedNumber"
           value={min}
-          placeholder="Ejemplo: 100.000"
+          placeholder={t("placeholder.minAmount")}
           onChange={(e) => setMin(e.target.value)}
           className="w-full border px-3 py-2 rounded"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="totalMax">Total máximo</Label>
+        <Label htmlFor="totalMax">{t("filters.total.maxTotal")}</Label>
         <NumericInput
           id="totalMax"
           type="formattedNumber"
           value={max}
-          placeholder="Ejemplo: 1.000.000"
+          placeholder={t("placeholder.maxAmount")}
           onChange={(e) => setMax(e.target.value)}
           className="w-full border px-3 py-2 rounded"
         />

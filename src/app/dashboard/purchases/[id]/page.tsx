@@ -27,5 +27,7 @@ export default async function PurchaseDetailPage({ params }: { params: Promise<{
   // Si no hay detalles para esta compra, mostrar 404
   if (!detailResp || !detailResp.data || detailResp.data.length === 0) return notFound();
 
-  return <PurchaseDetail token={token} purchaseInfo={purchase} />;
+  return (
+        <PurchaseDetail token={token} purchaseInfo={purchase} />
+  );
 }

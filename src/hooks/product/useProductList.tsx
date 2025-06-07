@@ -49,7 +49,6 @@ export function useProductList(token: string) {
   });
 
   const [products, setProducts] = useState<Product[]>([]);
-  const [stockMap, setStockMap] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [pagination, setPagination] = useState({
     currentPage: 1,
@@ -57,22 +56,6 @@ export function useProductList(token: string) {
     totalItems: 0,
     pageSize: 16,
   });
-
-  const loadProductStock = useCallback(
-    async (productId: string) => {
-      try {
-        const stockData = await getStockDetails(productId, token);
-        return stockData.data.reduce(
-          (total, detail) => total + detail.amount,
-          0
-        );
-      } catch (error) {
-        toast("error", `Error al cargar el stock del producto ${productId}`);
-        return 0;
-      }
-    },
-    [token]
-  );
 
   const loadProducts = useCallback(
     async (page: number, filterParams: FiltersType = initialFilters) => {
@@ -116,24 +99,31 @@ export function useProductList(token: string) {
         let totalItems = data.total;
         let totalPages = data.totalPages;
 
-        // BLOQUE DE FILTRADO LOCAL POR NOMBRE: Si existe término de búsqueda y no buscamos por código, aplico filtrado local sobre el array devuelto.
+        // FILTRADO LOCAL POR NOMBRE ACROSS ALL PAGES
         if (term && !preparedParams.code) {
-          const norm = normalizeText(term); // Normalizamos texto de búsqueda para evitar diferencias por acentos o mayúsculas
-          filteredProducts = filteredProducts.filter(p => // Filtramos productos cuyo nombre normalizado incluya el término
+          // Trae todos los productos sin paginar (asumiendo un límite alto)
+          const fullData: ProductResponse = await getProducts(
+            { ...preparedParams, page: 1, size: 10000 },
+            token
+          );
+
+          const norm = normalizeText(term);
+          const allMatching = fullData.data.filter(p =>
             normalizeText(p.name).includes(norm)
           );
 
-          totalItems = filteredProducts.length;
+          totalItems = allMatching.length;
           totalPages =
             totalItems > 0
               ? Math.ceil(totalItems / pagination.pageSize)
               : 1;
 
-          filteredProducts = filteredProducts.slice(
+          filteredProducts = allMatching.slice(
             (page - 1) * pagination.pageSize,
             page * pagination.pageSize
           );
         }
+
 
         setPagination({
           currentPage: page,
@@ -143,15 +133,7 @@ export function useProductList(token: string) {
         });
         setProducts(filteredProducts);
 
-        const stockEntries = await Promise.all(
-          filteredProducts.map(async (product) =>
-            [product.id, await loadProductStock(product.id)] as [
-              string,
-              number
-            ]
-          )
-        );
-        setStockMap(Object.fromEntries(stockEntries));
+
 
         setQuery({ ...preparedParams, page, size: data.size });
       } catch (error) {
@@ -166,7 +148,7 @@ export function useProductList(token: string) {
         setIsLoading(false);
       }
     },
-    [token, pagination.pageSize, loadProductStock, setQuery, initialFilters]
+    [token, pagination.pageSize, setQuery, initialFilters]
   );
 
   useEffect(() => {
@@ -187,7 +169,6 @@ export function useProductList(token: string) {
 
   return {
     products,
-    stockMap,
     isLoading,
     pagination,
     inputFilters,

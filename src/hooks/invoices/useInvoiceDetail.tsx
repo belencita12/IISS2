@@ -23,7 +23,7 @@ export function useInvoiceDetail(invoiceId: string, token: string) {
 
         // Obtiene los detalles filtrados por invoiceNumber
         const detailsResponse = await getInvoiceDetail(
-          invoiceData.invoiceNumber,
+          invoiceId,
           token
         );
         const fetchedDetails = detailsResponse.data;

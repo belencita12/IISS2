@@ -10,20 +10,25 @@ import {
   import Image from "next/image";
   import { Button } from "@/components/ui/button";
   import { PetData } from "@/lib/pets/IPet";
+  import { useTranslations } from "next-intl";
   
   export default function PetsTable(
     { pets }: { pets: PetData[] }
   ) {
-    if(pets.length === 0) return <p className="text-center">No hay mascotas</p>
+    const p = useTranslations("PeDetail");
+    const e = useTranslations("Error");
+
+    if(pets.length === 0) return <p className="text-center">{e("notFoundField", {field: "mascotas"})}</p>
+
     return (
       <Table>
         <TableHeader>
           <TableRow className="bg-[#E9EAEF]">
             <TableHead className="w-[50px]"> </TableHead>
-            <TableHead>Nombre</TableHead>
-            <TableHead>Especie</TableHead>
-            <TableHead>Raza</TableHead>
-            <TableHead className="text-right">Acciones</TableHead>
+            <TableHead>{p("name")}</TableHead>
+            <TableHead>{p("specie")}</TableHead>
+            <TableHead>{p("race")}</TableHead>
+            <TableHead className="text-right">{p("actions")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

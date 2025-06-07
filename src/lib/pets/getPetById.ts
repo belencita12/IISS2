@@ -9,7 +9,11 @@ export async function getPetById(id: number, token: string) {
             }
         });
         
-        if (res.status === 404) return null;
+            if (!res.ok) {
+            const errorData = await res.json().catch(() => ({})); // fallback si no es JSON
+            const message = errorData?.message || `Error HTTP: ${res.status}`;
+            throw new Error(message);
+        }
         
         const data = await res.json();
         
@@ -17,10 +21,8 @@ export async function getPetById(id: number, token: string) {
         if (!data || !data.id || !data.name) {
             return null;
         }
-        
         return data as PetData;
     } catch (error) {
-        console.error(error);
         return null;        
     }
 }

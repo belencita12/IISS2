@@ -1,4 +1,5 @@
 export const categoryMap = {
+    SERVICE: "Servicio",
     PRODUCT: "Producto",
     VACCINE: "Vacuna",
     none: "Ninguno",
