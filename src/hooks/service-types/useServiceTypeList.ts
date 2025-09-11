@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { usePaginatedFetch } from "../api/usePaginatedFetch";
 import { SERVICE_TYPE } from "@/lib/urls";
 
@@ -23,6 +23,7 @@ export interface ServiceType {
 
 export const useServiceTypeList = (token: string) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [serviceTypes, setServiceTypes] = useState<ServiceType[]>([]);
 
   const { data, loading, error, pagination, setPage, search } = usePaginatedFetch<ServiceType>(
     SERVICE_TYPE,
@@ -30,17 +31,28 @@ export const useServiceTypeList = (token: string) => {
     {
       initialPage: 1,
       autoFetch: true,
-      extraParams: { search: "" }
+      extraParams: { size : 10000 }
     }
   );
 
   const handleSearch = useCallback((query: string) => {
     setSearchQuery(query);
-    search({ name: query });
+    search({});
   }, [search]);
 
+  useEffect(() => {
+    if (data) {
+      console.log("Data fetched:", data);
+      setServiceTypes(data.filter(serviceType => {
+        const nameMatch = serviceType.name.toLowerCase().includes(searchQuery.toLowerCase());
+        return nameMatch;
+      }));
+    }
+  }
+  , [data]);
+
   return {
-    serviceTypes: data,
+    serviceTypes,
     isLoading: loading,
     error,
     pagination,
